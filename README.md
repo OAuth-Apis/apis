@@ -8,15 +8,16 @@
   \____/_/    \_\    \__,_|\__,_|_____/ 
 
 </pre>
-OA-aaS (Work in Progress, development starts in augustus sponsored by SURFnet)
+OA-aaS
 ======
+<em>(Work in Progress, development starts in august sponsored by SURFnet)</em>
 
 OAuth Authorization as a Service (OA-aaS) is a generic OAuth2 provider that can be used to kickstart your API authentication. 
 
 Features
 --------
 
-- An OAuth2 Provider compliant with [the draft v2-27 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-27) 
+- An OAuth2 Provider compliant with [the draft v2-30 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-30)
   * Pluggable authentication and configurable persistence 
   * Support for authorization code and implicit grant 
   * GUI for the registration of Resource Servers and Client apps
