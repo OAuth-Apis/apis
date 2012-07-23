@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.service;
+package org.surfnet.oaaas.repository;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import org.surfnet.oaaas.model.ResourceServer;
 
-public class RegistrationService {
-
-  public ResourceServer getResourceServer(long id) {
-    return new ResourceServer();
-  }
+@Repository
+public interface ResourceServerRepository extends CrudRepository<ResourceServer, Long> {
 }

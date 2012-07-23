@@ -19,10 +19,11 @@ package org.surfnet.oaaas.resource;
 import com.yammer.dropwizard.testing.ResourceTest;
 
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.service.RegistrationService;
+import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -32,25 +33,26 @@ import static org.mockito.Mockito.when;
 public class ResourceServerResourceTest extends ResourceTest {
 
   @Mock
-  private RegistrationService registrationService;
+  private ResourceServerRepository repository;
+
+  @InjectMocks
+  private ResourceServerResource resourceServerResource;
 
   @Override
   protected void setUpResources() throws Exception {
+    resourceServerResource = new ResourceServerResource();
     MockitoAnnotations.initMocks(this);
-    ResourceServerResource r = new ResourceServerResource();
-
-    r.setRegistrationService(registrationService);
-    addResource(r);
+    addResource(resourceServerResource);
   }
 
 
   @Test
   public void getServer() {
     ResourceServer s = new ResourceServer();
-    when(registrationService.getResourceServer(1L)).thenReturn(s);
+    when(repository.findOne(1L)).thenReturn(s);
     assertThat("GET requests fetch the server by ID",
         client().resource("/resourceServer/1").get(ResourceServer.class),
         is(s));
-    verify(registrationService).getResourceServer(1L);
+    verify(repository).findOne(1L);
   }
 }

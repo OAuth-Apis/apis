@@ -18,17 +18,21 @@ package org.surfnet.oaaas.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+@Entity
 @XmlRootElement
 public class ResourceServer implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  @Id
   @JsonProperty
   private long id;
 

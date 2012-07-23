@@ -14,28 +14,11 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.boot;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import com.yammer.dropwizard.config.Configuration;
 
-import org.springframework.stereotype.Component;
-import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
+public class ApplicationConfiguration extends Configuration {
 
-@Component
-@Path("/resourceServer")
-public class ResourceServerResource {
-
-  @Inject
-  private ResourceServerRepository resourceServerRepository;
-
-  @GET
-  @Path("/{resourceServerId}")
-  public ResourceServer getById(@PathParam("resourceServerId") long id) {
-    return resourceServerRepository.findOne(id);
-  }
 
 }

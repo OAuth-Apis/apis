@@ -41,10 +41,22 @@
     <hsqldb.version>2.2.8</hsqldb.version>
     <junit.version>4.10</junit.version>
     <commons.dbcp.version>1.4</commons.dbcp.version>
+    <spring.version>3.1.2.RELEASE</spring.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-auth</artifactId>
