@@ -16,49 +16,13 @@
 
 package org.surfnet.oaaas.model;
 
-import java.io.Serializable;
+/**
+ * 
+ * Representation of the server hosting the protected resources, capable of
+ * accepting and responding to protected resource requests using access tokens.
+ * 
+ */
+@SuppressWarnings("serial")
+public class ResourceServer extends AbstractEntity {
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.codehaus.jackson.annotate.JsonProperty;
-
-@Entity
-@XmlRootElement
-public class ResourceServer implements Serializable {
-
-  private static final long serialVersionUID = 1L;
-
-  @Id
-  @JsonProperty
-  private long id;
-
-
-  @Override
-  public boolean equals(Object obj) {
-
-    if (obj == null) { return false; }
-    if (obj == this) { return true; }
-    if (obj.getClass() != getClass()) {
-      return false;
-    }
-    ResourceServer rhs = (ResourceServer) obj;
-    return new EqualsBuilder()
-        .append(id, rhs.id)
-        .isEquals();
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 19)
-        .append(id)
-    .toHashCode();
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
 }

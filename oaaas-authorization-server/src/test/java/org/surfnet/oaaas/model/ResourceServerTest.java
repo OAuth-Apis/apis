@@ -30,7 +30,7 @@ public class ResourceServerTest {
   @Test
   public void serializesToJSON() throws Exception {
     final ResourceServer r = new ResourceServer();
-    r.setId(1);
+    r.setId(1L);
     assertThat("a resource server can be serialized to JSON",
         asJson(r),
         is(equalTo(jsonFixture("fixtures/resourceServer1.json"))));
@@ -39,7 +39,7 @@ public class ResourceServerTest {
   @Test
   public void deserializesFromJSON() throws Exception {
     final ResourceServer r = new ResourceServer();
-    r.setId(1);
+    r.setId(1L);
     assertThat("a resource server can be deserialized from JSON",
         fromJson(jsonFixture("fixtures/resourceServer1.json"), ResourceServer.class),
         is(r));
