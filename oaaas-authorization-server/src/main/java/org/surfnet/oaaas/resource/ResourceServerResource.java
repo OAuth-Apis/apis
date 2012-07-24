@@ -19,7 +19,10 @@ package org.surfnet.oaaas.resource;
 import java.net.URI;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -62,7 +65,7 @@ public class ResourceServerResource {
 
   @PUT
   @Timed
-  public Response put(ResourceServer resourceServer) {
+  public Response put(@Valid ResourceServer resourceServer) {
     final ResourceServer resourceServerSaved = resourceServerRepository.save(resourceServer);
     LOG.debug("nr of entities in store now: {}", resourceServerRepository.count());
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
@@ -70,5 +73,27 @@ public class ResourceServerResource {
         .created(uri)
         .entity(resourceServerSaved)
         .build();
+  }
+
+  @DELETE
+  @Timed
+  @Path("/{resourceServerId}.json")
+  public Response delete(@PathParam("resourceServerId") Long id) {
+    if (resourceServerRepository.findOne(id) == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    resourceServerRepository.delete(id);
+    return Response.noContent().build();
+  }
+
+  @POST
+  @Timed
+  @Path("/{resourceServerId}.json")
+  public Response post(@Valid ResourceServer newOne, @PathParam("resourceServerId") Long id) {
+    if (resourceServerRepository.findOne(id) == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    ResourceServer savedInstance = resourceServerRepository.save(newOne);
+    return Response.ok(savedInstance).build();
   }
 }

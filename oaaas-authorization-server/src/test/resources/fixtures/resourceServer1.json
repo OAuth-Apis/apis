@@ -1,7 +1,6 @@
 {
   "id": 1,
   "name": "myname",
-  "restEndpoint": null,
   "scopes": null,
   "secret": null,
   "contactName": "Geert",

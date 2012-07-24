@@ -19,6 +19,7 @@ package org.surfnet.oaaas.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -27,14 +28,12 @@ import javax.validation.constraints.NotNull;
  */
 @SuppressWarnings("serial")
 @Entity
+@Table(name="resourceserver")
 public class ResourceServer extends AbstractEntity {
 
   @Column(unique = true)
   @NotNull
   private String name;
-
-  @Column
-  private String restEndpoint;
 
   @Column
   private String scopes;
@@ -56,14 +55,6 @@ public class ResourceServer extends AbstractEntity {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getRestEndpoint() {
-    return restEndpoint;
-  }
-
-  public void setRestEndpoint(String restEndpoint) {
-    this.restEndpoint = restEndpoint;
   }
 
   public String getScopes() {

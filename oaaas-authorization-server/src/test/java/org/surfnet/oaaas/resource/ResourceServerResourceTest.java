@@ -76,8 +76,14 @@ public class ResourceServerResourceTest extends ResourceTest {
   @Test
   public void putServer() {
     ResourceServer newOne = new ResourceServer();
+    newOne.setSecret("s");
+    newOne.setContactName("c");
+    newOne.setName("name");
     ResourceServer savedOne = new ResourceServer();
     savedOne.setId(101L);
+    savedOne.setSecret("s");
+    savedOne.setName("name");
+    savedOne.setContactName("c");
     when(repository.save((ResourceServer) any())).thenReturn(savedOne);
 
     ClientResponse response = client()
@@ -85,5 +91,51 @@ public class ResourceServerResourceTest extends ResourceTest {
 
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     assertEquals(Long.valueOf(101L), response.getEntity(ResourceServer.class).getId());
+  }
+
+  @Test
+  public void delete() {
+    when(repository.findOne(1L)).thenReturn(new ResourceServer());
+    ClientResponse response = client()
+        .resource("/resourceServer/1.json")
+        .delete(ClientResponse.class);
+    assertEquals(204, response.getStatus());
+  }
+
+  @Test
+  public void deleteButNoneFound() {
+    when(repository.findOne(1L)).thenReturn(null);
+    ClientResponse response = client()
+        .resource("/resourceServer/1.json")
+        .delete(ClientResponse.class);
+    assertEquals(404, response.getStatus());
+  }
+
+  @Test
+  public void update() {
+    ResourceServer existingOne = new ResourceServer();
+    existingOne.setName("thename");
+    existingOne.setContactName("contact");
+    existingOne.setSecret("s");
+    existingOne.setId(1L);
+
+    ResourceServer newOne = new ResourceServer();
+    newOne.setId(1L);
+    newOne.setSecret("s");
+    newOne.setName("newname");
+    newOne.setContactName("contact");
+
+    when(repository.findOne(1L)).thenReturn(existingOne);
+
+    when(repository.save((ResourceServer) any())).thenReturn(newOne);
+    ClientResponse response = client()
+        .resource("/resourceServer/1.json")
+        .entity(newOne)
+        .post(ClientResponse.class);
+
+    assertEquals(response.getStatus(), 200);
+    final ResourceServer savedOne = response.getEntity(ResourceServer.class);
+    assertEquals("saved instance should equal posted one", newOne, savedOne);
+    assertEquals(savedOne.getName(), "newname");
   }
 }
