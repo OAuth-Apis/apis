@@ -19,6 +19,8 @@ package org.surfnet.oaaas.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +31,7 @@ import javax.validation.constraints.NotNull;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="resourceserver")
+@Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class ResourceServer extends AbstractEntity {
 
   @Column(unique = true)
