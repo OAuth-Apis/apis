@@ -16,11 +16,10 @@
 
 package org.surfnet.oaaas.model;
 
+
 /**
- * 
  * Representation of the server hosting the protected resources, capable of
  * accepting and responding to protected resource requests using access tokens.
- * 
  */
 @SuppressWarnings("serial")
 public class ResourceServer extends AbstractEntity {

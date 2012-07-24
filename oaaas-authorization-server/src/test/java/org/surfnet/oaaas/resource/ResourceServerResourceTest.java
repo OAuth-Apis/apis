@@ -16,6 +16,9 @@
 
 package org.surfnet.oaaas.resource;
 
+import javax.ws.rs.core.Response;
+
+import com.sun.jersey.api.client.ClientResponse;
 import com.yammer.dropwizard.testing.ResourceTest;
 
 import org.junit.Test;
@@ -26,6 +29,7 @@ import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,5 +58,32 @@ public class ResourceServerResourceTest extends ResourceTest {
         client().resource("/resourceServer/1").get(ResourceServer.class),
         is(s));
     verify(repository).findOne(1L);
+  }
+
+  @Test
+  public void nonExisting() {
+    when(repository.findOne(991L)).thenReturn(null);
+
+    ClientResponse response = client().resource("/resourceServer/991").get(ClientResponse.class);
+
+    assertEquals("GET requests fetch the server by ID but when not found, returns a 404. ", 404, response.getStatus());
+
+    verify(repository).findOne(991L);
+  }
+
+  @Test
+  public void putServer() {
+    ResourceServer newOne = new ResourceServer();
+    ResourceServer savedOne = new ResourceServer();
+    savedOne.setId(101L);
+    when(repository.save(newOne)).thenReturn(savedOne);
+
+    ClientResponse response = client()
+        .resource("/resourceServer").put(ClientResponse.class, newOne);
+
+    assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+    assertEquals(101L, response.getEntity(ResourceServer.class).getId());
+
+    verify(repository).save(newOne);
   }
 }

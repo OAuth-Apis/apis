@@ -19,6 +19,10 @@ package org.surfnet.oaaas.boot;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
+/**
+ * Configuration and wiring of @Beans.
+ * Complemented with beans from the imported xml resources.
+ */
 @Configuration
 @ImportResource("classpath:context.xml")
 public class SpringConfiguration {

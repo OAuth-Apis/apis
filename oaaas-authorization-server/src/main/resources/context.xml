@@ -15,17 +15,21 @@
   ~ limitations under the License.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns:datajpa="http://www.springframework.org/schema/data/jpa"
-             xmlns:context="http://www.springframework.org/schema/context"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:datajpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/data/jpa
     http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
     http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context.xsd">
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
 
   <datajpa:repositories base-package="org.surfnet.oaaas.repository" />
+  <tx:annotation-driven transaction-manager="transactionManager" />
+
   <context:property-placeholder location="application.properties" />
   <context:component-scan base-package="org.surfnet.oaaas" />
 
@@ -41,4 +45,6 @@
     <property name="username" value="${jdbc.username}"/>
     <property name="password" value="${jdbc.password}"/>
   </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 </beans>
