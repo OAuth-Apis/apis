@@ -36,64 +36,65 @@ import com.yammer.metrics.annotation.Timed;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.repository.ClientRepository;
 
 @Named
-@Path("/resourceServer")
+@Path("/client")
 @Produces(MediaType.APPLICATION_JSON)
-public class ResourceServerResource {
+public class ClientResource {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ClientResource.class);
+
   @Inject
-  private ResourceServerRepository resourceServerRepository;
+  private ClientRepository clientRepository;
 
   @GET
   @Timed
-  @Path("/{resourceServerId}.json")
-  public Response getById(@PathParam("resourceServerId") Long id) {
+  @Path("/{clientId}.json")
+  public Response getById(@PathParam("clientId") Long id) {
     Response.ResponseBuilder responseBuilder;
-    final ResourceServer resourceServer = resourceServerRepository.findOne(id);
+    final Client client = clientRepository.findOne(id);
 
-    if (resourceServer == null) {
+    if (client == null) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
     } else {
-      responseBuilder = Response.ok(resourceServer);
+      responseBuilder = Response.ok(client);
     }
     return responseBuilder.build();
   }
 
   @PUT
   @Timed
-  public Response put(@Valid ResourceServer resourceServer) {
-    final ResourceServer resourceServerSaved = resourceServerRepository.save(resourceServer);
-    LOG.debug("nr of entities in store now: {}", resourceServerRepository.count());
-    final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
+  public Response put(@Valid Client client) {
+    final Client clientSaved = clientRepository.save(client);
+    LOG.debug("nr of entities in store now: {}", clientRepository.count());
+    final URI uri = UriBuilder.fromPath("{clientId}.json").build(clientSaved.getId());
     return Response
         .created(uri)
-        .entity(resourceServerSaved)
+        .entity(clientSaved)
         .build();
   }
 
   @DELETE
   @Timed
-  @Path("/{resourceServerId}.json")
-  public Response delete(@PathParam("resourceServerId") Long id) {
-    if (resourceServerRepository.findOne(id) == null) {
+  @Path("/{clientId}.json")
+  public Response delete(@PathParam("clientId") Long id) {
+    if (clientRepository.findOne(id) == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    resourceServerRepository.delete(id);
+    clientRepository.delete(id);
     return Response.noContent().build();
   }
 
   @POST
   @Timed
-  @Path("/{resourceServerId}.json")
-  public Response post(@Valid ResourceServer newOne, @PathParam("resourceServerId") Long id) {
-    if (resourceServerRepository.findOne(id) == null) {
+  @Path("/{clientId}.json")
+  public Response post(@Valid Client newOne, @PathParam("clientId") Long id) {
+    if (clientRepository.findOne(id) == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    ResourceServer savedInstance = resourceServerRepository.save(newOne);
+    Client savedInstance = clientRepository.save(newOne);
     return Response.ok(savedInstance).build();
   }
 }

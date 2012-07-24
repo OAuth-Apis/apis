@@ -24,6 +24,7 @@ import com.yammer.dropwizard.config.Environment;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 
 public class Application extends Service<ApplicationConfiguration> {
@@ -43,6 +44,7 @@ public class Application extends Service<ApplicationConfiguration> {
 
     initFlyway(ctx.getBean(DataSource.class));
     environment.addResource(ctx.getBean(ResourceServerResource.class));
+    environment.addResource(ctx.getBean(ClientResource.class));
   }
 
   private void initFlyway(DataSource datasource) {
