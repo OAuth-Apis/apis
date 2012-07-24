@@ -16,12 +16,16 @@
 
 package org.surfnet.oaaas.resource;
 
+import javax.ws.rs.core.MediaType;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.ResourceServer;
 
 import static org.junit.Assert.assertEquals;
@@ -30,6 +34,7 @@ public class ResourceServerResourceTestIT {
 
   private static final String BASE_URL = "http://localhost:8080/resourceServer";
   private Client client;
+  private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResourceTestIT.class);
 
   @Before
   public void setup() {
@@ -40,7 +45,7 @@ public class ResourceServerResourceTestIT {
   public void get() {
 
 
-    WebResource webResource = client.resource(BASE_URL + "/1");
+    WebResource webResource = client.resource(BASE_URL + "/1.json");
 
     ClientResponse response = webResource.accept("application/json")
         .get(ClientResponse.class);
@@ -58,8 +63,14 @@ public class ResourceServerResourceTestIT {
   public void put() {
 
     ResourceServer resourceServer = new ResourceServer();
+    resourceServer.setName("thename");
+    resourceServer.setSecret("thesecret");
+    resourceServer.setContactName("myname");
+    LOG.debug(client.getMessageBodyWorkers().toString());
     final ResourceServer responseObj = client
+        
         .resource(BASE_URL)
+        .type(MediaType.APPLICATION_JSON)
         .put(ResourceServer.class, resourceServer);
 
     assertEquals(resourceServer, responseObj);

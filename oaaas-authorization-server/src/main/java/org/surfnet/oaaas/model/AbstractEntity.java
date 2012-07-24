@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -33,31 +32,22 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * the repository)
  * 
  */
-@Entity
 @XmlRootElement
+@Entity
 public abstract class AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Id
+  @GeneratedValue
   @JsonProperty
   private Long id;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#hashCode()
-   */
   @Override
   public int hashCode() {
     return (id == null) ? super.hashCode() : id.hashCode();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
   @Override
   public boolean equals(Object other) {
     if (this == other) {
@@ -91,11 +81,6 @@ public abstract class AbstractEntity implements Serializable {
     this.id = id;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
   @Override
   public String toString() {
     return getClass() + "(id='" + id + "')";

@@ -31,6 +31,8 @@ public class ResourceServerTest {
   public void serializesToJSON() throws Exception {
     final ResourceServer r = new ResourceServer();
     r.setId(1L);
+    r.setContactName("Geert");
+    r.setName("myname");
     assertThat("a resource server can be serialized to JSON",
         asJson(r),
         is(equalTo(jsonFixture("fixtures/resourceServer1.json"))));

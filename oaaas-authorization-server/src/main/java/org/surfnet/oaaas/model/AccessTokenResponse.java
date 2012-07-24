@@ -26,6 +26,7 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
  * section</a> of the spec for more info.
  * 
  */
+
 @JsonSnakeCase
 public class AccessTokenResponse {
 

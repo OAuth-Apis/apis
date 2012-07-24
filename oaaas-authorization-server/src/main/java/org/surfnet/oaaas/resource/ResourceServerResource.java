@@ -23,6 +23,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -36,6 +38,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 @Component
 @Path("/resourceServer")
+@Produces(MediaType.APPLICATION_JSON)
 public class ResourceServerResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResource.class);
@@ -44,8 +47,8 @@ public class ResourceServerResource {
 
   @GET
   @Timed
-  @Path("/{resourceServerId}")
-  public Response getById(@PathParam("resourceServerId") long id) {
+  @Path("/{resourceServerId}.json")
+  public Response getById(@PathParam("resourceServerId") Long id) {
     Response.ResponseBuilder responseBuilder;
     final ResourceServer resourceServer = resourceServerRepository.findOne(id);
 
@@ -62,7 +65,7 @@ public class ResourceServerResource {
   public Response put(ResourceServer resourceServer) {
     final ResourceServer resourceServerSaved = resourceServerRepository.save(resourceServer);
     LOG.debug("nr of entities in store now: {}", resourceServerRepository.count());
-    final URI uri = UriBuilder.fromPath("/resourceServer/{resourceServerId}").build(resourceServerSaved.getId());
+    final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
     return Response
         .created(uri)
         .entity(resourceServerSaved)

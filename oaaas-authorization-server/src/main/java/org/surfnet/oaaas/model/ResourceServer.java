@@ -17,11 +17,84 @@
 package org.surfnet.oaaas.model;
 
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+
 /**
  * Representation of the server hosting the protected resources, capable of
  * accepting and responding to protected resource requests using access tokens.
  */
 @SuppressWarnings("serial")
+@Entity
 public class ResourceServer extends AbstractEntity {
 
+  @Column(unique = true)
+  @NotNull
+  private String name;
+
+  @Column
+  private String restEndpoint;
+
+  @Column
+  private String scopes;
+
+  @Column
+  @NotNull
+  private String secret;
+
+  @Column
+  @NotNull
+  private String contactName;
+
+  @Column
+  private String contactEmail;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getRestEndpoint() {
+    return restEndpoint;
+  }
+
+  public void setRestEndpoint(String restEndpoint) {
+    this.restEndpoint = restEndpoint;
+  }
+
+  public String getScopes() {
+    return scopes;
+  }
+
+  public void setScopes(String scopes) {
+    this.scopes = scopes;
+  }
+
+  public String getSecret() {
+    return secret;
+  }
+
+  public void setSecret(String secret) {
+    this.secret = secret;
+  }
+
+  public String getContactName() {
+    return contactName;
+  }
+
+  public void setContactName(String contactName) {
+    this.contactName = contactName;
+  }
+
+  public String getContactEmail() {
+    return contactEmail;
+  }
+
+  public void setContactEmail(String contactEmail) {
+    this.contactEmail = contactEmail;
+  }
 }
