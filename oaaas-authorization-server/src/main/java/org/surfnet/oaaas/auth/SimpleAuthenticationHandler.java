@@ -18,29 +18,89 @@
  */
 package org.surfnet.oaaas.auth;
 
-/**
- * @author oharsta
- *
- */
-public class SimpleAuthenticationHandler implements AuthenticationHandler{
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
 
-  
-  /* (non-Javadoc)
-   * @see org.surfnet.oaaas.auth.AuthenticationHandler#handle()
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.springframework.stereotype.Component;
+
+import com.yammer.dropwizard.views.View;
+
+/**
+ * An {@link AuthenticationHandler} that simply shows a form to login and
+ * accepts all
+ * 
+ */
+@Component
+@Produces(MediaType.TEXT_HTML)
+@Path("/doAuthorize")
+public class SimpleAuthenticationHandler implements AuthenticationHandler {
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.surfnet.oaaas.auth.AuthenticationHandler#handle(javax.servlet.http.
+   * HttpServletRequest, javax.servlet.http.HttpServletResponse,
+   * java.lang.String)
    */
   @Override
-  public void handle() {
-//    response.sendRidreict("loginView");
-    
+  public Response handle(HttpServletRequest request, HttpServletResponse response, String forwardUri, String csrfValue) {
+    String baseUrl = getBaseUrl(request);
+    try {
+      return Response.seeOther(
+          new URI("doAuthorize?forwardUri=".concat(forwardUri).concat("&csrfValue=").concat(csrfValue))).build();
+    } catch (URISyntaxException e) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
   }
-  
-//  @Path(/loginPerformed) 
-//  void loginPerformend() {
-//    user/ password
-//    validate-database
-//    Principal principal;
-//    
-//    authorizationEndpoint.callback(principal);
-//  }
+
+  @GET
+  public View login(@QueryParam("forwardUri")
+  String forwardUri,@QueryParam("csrfValue") String csrfValue) {
+    return new LoginView(forwardUri,csrfValue);
+  }
+
+  @POST
+  public void authorize(@FormParam("username")
+  final String username, @FormParam("password")
+  String password, @FormParam("forwardUri")
+  String forwardUri,@FormParam("csrfValue")
+  String csrfValue , @Context
+  HttpServletRequest request, @Context
+  HttpServletResponse response) {
+    try {
+      request.setAttribute(PRINCIPAL, new Principal() {
+        @Override
+        public String getName() {
+          return username;
+        }
+      });
+      request.getRequestDispatcher(forwardUri.concat("?").concat(username)).forward(request, response);
+    } catch (ServletException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private String getBaseUrl(HttpServletRequest request) {
+    return request.getRequestURL().toString().replace(request.getRequestURI().substring(1), request.getContextPath());
+  }
 
 }

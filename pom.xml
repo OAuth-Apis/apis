@@ -64,6 +64,11 @@
       </dependency>
       <dependency>
         <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-views</artifactId>
+        <version>${dropwizard.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-client</artifactId>
         <version>${dropwizard.version}</version>
       </dependency>
@@ -97,6 +102,7 @@
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-testing</artifactId>
         <version>${dropwizard.version}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.openjpa</groupId>
