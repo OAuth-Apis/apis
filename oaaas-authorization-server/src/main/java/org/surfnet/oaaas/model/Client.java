@@ -42,7 +42,7 @@ import javax.validation.constraints.NotNull;
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class Client extends AbstractEntity {
 
-  @Column
+  @Column(unique = true)
   @NotNull
   private String name;
 

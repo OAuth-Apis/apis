@@ -16,7 +16,12 @@
 
 package org.surfnet.oaaas.resource;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.yammer.dropwizard.testing.ResourceTest;
 
 import org.junit.Test;
@@ -48,9 +53,25 @@ public class ClientResourceTest extends ResourceTest {
 
   @Test
   public void getNonExisting() {
-    ClientResponse response = client().resource("/client/1.json").get(ClientResponse.class);
+    ClientResponse response = client().resource("/admin/client/1.json").get(ClientResponse.class);
     assertEquals(404, response.getStatus());
     verify(repository).findOne(1L);
+  }
+
+  @Test
+  public void getAllWhenNoneFound() {
+    ClientResponse response = client().resource("/admin/client").get(ClientResponse.class);
+    assertEquals(404, response.getStatus());
+
+  }
+
+  @Test
+  public void getAll() {
+    when(repository.findAll()).thenReturn(Arrays.asList(new Client(), new Client(), new Client()));
+    ClientResponse response = client().resource("/admin/client").get(ClientResponse.class);
+    assertEquals(200, response.getStatus());
+    List<Client> clients = response.getEntity(new GenericType<ArrayList<Client>>(ArrayList.class));
+    assertEquals(3, clients.size());
   }
 
   @Test
@@ -59,7 +80,7 @@ public class ClientResourceTest extends ResourceTest {
     s.setId(1L);
     when(repository.findOne(1L)).thenReturn(s);
 
-    ClientResponse response = client().resource("/client/1.json").get(ClientResponse.class);
+    ClientResponse response = client().resource("/admin/client/1.json").get(ClientResponse.class);
 
     assertEquals(200, response.getStatus());
     verify(repository).findOne(1L);

@@ -40,7 +40,7 @@ import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
 @Named
-@Path("/client")
+@Path("/admin/client")
 @Produces(MediaType.APPLICATION_JSON)
 public class ClientResource {
 
@@ -48,6 +48,22 @@ public class ClientResource {
 
   @Inject
   private ClientRepository clientRepository;
+
+
+  @GET
+  @Timed
+  public Response getAll() {
+    Response.ResponseBuilder responseBuilder;
+    final Iterable<Client> clients = clientRepository.findAll();
+
+    if (clients == null || !clients.iterator().hasNext()) {
+      responseBuilder = Response.status(Response.Status.NOT_FOUND);
+    } else {
+      responseBuilder = Response.ok(clients);
+    }
+    return responseBuilder.build();
+  }
+
 
   @GET
   @Timed

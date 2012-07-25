@@ -57,7 +57,7 @@ public class ResourceServerResourceTest extends ResourceTest {
     s.setId(1L);
     when(repository.findOne(1L)).thenReturn(s);
     assertThat("GET requests fetch the server by ID",
-        client().resource("/resourceServer/1.json").get(ResourceServer.class),
+        client().resource("/admin/resourceServer/1.json").get(ResourceServer.class),
         is(s));
     verify(repository).findOne(1L);
   }
@@ -66,7 +66,7 @@ public class ResourceServerResourceTest extends ResourceTest {
   public void nonExisting() {
     when(repository.findOne(991L)).thenReturn(null);
 
-    ClientResponse response = client().resource("/resourceServer/991.json").get(ClientResponse.class);
+    ClientResponse response = client().resource("/admin/resourceServer/991.json").get(ClientResponse.class);
 
     assertEquals("GET requests fetch the server by ID but when not found, returns a 404. ", 404, response.getStatus());
 
@@ -87,7 +87,7 @@ public class ResourceServerResourceTest extends ResourceTest {
     when(repository.save((ResourceServer) any())).thenReturn(savedOne);
 
     ClientResponse response = client()
-        .resource("/resourceServer").put(ClientResponse.class, newOne);
+        .resource("/admin/resourceServer").put(ClientResponse.class, newOne);
 
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     assertEquals(Long.valueOf(101L), response.getEntity(ResourceServer.class).getId());
@@ -97,7 +97,7 @@ public class ResourceServerResourceTest extends ResourceTest {
   public void delete() {
     when(repository.findOne(1L)).thenReturn(new ResourceServer());
     ClientResponse response = client()
-        .resource("/resourceServer/1.json")
+        .resource("/admin/resourceServer/1.json")
         .delete(ClientResponse.class);
     assertEquals(204, response.getStatus());
   }
@@ -106,7 +106,7 @@ public class ResourceServerResourceTest extends ResourceTest {
   public void deleteButNoneFound() {
     when(repository.findOne(1L)).thenReturn(null);
     ClientResponse response = client()
-        .resource("/resourceServer/1.json")
+        .resource("/admin/resourceServer/1.json")
         .delete(ClientResponse.class);
     assertEquals(404, response.getStatus());
   }
@@ -129,7 +129,7 @@ public class ResourceServerResourceTest extends ResourceTest {
 
     when(repository.save((ResourceServer) any())).thenReturn(newOne);
     ClientResponse response = client()
-        .resource("/resourceServer/1.json")
+        .resource("/admin/resourceServer/1.json")
         .entity(newOne)
         .post(ClientResponse.class);
 

@@ -40,13 +40,28 @@ import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 @Named
-@Path("/resourceServer")
+@Path("/admin/resourceServer")
 @Produces(MediaType.APPLICATION_JSON)
 public class ResourceServerResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResource.class);
   @Inject
   private ResourceServerRepository resourceServerRepository;
+
+  @GET
+  @Timed
+  public Response getAll() {
+    Response.ResponseBuilder responseBuilder;
+    final Iterable<ResourceServer> resourceServers = resourceServerRepository.findAll();
+
+    if (resourceServers == null || !resourceServers.iterator().hasNext()) {
+      responseBuilder = Response.status(Response.Status.NOT_FOUND);
+    } else {
+      responseBuilder = Response.ok(resourceServers);
+    }
+    return responseBuilder.build();
+  }
+
 
   @GET
   @Timed
