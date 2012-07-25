@@ -1,6 +1,8 @@
 http:
   port: 8080
 
+authenticatorClass: org.surfnet.oaaas.basic.BasicAuthenticator
+
 logging:
   level: info
   loggers:

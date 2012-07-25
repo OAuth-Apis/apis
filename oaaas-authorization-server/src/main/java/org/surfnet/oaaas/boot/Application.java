@@ -26,10 +26,11 @@ import com.yammer.dropwizard.views.ViewBundle;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
-import org.surfnet.oaaas.simple.SimpleAuthenticationHandler;
 
 public class Application extends Service<ApplicationConfiguration> {
 
@@ -63,14 +64,29 @@ public class Application extends Service<ApplicationConfiguration> {
     environment.addResource(ctx.getBean(ClientResource.class));
     environment.addResource(ctx.getBean(TokenResource.class));
 
-    addAuthenticationHandler(environment, ctx);
+    addAuthenticationHandling(configuration, environment, ctx);
 
     final AssetsBundle assetsBundle = new AssetsBundle("/assets", "/adminClient");
     assetsBundle.initialize(environment);
   }
 
-  protected void addAuthenticationHandler(Environment environment, ApplicationContext ctx) {
-    environment.addResource(ctx.getBean(SimpleAuthenticationHandler.class));
+  protected void addAuthenticationHandling(ApplicationConfiguration configuration, Environment environment,
+                                           ApplicationContext ctx) {
+
+    AbstractAuthenticator authnFilter;
+    try {
+      authnFilter = (AbstractAuthenticator) ctx.getBean(getClass().getClassLoader().loadClass(
+          configuration.getAuthenticatorClass()));
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+
+    final AuthenticationFilter authzFilter = ctx.getBean(AuthenticationFilter.class);
+    authzFilter.setAuthenticator(authnFilter);
+    environment.addFilter(authzFilter, "/oauth2/authorize");
+    environment.addFilter(authnFilter, "/oauth2/authorize");
+
+//    environment.addResource(ctx.getBean(SimpleAuthenticationHandler.class));
   }
 
   private void initFlyway(DataSource datasource) {

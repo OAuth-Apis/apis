@@ -16,9 +16,19 @@
 
 package org.surfnet.oaaas.boot;
 
+import javax.validation.constraints.NotNull;
+
 import com.yammer.dropwizard.config.Configuration;
+
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ApplicationConfiguration extends Configuration {
 
+  @JsonProperty
+  @NotNull
+  private String authenticatorClass;
 
+  public String getAuthenticatorClass() {
+    return authenticatorClass;
+  }
 }

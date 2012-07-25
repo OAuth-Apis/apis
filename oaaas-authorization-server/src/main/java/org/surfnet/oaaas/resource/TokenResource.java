@@ -25,20 +25,19 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.surfnet.oaaas.auth.AuthenticationHandler;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
@@ -51,61 +50,23 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 public class TokenResource {
 
   @Inject
-  private AuthenticationHandler authenticationHandler;
-
-  @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
+  private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
 
-  /**
-   * 
-   * @param responseType
-   *          Value MUST be set to either code for requesting an authorization
-   *          code or to token when requesting an access token (implicit grant)
-   * @param clientId
-   *          A unique client identifier issued by the authorization server when
-   *          the client was registered
-   * @param redirectUri
-   *          The redirection endpoint where the authorization server redirects
-   *          the resource owner's user-agent back to the client
-   * @param scope
-   *          Access Token scope allowing the client the client to specify the
-   *          scope of the access request
-   * @param state
-   *          The client SHOULD utilize the "state" request parameter to deliver
-   *          this value to the authorization server when making an
-   *          authorization request.
-   */
   @GET
   @Path("/authorize")
-  public Response authorize(@QueryParam("response_type")
-  String responseType, @QueryParam("client_id")
-  String clientId, @QueryParam("redirect_uri")
-  String redirectUri, @QueryParam("scope")
-  String scope, @QueryParam("state")
-  String state, @Context ThreadLocal<HttpServletRequest> treq, 
-  @Context ThreadLocal<HttpServletResponse> tres ) {
-    // TODO get the clientApp and validate / overwrite the redirectUri
-    String csrfValue = UUID.randomUUID().toString();
-    AuthorizationRequest authReq = new AuthorizationRequest(responseType, clientId, redirectUri, scope, state,
-        csrfValue);
-    authorizationRequestRepository.save(authReq);
-    HttpServletRequest request = treq.get();
-    HttpServletResponse response = tres.get();
-    return authenticationHandler.handle(request, response, "authorizeCallback", csrfValue);
+  public Response authorizeCallbackGet(@Context HttpServletRequest request) {
+    return authorizeCallback(request);
   }
 
-  @GET
-  @Path("/authorizeCallback")
-  public Response authorizeCallback(@QueryParam("csrfValue")
-  String csrfValue) {
+  @POST
+  @Path("/authorize")
+  public Response authorizeCallback(@Context HttpServletRequest request) {
+    String csrfValue = (String) request.getAttribute("csrfValue");
     AuthorizationRequest authReq = authorizationRequestRepository.findByCsrfValue(csrfValue);
-    // TODO get the principal from ???
-    Principal principal = new Principal() {
-      @Override
-      public String getName() {
-        return "Pitje Puk";
-      }
-    };
+
+    Principal principal = (Principal) request.getAttribute("principal");
+    LOG.debug("principal: {}", principal);
     String authorizationCode = UUID.randomUUID().toString();
     String uri = String.format(authReq.getRedirectUri().concat("?").concat("code=%s").concat("&state=%s"),
         authorizationCode, authReq.getState());

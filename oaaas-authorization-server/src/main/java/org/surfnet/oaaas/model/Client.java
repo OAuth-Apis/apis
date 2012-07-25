@@ -56,7 +56,7 @@ public class Client extends AbstractEntity {
   private String contactEmail;
 
   @ElementCollection
-  protected Set<String> scopes = new HashSet();
+  protected Set<String> scopes = new HashSet<String>();
 
   public String getName() {
     return name;

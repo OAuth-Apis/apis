@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="span8">
 				<form class="form-horizontal" id="registerHere" method="post"
-					action="/doAuthorize">
+					action="/oauth2/authorize">
 					<fieldset>
 
 						<legend>Login with your identifier and password</legend>
