@@ -25,10 +25,10 @@
   <name>OA-aaS</name>
 
   <modules>
-    <!--<module>oaaas-client</module>-->
+    <module>oaaas-client</module>
     <!--<module>oaaas-example-resource-server</module>-->
     <module>oaaas-authorization-server</module>
-    <!--<module>oaaas-surfconext-authorization-server</module>-->
+    <module>oaaas-surfconext-authn</module>
     <!--<module>oaaas-performance</module>-->
   </modules>
 
@@ -116,6 +116,17 @@
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
       </dependency>
+      <dependency>
+        <groupId>nl.surfnet.oaaas</groupId>
+        <artifactId>oaaas-client</artifactId>
+        <version>0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <scope>provided</scope>
+        <version>3.0.1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
@@ -129,4 +140,18 @@
       </plugins>
     </pluginManagement>
   </build>
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <id>openconext-releases</id>
+      <name>OpenConext public releases repository</name>
+      <url>https://build.surfconext.nl/repository/public/releases</url>
+    </repository>
+  </repositories>
 </project>

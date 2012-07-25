@@ -30,6 +30,9 @@ import javax.servlet.ServletResponse;
  */
 public abstract class AbstractAuthenticator implements Filter {
 
+  private static final String CSRF_VALUE = "csrfValue";
+  private static final String RETURN_URI = "returnUri";
+
   /**
    * Implement this method to perform the actual authentication.
    * Use {@link org.surfnet.oaaas.basic.BasicAuthenticator BasicAuthenticator}
@@ -63,10 +66,10 @@ public abstract class AbstractAuthenticator implements Filter {
   }
 
   public final String getCsrfValue(ServletRequest request) {
-    return (String) request.getAttribute("csrfValue");
+    return (String) request.getAttribute(CSRF_VALUE);
   }
 
   public final String getReturnUri(ServletRequest request) {
-    return (String) request.getAttribute("returnUri");
+    return (String) request.getAttribute(RETURN_URI);
   }
 }

@@ -86,6 +86,7 @@ public class Application extends Service<ApplicationConfiguration> {
     environment.addFilter(authzFilter, "/oauth2/authorize");
     environment.addFilter(authnFilter, "/oauth2/authorize");
 
+//    environment.addFilter(ctx.getBean(FilterChainProxy.class), "/*");
 //    environment.addResource(ctx.getBean(SimpleAuthenticationHandler.class));
   }
 

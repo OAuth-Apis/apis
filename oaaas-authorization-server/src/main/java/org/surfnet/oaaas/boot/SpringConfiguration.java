@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ImportResource;
  * Complemented with beans from the imported xml resources.
  */
 @Configuration
-@ImportResource("classpath:context.xml")
+@ImportResource("classpath*:*context.xml")
 public class SpringConfiguration {
 
 }
