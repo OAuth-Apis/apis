@@ -40,9 +40,9 @@
 							</div>
 						</div>
 						<input type="hidden" name="forwardUri"
-							value="${forwardUri}" /> 
+							value="${context.forwardUri}" /> 
 						<input type="hidden" name="csrfValue"
-							value="${csrfValue}" /> 
+							value="${context.csrfValue}" /> 
 							
 					</fieldset>
 					<div class="control-group">

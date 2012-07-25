@@ -5,3 +5,4 @@ logging:
   level: info
   loggers:
     "org.surfnet": debug
+    "openjpa": error

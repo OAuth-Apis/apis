@@ -16,29 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.auth;
+package org.surfnet.oaaas.simple;
 
 import com.yammer.dropwizard.views.View;
 
 public class LoginView extends View {
-  
-  private String forwardUri;
-  private String csrfValue;
-  
-  public LoginView(String forwardUri,String csrfValue) {
-    super("login.ftl");
-    this.forwardUri = forwardUri;
-    this.csrfValue = csrfValue;
-  }
 
-  public String getForwardUri() {
-    return forwardUri;
+  private Context context;
+
+  public LoginView(String forwardUri, String csrfValue) {
+    super("login.ftl");
+    this.context = new Context(forwardUri, csrfValue);
+
   }
 
   /**
-   * @return the csrfValue
+   * @return the context
    */
-  public String getCsrfValue() {
-    return csrfValue;
+  public Context getContext() {
+    return context;
+  }
+
+  /**
+   * @param context
+   *          the context to set
+   */
+  public void setContext(Context context) {
+    this.context = context;
   }
 }

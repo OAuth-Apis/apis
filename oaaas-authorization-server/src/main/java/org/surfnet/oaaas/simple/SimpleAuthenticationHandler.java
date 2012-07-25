@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.auth;
+package org.surfnet.oaaas.simple;
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.stereotype.Component;
+import org.surfnet.oaaas.auth.AuthenticationHandler;
 
 import com.yammer.dropwizard.views.View;
 
