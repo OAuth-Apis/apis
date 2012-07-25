@@ -1,0 +1,45 @@
+{
+    "name": "University Foo",
+    "students": [
+        {
+            "identifier": "foo1",
+            "name": "John Doe"
+        },
+        {
+            "identifier": "foo2",
+            "name": "Mark Allen"
+        },
+        {
+            "identifier": "foo3",
+            "name": "Liza Goodyear"
+        },
+        {
+            "identifier": "foo4",
+            "name": "Brad Small"
+        },
+        {
+            "identifier": "foo5",
+            "name": "Anna Harris"
+        },
+        {
+            "identifier": "foo6",
+            "name": "Jessica Poo"
+        },
+        {
+            "identifier": "foo7",
+            "name": "Ethan Smith"
+        },
+        {
+            "identifier": "foo8",
+            "name": "William Rore"
+        },
+        {
+            "identifier": "foo9",
+            "name": "Mia Wabo"
+        },
+        {
+            "identifier": "foo10",
+            "name": "Daniel Bane"
+        }
+    ]
+}

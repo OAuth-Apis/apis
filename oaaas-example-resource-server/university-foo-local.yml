@@ -1,0 +1,13 @@
+http:
+  port: 8080
+
+logging:
+  level: info
+  loggers:
+    "org.surfnet": debug
+    "openjpa": error
+    
+auth:
+  authorizationServerUrl: http://localhost:8080/v1/verify
+  accessToken: 58b749f7-acb3-44b7-a38c-53d5ad740cf6
+   
