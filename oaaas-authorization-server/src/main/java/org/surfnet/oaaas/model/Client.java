@@ -24,6 +24,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -55,8 +57,15 @@ public class Client extends AbstractEntity {
   @Column
   private String contactEmail;
 
-  @ElementCollection
-  protected Set<String> scopes = new HashSet<String>();
+  @Column
+  private String scopes;
+  
+  @ManyToOne(optional=false) 
+  @JoinColumn(name="resourceserver_id", nullable=false, updatable=false)
+  private ResourceServer resourceServer;
+
+  @Column
+  private String thumbNailUrl;
 
   public String getName() {
     return name;
@@ -90,11 +99,46 @@ public class Client extends AbstractEntity {
     this.contactEmail = contactEmail;
   }
 
-  public Set<String> getScopes() {
+  /**
+   * @return the scopes
+   */
+  public String getScopes() {
     return scopes;
   }
 
-  public void setScopes(Set<String> scopes) {
+  /**
+   * @param scopes the scopes to set
+   */
+  public void setScopes(String scopes) {
     this.scopes = scopes;
   }
+
+  /**
+   * @return the resourceServer
+   */
+  public ResourceServer getResourceServer() {
+    return resourceServer;
+  }
+
+  /**
+   * @param resourceServer the resourceServer to set
+   */
+  public void setResourceServer(ResourceServer resourceServer) {
+    this.resourceServer = resourceServer;
+  }
+
+  /**
+   * @return the thumbNailUrl
+   */
+  public String getThumbNailUrl() {
+    return thumbNailUrl;
+  }
+
+  /**
+   * @param thumbNailUrl the thumbNailUrl to set
+   */
+  public void setThumbNailUrl(String thumbNailUrl) {
+    this.thumbNailUrl = thumbNailUrl;
+  }
+
 }

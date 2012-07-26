@@ -52,6 +52,9 @@ public class ResourceServer extends AbstractEntity {
   @Column
   private String contactEmail;
 
+  @Column
+  private String thumbNailUrl;
+
   public String getName() {
     return name;
   }
@@ -90,5 +93,19 @@ public class ResourceServer extends AbstractEntity {
 
   public void setContactEmail(String contactEmail) {
     this.contactEmail = contactEmail;
+  }
+
+  /**
+   * @return the thumbNailUrl
+   */
+  public String getThumbNailUrl() {
+    return thumbNailUrl;
+  }
+
+  /**
+   * @param thumbNailUrl the thumbNailUrl to set
+   */
+  public void setThumbNailUrl(String thumbNailUrl) {
+    this.thumbNailUrl = thumbNailUrl;
   }
 }

@@ -44,8 +44,11 @@ public class OAuthAuthenticator implements Authenticator<String, Principal> {
    */
   @Override
   public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
-    //go to the authorization service
-    return null;
+    //TODO go to the authorization service
+    
+    http://www.mkyong.com/webservices/jax-rs/restful-java-client-with-jersey-client/
+    
+    return xxx;
   }
 
 }

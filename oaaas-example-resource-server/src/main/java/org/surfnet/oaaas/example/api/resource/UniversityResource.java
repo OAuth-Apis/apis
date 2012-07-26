@@ -22,6 +22,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.surfnet.oaaas.example.api.domain.University;
+
 /**
  * Main resource
  *
@@ -31,4 +36,31 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class UniversityResource  {
 
+  private static final String UNIVERSITY_FOO_JSON = "university-foo.json";
+
+  private final ObjectMapper objectMapper = new ObjectMapper().enable(
+      DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).setSerializationInclusion(
+      JsonSerialize.Inclusion.NON_NULL);
+
+  private University university;
+
+  public UniversityResource() {
+    super();
+    //init();
+  }
+
+  private void init() {
+    try {
+      university = getObjectMapper().readValue(
+          Thread.currentThread().getContextClassLoader().getResourceAsStream(UNIVERSITY_FOO_JSON), University.class);
+    } catch (Exception e) {
+      throw new RuntimeException(String.format("Unable to parse %s", UNIVERSITY_FOO_JSON), e);
+    }
+  }
+
+  protected ObjectMapper getObjectMapper() {
+    return objectMapper;
+  }
+
+  
 }

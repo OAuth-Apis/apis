@@ -18,6 +18,15 @@
  */
 package org.surfnet.oaaas.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 /**
  * Representation of an <a
  * href="http://tools.ietf.org/html/draft-ietf-oauth-v2-30#section-1.4"
@@ -25,9 +34,99 @@ package org.surfnet.oaaas.model;
  * 
  */
 @SuppressWarnings("serial")
+@Entity
+@Table(name="accesstoken")
+@Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class AccessToken extends AbstractEntity {
 
+  @Column(unique = true)
+  @NotNull
   private String token;
+
+  @Column
+  @NotNull
+  private String principal;
+  
+  @ManyToOne(optional=false) 
+  @JoinColumn(name="client_id", nullable=false, updatable=false)
+  private Client client;
+  
+  @Column
+  private long expires;
+
+  @Column
+  private String scopes;
+
+  /**
+   * @return the token
+   */
+  public String getToken() {
+    return token;
+  }
+
+  /**
+   * @param token the token to set
+   */
+  public void setToken(String token) {
+    this.token = token;
+  }
+
+  /**
+   * @return the principal
+   */
+  public String getPrincipal() {
+    return principal;
+  }
+
+  /**
+   * @param principal the principal to set
+   */
+  public void setPrincipal(String principal) {
+    this.principal = principal;
+  }
+
+  /**
+   * @return the client
+   */
+  public Client getClient() {
+    return client;
+  }
+
+  /**
+   * @param client the client to set
+   */
+  public void setClient(Client client) {
+    this.client = client;
+  }
+
+  /**
+   * @return the expires
+   */
+  public long getExpires() {
+    return expires;
+  }
+
+  /**
+   * @param expires the expires to set
+   */
+  public void setExpires(long expires) {
+    this.expires = expires;
+  }
+
+  /**
+   * @return the scopes
+   */
+  public String getScopes() {
+    return scopes;
+  }
+
+  /**
+   * @param scopes the scopes to set
+   */
+  public void setScopes(String scopes) {
+    this.scopes = scopes;
+  }
+
   
   
 }

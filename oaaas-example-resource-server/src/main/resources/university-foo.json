@@ -2,44 +2,109 @@
     "name": "University Foo",
     "students": [
         {
-            "identifier": "foo1",
-            "name": "John Doe"
+            "id": "foo1",
+            "name": "John Doe",
+            "email": "john.doe@university.foo"
         },
         {
-            "identifier": "foo2",
-            "name": "Mark Allen"
+            "id": "foo2",
+            "name": "Mark Allen",
+            "email": "mark.allen@university.foo"
         },
         {
-            "identifier": "foo3",
-            "name": "Liza Goodyear"
+            "id": "foo3",
+            "name": "Liza Goodyear",
+            "email": "liza.goodyear@university.foo"
         },
         {
-            "identifier": "foo4",
-            "name": "Brad Small"
+            "id": "foo4",
+            "name": "Brad Small",
+            "email": "brad.small@university.foo"
         },
         {
-            "identifier": "foo5",
-            "name": "Anna Harris"
+            "id": "foo5",
+            "name": "Anna Harris",
+            "email": "anna.harris@university.foo"
         },
         {
-            "identifier": "foo6",
-            "name": "Jessica Poo"
+            "id": "foo6",
+            "name": "Jessica Poo",
+            "email": "jessica.poo@university.foo"
         },
         {
-            "identifier": "foo7",
-            "name": "Ethan Smith"
+            "id": "foo7",
+            "name": "Ethan Smith",
+            "email": "ethan.smith@university.foo"
         },
         {
-            "identifier": "foo8",
-            "name": "William Rore"
+            "id": "foo8",
+            "name": "William Rore",
+            "email": "william.rore@university.foo"
         },
         {
-            "identifier": "foo9",
-            "name": "Mia Wabo"
+            "id": "foo9",
+            "name": "Mia Wabo",
+            "email": "mia.wabo@university.foo"
         },
         {
-            "identifier": "foo10",
-            "name": "Daniel Bane"
+            "id": "foo10",
+            "name": "Daniel Bane",
+            "email": "daniel.bane@university.foo"
         }
+    ],
+    "courses": [
+        {
+            "id": "cs1",
+            "name": "Archaeology and Anthropology",
+            "description": "Archaeology and anthropology together encompass the study of humankind from the distant origins of the human species to the present day"
+        },
+        {
+            "id": "cs2",
+            "name": "Biochemistry",
+            "description": "The study of living things at the molecular level has undergone tremendous expansion in recent years, leading to ever increasing insights into topics as various as the origin of life, the nature of disease and the development of individual organisms"
+        },
+        {
+            "id": "cs3",
+            "name": "Chemistry",
+            "description": "Chemistry is a wide-ranging science concerned with the synthesis, structures, dynamics, properties and transformations of all types of materials – organic, inorganic and biological"
+        },
+        {
+            "id": "cs4",
+            "name": "Classical Archaeology and Ancient History",
+            "description": "The course combines study of the history, archaeology and art of the classical world. It looks at the societies and cultures of the ancient Mediterranean world through their written texts, visual art and material remains, and has at its centre the two classical cultures of Greece and Rome"
+        },
+        {
+            "id": "cs5",
+            "name": "Computer Science",
+            "description": "Computer Science is for people who strive to analyse and understand how computing fits into our lives and who want to influence the future of our increasingly technology-dependent world"
+        },
+        {
+            "id": "cs6",
+            "name": "Economics and Management",
+            "description": "Economics is the study of how consumers, firms and governments make decisions that together determine how resources are allocated. An appreciation of economics and the general workings of the economy has become increasingly necessary to make sense of government policy-making, the conduct of businesses and the enormous changes in economic systems which are occurring throughout the world"
+        },
+        {
+            "id": "cs7",
+            "name": "English Language and Literature",
+            "description": "The English Language and Literature course is one of the broadest in the country, giving you the chance to study writing in English from its origins in Anglo-Saxon England to the literature of the 20th and early 21st centuries. As well as the literature of the British Isles, you can study works written in English from many other parts of the world"
+        },
+        {
+            "id": "cs8",
+            "name": "Human Sciences",
+            "description": "Human Sciences studies the biological, social and cultural aspects of human life, and provides a challenging alternative to some of the more traditional courses offered at Oxford. The School was founded in 1969 in recognition of the need for interdisciplinary understanding of fundamental issues and problems confronting contemporary societies"
+        },
+        {
+            "id": "cs9",
+            "name": "Music",
+            "description": "Music can be studied from a wide variety of perspectives. We ‘study music’ by listening or by learning to perform a musical composition. We may also investigate, through analysis, the relationships between the various parts of the composition, or use documentary evidence to explore how reliable and authoritative a given score might be and how we might perform it in a historically sensitive manner"
+        },
+        {
+            "id": "cs10",
+            "name": "Philosophy, Politics and Economics (PPE)",
+            "description": "PPE brings together some of the most important approaches to understanding the social and human world around us, developing skills useful for a whole range of future careers and activities"
+        }
+    ],
+    "schedules":[
+    {"course_id":"cs1",""}
     ]
 }

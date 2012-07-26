@@ -66,8 +66,14 @@ public class TokenResource {
     AuthorizationRequest authReq = authorizationRequestRepository.findByCsrfValue(csrfValue);
 
     Principal principal = (Principal) request.getAttribute("principal");
+    /*
+     * TODO save principal in AuthorizationRequest
+     */
     LOG.debug("principal: {}", principal);
     String authorizationCode = UUID.randomUUID().toString();
+    /*
+     * TODO implicit grant check
+     */
     String uri = String.format(authReq.getRedirectUri().concat("?").concat("code=%s").concat("&state=%s"),
         authorizationCode, authReq.getState());
     try {
