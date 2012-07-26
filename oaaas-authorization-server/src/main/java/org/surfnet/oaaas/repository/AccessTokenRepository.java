@@ -18,11 +18,10 @@ package org.surfnet.oaaas.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.surfnet.oaaas.model.AuthorizationRequest;
-import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.model.AccessToken;
 
 @Repository
-public interface ResourceServerRepository extends CrudRepository<ResourceServer, Long> {
-
-  ResourceServer findByName(String name);
+public interface AccessTokenRepository extends CrudRepository<AccessToken, Long> {
+  
+  AccessToken findByToken(String token);
 }

@@ -4,5 +4,6 @@
   "scopes": null,
   "secret": null,
   "contactName": "Geert",
-  "contactEmail": null
+  "contactEmail": null,
+  "thumbNailUrl": null
 }

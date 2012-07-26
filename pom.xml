@@ -44,6 +44,7 @@
     <spring.version>3.1.2.RELEASE</spring.version>
     <openjpa.version>2.2.0</openjpa.version>
     <commons-lang.version>2.6</commons-lang.version>
+	<jersey.version>1.12</jersey.version>
   </properties>
 
   <dependencyManagement>
@@ -58,7 +59,16 @@
         <artifactId>spring-context</artifactId>
         <version>${spring.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-client</artifactId>
+        <version>${jersey.version}</version>
+      </dependency>
+	  <dependency>
+        <groupId>com.sun.jersey</groupId>
+		<artifactId>jersey-json</artifactId>
+		<version>${jersey.version}</version>
+	  </dependency>
       <dependency>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-auth</artifactId>

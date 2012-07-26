@@ -1,5 +1,6 @@
 http:
-  port: 8080
+  port: 8180
+  adminPort: 8181
 
 logging:
   level: info
@@ -8,6 +9,7 @@ logging:
     "openjpa": error
     
 auth:
-  authorizationServerUrl: http://localhost:8080/v1/verify
+  authorizationServerUrl: http://localhost:8080/v1/tokeninfo
   accessToken: 58b749f7-acb3-44b7-a38c-53d5ad740cf6
+  name: university-foo
    

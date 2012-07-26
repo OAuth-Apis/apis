@@ -18,6 +18,8 @@
  */
 package org.surfnet.oaaas.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
@@ -26,7 +28,7 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
  * section</a> of the spec for more info.
  * 
  */
-
+@XmlRootElement
 @JsonSnakeCase
 public class AccessTokenResponse {
 

@@ -18,12 +18,6 @@ package org.surfnet.oaaas.boot;
 
 import javax.sql.DataSource;
 
-import com.googlecode.flyway.core.Flyway;
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.bundles.AssetsBundle;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.views.ViewBundle;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
@@ -31,6 +25,13 @@ import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
+import org.surfnet.oaaas.resource.VerifyResource;
+
+import com.googlecode.flyway.core.Flyway;
+import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.views.ViewBundle;
 
 public class Application extends Service<ApplicationConfiguration> {
 
@@ -60,9 +61,10 @@ public class Application extends Service<ApplicationConfiguration> {
     ApplicationContext ctx = createSpringContext();
 
     initFlyway(ctx.getBean(DataSource.class));
-    environment.addResource(ctx.getBean(ResourceServerResource.class));
     environment.addResource(ctx.getBean(ClientResource.class));
+    environment.addResource(ctx.getBean(ResourceServerResource.class));
     environment.addResource(ctx.getBean(TokenResource.class));
+    environment.addResource(ctx.getBean(VerifyResource.class));
 
     addAuthenticationHandling(configuration, environment, ctx);
 

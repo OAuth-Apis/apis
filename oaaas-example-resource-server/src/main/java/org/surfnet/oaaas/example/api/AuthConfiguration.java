@@ -25,6 +25,7 @@ package org.surfnet.oaaas.example.api;
 public class AuthConfiguration {
   private String authorizationServerUrl;
   private String accessToken;
+  private String name;
 
   /**
    * @return the authorizationServerUrl
@@ -54,6 +55,20 @@ public class AuthConfiguration {
    */
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
+  }
+
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
   }
 
 }

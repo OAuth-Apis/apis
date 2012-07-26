@@ -16,6 +16,8 @@
 
 package org.surfnet.oaaas.model;
 
+import java.util.UUID;
+
 import org.junit.Test;
 
 import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
