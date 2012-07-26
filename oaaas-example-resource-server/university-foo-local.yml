@@ -10,6 +10,6 @@ logging:
     
 auth:
   authorizationServerUrl: http://localhost:8080/v1/tokeninfo
-  accessToken: 58b749f7-acb3-44b7-a38c-53d5ad740cf6
+  secret: 58b749f7-acb3-44b7-a38c-53d5ad740cf6
   name: university-foo
    

@@ -19,13 +19,10 @@
 package org.surfnet.oaaas.example.api;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.surfnet.oaaas.model.VerifyTokenResponse;
-import org.surfnet.oaaas.resource.VerifyResource;
+import org.surfnet.oaaas.auth.VerifyTokenResponse;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.client.Client;
@@ -50,7 +47,7 @@ public class OAuthAuthenticator implements Authenticator<String, Principal> {
   public OAuthAuthenticator(UniversityFooConfiguration configuration) {
     AuthConfiguration auth = configuration.getAuth();
     authorizationServerUrl = auth.getAuthorizationServerUrl();
-    authorizationValue = new String(Base64.encode(auth.getName().concat(":").concat(auth.getAccessToken())));
+    authorizationValue = new String(Base64.encode(auth.getName().concat(":").concat(auth.getSecret())));
   }
 
   /*

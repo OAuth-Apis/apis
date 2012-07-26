@@ -16,13 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.model;
+package org.surfnet.oaaas.auth;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.codehaus.jackson.map.annotate.JsonCachable;
-
-import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Representation of the answer to the a Resource Server when asked to verify
@@ -30,7 +26,7 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
  * 
  * We don't use conversion of camelCase to snakeCase as this class is
  * potentially used by clients which have different dependencies where
- * {@link JsonSnakeCase} is ignored.
+ * JsonSnakeCase is ignored.
  * 
  */
 

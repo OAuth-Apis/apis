@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>nl.surfnet.oaaas</groupId>
-      <artifactId>oaaas-authorization-server</artifactId>
+      <artifactId>oaaas-client</artifactId>
 	  <version>${project.version}</version>
 	</dependency>
     <dependency>
