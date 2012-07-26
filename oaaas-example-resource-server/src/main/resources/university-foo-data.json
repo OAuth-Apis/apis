@@ -66,7 +66,7 @@
         {
             "id": "cs3",
             "name": "Chemistry",
-            "description": "Chemistry is a wide-ranging science concerned with the synthesis, structures, dynamics, properties and transformations of all types of materials Ð organic, inorganic and biological"
+            "description": "Chemistry is a wide-ranging science concerned with the synthesis, structures, dynamics, properties and transformations of all types of materials ï¿½ organic, inorganic and biological"
         },
         {
             "id": "cs4",
@@ -96,15 +96,12 @@
         {
             "id": "cs9",
             "name": "Music",
-            "description": "Music can be studied from a wide variety of perspectives. We Ôstudy musicÕ by listening or by learning to perform a musical composition. We may also investigate, through analysis, the relationships between the various parts of the composition, or use documentary evidence to explore how reliable and authoritative a given score might be and how we might perform it in a historically sensitive manner"
+            "description": "Music can be studied from a wide variety of perspectives. We ï¿½study musicï¿½ by listening or by learning to perform a musical composition. We may also investigate, through analysis, the relationships between the various parts of the composition, or use documentary evidence to explore how reliable and authoritative a given score might be and how we might perform it in a historically sensitive manner"
         },
         {
             "id": "cs10",
             "name": "Philosophy, Politics and Economics (PPE)",
             "description": "PPE brings together some of the most important approaches to understanding the social and human world around us, developing skills useful for a whole range of future careers and activities"
         }
-    ],
-    "schedules":[
-    {"course_id":"cs1",""}
     ]
 }

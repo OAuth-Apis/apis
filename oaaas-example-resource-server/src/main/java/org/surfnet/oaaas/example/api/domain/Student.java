@@ -16,29 +16,52 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.example.api.resource;
-
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.Date;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.junit.Test;
+package org.surfnet.oaaas.example.api.domain;
 
 /**
- * {@link Test} for {@link UniversityResource}
+ * Student representation
  *
  */
-public class UniversityResourceTest {
+public class Student {
 
-  private final UniversityResource resource = new UniversityResource();
-  //http://java.dzone.com/articles/how-serialize-javautildate
-  @Test
-  public void test() throws JsonGenerationException, JsonMappingException, IOException {
-    String value = resource.getObjectMapper().writeValueAsString(new Date());
-    System.out.println(value);
+  private String id;
+  private String  name;
+  private String  email;
+  
+  /**
+   * @return the id
+   */
+  public String getId() {
+    return id;
   }
-
+  /**
+   * @param id the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
+  /**
+   * @return the email
+   */
+  public String getEmail() {
+    return email;
+  }
+  /**
+   * @param email the email to set
+   */
+  public void setEmail(String email) {
+    this.email = email;
+  }
 }

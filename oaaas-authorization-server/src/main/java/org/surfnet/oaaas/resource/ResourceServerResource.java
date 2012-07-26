@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,6 +46,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 public class ResourceServerResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResource.class);
+  
   @Inject
   private ResourceServerRepository resourceServerRepository;
 
@@ -80,8 +82,9 @@ public class ResourceServerResource {
 
   @PUT
   @Timed
-  public Response put(@Valid ResourceServer resourceServer) {
-    final ResourceServer resourceServerSaved = resourceServerRepository.save(resourceServer);
+  public Response put(@Valid ResourceServer newOne) {
+    newOne.setSecret(UUID.randomUUID().toString());
+    final ResourceServer resourceServerSaved = resourceServerRepository.save(newOne);
     LOG.debug("nr of entities in store now: {}", resourceServerRepository.count());
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
     return Response
@@ -104,11 +107,13 @@ public class ResourceServerResource {
   @POST
   @Timed
   @Path("/{resourceServerId}.json")
-  public Response post(@Valid ResourceServer newOne, @PathParam("resourceServerId") Long id) {
-    if (resourceServerRepository.findOne(id) == null) {
+  public Response post(@Valid ResourceServer resourceServer, @PathParam("resourceServerId") Long id) {
+    ResourceServer findOne = resourceServerRepository.findOne(id);
+    if (findOne == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    ResourceServer savedInstance = resourceServerRepository.save(newOne);
+    resourceServer.setSecret(findOne.getSecret());
+    ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
     return Response.ok(savedInstance).build();
   }
 }

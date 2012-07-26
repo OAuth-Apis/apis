@@ -25,7 +25,7 @@ import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 
 /**
- * @author oharsta
+ * {@link Authenticator} that ask the Authorization Server to check
  *
  */
 public class OAuthAuthenticator implements Authenticator<String, Principal> {
@@ -46,9 +46,14 @@ public class OAuthAuthenticator implements Authenticator<String, Principal> {
   public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
     //TODO go to the authorization service
     
-    http://www.mkyong.com/webservices/jax-rs/restful-java-client-with-jersey-client/
+    //http://www.mkyong.com/webservices/jax-rs/restful-java-client-with-jersey-client/
     
-    return xxx;
+    Principal principal= new Principal() {
+      @Override
+      public String getName() {
+        return "TOOD";
+      }};
+    return Optional.of(principal);
   }
 
 }

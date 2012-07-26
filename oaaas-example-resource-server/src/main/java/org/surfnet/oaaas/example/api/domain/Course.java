@@ -18,16 +18,29 @@
  */
 package org.surfnet.oaaas.example.api.domain;
 
-import java.util.List;
-
 /**
- * Root domain object for our dummy API
+ * Course representation
  * 
  */
-public class University {
+public class Course {
+  private String id;
   private String name;
-  private List<Student> students;
-  private List<Course> courses;
+  private String description;
+
+  /**
+   * @return the id
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * @param id
+   *          the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
 
   /**
    * @return the name
@@ -45,33 +58,17 @@ public class University {
   }
 
   /**
-   * @return the students
+   * @return the description
    */
-  public List<Student> getStudents() {
-    return students;
+  public String getDescription() {
+    return description;
   }
 
   /**
-   * @param students
-   *          the students to set
+   * @param description
+   *          the description to set
    */
-  public void setStudents(List<Student> students) {
-    this.students = students;
+  public void setDescription(String description) {
+    this.description = description;
   }
-
-  /**
-   * @return the courses
-   */
-  public List<Course> getCourses() {
-    return courses;
-  }
-
-  /**
-   * @param courses
-   *          the courses to set
-   */
-  public void setCourses(List<Course> courses) {
-    this.courses = courses;
-  }
-
 }
