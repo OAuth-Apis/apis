@@ -17,10 +17,13 @@
 package org.surfnet.oaaas.model;
 
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -51,6 +54,10 @@ public class ResourceServer extends AbstractEntity {
 
   @Column
   private String contactEmail;
+
+
+  @OneToMany(mappedBy = "resourceServer")
+  private List<Client> clients;
 
   @Column
   private String thumbNailUrl;

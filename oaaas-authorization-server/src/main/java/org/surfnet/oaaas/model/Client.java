@@ -16,11 +16,9 @@
 
 package org.surfnet.oaaas.model;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -28,6 +26,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:
@@ -60,13 +60,14 @@ public class Client extends AbstractEntity {
   @Column
   private String scopes;
   
-  @ManyToOne(optional=false) 
+  @ManyToOne(optional=false)
+  @JsonIgnore
   @JoinColumn(name="resourceserver_id", nullable=false, updatable=false)
   private ResourceServer resourceServer;
 
   @Column
   private String thumbNailUrl;
-
+  
   public String getName() {
     return name;
   }
