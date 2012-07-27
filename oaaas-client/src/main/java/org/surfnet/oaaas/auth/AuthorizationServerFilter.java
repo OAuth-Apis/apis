@@ -64,8 +64,9 @@ import com.sun.jersey.api.client.Client;
  * }
  * </pre>
  * 
- * The id of the user (depending on how the authentication in the
- * AuthorizationServer is implemented) is put on the {@link HttpServletRequest}.
+ * The response of the Authorization Server is put on the
+ * {@link HttpServletRequest}.
+ * 
  * Of course it might be better to use a properties file depending on the
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
  * simple to override the {@link AuthorizationServerFilter#init(FilterConfig)}
@@ -120,9 +121,7 @@ public class AuthorizationServerFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
     String accessToken = getAccessToken(request);
-    if (accessToken == null) {
-      sendError(response);
-    } else {
+    if (accessToken != null) {
       VerifyTokenResponse tokenResponse = client
           .resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
           .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
@@ -130,10 +129,10 @@ public class AuthorizationServerFilter implements Filter {
       if (tokenResponse.getUser_id() != null) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
-      } else {
-        sendError(response);
+        return;
       }
     }
+    sendError(response);
   }
 
   private void sendError(HttpServletResponse response) throws IOException {
