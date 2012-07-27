@@ -32,6 +32,22 @@ Features
     java -cp oaaas-authorization-server/target/oaaas-*.jar org.surfnet.oaaas.boot.Application
 Configuration resides in oaaas.yml.
 
-## Test
-GUI for Resource Servers and Client apps registration can be found at:
+
+## Resource Servers and Client apps registration
+### GUI
+The GUI for Resource Servers and Client apps registration can be found at:
 [http://localhost:8080/adminClient/](http://localhost:8080/adminClient/)
+### REST api
+The following URLs are available for the registration interface:
+
+    GET     /admin/resourceServer
+    GET     /admin/resourceServer/{resourceServerId}.json
+    PUT     /admin/resourceServer
+    POST    /admin/resourceServer/{resourceServerId}.json
+    DELETE  /admin/resourceServer/{resourceServerId}.json
+
+    GET     /admin/client
+    GET     /admin/client/{clientId}.json
+    PUT     /admin/client
+    POST    /admin/client/{clientId}.json
+    DELETE  /admin/client/{clientId}.json

@@ -18,6 +18,8 @@ package org.surfnet.oaaas.conext;
 
 import java.util.Arrays;
 
+import javax.inject.Named;
+
 import org.opensaml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import nl.surfnet.spring.security.opensaml.Provisioner;
 
+@Named
 public class SAMLProvisioner implements Provisioner {
 
   private static final Logger LOG = LoggerFactory.getLogger(SAMLProvisioner.class);

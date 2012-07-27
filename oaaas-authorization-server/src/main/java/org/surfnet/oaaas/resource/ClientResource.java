@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
+import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 @Named
 @Path("/admin/client")
@@ -48,6 +49,9 @@ public class ClientResource {
 
   @Inject
   private ClientRepository clientRepository;
+
+  @Inject
+  private ResourceServerRepository resourceServerRepository;
 
 
   @GET
@@ -83,6 +87,10 @@ public class ClientResource {
   @PUT
   @Timed
   public Response put(@Valid Client client) {
+
+    // TODO: get resourceServer from authentication process, and put that in client
+    client.setResourceServer(resourceServerRepository.findOne(51L));
+
     final Client clientSaved = clientRepository.save(client);
     LOG.debug("nr of entities in store now: {}", clientRepository.count());
     final URI uri = UriBuilder.fromPath("{clientId}.json").build(clientSaved.getId());
