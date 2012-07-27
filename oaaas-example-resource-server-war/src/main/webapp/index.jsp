@@ -1,0 +1,1 @@
+<%= request.getAttribute("VERIFY_TOKEN_RESPONSE") %>

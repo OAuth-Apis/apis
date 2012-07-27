@@ -20,6 +20,7 @@ package org.surfnet.oaaas.resource;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -74,7 +75,7 @@ public class VerifyResource {
     authorization = new String(Base64.decode(authorization));
     int atColon = authorization.indexOf(':');
     if (atColon < 1) {
-      return Response.status(Status.UNAUTHORIZED).build();
+      return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Authorization Server\"").build();
     }
     String name = authorization.substring(0, atColon);
     ResourceServer resourceServer = resourceServerRepository.findByName(name);

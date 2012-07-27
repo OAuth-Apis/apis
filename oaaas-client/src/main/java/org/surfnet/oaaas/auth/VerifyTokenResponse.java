@@ -18,6 +18,8 @@
  */
 package org.surfnet.oaaas.auth;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,8 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 
+@SuppressWarnings("serial")
 @XmlRootElement
-public class VerifyTokenResponse {
+public class VerifyTokenResponse implements Serializable{
   /*
    * The application that is the intended target of the token.
    */
@@ -50,7 +53,7 @@ public class VerifyTokenResponse {
   private long expires_in;
 
   /*
-   * If the token is no good then we return 400 status code with an error
+   * If the token is no good then we return with an error
    */
   private String error;
 
@@ -142,6 +145,15 @@ public class VerifyTokenResponse {
    */
   public void setExpires_in(long expires_in) {
     this.expires_in = expires_in;
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return "VerifyTokenResponse [audience=" + audience + ", scopes=" + scopes + ", user_id=" + user_id
+        + ", expires_in=" + expires_in + "]";
   }
 
 }

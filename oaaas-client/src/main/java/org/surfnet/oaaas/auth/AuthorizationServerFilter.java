@@ -34,11 +34,10 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.sun.jersey.api.client.Client;
 
-
 /**
- * {@link Filter} which can be used to protect all resources by validating the
- * oauth access token with the Authorization server. This is an example
- * configuration:
+ * {@link Filter} which can be used to protect all relevant resources by
+ * validating the oauth access token with the Authorization server. This is an
+ * example configuration:
  * 
  * <pre>
  * {@code
@@ -67,6 +66,9 @@ import com.sun.jersey.api.client.Client;
  * 
  * The id of the user (depending on how the authentication in the
  * AuthorizationServer is implemented) is put on the {@link HttpServletRequest}.
+ * Of course it might be better to use a properties file depending on the
+ * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
+ * simple to override the {@link AuthorizationServerFilter#init(FilterConfig)}
  */
 public class AuthorizationServerFilter implements Filter {
 
@@ -81,7 +83,7 @@ public class AuthorizationServerFilter implements Filter {
    * secret separated with a semicolon
    */
   private String authorizationValue;
-  
+
   /*
    * Client to make GET calls to the authorization server
    */
@@ -95,7 +97,7 @@ public class AuthorizationServerFilter implements Filter {
   /*
    * Constant name of the request attribute where the userId is stored
    */
-  public static final String USER_ID = "user_id";
+  public static final String VERIFY_TOKEN_RESPONSE = "VERIFY_TOKEN_RESPONSE";
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -103,42 +105,53 @@ public class AuthorizationServerFilter implements Filter {
     String secret = filterConfig.getInitParameter("resource-server-secret");
 
     this.authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
-    this.authorizationValue = new String(Base64.encodeBase64String(name.concat(":").concat(secret).getBytes()));
+    /*
+     * See http://bugs.sun.com/bugdatabase/view_bug.do;jsessionid=
+     * c742d1615af66e3dd9568f7632ab3?bug_id=6947917
+     */
+    this.authorizationValue = new String(Base64.encodeBase64String(name.concat(":").concat(secret).getBytes()))
+        .replaceAll("\r\n?", "");
 
   }
 
   @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException,
-      ServletException {
+  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
+      throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
     String accessToken = getAccessToken(request);
     if (accessToken == null) {
-      response.sendError(401);
+      sendError(response);
     } else {
       VerifyTokenResponse tokenResponse = client
           .resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
           .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
           .get(VerifyTokenResponse.class);
       if (tokenResponse.getUser_id() != null) {
-        request.setAttribute(USER_ID, tokenResponse.getUser_id());
+        request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
+        chain.doFilter(request, response);
       } else {
-        response.sendError(401);
+        sendError(response);
       }
     }
+  }
+
+  private void sendError(HttpServletResponse response) throws IOException {
+    response.sendError(HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint");
+    response.flushBuffer();
   }
 
   private String getAccessToken(HttpServletRequest request) {
     String accessToken = null;
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (header != null) {
-        int space = header.indexOf(' ');
-        if (space > 0) {
-            String method = header.substring(0, space);
-            if (BEARER.equalsIgnoreCase(method)) {
-                accessToken = header.substring(space + 1);
-            }
+      int space = header.indexOf(' ');
+      if (space > 0) {
+        String method = header.substring(0, space);
+        if (BEARER.equalsIgnoreCase(method)) {
+          accessToken = header.substring(space + 1);
         }
+      }
     }
     return accessToken;
   }

@@ -29,6 +29,7 @@
     <module>oaaas-example-resource-server</module>
     <module>oaaas-authorization-server</module>
     <module>oaaas-surfconext-authn</module>
+    <module>oaaas-example-resource-server-war</module>
     <!--<module>oaaas-performance</module>-->
   </modules>
 
@@ -44,6 +45,7 @@
     <spring.version>3.1.2.RELEASE</spring.version>
     <openjpa.version>2.2.0</openjpa.version>
     <commons-lang.version>2.6</commons-lang.version>
+	<commons-io.version>2.0.1</commons-io.version>
 	<jersey.version>1.12</jersey.version>
 	<commons-codec.version>1.4</commons-codec.version>
   </properties>
@@ -106,6 +108,11 @@
 		<version>${commons-codec.version}</version>
 	  </dependency>
       <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+		<version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb.version}</version>
@@ -135,7 +142,7 @@
       <dependency>
         <groupId>nl.surfnet.oaaas</groupId>
         <artifactId>oaaas-client</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
