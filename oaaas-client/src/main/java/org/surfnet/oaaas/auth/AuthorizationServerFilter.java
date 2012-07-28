@@ -199,4 +199,11 @@ public class AuthorizationServerFilter implements Filter {
   public void destroy() {
   }
 
+  /**
+   * @return the cache
+   */
+  public Cache<String, VerifyTokenResponse> getCache() {
+    return cache;
+  }
+
 }

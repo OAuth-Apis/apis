@@ -33,6 +33,7 @@ import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -69,11 +70,20 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read", "john.doe", 0);
     MockFilterChain chain = doCallFilter(recorderdResponse);
     /*
-     * Verify that the FilterChain#doFilter is called and the VerifyTokenResponse is set on the Request
+     * Verify that the FilterChain#doFilter is called and the
+     * VerifyTokenResponse is set on the Request
      */
     VerifyTokenResponse response = (VerifyTokenResponse) chain.getRequest().getAttribute(
         AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
     assertEquals(recorderdResponse.toString(), response.toString());
+
+    /*
+     * Also test the cache by repeating the call and setting the expected result
+     * to null (which would cause an exception in MockHandler#invariant if the
+     * cache does not kick in)
+     */
+    Resource[] resource = null;
+    doCallFilter(resource, new MockHttpServletResponse());
   }
 
   /**
@@ -100,9 +110,15 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     return doCallFilter(recorderdResponse, new MockHttpServletResponse());
   }
 
-  private MockFilterChain doCallFilter(VerifyTokenResponse recorderdResponse, MockHttpServletResponse response) throws IOException, ServletException {
-    super.setResponseResource(new ByteArrayResource(asJson(
-        recorderdResponse).getBytes(),"json"));
+  private MockFilterChain doCallFilter(VerifyTokenResponse recorderdResponse, MockHttpServletResponse response)
+      throws IOException, ServletException {
+    return doCallFilter(new Resource[] { new ByteArrayResource(asJson(recorderdResponse).getBytes(), "json") },
+        response);
+  }
+
+  private MockFilterChain doCallFilter(Resource[] resource, MockHttpServletResponse response) throws IOException,
+      ServletException {
+    super.setResponseResource(resource);
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addHeader(HttpHeaders.AUTHORIZATION, "bearer dummy-access-token");
     MockFilterChain chain = new MockFilterChain();
