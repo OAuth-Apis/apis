@@ -70,25 +70,25 @@ public class VerifyResource {
   String authorization, @QueryParam("access_token")
   String accessToken) {
     if (authorization == null && accessToken == null) {
-      return Response.status(Status.UNAUTHORIZED).build();
+      return unauthorized();
     }
     authorization = new String(Base64.decode(authorization));
     int atColon = authorization.indexOf(':');
     if (atColon < 1) {
-      return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Authorization Server\"").build();
+      return unauthorized();
     }
     String name = authorization.substring(0, atColon);
     ResourceServer resourceServer = resourceServerRepository.findByName(name);
     if (resourceServer == null) {
       LOG.warn(String.format("ResourceServer(name='%s') not found", name));
-      return Response.status(Status.UNAUTHORIZED).build();
+      return unauthorized();
     }
     String secret = authorization.substring(atColon + 1);
     if (!resourceServer.getSecret().equals(secret)) {
       LOG.warn(String
           .format("ResourceServer(name='%s') is accessing VerifyResource#verifyToken with the wrong secret('%s')",
               name, secret));
-      return Response.status(Status.UNAUTHORIZED).build();
+      return unauthorized();
     }
     AccessToken token = accessTokenRepository.findByToken(accessToken);
     if (token == null || (token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis())) {
@@ -97,6 +97,10 @@ public class VerifyResource {
     return Response.ok(
         new VerifyTokenResponse(token.getClient().getName(), token.getScopes(), token.getPrincipal(), token
             .getExpires())).build();
+  }
+
+  private Response unauthorized() {
+    return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Authorization Server\"").build();
   }
 
 }

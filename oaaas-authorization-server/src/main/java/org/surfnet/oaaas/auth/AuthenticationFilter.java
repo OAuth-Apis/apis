@@ -37,7 +37,6 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 @Named
 public class AuthenticationFilter implements Filter {
 
-
   private Filter authenticator;
 
   @Inject

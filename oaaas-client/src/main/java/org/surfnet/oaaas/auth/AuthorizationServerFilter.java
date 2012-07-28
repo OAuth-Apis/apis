@@ -19,6 +19,9 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,6 +35,8 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.sun.jersey.api.client.Client;
 
 /**
@@ -100,6 +105,12 @@ public class AuthorizationServerFilter implements Filter {
    */
   public static final String VERIFY_TOKEN_RESPONSE = "VERIFY_TOKEN_RESPONSE";
 
+  /*
+   * If not overridden by a subclass we cache the answers from the authorization
+   * server
+   */
+  private Cache<String, VerifyTokenResponse> cache;
+
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
     String name = filterConfig.getInitParameter("resource-server-name");
@@ -112,7 +123,13 @@ public class AuthorizationServerFilter implements Filter {
      */
     this.authorizationValue = new String(Base64.encodeBase64String(name.concat(":").concat(secret).getBytes()))
         .replaceAll("\r\n?", "");
+    if (cacheAccessTokens()) {
+      this.cache = buildCache();
+    }
+  }
 
+  protected Cache<String, VerifyTokenResponse> buildCache() {
+    return CacheBuilder.newBuilder().maximumSize(100000).expireAfterAccess(10, TimeUnit.MINUTES).build();
   }
 
   @Override
@@ -120,13 +137,17 @@ public class AuthorizationServerFilter implements Filter {
       throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
-    String accessToken = getAccessToken(request);
+    final String accessToken = getAccessToken(request);
     if (accessToken != null) {
-      VerifyTokenResponse tokenResponse = client
-          .resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
-          .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
-          .get(VerifyTokenResponse.class);
-      if (tokenResponse.getUser_id() != null) {
+      VerifyTokenResponse tokenResponse = null;
+      try {
+        tokenResponse = cacheAccessTokens() ? cache.get(accessToken, getCallable(accessToken))
+            : getVerifyTokenResponse(accessToken);
+      } catch (ExecutionException e) {
+        // will result in sendError which is the only sensible thing to do
+      }
+      String userId = tokenResponse.getUser_id();
+      if (userId != null && userId.trim().length() > 0) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
         return;
@@ -135,9 +156,28 @@ public class AuthorizationServerFilter implements Filter {
     sendError(response);
   }
 
-  private void sendError(HttpServletResponse response) throws IOException {
+  private Callable<VerifyTokenResponse> getCallable(final String accessToken) {
+    return new Callable<VerifyTokenResponse>() {
+      @Override
+      public VerifyTokenResponse call() throws Exception {
+        return getVerifyTokenResponse(accessToken);
+      }
+    };
+  }
+
+  private VerifyTokenResponse getVerifyTokenResponse(String accessToken) {
+    return client.resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
+        .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
+        .get(VerifyTokenResponse.class);
+  }
+
+  protected void sendError(HttpServletResponse response) throws IOException {
     response.sendError(HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint");
     response.flushBuffer();
+  }
+
+  protected boolean cacheAccessTokens() {
+    return true;
   }
 
   private String getAccessToken(HttpServletRequest request) {

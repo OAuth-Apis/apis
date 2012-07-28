@@ -16,8 +16,6 @@
 
 package org.surfnet.oaaas.model;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -67,6 +65,12 @@ public class Client extends AbstractEntity {
 
   @Column
   private String thumbNailUrl;
+  
+  @Column
+  private String redirectUri;
+  
+  @Column
+  private boolean skipConsent;
   
   public String getName() {
     return name;
@@ -140,6 +144,34 @@ public class Client extends AbstractEntity {
    */
   public void setThumbNailUrl(String thumbNailUrl) {
     this.thumbNailUrl = thumbNailUrl;
+  }
+
+  /**
+   * @return the redirectUri
+   */
+  public String getRedirectUri() {
+    return redirectUri;
+  }
+
+  /**
+   * @param redirectUri the redirectUri to set
+   */
+  public void setRedirectUri(String redirectUri) {
+    this.redirectUri = redirectUri;
+  }
+
+  /**
+   * @return the skipConsent
+   */
+  public boolean isSkipConsent() {
+    return skipConsent;
+  }
+
+  /**
+   * @param skipConsent the skipConsent to set
+   */
+  public void setSkipConsent(boolean skipConsent) {
+    this.skipConsent = skipConsent;
   }
 
 }

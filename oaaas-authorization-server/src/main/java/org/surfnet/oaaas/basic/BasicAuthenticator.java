@@ -76,6 +76,7 @@ public class BasicAuthenticator extends AbstractAuthenticator {
    */
   private static final class UserPassCredentials {
 
+    private static final char SEMI_COLON = ':';
     private static final int BASIC_AUTH_PREFIX_LENGTH = "Basic ".length();
 
     private final String username;
@@ -97,14 +98,14 @@ public class BasicAuthenticator extends AbstractAuthenticator {
 
       String authPart = authorizationHeader.substring(BASIC_AUTH_PREFIX_LENGTH);
       String userpass = new String(Base64.decodeBase64(authPart));
-      if (userpass.indexOf(':') < 1) {
+      if (userpass.indexOf(SEMI_COLON) < 1) {
         LOG.debug("Invalid authorization header found.");
         username = null;
         password = null;
         return;
       }
-      username = userpass.substring(0, userpass.indexOf(':'));
-      password = userpass.substring(userpass.indexOf(':') + 1);
+      username = userpass.substring(0, userpass.indexOf(SEMI_COLON));
+      password = userpass.substring(userpass.indexOf(SEMI_COLON) + 1);
     }
 
     /**
