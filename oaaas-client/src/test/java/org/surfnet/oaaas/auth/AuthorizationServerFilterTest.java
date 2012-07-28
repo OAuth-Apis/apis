@@ -46,7 +46,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
 
-  private AuthorizationServerFilter filter = new AuthorizationServerFilter();
+  private AuthorizationServerFilter filter;
 
   @Before
   public void before() throws ServletException {
@@ -54,6 +54,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     filterConfig.addInitParameter("resource-server-name", "mock-server-name");
     filterConfig.addInitParameter("resource-server-secret", UUID.randomUUID().toString());
     filterConfig.addInitParameter("authorization-server-url", "http://localhost:8088/mock/endpoint");
+    filter = new AuthorizationServerFilter();
     filter.init(filterConfig);
   }
 
@@ -84,6 +85,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
      */
     Resource[] resource = null;
     doCallFilter(resource, new MockHttpServletResponse());
+    assertEquals(1L, filter.getCache().stats().hitCount());
   }
 
   /**
@@ -100,7 +102,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     MockHttpServletResponse response = new MockHttpServletResponse();
     MockFilterChain chain = doCallFilter(recorderdResponse, response);
     /*
-     * Verify that the response is 401
+     * Verify that the response is 403 and that the chain is stopped
      */
     assertNull(chain.getRequest());
     assertEquals(403, response.getStatus());

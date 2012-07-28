@@ -70,11 +70,17 @@ import com.sun.jersey.api.client.Client;
  * </pre>
  * 
  * The response of the Authorization Server is put on the
- * {@link HttpServletRequest}.
+ * {@link HttpServletRequest} with the name
+ * {@link AuthorizationServerFilter#VERIFY_TOKEN_RESPONSE}.
  * 
  * Of course it might be better to use a properties file depending on the
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
  * simple to override the {@link AuthorizationServerFilter#init(FilterConfig)}
+ * 
+ * Also note that by default the responses from the Authorization Server are
+ * cached. This can easily be changed if you override
+ * {@link AuthorizationServerFilter#cacheAccessTokens()} and to configure the
+ * cache differently override {@link AuthorizationServerFilter#buildCache()}
  */
 public class AuthorizationServerFilter implements Filter {
 
@@ -101,7 +107,7 @@ public class AuthorizationServerFilter implements Filter {
   private static final String BEARER = "bearer";
 
   /*
-   * Constant name of the request attribute where the userId is stored
+   * Constant name of the request attribute where the response is stored
    */
   public static final String VERIFY_TOKEN_RESPONSE = "VERIFY_TOKEN_RESPONSE";
 
@@ -129,7 +135,7 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   protected Cache<String, VerifyTokenResponse> buildCache() {
-    return CacheBuilder.newBuilder().maximumSize(100000).expireAfterAccess(10, TimeUnit.MINUTES).build();
+    return CacheBuilder.newBuilder().recordStats().maximumSize(100000).expireAfterAccess(10, TimeUnit.MINUTES).build();
   }
 
   @Override
@@ -146,7 +152,7 @@ public class AuthorizationServerFilter implements Filter {
       } catch (ExecutionException e) {
         // will result in sendError which is the only sensible thing to do
       }
-      String userId = tokenResponse.getUser_id();
+      String userId = (tokenResponse != null ? tokenResponse.getUser_id() : null);
       if (userId != null && userId.trim().length() > 0) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
