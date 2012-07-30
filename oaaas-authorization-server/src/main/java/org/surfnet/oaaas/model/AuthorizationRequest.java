@@ -22,7 +22,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.openjpa.persistence.jdbc.Unique;
@@ -43,10 +46,13 @@ public class AuthorizationRequest extends AbstractEntity {
   @NotNull
   private String responseType;
 
-  @Column
-  @NotNull
+  @Transient
   private String clientId;
 
+  @ManyToOne(optional=false) 
+  @JoinColumn(name="client_id", nullable=false, updatable=false)
+  private Client client;
+  
   @Column
   @NotNull
   private String redirectUri;
@@ -61,6 +67,9 @@ public class AuthorizationRequest extends AbstractEntity {
   @NotNull
   @Unique
   private String authState;
+  
+  @Column
+  private String principal;
   
   public AuthorizationRequest() {
     super();
@@ -163,6 +172,34 @@ public class AuthorizationRequest extends AbstractEntity {
    */
   public void setAuthState(String authState) {
     this.authState = authState;
+  }
+
+  /**
+   * @return the client
+   */
+  public Client getClient() {
+    return client;
+  }
+
+  /**
+   * @param client the client to set
+   */
+  public void setClient(Client client) {
+    this.client = client;
+  }
+
+  /**
+   * @return the principal
+   */
+  public String getPrincipal() {
+    return principal;
+  }
+
+  /**
+   * @param principal the principal to set
+   */
+  public void setPrincipal(String principal) {
+    this.principal = principal;
   }
 
  

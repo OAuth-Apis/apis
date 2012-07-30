@@ -34,4 +34,6 @@ public class AuthorizationFilterIntegration {
     assertEquals(200, connection.getResponseCode());
     assertTrue(IOUtils.toString(connection.getInputStream()).contains("emma.blunt"));
   }
+  
+
 }

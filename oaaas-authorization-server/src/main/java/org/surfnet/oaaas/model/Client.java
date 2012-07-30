@@ -56,6 +56,7 @@ public class Client extends AbstractEntity {
   private String contactEmail;
 
   @Column
+  @NotNull
   private String scopes;
   
   @ManyToOne(optional=false)

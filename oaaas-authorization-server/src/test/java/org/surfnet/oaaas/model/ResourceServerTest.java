@@ -16,14 +16,14 @@
 
 package org.surfnet.oaaas.model;
 
-import org.junit.Test;
-
 import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
 import static com.yammer.dropwizard.testing.JsonHelpers.fromJson;
 import static com.yammer.dropwizard.testing.JsonHelpers.jsonFixture;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
 
 public class ResourceServerTest {
 
@@ -48,4 +48,5 @@ public class ResourceServerTest {
         is(r));
   }
 
+  
 }

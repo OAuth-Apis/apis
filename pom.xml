@@ -53,6 +53,7 @@
 	<guava.version>12.0.1</guava.version>
 	<coin-test.version>2.8.1</coin-test.version>
 	<servlet-api.version>3.0.1</servlet-api.version>
+	<commons-validator.version>1.4.0</commons-validator.version>
   </properties>
 
   <dependencyManagement>
@@ -122,6 +123,11 @@
         <artifactId>commons-io</artifactId>
 		<version>${commons-io.version}</version>
       </dependency>
+	  <dependency>
+		<groupId>commons-validator</groupId>
+		<artifactId>commons-validator</artifactId>
+		<version>${commons-validator.version}</version>
+	  </dependency>
       <dependency>
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
@@ -197,6 +203,18 @@
       <id>openconext-releases</id>
       <name>OpenConext public releases repository</name>
       <url>https://build.surfconext.nl/repository/public/releases</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <id>openconext-snapshots</id>
+      <name>OpenConext public snapshots repository</name>
+      <url>https://build.surfconext.nl/repository/public/snapshots</url>
     </repository>
   </repositories>
 </project>

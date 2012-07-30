@@ -25,6 +25,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -83,7 +85,7 @@ public abstract class AbstractEntity implements Serializable {
 
   @Override
   public String toString() {
-    return getClass() + "(id='" + id + "')";
+    return ToStringBuilder.reflectionToString(this);
   }
 
 }

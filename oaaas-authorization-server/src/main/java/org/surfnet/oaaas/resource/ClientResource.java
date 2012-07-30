@@ -92,7 +92,9 @@ public class ClientResource {
     client.setResourceServer(resourceServerRepository.findOne(51L));
 
     final Client clientSaved = clientRepository.save(client);
-    LOG.debug("nr of entities in store now: {}", clientRepository.count());
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Saving client: {}", clientSaved);
+    }
     final URI uri = UriBuilder.fromPath("{clientId}.json").build(clientSaved.getId());
     return Response
         .created(uri)
@@ -104,8 +106,12 @@ public class ClientResource {
   @Timed
   @Path("/{clientId}.json")
   public Response delete(@PathParam("clientId") Long id) {
-    if (clientRepository.findOne(id) == null) {
+    Client client = clientRepository.findOne(id);
+    if (client == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Deleting client: {}", client);
     }
     clientRepository.delete(id);
     return Response.noContent().build();
@@ -119,6 +125,9 @@ public class ClientResource {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     Client savedInstance = clientRepository.save(newOne);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Saving client: {}", savedInstance);
+    }
     return Response.ok(savedInstance).build();
   }
 }

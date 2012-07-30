@@ -34,11 +34,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
+
+
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
  * href="http://tools.ietf.org/html/draft-ietf-oauth-v2"> the OAuth spec</a>.
@@ -51,21 +57,23 @@ public class TokenResource {
 
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
-  
-  private static final String IMPLICIT_GRANT_RESPONSE_TYPE = "token"; 
-  private static final String AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE = "code"; 
-  
+
+  @Inject
+  private AccessTokenRepository accessTokenRepository;
+
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
 
   @GET
   @Path("/authorize")
-  public Response authorizeCallbackGet(@Context HttpServletRequest request) {
+  public Response authorizeCallbackGet(@Context
+  HttpServletRequest request) {
     return authorizeCallback(request);
   }
 
   @POST
   @Path("/authorize")
-  public Response authorizeCallback(@Context HttpServletRequest request) {
+  public Response authorizeCallback(@Context
+  HttpServletRequest request) {
     String authState = (String) request.getAttribute(AbstractAuthenticator.AUTH_STATE);
     if (authState == null) {
       LOG.warn("Null authState while in TokenResource#authorizeCallback");
@@ -73,7 +81,7 @@ public class TokenResource {
     }
     AuthorizationRequest authReq = authorizationRequestRepository.findByAuthState(authState);
     if (authReq == null) {
-      LOG.warn("Null AuthorizationRequest while in TokenResource#authorizeCallback processing authState {}",authState);
+      LOG.warn("Null AuthorizationRequest while in TokenResource#authorizeCallback processing authState {}", authState);
       return Response.serverError().build();
     }
     Principal principal = (Principal) request.getAttribute("principal");
@@ -84,23 +92,47 @@ public class TokenResource {
     if (LOG.isDebugEnabled()) {
       LOG.debug("Principal from HttpServletRequest: {}", principal);
     }
-    if (authReq.getResponseType().equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
-      
+    if (authReq.getResponseType().equals(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE)) {
+      //Implement refresh tokens
+      AccessToken accessToken = new AccessToken(UUID.randomUUID().toString(), principal.getName(), authReq.getClient(),
+          0, authReq.getScope());
+      accessToken = accessTokenRepository.save(accessToken);
+      return sendImplicitGrantResponse(authReq, accessToken);
+    } else {
+      return sendAuthorizationCodeResponse(authReq);
     }
-    /*
-     * TODO save principal in AuthorizationRequest
-     */
+  }
+
+  private Response sendAuthorizationCodeResponse(AuthorizationRequest authReq) {
+    String uri = authReq.getRedirectUri();
     String authorizationCode = UUID.randomUUID().toString();
-    /*
-     *  
-     */
-    String uri = String.format(authReq.getRedirectUri().concat("?").concat("code=%s").concat("&state=%s"),
-        authorizationCode, authReq.getState());
+    uri = uri + appendQueryMark(uri) + "code=" + authorizationCode + appendStateParameter(authReq);
+    return redirect(uri);
+  }
+
+  private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
+    String uri = authReq.getRedirectUri();
+    uri = String.format(uri + appendQueryMark(uri) + "access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
+        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), authReq.getScope());
+    return redirect(uri);
+  }
+
+  private String appendQueryMark(String uri) {
+    return uri.contains("?") ? "&" : "?";
+  }
+
+  private String appendStateParameter(AuthorizationRequest authReq) {
+    String state = authReq.getState();
+    return StringUtils.isBlank(state) ? "" : "&state=".concat(state);
+  }
+
+  private Response redirect(String uri) {
     try {
       return Response.seeOther(new URI(uri)).build();
     } catch (URISyntaxException e) {
       throw new RuntimeException(String.format("Redirect URI '%s' is not valid", uri));
     }
-    // return Response.status(Response.Status.UNAUTHORIZED).build();
   }
+
+
 }

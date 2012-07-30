@@ -50,12 +50,27 @@ public class AccessToken extends AbstractEntity {
   @ManyToOne(optional=false) 
   @JoinColumn(name="client_id", nullable=false, updatable=false)
   private Client client;
-  
+
   @Column
   private long expires;
 
   @Column
   private String scopes;
+
+  public AccessToken() {
+    super();
+  }
+
+  public AccessToken(String token, String principal, Client client, long expires, String scopes) {
+    super();
+    this.token = token;
+    this.principal = principal;
+    this.client = client;
+    this.expires = expires;
+    this.scopes = scopes;
+  }
+
+
 
   /**
    * @return the token

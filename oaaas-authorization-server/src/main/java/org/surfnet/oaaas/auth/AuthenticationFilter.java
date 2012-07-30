@@ -17,6 +17,8 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.UUID;
 
@@ -29,8 +31,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
@@ -42,28 +46,56 @@ public class AuthenticationFilter implements Filter {
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
 
+  @Inject
+  private OAuth2Validator oAuth2Validator;
+
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
   }
 
   @Override
-  public void doFilter(ServletRequest req, ServletResponse response, FilterChain chain) throws IOException,
-      ServletException {
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
-    if (principalSet(request)) {
-      chain.doFilter(request, response);
-    } else if (initialRequest(request)) {
-      String authState = UUID.randomUUID().toString();
-      AuthorizationRequest authReq = new AuthorizationRequest(request.getParameter("response_type"),
-          request.getParameter("client_id"), request.getParameter("redirect_uri"), request.getParameter("scope"),
-          request.getParameter("state"), authState);
-      authorizationRequestRepository.save(authReq);
+    HttpServletResponse response = (HttpServletResponse) res;
 
-      request.setAttribute(AbstractAuthenticator.AUTH_STATE, authState);
-      request.setAttribute(AbstractAuthenticator.RETURN_URI, request.getRequestURI());
-      authenticator.doFilter(request, response, chain);
+    if (principalSet(request)) {
+      chain.doFilter(request, res);
+    } else if (initialRequest(request)) {
+      String responseType = request.getParameter("response_type");
+      String clientId = request.getParameter("client_id");
+      String redirectUri = request.getParameter("redirect_uri");
+      String scope = request.getParameter("scope");
+      String state = request.getParameter("state");
+      String authState = UUID.randomUUID().toString();
+
+      AuthorizationRequest authReq = new AuthorizationRequest(responseType, clientId, redirectUri, scope, state,
+          authState);
+
+      ValidationResponse validate = oAuth2Validator.validate(authReq);
+      if (validate.isError()) {
+        sendError(response, authReq, validate);
+      } else {
+        authorizationRequestRepository.save(authReq);
+
+        request.setAttribute(AbstractAuthenticator.AUTH_STATE, authState);
+        request.setAttribute(AbstractAuthenticator.RETURN_URI, request.getRequestURI());
+        authenticator.doFilter(request, response, chain);
+      }
     } else {
       authenticator.doFilter(request, response, chain);
+    }
+  }
+
+  private void sendError(HttpServletResponse response, AuthorizationRequest authReq, ValidationResponse validate)
+      throws IOException {
+    String redirectUri = authReq.getRedirectUri();
+    String state = authReq.getState();
+    if (isValidUrl(redirectUri)) {
+      response.sendRedirect(redirectUri.concat(redirectUri.contains("?") ? "&" : "?").concat("error=")
+          .concat(validate.getValue()).concat("&error_description=")
+          .concat(validate.getDescription()).concat(StringUtils.isBlank(state) ? "" : "&state=").concat(state));
+    } else {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, validate.getDescription());
     }
   }
 
@@ -82,5 +114,14 @@ public class AuthenticationFilter implements Filter {
 
   public void setAuthenticator(Filter authenticator) {
     this.authenticator = authenticator;
+  }
+
+  public static boolean isValidUrl(String redirectUri) {
+    try {
+      new URL(redirectUri);
+      return true;
+    } catch (MalformedURLException e) {
+      return false;
+    }
   }
 }

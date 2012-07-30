@@ -22,4 +22,7 @@ import org.surfnet.oaaas.model.Client;
 
 @Repository
 public interface ClientRepository extends CrudRepository<Client, Long> {
+  
+  Client findByName(String name);
+  
 }
