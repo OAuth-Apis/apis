@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.inject.Named;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -38,7 +37,7 @@ import com.yammer.dropwizard.views.ViewMessageBodyWriter;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
-@Named("theAuthenticationFilter")
+//@Named("theAuthenticationFilter")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
 
   private String forwardUri = "/doAuthorize";

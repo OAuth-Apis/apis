@@ -33,11 +33,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.codec.binary.Base64;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.sun.jersey.api.client.Client;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link Filter} which can be used to protect all relevant resources by
@@ -84,6 +87,7 @@ import com.sun.jersey.api.client.Client;
  */
 public class AuthorizationServerFilter implements Filter {
 
+  private static final Logger LOG = LoggerFactory.getLogger(AuthorizationServerFilter.class);
   /*
    * Endpoint of the authorization server (e.g. something like
    * http://<host-name>/v1/tokeninfo)
@@ -126,7 +130,7 @@ public class AuthorizationServerFilter implements Filter {
     /*
      * See http://bugs.sun.com/view_bug.do?bug_id=6947917
      */
-    this.authorizationValue = new String(Base64.encodeBase64String(name.concat(":").concat(secret).getBytes()))
+    this.authorizationValue = Base64.encodeBase64String(name.concat(":").concat(secret).getBytes())
         .replaceAll("\r\n?", "");
     if (cacheAccessTokens()) {
       this.cache = buildCache();
@@ -143,22 +147,29 @@ public class AuthorizationServerFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
     final String accessToken = getAccessToken(request);
-    if (accessToken != null) {
+    if (accessToken == null) {
+      LOG.info("No accesstoken on request. Will respond with error response");
+      sendError(response, HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint requires valid access token");
+      return;
+    } else {
       VerifyTokenResponse tokenResponse = null;
       try {
         tokenResponse = cacheAccessTokens() ? cache.get(accessToken, getCallable(accessToken))
             : getVerifyTokenResponse(accessToken);
       } catch (ExecutionException e) {
-        // will result in sendError which is the only sensible thing to do
+        LOG.error("While validating access token", e);
+        sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot verify access token");
+        return;
       }
+
       String userId = (tokenResponse != null ? tokenResponse.getUser_id() : null);
-      if (userId != null && userId.trim().length() > 0) {
+      if (StringUtils.isNotBlank(userId)) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
         return;
       }
     }
-    sendError(response);
+    sendError(response, HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint");
   }
 
   private Callable<VerifyTokenResponse> getCallable(final String accessToken) {
@@ -171,13 +182,16 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   private VerifyTokenResponse getVerifyTokenResponse(String accessToken) {
-    return client.resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
-        .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
+    return client
+        .resource(String.format(
+            "%s?access_token=%s", authorizationServerUrl, accessToken))
+        .header(HttpHeaders.AUTHORIZATION, authorizationValue)
+        .accept("application/json")
         .get(VerifyTokenResponse.class);
   }
 
-  protected void sendError(HttpServletResponse response) throws IOException {
-    response.sendError(HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint");
+  protected void sendError(HttpServletResponse response, int statusCode, String reason) throws IOException {
+    response.sendError(statusCode, reason);
     response.flushBuffer();
   }
 

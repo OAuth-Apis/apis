@@ -32,8 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import com.yammer.metrics.annotation.Timed;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.Client;
@@ -55,7 +53,6 @@ public class ClientResource {
 
 
   @GET
-  @Timed
   public Response getAll() {
     Response.ResponseBuilder responseBuilder;
     final Iterable<Client> clients = clientRepository.findAll();
@@ -70,7 +67,6 @@ public class ClientResource {
 
 
   @GET
-  @Timed
   @Path("/{clientId}.json")
   public Response getById(@PathParam("clientId") Long id) {
     Response.ResponseBuilder responseBuilder;
@@ -85,7 +81,6 @@ public class ClientResource {
   }
 
   @PUT
-  @Timed
   public Response put(@Valid Client client) {
 
     // TODO: get resourceServer from authentication process, and put that in client
@@ -103,7 +98,6 @@ public class ClientResource {
   }
 
   @DELETE
-  @Timed
   @Path("/{clientId}.json")
   public Response delete(@PathParam("clientId") Long id) {
     Client client = clientRepository.findOne(id);
@@ -118,7 +112,6 @@ public class ClientResource {
   }
 
   @POST
-  @Timed
   @Path("/{clientId}.json")
   public Response post(@Valid Client newOne, @PathParam("clientId") Long id) {
     if (clientRepository.findOne(id) == null) {

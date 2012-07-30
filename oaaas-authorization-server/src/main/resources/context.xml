@@ -30,7 +30,7 @@
   <datajpa:repositories base-package="org.surfnet.oaaas.repository" />
   <tx:annotation-driven transaction-manager="transactionManager" />
 
-  <context:property-placeholder location="application.properties" />
+  <context:property-placeholder location="classpath*:application.properties" />
   <context:component-scan base-package="org.surfnet.oaaas" />
 
   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

@@ -1,0 +1,4 @@
+- JAX-RS provides for application bootstrapping in non-jaxrs-aware web containers. Dropwizard does not comply to this.
+What type of bootstrapping should we adapt to?
+https://cwiki.apache.org/WINK/jax-rs-getting-started.html
+
