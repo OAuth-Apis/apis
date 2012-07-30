@@ -16,8 +16,6 @@
 
 package org.surfnet.oaaas.model;
 
-import java.util.UUID;
-
 import org.junit.Test;
 
 import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
@@ -35,6 +33,7 @@ public class ResourceServerTest {
     r.setId(1L);
     r.setContactName("Geert");
     r.setName("myname");
+    r.setOwner("owner");
     assertThat("a resource server can be serialized to JSON",
         asJson(r),
         is(equalTo(jsonFixture("fixtures/resourceServer1.json"))));

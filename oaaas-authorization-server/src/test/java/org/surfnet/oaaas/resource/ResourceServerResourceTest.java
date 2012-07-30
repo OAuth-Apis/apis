@@ -79,11 +79,13 @@ public class ResourceServerResourceTest extends ResourceTest {
     newOne.setSecret("s");
     newOne.setContactName("c");
     newOne.setName("name");
+    newOne.setOwner("owner");
     ResourceServer savedOne = new ResourceServer();
     savedOne.setId(101L);
     savedOne.setSecret("s");
     savedOne.setName("name");
     savedOne.setContactName("c");
+    savedOne.setOwner("owner");
     when(repository.save((ResourceServer) any())).thenReturn(savedOne);
 
     ClientResponse response = client()
@@ -118,13 +120,14 @@ public class ResourceServerResourceTest extends ResourceTest {
     existingOne.setContactName("contact");
     existingOne.setSecret("s");
     existingOne.setId(1L);
+    existingOne.setOwner("owner");
 
     ResourceServer newOne = new ResourceServer();
     newOne.setId(1L);
     newOne.setSecret("s");
     newOne.setName("newname");
     newOne.setContactName("contact");
-
+    newOne.setOwner("owner");
     when(repository.findOne(1L)).thenReturn(existingOne);
 
     when(repository.save((ResourceServer) any())).thenReturn(newOne);

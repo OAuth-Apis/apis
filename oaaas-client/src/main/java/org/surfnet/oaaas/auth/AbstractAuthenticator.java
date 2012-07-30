@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -42,6 +43,13 @@ public abstract class AbstractAuthenticator implements Filter {
    */
   public static final String AUTH_STATE = "AUTH_STATE";
 
+
+  /**
+   * The constant that contains the principal, set by concrete authenticators and consumed by
+   * the authorization endpoint.
+   */
+  public static final String PRINCIPAL = "PRINCIPAL";
+
   /**
    * Implement this method to perform the actual authentication.
    * Use {@link org.surfnet.oaaas.basic.BasicAuthenticator BasicAuthenticator}
@@ -51,13 +59,15 @@ public abstract class AbstractAuthenticator implements Filter {
    *   <p>assert that the user is authenticated. You can use the request and response for this. When
    *   not yet authenticated:</p>
    *   <ul>
-   *    <li>use {@link #getCsrfValue(javax.servlet.ServletRequest)} to pass-around for user agent communication </li>
+   *    <li>use {@link #getAuthStateValue(javax.servlet.ServletRequest)} to pass-around for user agent communication </li>
    *    <li>use {@link #getReturnUri(javax.servlet.ServletRequest)} if you need to step out and return to the current
    *    location
    *   </ul>
    *   <p>When authenticated:</p>
    *   <ul>
-   *    <li>call chain.doFilter(request, response) to continue.
+   *     <li>set the authState attribute, by calling {@link #setAuthStateValue(javax.servlet.ServletRequest, String)}</li>
+   *     <li>set the principal attribute, by calling {@link #setPrincipal(javax.servlet.ServletRequest, java.security.Principal)} </li>
+   *    <li>call chain.doFilter(request, response) to let the flow continue..
    *   </ul>
    * @param request the ServletRequest
    * @param response the ServletResponse
@@ -81,4 +91,18 @@ public abstract class AbstractAuthenticator implements Filter {
   public final String getReturnUri(ServletRequest request) {
     return (String) request.getAttribute(RETURN_URI);
   }
+
+  protected final void setAuthStateValue(ServletRequest request, String authState) {
+    request.setAttribute(AUTH_STATE, authState);
+  }
+
+  /**
+   * Set the given principal on the request.
+   * @param request the original ServletRequest
+   * @param principal the Principal to set.
+   */
+  protected final void setPrincipal(ServletRequest request, Principal principal) {
+    request.setAttribute(PRINCIPAL, principal);
+  }
+
 }

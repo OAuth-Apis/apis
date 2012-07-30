@@ -17,7 +17,6 @@
 package org.surfnet.oaaas.conext;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Properties;
 
 import javax.servlet.FilterChain;
@@ -43,6 +42,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
 import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
@@ -87,27 +87,30 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     if (isSAMLResponse(request)) {
       final Response samlResponse = extractSamlResponse(request);
 
-      if (samlResponse != null) {
+      if (samlResponse == null) {
+        LOG.info("Invalid response gotten from SAML IdP");
+        return;
+      } else {
         final UserDetails ud = authenticate(samlResponse);
-        if (ud != null) {
-          request.setAttribute("principal", new Principal() {
-            @Override
-            public String getName() {
-              return ud.getUsername();
-            }
-          });
-          // TODO: set csrfValue on request here
-//          request.setAttribute(request);
+        if (ud == null) {
+          LOG.info("Cannot get UserDetails from SAML response");
+        } else {
+          request.setAttribute("principal", new SimplePrincipal(ud.getUsername()));
+          setAuthStateValue(request, getSAMLRelayState(request));
           chain.doFilter(request, response);
+          return;
         }
       }
     }
-    sendAuthnRequest(response, getCsrfValue(request), getReturnUri(request));
+    sendAuthnRequest(response, getAuthStateValue(request), getReturnUri(request));
   }
 
-  private boolean isSAMLResponse(HttpServletRequest request) {
+
+  protected String getSAMLRelayState(HttpServletRequest request) {
+    return request.getParameter("RelayState");
+  }
+  protected boolean isSAMLResponse(HttpServletRequest request) {
     return request.getParameter("SAMLResponse") != null;
-//    return request.getRequestURI().equals(openSAMLContext.assertionConsumerUri());
   }
 
   private UserDetails authenticate(Response samlResponse) {
@@ -144,6 +147,9 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     final Response inboundSAMLMessage = (Response) messageContext.getInboundSAMLMessage();
 
+    // TODO: put this somewhere
+    messageContext.getRelayState();
+
     try {
       openSAMLContext.validatorSuite().validate(inboundSAMLMessage);
       return inboundSAMLMessage;
@@ -153,7 +159,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     }
   }
 
-  private void sendAuthnRequest(HttpServletResponse response, String csrfValue, String returnUri) throws IOException {
+  private void sendAuthnRequest(HttpServletResponse response, String authState, String returnUri) throws IOException {
     AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(openSAMLContext.entityId(), timeService,
         idService);
     EndpointGenerator endpointGenerator = new EndpointGenerator();
@@ -167,7 +173,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     LOG.debug("Sending authnRequest to {}", target);
 
-    String relayState = String.format("csrfValue=%s&returnUri=%s", csrfValue, returnUri);
+    String relayState = authState;
     try {
       openSAMLContext.samlMessageHandler().sendSAMLMessage(authnRequest, endpoint, response, relayState);
     } catch (MessageEncodingException mee) {

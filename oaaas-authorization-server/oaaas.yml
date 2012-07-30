@@ -1,8 +1,8 @@
 http:
   port: 8080
 
-#authenticatorClass: org.surfnet.oaaas.conext.SAMLAuthenticator
-authenticatorClass: org.surfnet.oaaas.basic.BasicAuthenticator
+authenticatorClass: org.surfnet.oaaas.conext.SAMLAuthenticator
+#authenticatorClass: org.surfnet.oaaas.basic.BasicAuthenticator
 
 logging:
   level: info

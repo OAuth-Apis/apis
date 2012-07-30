@@ -54,6 +54,7 @@ public class ResourceServer extends AbstractEntity {
   
   @Column
   @NotNull
+  // FIXME: do not return this in rest response and do not accept in requests
   private String owner;
 
   @Column
@@ -117,5 +118,13 @@ public class ResourceServer extends AbstractEntity {
    */
   public void setThumbNailUrl(String thumbNailUrl) {
     this.thumbNailUrl = thumbNailUrl;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+
+  public String getOwner() {
+    return owner;
   }
 }

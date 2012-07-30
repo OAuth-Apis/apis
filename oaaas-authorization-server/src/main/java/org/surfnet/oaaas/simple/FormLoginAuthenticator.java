@@ -17,7 +17,6 @@
 package org.surfnet.oaaas.simple;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -37,6 +36,7 @@ import com.yammer.dropwizard.views.View;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
 
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 @Named("theAuthenticationFilter")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
@@ -70,13 +70,9 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
 
   private void processForm(final HttpServletRequest request) {
     // TODO: process POST parameters, actually perform authentication at user repository
-    request.setAttribute("principal", new Principal() {
-      @Override
-      public String getName() {
-        return request.getParameter("username");
-      }
-    });
-    request.setAttribute(AbstractAuthenticator.AUTH_STATE, request.getParameter(AbstractAuthenticator.AUTH_STATE));
+
+    setAuthStateValue(request, request.getParameter("authState"));
+    setPrincipal(request, new SimplePrincipal(request.getParameter("username")));
   }
 
   private MultivaluedMap<String,Object> headersAsMap(HttpServletRequest request) {

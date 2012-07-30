@@ -72,7 +72,8 @@ public class AuthenticationFilter implements Filter {
   }
 
   private boolean principalSet(ServletRequest request) {
-    return request.getAttribute("principal") != null && request.getAttribute("principal") instanceof Principal;
+    return request.getAttribute(AbstractAuthenticator.PRINCIPAL) != null
+        && request.getAttribute(AbstractAuthenticator.PRINCIPAL) instanceof Principal;
   }
 
   @Override

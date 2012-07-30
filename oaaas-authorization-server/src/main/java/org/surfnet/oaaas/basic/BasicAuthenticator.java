@@ -17,7 +17,6 @@
 package org.surfnet.oaaas.basic;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.inject.Named;
 import javax.servlet.FilterChain;
@@ -31,6 +30,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 /**
  * Authenticator that uses HTTP Basic Authentication.
@@ -48,14 +48,14 @@ public class BasicAuthenticator extends AbstractAuthenticator {
 
     final UserPassCredentials credentials = new UserPassCredentials(request.getHeader("Authorization"));
 
+
     if (authenticate(credentials)) {
-      request.setAttribute("principal", new Principal() {
-        public String getName() {
-           return credentials.getUsername();
-        }
-      });
+      // TODO: see below, need to implement transfer of auth state with client
+      // setAuthStateValue(request, ....);
+      setPrincipal(request, new SimplePrincipal(credentials.getUsername()));
       chain.doFilter(request, response);
     } else {
+      // TODO: transfer auth state somehow... cookie?
       response.setHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization required");
       response.flushBuffer();

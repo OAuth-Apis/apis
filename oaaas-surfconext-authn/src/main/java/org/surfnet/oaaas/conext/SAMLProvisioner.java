@@ -37,7 +37,7 @@ public class SAMLProvisioner implements Provisioner {
   @Override
   public UserDetails provisionUser(Assertion assertion) {
     LOG.debug("Assertion: {}", assertion);
-    return new User(assertion.getID(), null, Arrays.asList(new SimpleAuthority("ROLE_USER")));
+    return new User(assertion.getID(), "", Arrays.asList(new SimpleAuthority("USER")));
   }
 
   public static class SimpleAuthority implements GrantedAuthority {
