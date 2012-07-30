@@ -16,11 +16,12 @@
 
 package org.surfnet.oaaas.conext;
 
-import java.util.Arrays;
-
-import javax.inject.Named;
+import java.util.Collections;
+import java.util.List;
 
 import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.Attribute;
+import org.opensaml.saml2.core.AttributeStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,15 +30,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import nl.surfnet.spring.security.opensaml.Provisioner;
 
-@Named
 public class SAMLProvisioner implements Provisioner {
+
+  private static final String UID = "urn:oid:1.3.6.1.4.1.1076.20.40.40.1";
+
 
   private static final Logger LOG = LoggerFactory.getLogger(SAMLProvisioner.class);
 
   @Override
   public UserDetails provisionUser(Assertion assertion) {
-    LOG.debug("Assertion: {}", assertion);
-    return new User(assertion.getID(), "", Arrays.asList(new SimpleAuthority("USER")));
+    String userId = getValueFromAttributeStatements(assertion, UID);
+    return new User(userId, "", Collections.singletonList(new SimpleAuthority("USER")));
   }
 
   public static class SimpleAuthority implements GrantedAuthority {
@@ -54,5 +57,19 @@ public class SAMLProvisioner implements Provisioner {
     public String getAuthority() {
       return name;
     }
+  }
+
+
+  private String getValueFromAttributeStatements(final Assertion assertion, final String name) {
+    final List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
+    for (AttributeStatement attributeStatement : attributeStatements) {
+      final List<Attribute> attributes = attributeStatement.getAttributes();
+      for (Attribute attribute : attributes) {
+        if (name.equals(attribute.getName())) {
+          return attribute.getAttributeValues().get(0).getDOM().getTextContent();
+        }
+      }
+    }
+    return "";
   }
 }

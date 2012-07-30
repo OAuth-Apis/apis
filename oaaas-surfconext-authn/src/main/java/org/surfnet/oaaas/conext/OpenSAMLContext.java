@@ -82,12 +82,11 @@ public class OpenSAMLContext {
       throw new RuntimeException(e);
     }
 
-    // TODO: sensible defaults for all properties
-    replayCacheDuration = Long.parseLong(properties.getProperty("replayCacheDuration", "1000"));
-    maxParserPoolSize = Integer.parseInt(properties.getProperty("maxParserPoolSize", "1000"));
+    replayCacheDuration = Long.parseLong(properties.getProperty("replayCacheDuration", "14400000"));
+    maxParserPoolSize = Integer.parseInt(properties.getProperty("maxParserPoolSize", "2"));
     entityId = properties.getProperty("entityId", "no-property-named-entityId");
-    clockSkew = Integer.parseInt(properties.getProperty("clockSkew", "1000"));
-    newExpires = Integer.parseInt(properties.getProperty("newExpires", "1000"));
+    clockSkew = Integer.parseInt(properties.getProperty("clockSkew", "90"));
+    newExpires = Integer.parseInt(properties.getProperty("newExpires", "300"));
     assertionConsumerURI = properties.getProperty("assertionConsumerURI", DEFAULT_ASSERTION_CONSUMER_URI);
     wayfUrlMetadata = properties.getProperty("wayfUrlMetadata", "no-property-named-wayfUrlMetadata");
     wayfCertificate = properties.getProperty("wayfCertificate", "no-property-named-wayfCertificate");

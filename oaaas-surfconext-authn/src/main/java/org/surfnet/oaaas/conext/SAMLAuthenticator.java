@@ -117,8 +117,6 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     // throws AuthenticationException when not authenticated successfully.
     try {
-      // TODO: consume() uses the configured Provisioner to create a UserDetails. We should use a more sensible
-      // UserDetails there....
       return openSAMLContext.assertionConsumer().consume(samlResponse);
     } catch (AuthenticationException e) {
       LOG.info("When authenticating SAML response", e);
@@ -146,9 +144,6 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     }
 
     final Response inboundSAMLMessage = (Response) messageContext.getInboundSAMLMessage();
-
-    // TODO: put this somewhere
-    messageContext.getRelayState();
 
     try {
       openSAMLContext.validatorSuite().validate(inboundSAMLMessage);
