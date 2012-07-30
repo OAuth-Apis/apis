@@ -51,6 +51,10 @@ public class ResourceServer extends AbstractEntity {
   @Column
   @NotNull
   private String contactName;
+  
+  @Column
+  @NotNull
+  private String owner;
 
   @Column
   private String contactEmail;

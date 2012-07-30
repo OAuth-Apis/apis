@@ -60,20 +60,20 @@ public class AuthorizationRequest extends AbstractEntity {
   @Column
   @NotNull
   @Unique
-  private String csrfValue;
+  private String authState;
   
   public AuthorizationRequest() {
     super();
   }
 
-  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scope, String state, String csrfValue) {
+  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scope, String state, String authState) {
     super();
     this.responseType = responseType;
     this.clientId = clientId;
     this.redirectUri = redirectUri;
     this.scope = scope;
     this.state = state;
-    this.csrfValue = csrfValue;
+    this.authState = authState;
   }
 
   /**
@@ -152,17 +152,18 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @return the csrfValue
+   * @return the authState
    */
-  public String getCsrfValue() {
-    return csrfValue;
+  public String getAuthState() {
+    return authState;
   }
 
   /**
-   * @param csrfValue the csrfValue to set
+   * @param authState the authState to set
    */
-  public void setCsrfValue(String csrfValue) {
-    this.csrfValue = csrfValue;
+  public void setAuthState(String authState) {
+    this.authState = authState;
   }
 
+ 
 }

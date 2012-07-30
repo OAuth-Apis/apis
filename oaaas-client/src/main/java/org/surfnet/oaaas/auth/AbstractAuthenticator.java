@@ -30,8 +30,17 @@ import javax.servlet.ServletResponse;
  */
 public abstract class AbstractAuthenticator implements Filter {
 
-  private static final String CSRF_VALUE = "csrfValue";
-  private static final String RETURN_URI = "returnUri";
+  /*
+   * Constant to set the return uri when authentication is done
+   */
+  public static final String RETURN_URI = "returnUri";
+
+  /*
+   * The constant used to keep 'session' state when we give flow control to the
+   * authenticator filter. Part of the contract with the authenticator Filter is
+   * that we expect to get the value back when authentication is done.
+   */
+  public static final String AUTH_STATE = "AUTH_STATE";
 
   /**
    * Implement this method to perform the actual authentication.
@@ -65,8 +74,8 @@ public abstract class AbstractAuthenticator implements Filter {
   public void destroy() {
   }
 
-  public final String getCsrfValue(ServletRequest request) {
-    return (String) request.getAttribute(CSRF_VALUE);
+  public final String getAuthStateValue(ServletRequest request) {
+    return (String) request.getAttribute(AUTH_STATE);
   }
 
   public final String getReturnUri(ServletRequest request) {

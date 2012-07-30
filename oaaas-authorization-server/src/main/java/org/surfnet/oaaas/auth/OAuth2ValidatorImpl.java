@@ -16,32 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.simple;
+package org.surfnet.oaaas.auth;
 
-import com.yammer.dropwizard.views.View;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-public class LoginView extends View {
+import org.surfnet.oaaas.repository.ClientRepository;
 
-  private Context context;
+/**
+ * All business logic related to the OAuth2 spec is coded
+ *
+ */
+@Named
+public class OAuth2ValidatorImpl {
 
-  public LoginView(String forwardUri, String authState) {
-    super("login.ftl");
-    this.context = new Context(forwardUri, authState);
+  public static final String IMPLICIT_GRANT_RESPONSE_TYPE = "token"; 
+  public static final String AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE = "code";
+  
+  @Inject
+  private ClientRepository clientRepository;
+  
+  
+  
 
-  }
-
-  /**
-   * @return the context
-   */
-  public Context getContext() {
-    return context;
-  }
-
-  /**
-   * @param context
-   *          the context to set
-   */
-  public void setContext(Context context) {
-    this.context = context;
-  }
 }

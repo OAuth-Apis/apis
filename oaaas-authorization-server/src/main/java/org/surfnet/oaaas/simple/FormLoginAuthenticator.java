@@ -57,11 +57,11 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
   }
 
   private void processInitial(HttpServletRequest request, ServletResponse response) throws IOException {
-    final String uri = String.format("%s?forwardUri=%s&csrfValue=%s",
-        forwardUri, getReturnUri(request), getCsrfValue(request));
+    final String uri = String.format("%s?forwardUri=%s&authState=%s",
+        forwardUri, getReturnUri(request), getAuthStateValue(request));
 
     ViewMessageBodyWriter w = new ViewMessageBodyWriter(new MockHttpHeaders());
-    View view = new LoginView(getReturnUri(request), getCsrfValue(request));
+    View view = new LoginView(getReturnUri(request), getAuthStateValue(request));
 
     w.writeTo(view, LoginView.class, null, null, MediaType.TEXT_HTML_TYPE,
         headersAsMap(request), response.getOutputStream());
@@ -76,7 +76,7 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
         return request.getParameter("username");
       }
     });
-    request.setAttribute("csrfValue", request.getParameter("csrfValue"));
+    request.setAttribute(AbstractAuthenticator.AUTH_STATE, request.getParameter(AbstractAuthenticator.AUTH_STATE));
   }
 
   private MultivaluedMap<String,Object> headersAsMap(HttpServletRequest request) {

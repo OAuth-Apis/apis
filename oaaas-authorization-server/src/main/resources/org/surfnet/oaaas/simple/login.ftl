@@ -41,8 +41,8 @@
 						</div>
 						<input type="hidden" name="forwardUri"
 							value="${context.forwardUri}" /> 
-						<input type="hidden" name="csrfValue"
-							value="${context.csrfValue}" /> 
+						<input type="hidden" name="authState"
+							value="${context.authState}" /> 
 							
 					</fieldset>
 					<div class="control-group">

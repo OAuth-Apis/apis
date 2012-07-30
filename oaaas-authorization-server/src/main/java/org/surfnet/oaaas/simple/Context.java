@@ -25,12 +25,12 @@ package org.surfnet.oaaas.simple;
 public class Context {
 
   private String forwardUri;
-  private String csrfValue;
+  private String authState;
 
-  public Context(String forwardUri, String csrfValue) {
+  public Context(String forwardUri, String authState) {
     super();
     this.forwardUri = forwardUri;
-    this.csrfValue = csrfValue;
+    this.authState = authState;
   }
 
   /**
@@ -49,18 +49,19 @@ public class Context {
   }
 
   /**
-   * @return the csrfValue
+   * @return the authState
    */
-  public String getCsrfValue() {
-    return csrfValue;
+  public String getAuthState() {
+    return authState;
   }
 
   /**
-   * @param csrfValue
-   *          the csrfValue to set
+   * @param authState the authState to set
    */
-  public void setCsrfValue(String csrfValue) {
-    this.csrfValue = csrfValue;
+  public void setAuthState(String authState) {
+    this.authState = authState;
   }
+
+ 
 
 }

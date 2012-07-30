@@ -24,6 +24,7 @@ import java.security.Principal;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,22 +36,25 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
-
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
  * href="http://tools.ietf.org/html/draft-ietf-oauth-v2"> the OAuth spec</a>.
  * 
  */
-@Component
+@Named
 @Path("/oauth2")
 @Produces(MediaType.APPLICATION_JSON)
 public class TokenResource {
 
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
+  
+  private static final String IMPLICIT_GRANT_RESPONSE_TYPE = "token"; 
+  private static final String AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE = "code"; 
+  
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
 
   @GET
@@ -62,17 +66,33 @@ public class TokenResource {
   @POST
   @Path("/authorize")
   public Response authorizeCallback(@Context HttpServletRequest request) {
-    String csrfValue = (String) request.getAttribute("csrfValue");
-    AuthorizationRequest authReq = authorizationRequestRepository.findByCsrfValue(csrfValue);
-
+    String authState = (String) request.getAttribute(AbstractAuthenticator.AUTH_STATE);
+    if (authState == null) {
+      LOG.warn("Null authState while in TokenResource#authorizeCallback");
+      return Response.serverError().build();
+    }
+    AuthorizationRequest authReq = authorizationRequestRepository.findByAuthState(authState);
+    if (authReq == null) {
+      LOG.warn("Null AuthorizationRequest while in TokenResource#authorizeCallback processing authState {}",authState);
+      return Response.serverError().build();
+    }
     Principal principal = (Principal) request.getAttribute("principal");
+    if (principal == null) {
+      LOG.warn("Null principal while in TokenResource#authorizeCallback");
+      return Response.serverError().build();
+    }
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Principal from HttpServletRequest: {}", principal);
+    }
+    if (authReq.getResponseType().equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
+      
+    }
     /*
      * TODO save principal in AuthorizationRequest
      */
-    LOG.debug("principal: {}", principal);
     String authorizationCode = UUID.randomUUID().toString();
     /*
-     * TODO implicit grant check
+     *  
      */
     String uri = String.format(authReq.getRedirectUri().concat("?").concat("code=%s").concat("&state=%s"),
         authorizationCode, authReq.getState());

@@ -47,23 +47,20 @@ public class AuthenticationFilter implements Filter {
   }
 
   @Override
-  public void doFilter(ServletRequest req, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+  public void doFilter(ServletRequest req, ServletResponse response, FilterChain chain) throws IOException,
+      ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     if (principalSet(request)) {
       chain.doFilter(request, response);
     } else if (initialRequest(request)) {
-      String csrfValue = UUID.randomUUID().toString();
-
-      AuthorizationRequest authReq = new AuthorizationRequest(
-          request.getParameter("response_type"),
-          request.getParameter("client_id"),
-          request.getParameter("redirect_uri"),
-          request.getParameter("scope"),
-          request.getParameter("state"),
-          csrfValue);
+      String authState = UUID.randomUUID().toString();
+      AuthorizationRequest authReq = new AuthorizationRequest(request.getParameter("response_type"),
+          request.getParameter("client_id"), request.getParameter("redirect_uri"), request.getParameter("scope"),
+          request.getParameter("state"), authState);
       authorizationRequestRepository.save(authReq);
-      request.setAttribute("csrfValue", csrfValue);
-      request.setAttribute("returnUri", request.getRequestURI());
+
+      request.setAttribute(AbstractAuthenticator.AUTH_STATE, authState);
+      request.setAttribute(AbstractAuthenticator.RETURN_URI, request.getRequestURI());
       authenticator.doFilter(request, response, chain);
     } else {
       authenticator.doFilter(request, response, chain);

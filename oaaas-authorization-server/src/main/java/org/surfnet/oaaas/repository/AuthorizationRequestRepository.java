@@ -23,6 +23,6 @@ import org.surfnet.oaaas.model.AuthorizationRequest;
 @Repository
 public interface AuthorizationRequestRepository extends CrudRepository<AuthorizationRequest, Long> {
   
-  AuthorizationRequest findByCsrfValue(String csrfValue);
+  AuthorizationRequest findByAuthState(String authState);
   
 }
