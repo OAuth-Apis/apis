@@ -52,7 +52,7 @@
 	<commons-codec.version>1.4</commons-codec.version>
 	<guava.version>12.0.1</guava.version>
 	<coin-test.version>2.8.1</coin-test.version>
-	<servlet-api.version></servlet-api.version>
+	<servlet-api.version>3.0.1</servlet-api.version>
   </properties>
 
   <dependencyManagement>

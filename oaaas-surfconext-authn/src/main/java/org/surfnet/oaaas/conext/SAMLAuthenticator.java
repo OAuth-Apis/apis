@@ -84,21 +84,30 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     LOG.debug("Hitting SAML Authenticator filter");
 
-    final Response samlResponse = extractSamlResponse(request);
+    if (isSAMLResponse(request)) {
+      final Response samlResponse = extractSamlResponse(request);
 
-    if (samlResponse != null) {
-      final UserDetails ud = authenticate(samlResponse);
-      if (ud != null) {
-        request.setAttribute("principal", new Principal() {
-          @Override
-          public String getName() {
-            return ud.getUsername();
-          }
-        });
-        chain.doFilter(request, response);
+      if (samlResponse != null) {
+        final UserDetails ud = authenticate(samlResponse);
+        if (ud != null) {
+          request.setAttribute("principal", new Principal() {
+            @Override
+            public String getName() {
+              return ud.getUsername();
+            }
+          });
+          // TODO: set csrfValue on request here
+//          request.setAttribute(request);
+          chain.doFilter(request, response);
+        }
       }
     }
-    sendAuthnRequest(response);
+    sendAuthnRequest(response, getCsrfValue(request), getReturnUri(request));
+  }
+
+  private boolean isSAMLResponse(HttpServletRequest request) {
+    return request.getParameter("SAMLResponse") != null;
+//    return request.getRequestURI().equals(openSAMLContext.assertionConsumerUri());
   }
 
   private UserDetails authenticate(Response samlResponse) {
@@ -144,7 +153,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     }
   }
 
-  private void sendAuthnRequest(HttpServletResponse response) throws IOException {
+  private void sendAuthnRequest(HttpServletResponse response, String csrfValue, String returnUri) throws IOException {
     AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(openSAMLContext.entityId(), timeService,
         idService);
     EndpointGenerator endpointGenerator = new EndpointGenerator();
@@ -154,12 +163,13 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     Endpoint endpoint = endpointGenerator.generateEndpoint(
         SingleSignOnService.DEFAULT_ELEMENT_NAME, target, openSAMLContext.assertionConsumerUri());
 
-    AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
+    AuthnRequest authnRequest = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
 
     LOG.debug("Sending authnRequest to {}", target);
 
+    String relayState = String.format("csrfValue=%s&returnUri=%s", csrfValue, returnUri);
     try {
-      openSAMLContext.samlMessageHandler().sendSAMLMessage(authnReqeust, endpoint, response);
+      openSAMLContext.samlMessageHandler().sendSAMLMessage(authnRequest, endpoint, response, relayState);
     } catch (MessageEncodingException mee) {
       LOG.error("Could not send authnRequest to Identity Provider.", mee);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

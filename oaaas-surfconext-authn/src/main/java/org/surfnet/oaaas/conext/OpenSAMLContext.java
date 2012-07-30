@@ -146,7 +146,14 @@ public class OpenSAMLContext {
   }
 
   private SignatureSecurityPolicyRule signatureBuilder() {
-    return new SignatureSecurityPolicyRule(new SAMLSignatureProfileValidator());
+    final SignatureSecurityPolicyRule signatureSecurityPolicyRule = new SignatureSecurityPolicyRule(new SAMLSignatureProfileValidator());
+    signatureSecurityPolicyRule.setCredentialResolver(keyStoreCredentialResolver());
+    try {
+      signatureSecurityPolicyRule.afterPropertiesSet();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    return signatureSecurityPolicyRule;
   }
 
   private SecurityPolicyDelegate securityPolicy() {
@@ -177,6 +184,11 @@ public class OpenSAMLContext {
   private CertificateStore certificateStore() {
     final CertificateStoreImpl certificateStore = new CertificateStoreImpl();
     certificateStore.setCertificates(Collections.singletonMap(wayfUrlMetadata, wayfCertificate));
+    try {
+      certificateStore.afterPropertiesSet();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
     return certificateStore;
   }
 
