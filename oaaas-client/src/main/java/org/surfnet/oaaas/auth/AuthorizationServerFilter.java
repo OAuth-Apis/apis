@@ -124,8 +124,7 @@ public class AuthorizationServerFilter implements Filter {
 
     this.authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
     /*
-     * See http://bugs.sun.com/bugdatabase/view_bug.do;jsessionid=
-     * c742d1615af66e3dd9568f7632ab3?bug_id=6947917
+     * See http://bugs.sun.com/view_bug.do?bug_id=6947917
      */
     this.authorizationValue = new String(Base64.encodeBase64String(name.concat(":").concat(secret).getBytes()))
         .replaceAll("\r\n?", "");
