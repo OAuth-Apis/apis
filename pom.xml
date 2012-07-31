@@ -28,6 +28,7 @@
     <module>oaaas-client</module>
     <module>oaaas-example-resource-server</module>
     <module>oaaas-authorization-server</module>
+    <module>oaaas-authorization-server-war</module>
     <module>oaaas-surfconext-authn</module>
     <module>oaaas-example-resource-server-war</module>
     <!--<module>oaaas-performance</module>-->
