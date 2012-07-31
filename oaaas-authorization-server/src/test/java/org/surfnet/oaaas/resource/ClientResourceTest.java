@@ -77,7 +77,7 @@ public class ClientResourceTest extends ResourceTest {
   @Test
   public void getAll() {
     when(repository.findAll()).thenReturn(Arrays.asList(new Client(), new Client(), new Client()));
-    ClientResponse response = client().resource("/admin/client").get(ClientResponse.class);
+    ClientResponse response = client().resource("/admin/resourceSerclient").get(ClientResponse.class);
     assertEquals(200, response.getStatus());
     List<Client> clients = response.getEntity(new GenericType<ArrayList<Client>>(ArrayList.class));
     assertEquals(3, clients.size());

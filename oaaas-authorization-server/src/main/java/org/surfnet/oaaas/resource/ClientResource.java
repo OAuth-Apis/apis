@@ -44,7 +44,7 @@ import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 @Named
-@Path("/admin/{resourceServerId}/client")
+@Path("/admin/resourceServer/{resourceServerId}/client")
 @Produces(MediaType.APPLICATION_JSON)
 public class ClientResource {
 
