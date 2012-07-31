@@ -42,9 +42,17 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class Client extends AbstractEntity {
 
-  @Column(unique = true)
+  @Column
   @NotNull
   private String name;
+
+  @Column(unique = true)
+  @NotNull
+  private String clientId;
+
+  @Column(unique = true)
+  @NotNull
+  private String secret;
 
   @Column
   private String description;
@@ -68,7 +76,7 @@ public class Client extends AbstractEntity {
   private String thumbNailUrl;
   
   @Column
-  private String redirectUri;
+  private String redirectUris;
   
   @Column
   private boolean skipConsent;
@@ -147,19 +155,7 @@ public class Client extends AbstractEntity {
     this.thumbNailUrl = thumbNailUrl;
   }
 
-  /**
-   * @return the redirectUri
-   */
-  public String getRedirectUri() {
-    return redirectUri;
-  }
-
-  /**
-   * @param redirectUri the redirectUri to set
-   */
-  public void setRedirectUri(String redirectUri) {
-    this.redirectUri = redirectUri;
-  }
+ 
 
   /**
    * @return the skipConsent
@@ -173,6 +169,48 @@ public class Client extends AbstractEntity {
    */
   public void setSkipConsent(boolean skipConsent) {
     this.skipConsent = skipConsent;
+  }
+
+  /**
+   * @return the clientId
+   */
+  public String getClientId() {
+    return clientId;
+  }
+
+  /**
+   * @param clientId the clientId to set
+   */
+  public void setClientId(String clientId) {
+    this.clientId = clientId;
+  }
+
+  /**
+   * @return the secret
+   */
+  public String getSecret() {
+    return secret;
+  }
+
+  /**
+   * @param secret the secret to set
+   */
+  public void setSecret(String secret) {
+    this.secret = secret;
+  }
+
+  /**
+   * @return the redirectUris
+   */
+  public String getRedirectUris() {
+    return redirectUris;
+  }
+
+  /**
+   * @param redirectUris the redirectUris to set
+   */
+  public void setRedirectUris(String redirectUris) {
+    this.redirectUris = redirectUris;
   }
 
 }

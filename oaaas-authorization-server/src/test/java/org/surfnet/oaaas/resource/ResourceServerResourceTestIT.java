@@ -43,8 +43,6 @@ public class ResourceServerResourceTestIT {
 
   @Test
   public void get() {
-
-
     WebResource webResource = client.resource(BASE_URL + "/1.json");
 
     ClientResponse response = webResource.accept("application/json")
@@ -61,7 +59,6 @@ public class ResourceServerResourceTestIT {
 
   @Test
   public void put() {
-
     ResourceServer resourceServer = new ResourceServer();
     resourceServer.setName("thename");
     resourceServer.setSecret("thesecret");

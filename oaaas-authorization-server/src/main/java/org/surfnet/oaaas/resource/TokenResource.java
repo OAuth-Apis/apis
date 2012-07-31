@@ -26,7 +26,9 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -40,10 +42,11 @@ import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.model.AccessToken;
+import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
-
 
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
@@ -62,6 +65,10 @@ public class TokenResource {
   private AccessTokenRepository accessTokenRepository;
 
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
+
+  private static final String GRANT_TYPE = "authorization_code";
+  
+  private static final String BASIC = "basic";
 
   @GET
   @Path("/authorize")
@@ -93,7 +100,7 @@ public class TokenResource {
       LOG.debug("Principal from HttpServletRequest: {}", principal);
     }
     if (authReq.getResponseType().equals(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE)) {
-      //Implement refresh tokens
+      // TODO Implement refresh tokens
       AccessToken accessToken = new AccessToken(UUID.randomUUID().toString(), principal.getName(), authReq.getClient(),
           0, authReq.getScope());
       accessToken = accessTokenRepository.save(accessToken);
@@ -101,6 +108,25 @@ public class TokenResource {
     } else {
       return sendAuthorizationCodeResponse(authReq);
     }
+  }
+
+  @POST
+  @Path("/token")
+  public Response token(@HeaderParam("Authorization")
+  String authorization, @Valid AccessTokenRequest accessTokenRequest) {
+    /*
+     * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-2.3.1
+     * 
+     * We support both options. Clients can use the Basic Authentication or
+     * include the secret and id  in the request body
+     */
+    if (StringUtils.isBlank(authorization)) {
+      
+    } else {
+      
+    }
+    String uri = null;
+    return redirect(uri);
   }
 
   private Response sendAuthorizationCodeResponse(AuthorizationRequest authReq) {
@@ -133,6 +159,5 @@ public class TokenResource {
       throw new RuntimeException(String.format("Redirect URI '%s' is not valid", uri));
     }
   }
-
 
 }

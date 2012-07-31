@@ -68,7 +68,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       return ValidationResponse.UNKNOWN_CLIENT_ID;
     }
     request.setClient(client);
-    String uris = client.getRedirectUri();
+    String uris = client.getRedirectUris();
     String redirectUri = request.getRedirectUri();
     if (StringUtils.isBlank(redirectUri)) {
       if (responseType.equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {

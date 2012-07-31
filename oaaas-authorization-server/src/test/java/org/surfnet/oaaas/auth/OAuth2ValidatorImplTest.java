@@ -100,7 +100,7 @@ public class OAuth2ValidatorImplTest {
   private Client createClient(String name) {
     Client client = new Client();
     client.setName("client-app");
-    client.setRedirectUri("http://gothere.nl,http://gohere.nl");
+    client.setRedirectUris("http://gothere.nl,http://gohere.nl");
     client.setScopes("read,update");
     return client;
   }

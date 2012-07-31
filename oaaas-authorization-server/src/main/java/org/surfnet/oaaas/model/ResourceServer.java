@@ -27,6 +27,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 /**
  * Representation of the server hosting the protected resources, capable of
  * accepting and responding to protected resource requests using access tokens.
@@ -41,6 +43,10 @@ public class ResourceServer extends AbstractEntity {
   @NotNull
   private String name;
 
+  @Column(unique = true)
+  @NotNull
+  private String key;
+
   @Column
   private String scopes;
 
@@ -54,7 +60,7 @@ public class ResourceServer extends AbstractEntity {
   
   @Column
   @NotNull
-  // FIXME: do not return this in rest response and do not accept in requests
+  @JsonIgnore
   private String owner;
 
   @Column
@@ -126,5 +132,33 @@ public class ResourceServer extends AbstractEntity {
 
   public String getOwner() {
     return owner;
+  }
+
+  /**
+   * @return the key
+   */
+  public String getKey() {
+    return key;
+  }
+
+  /**
+   * @param key the key to set
+   */
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  /**
+   * @return the clients
+   */
+  public List<Client> getClients() {
+    return clients;
+  }
+
+  /**
+   * @param clients the clients to set
+   */
+  public void setClients(List<Client> clients) {
+    this.clients = clients;
   }
 }
