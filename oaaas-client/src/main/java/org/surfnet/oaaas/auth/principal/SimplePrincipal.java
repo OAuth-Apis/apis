@@ -36,4 +36,8 @@ public class SimplePrincipal implements Principal, Serializable {
   public String getName() {
     return username;
   }
+
+  public String toString() {
+    return "SimplePrincipal['" + username + "']";
+  }
 }

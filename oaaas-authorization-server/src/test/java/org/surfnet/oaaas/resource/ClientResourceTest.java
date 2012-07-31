@@ -29,7 +29,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ClientRepository;
+import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -37,6 +39,9 @@ import static org.mockito.Mockito.when;
 
 public class ClientResourceTest extends ResourceTest {
 
+
+  @Mock
+  private ResourceServerRepository resourceServerRepository;
 
   @Mock
   private ClientRepository repository;
@@ -49,11 +54,15 @@ public class ClientResourceTest extends ResourceTest {
     clientResource = new ClientResource();
     MockitoAnnotations.initMocks(this);
     addResource(clientResource);
+
   }
 
   @Test
   public void getNonExisting() {
-    ClientResponse response = client().resource("/admin/client/1.json").get(ClientResponse.class);
+    final ResourceServer resourceServer = new ResourceServer();
+    when(resourceServerRepository.findByIdAndOwner(1L, "me")).thenReturn(resourceServer);
+
+    ClientResponse response = client().resource("/admin/resourceServer/1/client/1.json").get(ClientResponse.class);
     assertEquals(404, response.getStatus());
     verify(repository).findOne(1L);
   }

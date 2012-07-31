@@ -16,8 +16,10 @@
 
 package org.surfnet.oaaas.boot;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 
 /**
  * Configuration and wiring of @Beans.
@@ -27,4 +29,8 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource("classpath*:*context.xml")
 public class SpringConfiguration {
 
+  @Bean
+  public AuthorizationServerFilter authorizationServerFilter() {
+    return new AuthorizationServerFilter();
+  }
 }

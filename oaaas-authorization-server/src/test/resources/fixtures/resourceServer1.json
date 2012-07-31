@@ -1,10 +1,10 @@
 {
   "id": 1,
   "name": "myname",
+  "key": "mykey",
   "scopes": null,
   "secret": null,
   "contactName": "Geert",
-  "owner": "owner",
   "contactEmail": null,
   "thumbNailUrl": null
 }

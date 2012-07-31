@@ -20,7 +20,6 @@ package org.surfnet.oaaas.resource;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -31,6 +30,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.sun.jersey.core.util.Base64;
+import com.yammer.metrics.annotation.Timed;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.VerifyTokenResponse;
@@ -38,9 +40,6 @@ import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
-
-import com.sun.jersey.core.util.Base64;
-import com.yammer.metrics.annotation.Timed;
 
 /**
  * Resource for handling the call from resource servers to validate an access
@@ -77,17 +76,17 @@ public class VerifyResource {
     if (atColon < 1) {
       return unauthorized();
     }
-    String name = authorization.substring(0, atColon);
-    ResourceServer resourceServer = resourceServerRepository.findByName(name);
+    String key = authorization.substring(0, atColon);
+    ResourceServer resourceServer = resourceServerRepository.findByKey(key);
     if (resourceServer == null) {
-      LOG.warn(String.format("ResourceServer(name='%s') not found", name));
+      LOG.warn(String.format("ResourceServer(key='%s') not found", key));
       return unauthorized();
     }
     String secret = authorization.substring(atColon + 1);
     if (!resourceServer.getSecret().equals(secret)) {
       LOG.warn(String
-          .format("ResourceServer(name='%s') is accessing VerifyResource#verifyToken with the wrong secret('%s')",
-              name, secret));
+          .format("ResourceServer(key='%s') is accessing VerifyResource#verifyToken with the wrong secret('%s')",
+              key, secret));
       return unauthorized();
     }
     AccessToken token = accessTokenRepository.findByToken(accessToken);

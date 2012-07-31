@@ -17,9 +17,11 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.security.Principal;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -28,18 +30,21 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 @Named
-@Path("/admin/client")
+@Path("/admin/{resourceServerId}/client")
 @Produces(MediaType.APPLICATION_JSON)
 public class ClientResource {
 
@@ -53,9 +58,14 @@ public class ClientResource {
 
 
   @GET
-  public Response getAll() {
+  public Response getAll(@Context HttpServletRequest request,
+                         @PathParam("resourceServerId")Long resourceServerId) {
+    String owner = getPrincipal(request).getName();
+
     Response.ResponseBuilder responseBuilder;
-    final Iterable<Client> clients = clientRepository.findAll();
+    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+
+    final Iterable<Client> clients = clientRepository.findByResourceServer(resourceServer);
 
     if (clients == null || !clients.iterator().hasNext()) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
@@ -68,9 +78,12 @@ public class ClientResource {
 
   @GET
   @Path("/{clientId}.json")
-  public Response getById(@PathParam("clientId") Long id) {
+  public Response getById(@PathParam("resourceServerId")Long resourceServerId, @PathParam("clientId") Long id) {
     Response.ResponseBuilder responseBuilder;
-    final Client client = clientRepository.findOne(id);
+
+    // TODO: check that invalid resourceServerIds result in 404
+    final ResourceServer resourceServer = resourceServerRepository.findOne(resourceServerId);
+    final Client client = clientRepository.findByIdAndResourceServer(id, resourceServer);
 
     if (client == null) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
@@ -80,6 +93,7 @@ public class ClientResource {
     return responseBuilder.build();
   }
 
+  // TODO: restrict based on resourceserver
   @PUT
   public Response put(@Valid Client client) {
 
@@ -97,6 +111,7 @@ public class ClientResource {
         .build();
   }
 
+  // TODO: restrict based on resourceserver
   @DELETE
   @Path("/{clientId}.json")
   public Response delete(@PathParam("clientId") Long id) {
@@ -111,6 +126,7 @@ public class ClientResource {
     return Response.noContent().build();
   }
 
+  // TODO: restrict based on resourceserver
   @POST
   @Path("/{clientId}.json")
   public Response post(@Valid Client newOne, @PathParam("clientId") Long id) {
@@ -122,5 +138,9 @@ public class ClientResource {
       LOG.debug("Saving client: {}", savedInstance);
     }
     return Response.ok(savedInstance).build();
+  }
+
+  private Principal getPrincipal(HttpServletRequest request) {
+    return (Principal) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
   }
 }

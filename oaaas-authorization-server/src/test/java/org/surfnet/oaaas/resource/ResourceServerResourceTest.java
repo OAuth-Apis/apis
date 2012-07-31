@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import com.sun.jersey.api.client.ClientResponse;
 import com.yammer.dropwizard.testing.ResourceTest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 public class ResourceServerResourceTest extends ResourceTest {
 
+  private static final byte[] AUTHORIZATION_HEADER = Base64.encodeBase64("key:secret".getBytes());
   @Mock
   private ResourceServerRepository repository;
 
@@ -57,7 +59,10 @@ public class ResourceServerResourceTest extends ResourceTest {
     s.setId(1L);
     when(repository.findOne(1L)).thenReturn(s);
     assertThat("GET requests fetch the server by ID",
-        client().resource("/admin/resourceServer/1.json").get(ResourceServer.class),
+        client()
+            .resource("/admin/resourceServer/1.json")
+            .header("Authorization", AUTHORIZATION_HEADER)
+            .get(ResourceServer.class),
         is(s));
     verify(repository).findOne(1L);
   }

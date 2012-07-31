@@ -17,7 +17,7 @@
 		<filter-name>authorization-server</filter-name>
 		<filter-class>org.surfnet.oaaas.auth.AuthorizationServerFilter</filter-class>
 		<init-param>
-			<param-name>resource-server-name</param-name>
+			<param-name>resource-server-key</param-name>
 			<param-value>university-foo</param-value>
 		</init-param>
 		<init-param>

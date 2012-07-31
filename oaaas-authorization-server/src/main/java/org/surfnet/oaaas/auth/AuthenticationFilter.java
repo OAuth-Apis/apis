@@ -34,12 +34,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 @Named
 public class AuthenticationFilter implements Filter {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
   private Filter authenticator;
 
@@ -72,14 +76,19 @@ public class AuthenticationFilter implements Filter {
           authState);
 
       ValidationResponse validate = oAuth2Validator.validate(authReq);
-      if (validate.isError()) {
-        sendError(response, authReq, validate);
-      } else {
-        authorizationRequestRepository.save(authReq);
+      if (validate.valid()) {
+        try {
+          authorizationRequestRepository.save(authReq);
+        } catch (Exception e) {
+          LOG.error("while saving authorization request", e);
+          throw new ServletException("Cannot save authorization request");
+        }
 
         request.setAttribute(AbstractAuthenticator.AUTH_STATE, authState);
         request.setAttribute(AbstractAuthenticator.RETURN_URI, request.getRequestURI());
         authenticator.doFilter(request, response, chain);
+      } else {
+        sendError(response, authReq, validate);
       }
     } else {
       authenticator.doFilter(request, response, chain);
@@ -88,13 +97,26 @@ public class AuthenticationFilter implements Filter {
 
   private void sendError(HttpServletResponse response, AuthorizationRequest authReq, ValidationResponse validate)
       throws IOException {
+    LOG.info("Will send error response for authorization request '{}', validation result: {}", authReq, validate);
     String redirectUri = authReq.getRedirectUri();
     String state = authReq.getState();
     if (isValidUrl(redirectUri)) {
-      response.sendRedirect(redirectUri.concat(redirectUri.contains("?") ? "&" : "?").concat("error=")
-          .concat(validate.getValue()).concat("&error_description=")
-          .concat(validate.getDescription()).concat(StringUtils.isBlank(state) ? "" : "&state=").concat(state));
+      String location = redirectUri;
+      if (redirectUri.contains("?")) {
+        location += "&";
+      } else {
+        location += "?";
+      }
+      location = location
+          .concat("error=")
+          .concat(validate.getValue())
+          .concat("&error_description=")
+          .concat(validate.getDescription())
+          .concat(StringUtils.isBlank(state) ? "" : "&state=".concat(state));
+      LOG.info("Sending error response, a redirect to: {}", location);
+      response.sendRedirect(location);
     } else {
+      LOG.info("Sending error response 'bad request': {}", validate.getDescription());
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, validate.getDescription());
     }
   }

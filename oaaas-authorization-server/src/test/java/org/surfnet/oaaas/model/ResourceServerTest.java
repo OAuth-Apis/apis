@@ -16,14 +16,14 @@
 
 package org.surfnet.oaaas.model;
 
+import org.junit.Test;
+
 import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
 import static com.yammer.dropwizard.testing.JsonHelpers.fromJson;
 import static com.yammer.dropwizard.testing.JsonHelpers.jsonFixture;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
 
 public class ResourceServerTest {
 
@@ -32,6 +32,7 @@ public class ResourceServerTest {
     final ResourceServer r = new ResourceServer();
     r.setId(1L);
     r.setContactName("Geert");
+    r.setKey("mykey");
     r.setName("myname");
     r.setOwner("owner");
     assertThat("a resource server can be serialized to JSON",

@@ -39,6 +39,82 @@ var Template = (function() {
 })();
 
 
-var clients = $.getJSON("/admin/client", function(data) {
-  $("#clientsListTable").html(Template.get("clientTableTpl")({clients: data}));
+/**
+ * OAuth2 Implicit Grant client.
+ *
+ * Create with these options:
+ * var auth = new OAuth({
+ *   context: window,
+ *   clientId: "myClientId",
+ *   authorizationEndpoint: "http://localhost/oauth2/authorize"
+ * });
+ *
+ * var accessToken = auth.authorize();
+ *
+ * @param opt
+ * @return {Object}
+ * @constructor
+ */
+var OAuth = function(opt) {
+  var
+    options = opt || {},
+    context = options.context,
+    oauthTokenInfo = {};
+
+  function buildAuthorizationUrl() {
+    return options.authorizationEndpoint
+        + "?"
+        + "response_type=token"
+        + "&client_id=" + options.clientId
+        + "&redirect_uri=" + context.location
+  }
+
+  function extractTokenInfo(hash) {
+    var split = hash.split('&');
+
+    var obj = {};
+    for(var i = 0; i < split.length; i++){
+      var kv = split[i].split('=');
+      obj[kv[0]] = decodeURIComponent(kv[1] ? kv[1].replace(/\+/g, ' ') : kv[1]);
+    }
+    oauthTokenInfo = {
+      accessToken: obj["access_token"],
+      expires: obj["expires_in"],
+      scope: obj["scope"]
+    };
+  }
+
+
+  return {
+    authorize: function() {
+      if (/access_token=/.test(context.location.hash)) {
+        extractTokenInfo(context.location.hash.substring(1));
+        context.location.hash = "";
+        return oauthTokenInfo.accessToken;
+      } else {
+        // redirect to authorization endpoint
+        context.location = buildAuthorizationUrl();
+      }
+    }
+  }
+};
+
+var accessToken = new OAuth({
+  context:window,
+  authorizationEndpoint:"http://localhost:8080/oauth2/authorize",
+  clientId:"authorization-server-admin-js-client"
+})
+    .authorize();
+
+
+var clients = $.ajax({
+  url: "/admin/resourceServer",
+  dataType: "json",
+  beforeSend: function(xhr, settings) {
+    xhr.setRequestHeader('Authorization', "bearer " + accessToken);
+    xhr.setRequestHeader('Accept', "application/json");
+  },
+  success: function(data) {
+    $("#clientsListTable").html(Template.get("clientTableTpl")({clients: data}));
+}
 });

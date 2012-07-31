@@ -16,13 +16,20 @@
 
 package org.surfnet.oaaas.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
 
 @Repository
 public interface ClientRepository extends CrudRepository<Client, Long> {
-  
-  Client findByName(String name);
-  
+
+
+  List<Client> findByResourceServer(ResourceServer resourceServer);
+
+  Client findByIdAndResourceServer(Long id, ResourceServer resourceServer);
+
+  Client findByClientId(String clientId);
 }

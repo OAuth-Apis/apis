@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  *   <filter-name>authorization-server</filter-name>
  *   <filter-class>org.surfnet.oaaas.auth.AuthorizationServerFilter</filter-class>
  *   <init-param> 
- *     <param-name>resource-server-name</param-name>
+ *     <param-name>resource-server-key</param-name>
  *     <param-value>university-foo</param-value> 
  *   </init-param> 
  *   <init-param> 
@@ -120,18 +120,21 @@ public class AuthorizationServerFilter implements Filter {
    * server
    */
   private Cache<String, VerifyTokenResponse> cache;
+  private String resourceServerKey;
+  private String resourceServerSecret;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    String name = filterConfig.getInitParameter("resource-server-name");
-    String secret = filterConfig.getInitParameter("resource-server-secret");
 
-    this.authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
-    /*
-     * See http://bugs.sun.com/view_bug.do?bug_id=6947917
-     */
-    this.authorizationValue = Base64.encodeBase64String(name.concat(":").concat(secret).getBytes())
-        .replaceAll("\r\n?", "");
+    // Only use filter config if parameters are present. Otherwise trust on setters.
+    if (filterConfig.getInitParameter("resource-server-key") != null) {
+      resourceServerKey = filterConfig.getInitParameter("resource-server-key");
+      resourceServerSecret = filterConfig.getInitParameter("resource-server-secret");
+      authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
+    }
+
+    this.authorizationValue = new String(Base64.encodeBase64(
+        resourceServerKey.concat(":").concat(resourceServerSecret).getBytes()));
     if (cacheAccessTokens()) {
       this.cache = buildCache();
     }
@@ -225,4 +228,15 @@ public class AuthorizationServerFilter implements Filter {
     return cache;
   }
 
+  public void setAuthorizationServerUrl(String authorizationServerUrl) {
+    this.authorizationServerUrl = authorizationServerUrl;
+  }
+
+  public void setResourceServerSecret(String resourceServerSecret) {
+    this.resourceServerSecret = resourceServerSecret;
+  }
+
+  public void setResourceServerKey(String resourceServerKey) {
+    this.resourceServerKey = resourceServerKey;
+  }
 }

@@ -17,10 +17,13 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,14 +32,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import com.yammer.metrics.annotation.Timed;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
@@ -51,10 +54,10 @@ public class ResourceServerResource {
   private ResourceServerRepository resourceServerRepository;
 
   @GET
-  @Timed
-  public Response getAll() {
+  public Response getAll(@Context HttpServletRequest request) {
     Response.ResponseBuilder responseBuilder;
-    final Iterable<ResourceServer> resourceServers = resourceServerRepository.findAll();
+    String owner = getPrincipal(request).getName();
+    final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
 
     if (resourceServers == null || !resourceServers.iterator().hasNext()) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
@@ -66,7 +69,6 @@ public class ResourceServerResource {
 
 
   @GET
-  @Timed
   @Path("/{resourceServerId}.json")
   public Response getById(@PathParam("resourceServerId") Long id) {
     Response.ResponseBuilder responseBuilder;
@@ -81,7 +83,6 @@ public class ResourceServerResource {
   }
 
   @PUT
-  @Timed
   public Response put(@Valid ResourceServer newOne) {
     newOne.setSecret(UUID.randomUUID().toString());
     final ResourceServer resourceServerSaved = resourceServerRepository.save(newOne);
@@ -94,7 +95,6 @@ public class ResourceServerResource {
   }
 
   @DELETE
-  @Timed
   @Path("/{resourceServerId}.json")
   public Response delete(@PathParam("resourceServerId") Long id) {
     if (resourceServerRepository.findOne(id) == null) {
@@ -105,7 +105,6 @@ public class ResourceServerResource {
   }
 
   @POST
-  @Timed
   @Path("/{resourceServerId}.json")
   public Response post(@Valid ResourceServer resourceServer, @PathParam("resourceServerId") Long id) {
     ResourceServer findOne = resourceServerRepository.findOne(id);
@@ -115,5 +114,9 @@ public class ResourceServerResource {
     resourceServer.setSecret(findOne.getSecret());
     ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
     return Response.ok(savedInstance).build();
+  }
+
+  private Principal getPrincipal(HttpServletRequest request) {
+    return (Principal) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
   }
 }

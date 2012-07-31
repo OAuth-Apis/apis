@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.boot;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.yammer.dropwizard.config.Configuration;
@@ -28,7 +29,44 @@ public class ApplicationConfiguration extends Configuration {
   @NotNull
   private String authenticatorClass;
 
+  @JsonProperty
+  @NotNull
+  @Valid
+  private AdminServiceConfiguration adminService = new AdminServiceConfiguration();
+
   public String getAuthenticatorClass() {
     return authenticatorClass;
+  }
+
+  public AdminServiceConfiguration getAdminService() {
+    return adminService;
+  }
+
+  public static class AdminServiceConfiguration extends Configuration {
+    @JsonProperty
+    @NotNull
+    private String tokenVerificationUrl;
+
+    @JsonProperty
+    @NotNull
+    private String resourceServerKey;
+
+    @JsonProperty
+    @NotNull
+    private String resourceServerSecret;
+
+    public String getTokenVerificationUrl() {
+      return tokenVerificationUrl;
+    }
+
+    public String getResourceServerKey() {
+      return resourceServerKey;
+    }
+
+    public String getResourceServerSecret() {
+      return resourceServerSecret;
+    }
+
+
   }
 }

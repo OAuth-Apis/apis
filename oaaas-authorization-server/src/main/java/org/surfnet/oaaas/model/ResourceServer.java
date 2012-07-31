@@ -66,6 +66,7 @@ public class ResourceServer extends AbstractEntity {
   @Column
   private String contactEmail;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "resourceServer")
   private List<Client> clients;
 

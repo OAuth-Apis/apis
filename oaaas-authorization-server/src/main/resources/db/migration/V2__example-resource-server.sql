@@ -11,10 +11,3 @@ VALUES
     (99999, 0, 'emma.blunt','read','74eccf5f-0995-4e1c-b08c-d05dd5a0f89b',99999);
 
 
-/*
-Local administration application
- */
-INSERT INTO resourceserver (id, contactEmail,  contactName, name, scopes, secret )
-VALUES
-	(99998, 'localadmin@example.com','local admin','authorization-server-admin','read','cafebabe-cafe-babe-cafe-babecafebabe');
-

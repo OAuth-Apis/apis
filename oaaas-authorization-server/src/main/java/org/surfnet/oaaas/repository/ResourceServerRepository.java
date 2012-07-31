@@ -16,13 +16,18 @@
 
 package org.surfnet.oaaas.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.ResourceServer;
 
 @Repository
 public interface ResourceServerRepository extends CrudRepository<ResourceServer, Long> {
 
-  ResourceServer findByName(String name);
+  List<ResourceServer> findByOwner(String owner);
+
+  ResourceServer findByIdAndOwner(Long id, String owner);
+
+  ResourceServer findByKey(String key);
 }

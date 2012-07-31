@@ -18,9 +18,6 @@
  */
 package org.surfnet.oaaas.auth;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -30,6 +27,9 @@ import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link Test} for {@link OAuth2ValidatorImpl}
@@ -49,7 +49,7 @@ public class OAuth2ValidatorImplTest {
   public void before() {
     MockitoAnnotations.initMocks(this);
     Client client = createClient("client-app");
-    when(clientRepository.findByName(client.getName())).thenReturn(client);
+    when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
     this.request = getAuthorizationRequest();
   }
 
@@ -97,9 +97,10 @@ public class OAuth2ValidatorImplTest {
     validate(ValidationResponse.REDIRCT_URI_NOT_URI);
   }
 
-  private Client createClient(String name) {
+  private Client createClient(String clientId) {
     Client client = new Client();
     client.setName("client-app");
+    client.setClientId(clientId);
     client.setRedirectUris("http://gothere.nl,http://gohere.nl");
     client.setScopes("read,update");
     return client;

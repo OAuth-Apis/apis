@@ -18,17 +18,11 @@
  */
 package org.surfnet.oaaas.auth;
 
-import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.core.HttpHeaders;
-
-import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +32,12 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
+
+import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * {@link Test} that uses a dummy http server to mock return values from the
@@ -51,7 +51,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
   @Before
   public void before() throws ServletException {
     MockFilterConfig filterConfig = new MockFilterConfig();
-    filterConfig.addInitParameter("resource-server-name", "mock-server-name");
+    filterConfig.addInitParameter("resource-server-key", "mock-server-name");
     filterConfig.addInitParameter("resource-server-secret", UUID.randomUUID().toString());
     filterConfig.addInitParameter("authorization-server-url", "http://localhost:8088/mock/endpoint");
     filter = new AuthorizationServerFilter();

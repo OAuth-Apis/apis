@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AuthenticationFilter;
+import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
@@ -89,6 +90,11 @@ public class Application extends Service<ApplicationConfiguration> {
     environment.addFilter(authzFilter, "/oauth2/authorize");
     environment.addFilter(authnFilter, "/oauth2/authorize");
 
+    AuthorizationServerFilter resourceServerFilter = ctx.getBean(AuthorizationServerFilter.class);
+    resourceServerFilter.setAuthorizationServerUrl(configuration.getAdminService().getTokenVerificationUrl());
+    resourceServerFilter.setResourceServerKey(configuration.getAdminService().getResourceServerKey());
+    resourceServerFilter.setResourceServerSecret(configuration.getAdminService().getResourceServerSecret());
+    environment.addFilter(resourceServerFilter, "/admin/*");
   }
 
   private void initFlyway(DataSource datasource) {

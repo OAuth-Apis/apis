@@ -1,8 +1,13 @@
 http:
   port: 8080
 
-authenticatorClass: org.surfnet.oaaas.conext.SAMLAuthenticator
-#authenticatorClass: org.surfnet.oaaas.basic.BasicAuthenticator
+#authenticatorClass: org.surfnet.oaaas.conext.SAMLAuthenticator
+authenticatorClass: org.surfnet.oaaas.basic.BasicAuthenticator
+
+adminService:
+  tokenVerificationUrl: http://localhost:8080/v1/tokeninfo
+  resourceServerKey: authorization-server-admin
+  resourceServerSecret: cafebabe-cafe-babe-cafe-babecafebabe
 
 logging:
   level: info
