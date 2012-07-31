@@ -1,17 +1,76 @@
+<!doctype html>
 <!--
-  ~ Copyright 2012 SURFnet bv, The Netherlands
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+~ Copyright 2012 SURFnet bv, The Netherlands
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~      http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+  <meta name="viewport" content="width=device-width"/>
+</head>
+<body>
+<h1>Authorization Server - admin</h1>
 
-client
+<!--
+<div>
+  <h2>Resource Servers</h2>
+  <table>
+    <tr>
+      <td>ID</td>
+      <td>Name</td>
+      <td>Clients</td>
+    </tr>
+  </table>
+</div>
+-->
+
+<script id="clientTableTpl" type="text/x-handlebars-template">
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Contact name</th>
+      <th>Contact email</th>
+      <th>Client key</th>
+      <th>Client secret</th>
+      <th>Access tokens</th>
+    </tr>
+    </thead>
+    {{#each clients}}
+    <tr>
+      <td>{{id}}</td>
+      <td>{{name}}</td>
+      <td>{{contactName}}</td>
+      <td>{{contactEmail}}</td>
+      <td>{{clientId}}</td>
+      <td>{{secret}}</td>
+      <td>...</td>
+    </tr>
+    {{/each}}
+  </table>
+</script>
+
+<div>
+    <h2>Registered clients</h2>
+    <div id="clientsListTable"></div>
+  </div>
+
+<script src="js/jquery.js"></script>
+<script src="js/handlebars.js"></script>
+<!--<script src="js/underscore-min.js"></script>-->
+<!--<script src="js/backbone.js"></script>-->
+<script src="js/client.js"></script>
+</body>
+</html>

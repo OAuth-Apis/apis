@@ -18,6 +18,13 @@ package org.surfnet.oaaas.boot;
 
 import javax.sql.DataSource;
 
+import com.google.common.cache.CacheBuilderSpec;
+import com.googlecode.flyway.core.Flyway;
+import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.views.ViewBundle;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
@@ -26,12 +33,6 @@ import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
 import org.surfnet.oaaas.resource.VerifyResource;
-
-import com.googlecode.flyway.core.Flyway;
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.bundles.AssetsBundle;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.views.ViewBundle;
 
 public class Application extends Service<ApplicationConfiguration> {
 
@@ -68,7 +69,7 @@ public class Application extends Service<ApplicationConfiguration> {
 
     addAuthenticationHandling(configuration, environment, ctx);
 
-    final AssetsBundle assetsBundle = new AssetsBundle("/assets", "/adminClient");
+    final AssetsBundle assetsBundle = new AssetsBundle("/client", CacheBuilderSpec.parse("maximumSize=0"), "/client");
     assetsBundle.initialize(environment);
   }
 
@@ -88,8 +89,6 @@ public class Application extends Service<ApplicationConfiguration> {
     environment.addFilter(authzFilter, "/oauth2/authorize");
     environment.addFilter(authnFilter, "/oauth2/authorize");
 
-//    environment.addFilter(ctx.getBean(FilterChainProxy.class), "/*");
-//    environment.addResource(ctx.getBean(SimpleAuthenticationHandler.class));
   }
 
   private void initFlyway(DataSource datasource) {
