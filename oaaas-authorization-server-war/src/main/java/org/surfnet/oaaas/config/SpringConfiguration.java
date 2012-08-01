@@ -33,6 +33,9 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.surfnet.oaaas.auth.AuthenticationFilter;
+import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.OAuth2ValidatorImpl;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -84,9 +87,28 @@ public class SpringConfiguration {
   }
 
   @Bean
-  public Filter authenticator() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-    final Class<?> authenticatorClass =
-        getClass().getClassLoader().loadClass(env.getProperty("authenticatorClass"));
-    return (Filter) authenticatorClass.newInstance();
+  public Filter oauth2AuthenticationFilter() {
+    final AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+    authenticationFilter.setAuthenticator(authenticator());
+    return authenticationFilter;
+  }
+
+  @Bean
+  public OAuth2Validator oAuth2Validator() {
+    return new OAuth2ValidatorImpl();
+  }
+  @Bean
+  public Filter authenticator() {
+    try {
+      Class<?> authenticatorClass =
+          getClass().getClassLoader().loadClass(env.getProperty("authenticatorClass"));
+      return (Filter) authenticatorClass.newInstance();
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
