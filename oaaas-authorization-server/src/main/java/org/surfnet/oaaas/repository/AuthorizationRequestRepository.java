@@ -25,4 +25,7 @@ public interface AuthorizationRequestRepository extends CrudRepository<Authoriza
   
   AuthorizationRequest findByAuthState(String authState);
   
+  AuthorizationRequest findByAuthorizationCode(String authorizationCode);
+  
+  
 }

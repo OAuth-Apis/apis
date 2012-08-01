@@ -1,0 +1,77 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.surfnet.oaaas.basic;
+
+import org.apache.commons.codec.binary.Base64;
+
+/**
+ * Holder and parser for the username and password from the authentication header.
+ */
+public class UserPassCredentials {
+
+  private static final char SEMI_COLON = ':';
+  private static final int BASIC_AUTH_PREFIX_LENGTH = "Basic ".length();
+
+  private String username;
+  private String password;
+
+  /**
+   * Parse the username and password from the authorization header. If
+   * the username and password cannot be found they are set to null.
+   * @param authorizationHeader the authorization header
+   */
+  public UserPassCredentials(final String authorizationHeader) {
+    if (authorizationHeader == null || authorizationHeader.length() < BASIC_AUTH_PREFIX_LENGTH) {
+      noValidAuthHeader();
+      return;
+    }
+
+    String authPart = authorizationHeader.substring(BASIC_AUTH_PREFIX_LENGTH);
+    String userpass = new String(Base64.decodeBase64(authPart));
+    if (userpass.indexOf(SEMI_COLON) < 1) {
+      noValidAuthHeader();
+      return;
+    }
+    username = userpass.substring(0, userpass.indexOf(SEMI_COLON));
+    password = userpass.substring(userpass.indexOf(SEMI_COLON) + 1);
+  }
+
+  private void noValidAuthHeader() {
+    username = null;
+    password = null;
+    return;
+  }
+
+  /**
+   * Get the username.
+   * @return the username or null if the username was not found
+   */
+  public String getUsername() {
+    return username;
+  }
+
+  /**
+   * Get the password.
+   * @return the password or null if the password was not found
+   */
+  public String getPassword() {
+    return password;
+  }
+
+}

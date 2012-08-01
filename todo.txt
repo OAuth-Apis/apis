@@ -2,3 +2,17 @@
 What type of bootstrapping should we adapt to?
 https://cwiki.apache.org/WINK/jax-rs-getting-started.html
 
+- consent (optional), are we going to deepen the dropwizard dependency and use views or use jsp, or freemarker java
+- refrsh tokens (optional to configure for the client)
+
+- rename VerifyResource and also use the OAuth2Validator here to validate and use the UserPassCredentials
+- ClientResource and ResourceServerResource must debug log all activity
+- TokenResource must use OAuth2Validator for validation
+- Introduce a token generator and default implementation
+
+
+- GUI
+- Performance
+- VM?
+
+

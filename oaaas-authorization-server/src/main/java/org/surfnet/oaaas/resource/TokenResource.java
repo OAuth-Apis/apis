@@ -26,7 +26,9 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -39,10 +41,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.basic.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
+import org.surfnet.oaaas.model.AccessTokenRequest;
+import org.surfnet.oaaas.model.AccessTokenResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
+import org.surfnet.oaaas.repository.ClientRepository;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
@@ -60,11 +70,12 @@ public class TokenResource {
   @Inject
   private AccessTokenRepository accessTokenRepository;
 
+  @Inject
+  private ClientRepository clientRepository;
+
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
 
   private static final String GRANT_TYPE = "authorization_code";
-  
-  private static final String BASIC = "basic";
 
   @GET
   @Path("/authorize")
@@ -96,9 +107,8 @@ public class TokenResource {
       LOG.debug("Principal from HttpServletRequest: {}", principal);
     }
     if (authReq.getResponseType().equals(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE)) {
-      // TODO Implement refresh tokens
-      AccessToken accessToken = new AccessToken(UUID.randomUUID().toString(), principal.getName(), authReq.getClient(),
-          0, authReq.getScope());
+      AccessToken accessToken = new AccessToken(getUniqueToken(), principal.getName(), authReq.getClient(), 0,
+          authReq.getScope());
       accessToken = accessTokenRepository.save(accessToken);
       return sendImplicitGrantResponse(authReq, accessToken);
     } else {
@@ -106,34 +116,70 @@ public class TokenResource {
     }
   }
 
-/*
+
   @POST
   @Path("/token")
   public Response token(@HeaderParam("Authorization")
   String authorization, @Valid AccessTokenRequest accessTokenRequest) {
-    */
-/*
+    /*
      * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-2.3.1
      *
      * We support both options. Clients can use the Basic Authentication or
      * include the secret and id  in the request body
-     *//*
+     */
 
+    String clientId, clientSecret;
     if (StringUtils.isBlank(authorization)) {
-
+      clientId = accessTokenRequest.getClientId();
+      clientSecret = accessTokenRequest.getClientSecret();
     } else {
-
+      UserPassCredentials credentials = new UserPassCredentials(authorization);
+      clientId = credentials.getUsername();
+      clientSecret = credentials.getPassword();
     }
-    String uri = null;
-    return redirect(uri);
+    Client client = clientRepository.findByClientId(clientId);
+    if (client == null || !client.getSecret().equals(clientSecret)) {
+      return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"OAuth2 Secure\"").build();
+    }
+    if (!GRANT_TYPE.equals(accessTokenRequest.getGrantType())) {
+      return sendErrorResponse("unsupported_grant_type", "Grant Type must be 'authorization_code'");
+    }
+    AuthorizationRequest authReq = authorizationRequestRepository.findByAuthorizationCode(accessTokenRequest.getCode());
+    if (authReq == null) {
+      return sendErrorResponse("invalid_grant", "The authorization code is not valid");
+    }
+    String uri = accessTokenRequest.getRedirectUri();
+    if (!authReq.getRedirectUri().equalsIgnoreCase(uri)) {
+      return sendErrorResponse("invalid_request", "The redirect_uri does not match the initial authorization request");
+    }
+    AccessToken token = new AccessToken(getUniqueToken(), authReq.getPrincipal(), client, client.getExpires(),
+        client.getScopes());
+    accessTokenRepository.save(token);
+    AccessTokenResponse accessToken = new AccessTokenResponse(token.getToken(), "bearer", client.expires(), null,
+        client.getScopes());
+
+    return Response.ok().entity(accessToken).build();
   }
-*/
 
   private Response sendAuthorizationCodeResponse(AuthorizationRequest authReq) {
     String uri = authReq.getRedirectUri();
-    String authorizationCode = UUID.randomUUID().toString();
+    String authorizationCode = getUniqueAuthorizationCode();
+    authReq.setAuthorizationCode(authorizationCode);
+    authorizationRequestRepository.save(authReq);
     uri = uri + appendQueryMark(uri) + "code=" + authorizationCode + appendStateParameter(authReq);
     return redirect(uri);
+  }
+
+  protected String getUniqueToken() {
+    return UUID.randomUUID().toString();
+  }
+
+  protected String getUniqueAuthorizationCode() {
+    return getUniqueToken();
+  }
+
+  private Response sendErrorResponse(String error, String description) {
+    return Response.status(Status.BAD_REQUEST).entity(new ErrorResponse(error, description)).build();
   }
 
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {

@@ -73,6 +73,10 @@ public class AuthorizationRequest extends AbstractEntity {
   @Column
   private String principal;
   
+  @Column
+  @Unique
+  private String authorizationCode;
+  
   public AuthorizationRequest() {
     super();
   }
@@ -204,7 +208,18 @@ public class AuthorizationRequest extends AbstractEntity {
     this.principal = principal;
   }
 
-  public String toString() {
-    return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+  /**
+   * @return the authorizationCode
+   */
+  public String getAuthorizationCode() {
+    return authorizationCode;
   }
+
+  /**
+   * @param authorizationCode the authorizationCode to set
+   */
+  public void setAuthorizationCode(String authorizationCode) {
+    this.authorizationCode = authorizationCode;
+  }
+ 
 }

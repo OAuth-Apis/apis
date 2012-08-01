@@ -81,6 +81,12 @@ public class Client extends AbstractEntity {
   @Column
   private boolean skipConsent;
   
+  @Column
+  private Long expires;
+  
+  @Column
+  private boolean refreshTokenEnables;
+  
   public String getName() {
     return name;
   }
@@ -213,4 +219,39 @@ public class Client extends AbstractEntity {
     this.redirectUris = redirectUris;
   }
 
+  /**
+   * @return the expires
+   */
+  public Long getExpires() {
+    return expires;
+  }
+
+  /**
+   * @param expires the expires to set
+   */
+  public void setExpires(Long expires) {
+    this.expires = expires;
+  }
+
+  /**
+   * @return the refreshTokenEnables
+   */
+  public boolean isRefreshTokenEnables() {
+    return refreshTokenEnables;
+  }
+
+  /**
+   * @param refreshTokenEnables the refreshTokenEnables to set
+   */
+  public void setRefreshTokenEnables(boolean refreshTokenEnables) {
+    this.refreshTokenEnables = refreshTokenEnables;
+  }
+
+  public long expires() {
+    if (this.expires == null) {
+      return 0;
+    }
+    return (expires - System.currentTimeMillis()) / 1000;
+  }
+  
 }

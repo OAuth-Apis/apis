@@ -26,9 +26,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
@@ -69,60 +66,5 @@ public class BasicAuthenticator extends AbstractAuthenticator {
 
   public void setRealm(String realm) {
     this.realm = realm;
-  }
-
-  /**
-   * Holder and parser for the username and password from the authentication header.
-   */
-  private static final class UserPassCredentials {
-
-    private static final char SEMI_COLON = ':';
-    private static final int BASIC_AUTH_PREFIX_LENGTH = "Basic ".length();
-
-    private final String username;
-    private final String password;
-    private final static Logger LOG = LoggerFactory.getLogger(UserPassCredentials.class);
-
-    /**
-     * Parse the username and password from the authorization header. If
-     * the username and password cannot be found they are set to null.
-     * @param authorizationHeader the authorization header
-     */
-    UserPassCredentials(final String authorizationHeader) {
-      if (authorizationHeader == null || authorizationHeader.length() < BASIC_AUTH_PREFIX_LENGTH) {
-        LOG.debug("Authorization header not found.");
-        username = null;
-        password = null;
-        return;
-      }
-
-      String authPart = authorizationHeader.substring(BASIC_AUTH_PREFIX_LENGTH);
-      String userpass = new String(Base64.decodeBase64(authPart));
-      if (userpass.indexOf(SEMI_COLON) < 1) {
-        LOG.debug("Invalid authorization header found.");
-        username = null;
-        password = null;
-        return;
-      }
-      username = userpass.substring(0, userpass.indexOf(SEMI_COLON));
-      password = userpass.substring(userpass.indexOf(SEMI_COLON) + 1);
-    }
-
-    /**
-     * Get the username.
-     * @return the username or null if the username was not found
-     */
-    String getUsername() {
-      return username;
-    }
-
-    /**
-     * Get the password.
-     * @return the password or null if the password was not found
-     */
-    String getPassword() {
-      return password;
-    }
-
   }
 }

@@ -50,7 +50,7 @@ public class OAuth2ValidatorImplTest {
     MockitoAnnotations.initMocks(this);
     Client client = createClient("client-app");
     when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
-    this.request = getAuthorizationRequest();
+    this.request = getAuthorizationRequest(client);
   }
 
   
@@ -96,10 +96,9 @@ public class OAuth2ValidatorImplTest {
     request.setRedirectUri("qwert://no-valid-url");
     validate(ValidationResponse.REDIRCT_URI_NOT_URI);
   }
-
   private Client createClient(String clientId) {
     Client client = new Client();
-    client.setName("client-app");
+    client.setName("Client App");
     client.setClientId(clientId);
     client.setRedirectUris("http://gothere.nl,http://gohere.nl");
     client.setScopes("read,update");
@@ -111,9 +110,9 @@ public class OAuth2ValidatorImplTest {
     assertEquals(expected, response);
   }
 
-  private AuthorizationRequest getAuthorizationRequest() {
+  private AuthorizationRequest getAuthorizationRequest(Client client) {
     AuthorizationRequest request = new AuthorizationRequest();
-    request.setClientId("client-app");
+    request.setClientId(client.getClientId());
     request.setRedirectUri("http://gothere.nl");
     request.setScope("read,update");
     request.setResponseType(OAuth2ValidatorImpl.AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE);

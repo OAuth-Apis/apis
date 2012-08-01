@@ -27,14 +27,14 @@ public interface OAuth2Validator {
 
   String AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE = "code";
 
-  
-  enum SpecResponseCode {
-    VALID_REQUEST, INVALID_REQUEST, UNAUTHORIZED_CLIENT, ACCESS_DENIED, UNSUPPORTED_RESPONSE_TYPE, INVALID_SCOPE, SERVER_ERROR;
-    @Override
-    public String toString() {
-      return super.toString().toLowerCase();
-    }
-  }
+  /**
+   * Validate the {@link AuthorizationRequest}
+   * 
+   * @param request
+   *          the Authorization Request with the data send from the client
+   * @return A {@link ValidationResponse} specifying what is wrong (if any)
+   */
+  ValidationResponse validate(AuthorizationRequest request);
 
   enum ValidationResponse {
 
@@ -66,7 +66,5 @@ public interface OAuth2Validator {
       return description;
     }
   }
-
-  ValidationResponse validate(AuthorizationRequest request);
 
 }
