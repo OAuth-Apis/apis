@@ -31,7 +31,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.sun.jersey.core.util.Base64;
-import com.yammer.metrics.annotation.Timed;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -67,7 +66,6 @@ public class VerifyResource {
   private ResourceServerRepository resourceServerRepository;
 
   @GET
-  @Timed
   public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
   String authorization, @QueryParam("access_token")
   String accessToken) {

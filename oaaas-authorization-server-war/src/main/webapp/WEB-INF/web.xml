@@ -20,11 +20,15 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   <display-name>Authorization server</display-name>
 
+  <!-- Do not use an XML-based Spring configuration, but annotation only. -->
+  <context-param>
+    <param-name>contextClass</param-name>
+    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+  </context-param>
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:applicationContext.xml</param-value>
+    <param-value>org.surfnet.oaaas.config.SpringConfiguration</param-value>
   </context-param>
-
   <listener>
     <listener-class>
       org.springframework.web.context.ContextLoaderListener
@@ -47,7 +51,6 @@
       <param-name>authorization-server-url</param-name>
       <param-value>http://localhost:8080/v1/tokeninfo</param-value>
     </init-param>
-
   </filter>
 
   <filter-mapping>

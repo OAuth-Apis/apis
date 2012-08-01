@@ -9,12 +9,18 @@
   <artifactId>oaaas-authorization-server-war</artifactId>
   <packaging>war</packaging>
   <name>OA-aaS - authorization server webapp</name>
+
+
+  <properties>
+    <servlet.port>8080</servlet.port>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>nl.surfnet.oaaas</groupId>
       <artifactId>oaaas-authorization-server</artifactId>
       <version>${project.version}</version>
       <exclusions>
+        <!-- TODO: remove exlusions once DropWizard has been removed from the jar. -->
         <exclusion>
           <groupId>com.yammer.dropwizard</groupId>
           <artifactId>dropwizard-core</artifactId>
@@ -68,23 +74,147 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
-    <plugins>
+    <pluginManagement>
+      <plugins>
+
+      <!--
+      Basic configuration for Cargo.
+      Do mind that no specific container is declared here.
+      This is deferred to the profiles section: there the plugin is refined
+      with a specific container.
+      -->
       <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>2.2</version>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <version>1.2.3</version>
         <configuration>
-          <webResources>
-            <resource>
-              <directory>../oaaas-authorization-server/src/main/resources/client</directory>
-              <targetPath>client</targetPath>
-            </resource>
-          </webResources>
+          <configuration>
+            <properties>
+              <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
+            </properties>
+          </configuration>
+          <deployables>
+            <!-- The project's artifact is automatically deployed if no deployable
+                      is defined. However, we define it here so that we can specify the context
+                      (we don't want the version to be included in the context). -->
+            <deployable>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}</artifactId>
+              <type>war</type>
+              <properties>
+                <context>/</context>
+              </properties>
+            </deployable>
+          </deployables>
         </configuration>
       </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+
+      <!--
+      Run the failsafe plugin which executes all **TestIT tests.
+      -->
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.12</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+      <!--
+      Start the configured container before running the IT tests.
+      Stop it afterwards.
+      -->
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>start-cargo</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-cargo</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
+
+  <profiles>
+
+    <!--
+    Actually tie a specific container to the cargo plugin.
+    Could be another container as well, if desired.
+    Refer to the Cargo documentation for ideas:
+    http://cargo.codehaus.org/Containers
+    -->
+    <profile>
+      <id>jetty7x</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
+                <container>
+                  <containerId>jetty7x</containerId>
+                  <artifactInstaller>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-distribution</artifactId>
+                    <version>7.6.4.v20120524</version>
+                  </artifactInstaller>
+                </container>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>
