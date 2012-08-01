@@ -69,11 +69,11 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
   public void happy() {
     final ClientResponse response = new Client()
         .resource(baseUrlWith("/v1/tokeninfo"))
-        .queryParam("access_token", "boobaa")
-        .header("Authorization", authorizationBasic("authorization-server-admin", "cafebabe-cafe-babe-cafe-babecafebabe"))
+        .queryParam("access_token", "00-11-22-33")
+        .header("Authorization", authorizationBasic("it-test-resource-server", "somesecret"))
         .get(ClientResponse.class);
     assertEquals(200, response.getStatus());
     final VerifyTokenResponse verifyTokenResponse = response.getEntity(VerifyTokenResponse.class);
-    assertEquals("boo", verifyTokenResponse.getUser_id());
+    assertEquals("it-test-enduser", verifyTokenResponse.getUser_id());
   }
 }

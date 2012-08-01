@@ -26,3 +26,23 @@ VALUES
     'authorization server admin js client', 'read,write',
     'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 99998,
     'authorization-server-admin-js-client', '');
+
+/*
+For integration tests
+*/
+INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, secret, scopes, owner)
+VALUES
+	(99997, 'it-test@example.com','it test','it-test-resource-server',
+	'it-test-resource-server', 'somesecret', 'read', 'it-test-enduser');
+
+INSERT INTO client (id, contactEmail, contactName, description, name, scopes, thumbNailUrl, resourceserver_id,
+clientId, secret)
+VALUES
+    (99997, 'it-test@example.com', 'john.doe', 'it test client',
+    'it test client', 'read,write',
+    'thumbnailurl', 99997,
+    'it-test-client', 'somesecret');
+
+INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
+VALUES
+    (99997, 0, 'it-test-enduser','read,write','00-11-22-33',99997);
