@@ -33,9 +33,12 @@ import javax.ws.rs.core.Response.Status;
 import com.sun.jersey.core.util.Base64;
 import com.yammer.metrics.annotation.Timed;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.surfnet.oaaas.auth.VerifyTokenResponse;
+import org.surfnet.oaaas.basic.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
@@ -44,8 +47,8 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 /**
  * Resource for handling the call from resource servers to validate an access
  * token. As this is not part of the oauth2 <a
- * href="http://http://tools.ietf.org/html/draft-ietf-oauth-v2">spec</a>, we
- * have taken the Google <a href=
+ * href="http://tools.ietf.org/html/draft-ietf-oauth-v2">spec</a>, we have taken
+ * the Google <a href=
  * "https://developers.google.com/accounts/docs/OAuth2Login#validatingtoken"
  * >specification</a> as basis.
  * 
@@ -68,25 +71,20 @@ public class VerifyResource {
   public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
   String authorization, @QueryParam("access_token")
   String accessToken) {
-    if (authorization == null && accessToken == null) {
+    UserPassCredentials credentials = new UserPassCredentials(authorization);
+    if (!credentials.isValid() || StringUtils.isBlank(accessToken)) {
       return unauthorized();
     }
-    authorization = new String(Base64.decode(authorization));
-    int atColon = authorization.indexOf(':');
-    if (atColon < 1) {
-      return unauthorized();
-    }
-    String key = authorization.substring(0, atColon);
+    String key = credentials.getUsername();
     ResourceServer resourceServer = resourceServerRepository.findByKey(key);
     if (resourceServer == null) {
       LOG.warn(String.format("ResourceServer(key='%s') not found", key));
       return unauthorized();
     }
-    String secret = authorization.substring(atColon + 1);
+    String secret = credentials.getPassword();
     if (!resourceServer.getSecret().equals(secret)) {
-      LOG.warn(String
-          .format("ResourceServer(key='%s') is accessing VerifyResource#verifyToken with the wrong secret('%s')",
-              key, secret));
+      LOG.warn(String.format(
+          "ResourceServer(key='%s') is accessing VerifyResource#verifyToken with the wrong secret('%s')", key, secret));
       return unauthorized();
     }
     AccessToken token = accessTokenRepository.findByToken(accessToken);
@@ -96,12 +94,29 @@ public class VerifyResource {
       return Response.status(Status.GONE).entity(new VerifyTokenResponse("token_expired")).build();
     }
     return Response.ok(
-        new VerifyTokenResponse(token.getClient().getName(), token.getScopes(), token.getPrincipal(), token
+        new VerifyTokenResponse(token.getClient().getName(), token.getScopes(),token.getRoles(), token.getPrincipal(), token
             .getExpires())).build();
   }
 
   private Response unauthorized() {
-    return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Authorization Server\"").build();
+    return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Authorization Server\"")
+        .build();
+  }
+
+  /**
+   * @param accessTokenRepository
+   *          the accessTokenRepository to set
+   */
+  public void setAccessTokenRepository(AccessTokenRepository accessTokenRepository) {
+    this.accessTokenRepository = accessTokenRepository;
+  }
+
+  /**
+   * @param resourceServerRepository
+   *          the resourceServerRepository to set
+   */
+  public void setResourceServerRepository(ResourceServerRepository resourceServerRepository) {
+    this.resourceServerRepository = resourceServerRepository;
   }
 
 }

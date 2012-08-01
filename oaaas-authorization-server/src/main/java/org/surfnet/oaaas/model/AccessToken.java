@@ -57,17 +57,21 @@ public class AccessToken extends AbstractEntity {
   @Column
   private String scopes;
 
+  @Column
+  private String roles;
+
   public AccessToken() {
     super();
   }
 
-  public AccessToken(String token, String principal, Client client, long expires, String scopes) {
+  public AccessToken(String token, String principal, Client client, long expires, String scopes, String roles) {
     super();
     this.token = token;
     this.principal = principal;
     this.client = client;
     this.expires = expires;
     this.scopes = scopes;
+    this.roles = roles;
   }
 
 
@@ -140,6 +144,20 @@ public class AccessToken extends AbstractEntity {
    */
   public void setScopes(String scopes) {
     this.scopes = scopes;
+  }
+
+  /**
+   * @return the roles
+   */
+  public String getRoles() {
+    return roles;
+  }
+
+  /**
+   * @param roles the roles to set
+   */
+  public void setRoles(String roles) {
+    this.roles = roles;
   }
 
   

@@ -68,7 +68,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
    */
   @Test
   public void testDoFilterHappyFlow() throws IOException, ServletException {
-    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read", "john.doe", 0);
+    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read", "admin", "john.doe", 0);
     MockFilterChain chain = doCallFilter(recorderdResponse);
     /*
      * Verify that the FilterChain#doFilter is called and the

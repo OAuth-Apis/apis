@@ -17,19 +17,26 @@
 package org.surfnet.oaaas.auth.principal;
 
 import java.io.Serializable;
-import java.security.Principal;
+import java.util.Collection;
 
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class SimplePrincipal implements Principal, Serializable {
+public class SimplePrincipal implements RolesPrincipal, Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String username;
 
+  private Collection<String> roles;
+
   public SimplePrincipal(String username) {
+    this(username,null);
+  }
+
+  public SimplePrincipal(String username, Collection<String> roles) {
     this.username = username;
+    this.roles = roles;
   }
 
   @Override
@@ -39,5 +46,13 @@ public class SimplePrincipal implements Principal, Serializable {
 
   public String toString() {
     return "SimplePrincipal['" + username + "']";
+  }
+
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.auth.principal.RolesPrincipal#getRoles()
+   */
+  @Override
+  public Collection<String> getRoles() {
+    return roles ;
   }
 }

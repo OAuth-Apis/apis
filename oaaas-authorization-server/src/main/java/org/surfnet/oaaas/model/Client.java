@@ -81,11 +81,14 @@ public class Client extends AbstractEntity {
   @Column
   private boolean skipConsent;
   
+  /*
+   * Seconds for expire of the access token that is granted for users of this client
+   */
   @Column
-  private Long expires;
+  private long expireDuration;
   
   @Column
-  private boolean refreshTokenEnables;
+  private boolean useRefreshTokens;
   
   public String getName() {
     return name;
@@ -220,38 +223,31 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @return the expires
+   * @return the useRefreshTokens
    */
-  public Long getExpires() {
-    return expires;
+  public boolean isUseRefreshTokens() {
+    return useRefreshTokens;
   }
 
   /**
-   * @param expires the expires to set
+   * @param useRefreshTokens the useRefreshTokens to set
    */
-  public void setExpires(Long expires) {
-    this.expires = expires;
+  public void setUseRefreshTokens(boolean useRefreshTokens) {
+    this.useRefreshTokens = useRefreshTokens;
   }
 
   /**
-   * @return the refreshTokenEnables
+   * @return the expireDuration
    */
-  public boolean isRefreshTokenEnables() {
-    return refreshTokenEnables;
+  public long getExpireDuration() {
+    return expireDuration;
   }
 
   /**
-   * @param refreshTokenEnables the refreshTokenEnables to set
+   * @param expireDuration the expireDuration to set
    */
-  public void setRefreshTokenEnables(boolean refreshTokenEnables) {
-    this.refreshTokenEnables = refreshTokenEnables;
-  }
-
-  public long expires() {
-    if (this.expires == null) {
-      return 0;
-    }
-    return (expires - System.currentTimeMillis()) / 1000;
+  public void setExpireDuration(long expireDuration) {
+    this.expireDuration = expireDuration;
   }
   
 }

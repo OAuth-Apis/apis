@@ -17,6 +17,8 @@
 package org.surfnet.oaaas.conext;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Properties;
 
 import javax.servlet.FilterChain;
@@ -27,6 +29,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
@@ -39,9 +43,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
@@ -83,7 +89,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     HttpServletResponse response = (HttpServletResponse) res;
 
     LOG.debug("Hitting SAML Authenticator filter");
-
+    
     if (isSAMLResponse(request)) {
       final Response samlResponse = extractSamlResponse(request);
 
@@ -95,8 +101,8 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         if (ud == null) {
           LOG.info("Cannot get UserDetails from SAML response");
         } else {
-          request.setAttribute("principal", new SimplePrincipal(ud.getUsername()));
-          setAuthStateValue(request, getSAMLRelayState(request));
+          super.setPrincipal(request, convertToPrincipal(ud));
+          super.setAuthStateValue(request, getSAMLRelayState(request));
           chain.doFilter(request, response);
           return;
         }
@@ -105,7 +111,17 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     sendAuthnRequest(response, getAuthStateValue(request), getReturnUri(request));
   }
 
-
+  private RolesPrincipal convertToPrincipal(UserDetails ud) {
+    Collection<? extends GrantedAuthority> authorities = ud.getAuthorities();
+    Collection<String> roles = new HashSet<String>();
+    if (authorities != null) {
+      for (GrantedAuthority authority : authorities) {
+        roles.add(authority.getAuthority());
+      }
+    }
+    return new SimplePrincipal(ud.getUsername(), roles);
+  }
+  
   protected String getSAMLRelayState(HttpServletRequest request) {
     return request.getParameter("RelayState");
   }

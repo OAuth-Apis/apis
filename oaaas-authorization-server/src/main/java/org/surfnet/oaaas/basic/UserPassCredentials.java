@@ -19,6 +19,7 @@
 package org.surfnet.oaaas.basic;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Holder and parser for the username and password from the authentication header.
@@ -58,6 +59,10 @@ public class UserPassCredentials {
     return;
   }
 
+  public boolean isValid() {
+    return !StringUtils.isBlank(username) && !StringUtils.isBlank(password);
+  }
+  
   /**
    * Get the username.
    * @return the username or null if the username was not found

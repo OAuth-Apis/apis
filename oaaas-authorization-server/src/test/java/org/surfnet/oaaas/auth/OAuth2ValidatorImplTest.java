@@ -87,7 +87,7 @@ public class OAuth2ValidatorImplTest {
 
   @Test
   public void testValidateScope() {
-    request.setScope("no-existing-scope");
+    request.setScopes("no-existing-scope");
     validate(ValidationResponse.SCOPE_NOT_VALID);
   }
 
@@ -114,7 +114,7 @@ public class OAuth2ValidatorImplTest {
     AuthorizationRequest request = new AuthorizationRequest();
     request.setClientId(client.getClientId());
     request.setRedirectUri("http://gothere.nl");
-    request.setScope("read,update");
+    request.setScopes("read,update");
     request.setResponseType(OAuth2ValidatorImpl.AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE);
     return request;
   }

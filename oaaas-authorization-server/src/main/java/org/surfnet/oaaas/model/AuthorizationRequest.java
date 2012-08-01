@@ -60,7 +60,10 @@ public class AuthorizationRequest extends AbstractEntity {
   private String redirectUri;
 
   @Column
-  private String scope;
+  private String scopes;
+  
+  @Column 
+  private String roles;
 
   @Column
   private String state;
@@ -77,16 +80,19 @@ public class AuthorizationRequest extends AbstractEntity {
   @Unique
   private String authorizationCode;
   
+  @Column
+  private boolean consentProvided;
+  
   public AuthorizationRequest() {
     super();
   }
 
-  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scope, String state, String authState) {
+  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scopes, String state, String authState) {
     super();
     this.responseType = responseType;
     this.clientId = clientId;
     this.redirectUri = redirectUri;
-    this.scope = scope;
+    this.scopes = scopes;
     this.state = state;
     this.authState = authState;
   }
@@ -139,16 +145,16 @@ public class AuthorizationRequest extends AbstractEntity {
   /**
    * @return the scope
    */
-  public String getScope() {
-    return scope;
+  public String getScopes() {
+    return scopes;
   }
 
   /**
    * @param scope
    *          the scope to set
    */
-  public void setScope(String scope) {
-    this.scope = scope;
+  public void setScopes(String scopes) {
+    this.scopes = scopes;
   }
 
   /**
@@ -220,6 +226,34 @@ public class AuthorizationRequest extends AbstractEntity {
    */
   public void setAuthorizationCode(String authorizationCode) {
     this.authorizationCode = authorizationCode;
+  }
+
+  /**
+   * @return the consentProvided
+   */
+  public boolean isConsentProvided() {
+    return consentProvided;
+  }
+
+  /**
+   * @param consentProvided the consentProvided to set
+   */
+  public void setConsentProvided(boolean consentProvided) {
+    this.consentProvided = consentProvided;
+  }
+
+  /**
+   * @return the roles
+   */
+  public String getRoles() {
+    return roles;
+  }
+
+  /**
+   * @param roles the roles to set
+   */
+  public void setRoles(String roles) {
+    this.roles = roles;
   }
  
 }

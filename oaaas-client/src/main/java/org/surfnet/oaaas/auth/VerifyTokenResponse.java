@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @SuppressWarnings("serial")
 @XmlRootElement
-public class VerifyTokenResponse implements Serializable{
+public class VerifyTokenResponse implements Serializable {
   /*
    * The application that is the intended target of the token.
    */
@@ -43,6 +43,10 @@ public class VerifyTokenResponse implements Serializable{
    * The space delimited set of scopes that the user consented to.
    */
   private String scopes;
+  /*
+   * The space delimited set of roles that the user consented to.
+   */
+  private String roles;
   /*
    * The userId
    */
@@ -66,10 +70,11 @@ public class VerifyTokenResponse implements Serializable{
     this.error = error;
   }
 
-  public VerifyTokenResponse(String audience, String scopes, String userId, long expiresIn) {
+  public VerifyTokenResponse(String audience, String scopes, String roles, String userId, long expiresIn) {
     super();
     this.audience = audience;
     this.scopes = scopes;
+    this.roles = roles;
     this.user_id = userId;
     this.expires_in = expiresIn;
   }
@@ -127,7 +132,8 @@ public class VerifyTokenResponse implements Serializable{
   }
 
   /**
-   * @param user_id the user_id to set
+   * @param user_id
+   *          the user_id to set
    */
   public void setUser_id(String user_id) {
     this.user_id = user_id;
@@ -141,19 +147,37 @@ public class VerifyTokenResponse implements Serializable{
   }
 
   /**
-   * @param expires_in the expires_in to set
+   * @param expires_in
+   *          the expires_in to set
    */
   public void setExpires_in(long expires_in) {
     this.expires_in = expires_in;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override
   public String toString() {
-    return "VerifyTokenResponse [audience=" + audience + ", scopes=" + scopes + ", user_id=" + user_id
-        + ", expires_in=" + expires_in + "]";
+    return "VerifyTokenResponse [audience=" + audience + ", scopes=" + scopes + ", roles=" + roles + ", user_id="
+        + user_id + ", expires_in=" + expires_in + "]";
+  }
+
+  /**
+   * @return the roles
+   */
+  public String getRoles() {
+    return roles;
+  }
+
+  /**
+   * @param roles
+   *          the roles to set
+   */
+  public void setRoles(String roles) {
+    this.roles = roles;
   }
 
 }

@@ -81,8 +81,8 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     } else if (!StringUtils.isBlank(uris) && !Arrays.asList(uris.split(",")).contains(redirectUri)) {
       return ValidationResponse.REDIRCT_URI_NOT_VALID;
     }
-    if (!StringUtils.isBlank(request.getScope())) {
-      String[] scopes = request.getScope().split(",");
+    if (!StringUtils.isBlank(request.getScopes())) {
+      String[] scopes = request.getScopes().split(",");
       List<String> clientScopes = Arrays.asList(client.getScopes().split(","));
       for (String scope : scopes) {
         if (!clientScopes.contains(scope)) {
@@ -90,7 +90,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
         }
       } 
     } else {
-      request.setScope(client.getScopes());
+      request.setScopes(client.getScopes());
     }
     return ValidationResponse.VALID;
   }

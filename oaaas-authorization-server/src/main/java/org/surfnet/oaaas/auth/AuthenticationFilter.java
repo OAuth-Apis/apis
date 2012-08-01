@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
+import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
@@ -62,7 +63,7 @@ public class AuthenticationFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
 
-    if (principalSet(request)) {
+    if (principalSet(request) || consentProvided(request)) {
       chain.doFilter(request, res);
     } else if (initialRequest(request)) {
       String responseType = request.getParameter("response_type");
@@ -107,12 +108,8 @@ public class AuthenticationFilter implements Filter {
       } else {
         location += "?";
       }
-      location = location
-          .concat("error=")
-          .concat(validate.getValue())
-          .concat("&error_description=")
-          .concat(validate.getDescription())
-          .concat(StringUtils.isBlank(state) ? "" : "&state=".concat(state));
+      location = location.concat("error=").concat(validate.getValue()).concat("&error_description=")
+          .concat(validate.getDescription()).concat(StringUtils.isBlank(state) ? "" : "&state=".concat(state));
       LOG.info("Sending error response, a redirect to: {}", location);
       response.sendRedirect(location);
     } else {
@@ -127,7 +124,11 @@ public class AuthenticationFilter implements Filter {
 
   protected boolean principalSet(ServletRequest request) {
     return request.getAttribute(AbstractAuthenticator.PRINCIPAL) != null
-        && request.getAttribute(AbstractAuthenticator.PRINCIPAL) instanceof Principal;
+        && request.getAttribute(AbstractAuthenticator.PRINCIPAL) instanceof RolesPrincipal;
+  }
+
+  protected boolean consentProvided(HttpServletRequest request) {
+    return Boolean.valueOf(request.getParameter(UserConsentHandler.USER_OAUTH_APPROVAL));
   }
 
   @Override

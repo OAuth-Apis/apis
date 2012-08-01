@@ -17,7 +17,6 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,17 +25,19 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.surfnet.oaaas.auth.principal.RolesPrincipal;
+
 /**
  * To be implemented by various authentication methods.
  */
 public abstract class AbstractAuthenticator implements Filter {
 
-  /*
+  /**
    * Constant to set the return uri when authentication is done
    */
   public static final String RETURN_URI = "returnUri";
 
-  /*
+  /**
    * The constant used to keep 'session' state when we give flow control to the
    * authenticator filter. Part of the contract with the authenticator Filter is
    * that we expect to get the value back when authentication is done.
@@ -66,7 +67,7 @@ public abstract class AbstractAuthenticator implements Filter {
    *   <p>When authenticated:</p>
    *   <ul>
    *     <li>set the authState attribute, by calling {@link #setAuthStateValue(javax.servlet.ServletRequest, String)}</li>
-   *     <li>set the principal attribute, by calling {@link #setPrincipal(javax.servlet.ServletRequest, java.security.Principal)} </li>
+   *     <li>set the principal attribute, by calling {@link #setPrincipal(ServletRequest, RolesPrincipal)}  </li>
    *    <li>call chain.doFilter(request, response) to let the flow continue..
    *   </ul>
    * @param request the ServletRequest
@@ -101,7 +102,7 @@ public abstract class AbstractAuthenticator implements Filter {
    * @param request the original ServletRequest
    * @param principal the Principal to set.
    */
-  protected final void setPrincipal(ServletRequest request, Principal principal) {
+  protected final void setPrincipal(ServletRequest request, RolesPrincipal principal) {
     request.setAttribute(PRINCIPAL, principal);
   }
 
