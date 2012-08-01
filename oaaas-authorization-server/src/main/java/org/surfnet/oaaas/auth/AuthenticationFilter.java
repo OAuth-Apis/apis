@@ -125,7 +125,7 @@ public class AuthenticationFilter implements Filter {
     return StringUtils.isNotEmpty(request.getParameter("response_type"));
   }
 
-  private boolean principalSet(ServletRequest request) {
+  protected boolean principalSet(ServletRequest request) {
     return request.getAttribute(AbstractAuthenticator.PRINCIPAL) != null
         && request.getAttribute(AbstractAuthenticator.PRINCIPAL) instanceof Principal;
   }

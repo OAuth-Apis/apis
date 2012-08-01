@@ -106,6 +106,12 @@ public class TokenResource {
     if (LOG.isDebugEnabled()) {
       LOG.debug("Principal from HttpServletRequest: {}", principal);
     }
+    /*
+     * do we need to go to consent screen 
+     */
+    
+    
+    
     if (authReq.getResponseType().equals(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE)) {
       AccessToken accessToken = new AccessToken(getUniqueToken(), principal.getName(), authReq.getClient(), 0,
           authReq.getScope());

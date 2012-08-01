@@ -9,9 +9,16 @@ https://cwiki.apache.org/WINK/jax-rs-getting-started.html
 - ClientResource and ResourceServerResource must debug log all activity
 - TokenResource must use OAuth2Validator for validation
 - Introduce a token generator and default implementation
+- Refactor OAuth2Validator to have seperate methods for the validation (for extensibility) and document code <=> spec
 
+- refactor resource tests to integration tests (without dropwizard dependency)
 
 - GUI
+
+_____________________________________
+
+
+
 - Performance
 - VM?
 
