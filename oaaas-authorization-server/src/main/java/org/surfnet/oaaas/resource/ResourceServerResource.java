@@ -17,7 +17,6 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,9 +39,13 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
+import org.surfnet.oaaas.auth.VerifyTokenResponse;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
+/**
+ * JAX-RS Resource for resource servers.
+ */
 @Named
 @Path("/admin/resourceServer")
 @Produces(MediaType.APPLICATION_JSON)
@@ -53,10 +56,13 @@ public class ResourceServerResource {
   @Inject
   private ResourceServerRepository resourceServerRepository;
 
+  /**
+   * Get all existing resource servers for the provided credentials (== owner).
+   */
   @GET
   public Response getAll(@Context HttpServletRequest request) {
     Response.ResponseBuilder responseBuilder;
-    String owner = getPrincipal(request).getName();
+    String owner = getUserId(request);
     final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
 
     if (resourceServers == null || !resourceServers.iterator().hasNext()) {
@@ -67,12 +73,17 @@ public class ResourceServerResource {
     return responseBuilder.build();
   }
 
-
+  /**
+   * Get one resource server.
+   */
   @GET
   @Path("/{resourceServerId}.json")
-  public Response getById(@PathParam("resourceServerId") Long id) {
+  public Response getById(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
+
+    String owner = getUserId(request);
+
     Response.ResponseBuilder responseBuilder;
-    final ResourceServer resourceServer = resourceServerRepository.findOne(id);
+    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(id, owner);
 
     if (resourceServer == null) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
@@ -82,9 +93,15 @@ public class ResourceServerResource {
     return responseBuilder.build();
   }
 
+  /**
+   * Save a new resource server.
+   */
   @PUT
-  public Response put(@Valid ResourceServer newOne) {
+  public Response put(@Context HttpServletRequest request, @Valid ResourceServer newOne) {
+    String owner = getUserId(request);
+
     newOne.setSecret(UUID.randomUUID().toString());
+    newOne.setOwner(owner);
     final ResourceServer resourceServerSaved = resourceServerRepository.save(newOne);
     LOG.debug("nr of entities in store now: {}", resourceServerRepository.count());
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
@@ -94,29 +111,42 @@ public class ResourceServerResource {
         .build();
   }
 
+  /**
+   * Delete an existing resource server.
+   */
   @DELETE
   @Path("/{resourceServerId}.json")
-  public Response delete(@PathParam("resourceServerId") Long id) {
-    if (resourceServerRepository.findOne(id) == null) {
+  public Response delete(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
+    String owner = getUserId(request);
+
+    if (resourceServerRepository.findByIdAndOwner(id, owner) == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     resourceServerRepository.delete(id);
     return Response.noContent().build();
   }
 
+  /**
+   * Update an existing resource server.
+   */
   @POST
   @Path("/{resourceServerId}.json")
-  public Response post(@Valid ResourceServer resourceServer, @PathParam("resourceServerId") Long id) {
-    ResourceServer findOne = resourceServerRepository.findOne(id);
-    if (findOne == null) {
+  public Response post(@Valid ResourceServer resourceServer,
+                       @Context HttpServletRequest request,
+                       @PathParam("resourceServerId") Long id) {
+    String owner = getUserId(request);
+
+    ResourceServer persistedResourceServer = resourceServerRepository.findByIdAndOwner(id, owner);
+    if (persistedResourceServer == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    resourceServer.setSecret(findOne.getSecret());
+    resourceServer.setSecret(persistedResourceServer.getSecret());
+    resourceServer.setOwner(owner);
     ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
     return Response.ok(savedInstance).build();
   }
 
-  private Principal getPrincipal(HttpServletRequest request) {
-    return (Principal) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
+  private String getUserId(HttpServletRequest request) {
+    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getUser_id();
   }
 }

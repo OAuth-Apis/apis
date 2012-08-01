@@ -20,7 +20,6 @@ package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
@@ -159,7 +158,7 @@ public class AuthorizationServerFilter implements Filter {
       try {
         tokenResponse = cacheAccessTokens() ? cache.get(accessToken, getCallable(accessToken))
             : getVerifyTokenResponse(accessToken);
-      } catch (ExecutionException e) {
+      } catch (Exception e) {
         LOG.error("While validating access token", e);
         sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot verify access token");
         return;

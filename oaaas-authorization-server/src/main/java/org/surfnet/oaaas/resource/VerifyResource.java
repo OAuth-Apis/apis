@@ -90,8 +90,10 @@ public class VerifyResource {
       return unauthorized();
     }
     AccessToken token = accessTokenRepository.findByToken(accessToken);
-    if (token == null || (token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis())) {
-      return Response.status(Status.BAD_REQUEST).entity(new VerifyTokenResponse("invalid_token")).build();
+    if (token == null) {
+      return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
+    } else if (token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis()) {
+      return Response.status(Status.GONE).entity(new VerifyTokenResponse("token_expired")).build();
     }
     return Response.ok(
         new VerifyTokenResponse(token.getClient().getName(), token.getScopes(), token.getPrincipal(), token

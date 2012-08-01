@@ -59,7 +59,6 @@ public class ResourceServer extends AbstractEntity {
   private String contactName;
   
   @Column
-  @NotNull
   @JsonIgnore
   private String owner;
 

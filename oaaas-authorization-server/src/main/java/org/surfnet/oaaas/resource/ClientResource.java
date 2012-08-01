@@ -17,7 +17,6 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
-import java.security.Principal;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,11 +37,15 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
+import org.surfnet.oaaas.auth.VerifyTokenResponse;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
+/**
+ * JAX-RS Resource for CRUD operations on Clients. (clients in OAuth 2 context).
+ */
 @Named
 @Path("/admin/resourceServer/{resourceServerId}/client")
 @Produces(MediaType.APPLICATION_JSON)
@@ -57,10 +60,14 @@ public class ClientResource {
   private ResourceServerRepository resourceServerRepository;
 
 
+  /**
+   * Get a list of all clients linked to the given resourceServer.
+   */
   @GET
   public Response getAll(@Context HttpServletRequest request,
-                         @PathParam("resourceServerId")Long resourceServerId) {
-    String owner = getPrincipal(request).getName();
+                         @PathParam("resourceServerId") Long resourceServerId) {
+
+    String owner = getUserId(request);
 
     Response.ResponseBuilder responseBuilder;
     final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
@@ -76,13 +83,19 @@ public class ClientResource {
   }
 
 
+  /**
+   * Get a specific Client.
+   */
   @GET
   @Path("/{clientId}.json")
-  public Response getById(@PathParam("resourceServerId")Long resourceServerId, @PathParam("clientId") Long id) {
+  public Response getById(@Context HttpServletRequest request,
+                          @PathParam("resourceServerId") Long resourceServerId,
+                          @PathParam("clientId") Long id) {
     Response.ResponseBuilder responseBuilder;
 
-    // TODO: check that invalid resourceServerIds result in 404
-    final ResourceServer resourceServer = resourceServerRepository.findOne(resourceServerId);
+    String owner = getUserId(request);
+
+    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
     final Client client = clientRepository.findByIdAndResourceServer(id, resourceServer);
 
     if (client == null) {
@@ -93,16 +106,22 @@ public class ClientResource {
     return responseBuilder.build();
   }
 
-  // TODO: restrict based on resourceserver
+  /**
+   * Save a new client.
+   */
   @PUT
-  public Response put(@Valid Client client) {
+  public Response put(@Context HttpServletRequest request,
+                      @PathParam("resourceServerId") Long resourceServerId,
+                      @Valid Client client) {
 
-    // TODO: get resourceServer from authentication process, and put that in client
-    client.setResourceServer(resourceServerRepository.findOne(51L));
+    String owner = getUserId(request);
+    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+
+    client.setResourceServer(resourceServer);
 
     final Client clientSaved = clientRepository.save(client);
     if (LOG.isDebugEnabled()) {
-      LOG.debug("Saving client: {}", clientSaved);
+      LOG.debug("Saved client: {}", clientSaved);
     }
     final URI uri = UriBuilder.fromPath("{clientId}.json").build(clientSaved.getId());
     return Response
@@ -111,11 +130,19 @@ public class ClientResource {
         .build();
   }
 
-  // TODO: restrict based on resourceserver
+  /**
+   * Delete a given client.
+   */
   @DELETE
   @Path("/{clientId}.json")
-  public Response delete(@PathParam("clientId") Long id) {
-    Client client = clientRepository.findOne(id);
+  public Response delete(@Context HttpServletRequest request,
+                         @PathParam("clientId") Long id,
+                         @PathParam("resourceServerId") Long resourceServerId) {
+
+    String owner = getUserId(request);
+    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+
+    Client client = clientRepository.findByIdAndResourceServer(id, resourceServer);
     if (client == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -126,13 +153,24 @@ public class ClientResource {
     return Response.noContent().build();
   }
 
-  // TODO: restrict based on resourceserver
+  /**
+   * Update an existing client.
+   */
   @POST
   @Path("/{clientId}.json")
-  public Response post(@Valid Client newOne, @PathParam("clientId") Long id) {
-    if (clientRepository.findOne(id) == null) {
+  public Response post(@Valid Client newOne, @PathParam("clientId") Long id,
+                       @Context HttpServletRequest request,
+                       @PathParam("resourceServerId") Long resourceServerId
+  ) {
+
+    String owner = getUserId(request);
+    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+
+    final Client clientFromStore = clientRepository.findByIdAndResourceServer(id, resourceServer);
+    if (clientFromStore == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
+    clientFromStore.setResourceServer(resourceServer);
     Client savedInstance = clientRepository.save(newOne);
     if (LOG.isDebugEnabled()) {
       LOG.debug("Saving client: {}", savedInstance);
@@ -140,7 +178,7 @@ public class ClientResource {
     return Response.ok(savedInstance).build();
   }
 
-  private Principal getPrincipal(HttpServletRequest request) {
-    return (Principal) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
+  private String getUserId(HttpServletRequest request) {
+    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getUser_id();
   }
 }

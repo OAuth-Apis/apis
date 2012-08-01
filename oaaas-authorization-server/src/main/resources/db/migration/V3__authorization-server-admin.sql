@@ -14,8 +14,6 @@ VALUES
     'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 99998,
     'authorization-server-admin-js-client', '');
 
-/*
 INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
 VALUES
-    (99998, 0, 'john.doe','read','74eccf5f-0995-4e1c-b08c-d05dd5a0f89c',99998);
-*/
+    (99998, 0, 'john.doe','read','8bb56054-fa9f-4b5a-94cf-379510cc574a',99998);
