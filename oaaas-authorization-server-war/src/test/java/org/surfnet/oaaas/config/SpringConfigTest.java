@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package it;
+package org.surfnet.oaaas.config;
 
-import org.apache.commons.codec.binary.Base64;
+import javax.inject.Inject;
+import javax.sql.DataSource;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public abstract class AbstractAuthorizationServerTest {
+import static org.junit.Assert.assertNotNull;
 
-  protected int defaultServletPort = 8080;
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes=SpringConfiguration.class)
+public class SpringConfigTest {
 
-  public String baseUrl() {
-    return String.format("http://localhost:%s",
-        System.getProperty("servlet.port", String.valueOf(defaultServletPort)));
-  }
-
-  public String baseUrlWith(String suffix) {
-    return baseUrl().concat(suffix);
-  }
-
-  public String authorizationBasic(String username, String password) {
-    String concatted = username + ":" + password;
-    return "Basic " + new String(Base64.encodeBase64(concatted.getBytes()));
+  @Inject
+  private DataSource dataSource;
+  @Test
+  public void wire() {
+    assertNotNull(dataSource);
   }
 }

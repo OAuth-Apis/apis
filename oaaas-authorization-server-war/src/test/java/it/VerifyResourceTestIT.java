@@ -26,8 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
-
-
   @Test
   public void withNoParams() {
     final ClientResponse response = new Client()
