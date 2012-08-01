@@ -30,12 +30,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.sun.jersey.core.util.Base64;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.surfnet.oaaas.auth.VerifyTokenResponse;
 import org.surfnet.oaaas.basic.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
@@ -66,11 +63,12 @@ public class VerifyResource {
   private ResourceServerRepository resourceServerRepository;
 
   @GET
-  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
-  String authorization, @QueryParam("access_token")
-  String accessToken) {
+  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+                              @QueryParam("access_token") String accessToken) {
+
     UserPassCredentials credentials = new UserPassCredentials(authorization);
     if (!credentials.isValid() || StringUtils.isBlank(accessToken)) {
+      LOG.info("responding with Unauthorized, for username '{}' and accessToken '{}'", credentials.getUsername(), accessToken);
       return unauthorized();
     }
     String key = credentials.getUsername();
@@ -87,13 +85,23 @@ public class VerifyResource {
     }
     AccessToken token = accessTokenRepository.findByToken(accessToken);
     if (token == null) {
+      LOG.info("responding with Not Found, for username '{}' and accessToken '{}'",
+          credentials.getUsername(),accessToken);
       return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
     } else if (token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis()) {
+      LOG.info("responding with Gone, for username '{}' and accessToken '{}'",
+          credentials.getUsername(), accessToken);
       return Response.status(Status.GONE).entity(new VerifyTokenResponse("token_expired")).build();
     }
-    return Response.ok(
-        new VerifyTokenResponse(token.getClient().getName(), token.getScopes(),token.getRoles(), token.getPrincipal(), token
-            .getExpires())).build();
+
+    final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(
+        token.getClient().getName(), token.getScopes(),
+        token.getRoles(), token.getPrincipal(), token.getExpires());
+
+    LOG.info("responding with 'OK' response, for username '{}' and accessToken '{}': {}",
+        new Object[] { credentials.getUsername(),accessToken, verifyTokenResponse});
+
+    return Response.ok(verifyTokenResponse).build();
   }
 
   private Response unauthorized() {

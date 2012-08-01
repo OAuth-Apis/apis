@@ -49,7 +49,7 @@
     <openjpa.version>2.2.0</openjpa.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.0.1</commons-io.version>
-    <jersey.version>1.12</jersey.version>
+    <jersey.version>1.13</jersey.version>
     <commons-codec.version>1.4</commons-codec.version>
     <guava.version>12.0.1</guava.version>
     <coin-test.version>2.8.1</coin-test.version>
