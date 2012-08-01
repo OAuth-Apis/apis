@@ -36,7 +36,7 @@
   </listener>
 
   <filter>
-    <filter-name>authfilter</filter-name>
+    <filter-name>adminAuthorizationFilter</filter-name>
     <filter-class>org.surfnet.oaaas.auth.AuthorizationServerFilter</filter-class>
 
     <init-param>
@@ -53,9 +53,21 @@
     </init-param>
   </filter>
 
+
+  <filter>
+    <filter-name>authenticationFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+
   <filter-mapping>
-    <filter-name>authfilter</filter-name>
+    <filter-name>adminAuthorizationFilter</filter-name>
     <url-pattern>/admin/*</url-pattern>
+  </filter-mapping>
+
+
+  <filter-mapping>
+    <filter-name>authenticationFilter</filter-name>
+    <url-pattern>/oauth2/authorize</url-pattern>
   </filter-mapping>
 
   <servlet>

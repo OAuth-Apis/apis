@@ -19,7 +19,6 @@ package org.surfnet.oaaas.auth;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Principal;
 import java.util.UUID;
 
 import javax.inject.Inject;

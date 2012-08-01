@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.config;
 
 import javax.inject.Inject;
+import javax.servlet.Filter;
 import javax.sql.DataSource;
 
 import com.googlecode.flyway.core.Flyway;
@@ -48,15 +49,6 @@ public class SpringConfiguration {
   Environment env;
 
   @Bean
-  public Flyway flyway() {
-    final Flyway flyway = new Flyway();
-    flyway.setDisableInitCheck(true);
-    flyway.setDataSource(dataSource());
-    flyway.migrate();
-    return flyway;
-  }
-
-  @Bean
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
     dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
@@ -65,6 +57,17 @@ public class SpringConfiguration {
     dataSource.setPassword(env.getProperty("jdbc.password"));
     return dataSource;
   }
+
+  @Bean
+  public Flyway flyway() {
+    final Flyway flyway = new Flyway();
+    flyway.setDisableInitCheck(true);
+    flyway.setDataSource(dataSource());
+    flyway.setBaseDir(env.getProperty("flyway.migrations.location"));
+    flyway.migrate();
+    return flyway;
+  }
+
 
   @Bean
   public JpaTransactionManager transactionManager() {
@@ -78,5 +81,12 @@ public class SpringConfiguration {
     emfBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
     emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
     return emfBean;
+  }
+
+  @Bean
+  public Filter authenticator() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    final Class<?> authenticatorClass =
+        getClass().getClassLoader().loadClass(env.getProperty("authenticatorClass"));
+    return (Filter) authenticatorClass.newInstance();
   }
 }

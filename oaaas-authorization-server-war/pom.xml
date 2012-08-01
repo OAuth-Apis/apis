@@ -94,6 +94,11 @@
       <artifactId>jul-to-slf4j</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -111,6 +116,13 @@
         <artifactId>cargo-maven2-plugin</artifactId>
         <version>1.2.3</version>
         <configuration>
+          <container>
+            <dependencies>
+              <dependency>
+                <location>src/test/resources/</location>
+              </dependency>
+            </dependencies>
+          </container>
           <configuration>
             <properties>
               <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
