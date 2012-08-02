@@ -48,6 +48,9 @@ public class ResourceServer extends AbstractEntity {
   private String key;
 
   @Column
+  private String description;
+
+  @Column
   private String scopes;
 
   @Column
@@ -160,5 +163,19 @@ public class ResourceServer extends AbstractEntity {
    */
   public void setClients(List<Client> clients) {
     this.clients = clients;
+  }
+
+  /**
+   * @return the description
+   */
+  public String getDescription() {
+    return description;
+  }
+
+  /**
+   * @param description the description to set
+   */
+  public void setDescription(String description) {
+    this.description = description;
   }
 }
