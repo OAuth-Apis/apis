@@ -53,46 +53,89 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
    * .AuthorizationRequest)
    */
   @Override
-  public ValidationResponse validate(AuthorizationRequest request) {
-    String responseType = request.getResponseType();
-    if (StringUtils.isBlank(responseType) || !RESPONSE_TYPES.contains(responseType)) {
-      return ValidationResponse.UNSUPPORTED_RESPONSE_TYPE;
-    }
+  public ValidationResponse validate(AuthorizationRequest authorizationRequest) {
+    try {
+      validateAuthorizationRequest(authorizationRequest);
 
-    String clientId = request.getClientId();
-    Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
-    if (client == null) {
-      return ValidationResponse.UNKNOWN_CLIENT_ID;
+      String responseType = validateResponseType(authorizationRequest);
+
+      Client client = validateClient(authorizationRequest);
+      authorizationRequest.setClient(client);
+
+      String redirectUri = determineRedirectUri(authorizationRequest, responseType, client);
+      authorizationRequest.setRedirectUri(redirectUri);
+
+      String scopes = determineScopes(authorizationRequest, client);
+      authorizationRequest.setScopes(scopes);
+
+    } catch (ValidationResponseException e) {
+      return e.v;
     }
-    request.setClient(client);
-    String uris = client.getRedirectUris();
-    String redirectUri = request.getRedirectUri();
-    if (StringUtils.isBlank(redirectUri)) {
-      if (responseType.equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
-        return ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI;
-      } else if (StringUtils.isBlank(uris)) {
-        return ValidationResponse.REDIRECT_URI_REQUIRED;
-      } else {
-        String[] split = uris.split(",");
-        request.setRedirectUri(split[0].trim());
-      }
-    } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
-      return ValidationResponse.REDIRCT_URI_NOT_URI;
-    } else if (!StringUtils.isBlank(uris) && !Arrays.asList(uris.split(",")).contains(redirectUri)) {
-      return ValidationResponse.REDIRCT_URI_NOT_VALID;
-    }
-    if (!StringUtils.isBlank(request.getScopes())) {
-      String[] scopes = request.getScopes().split(",");
+    return ValidationResponse.VALID;
+  }
+
+  protected String determineScopes(AuthorizationRequest authorizationRequest, Client client) {
+    if (StringUtils.isBlank(authorizationRequest.getScopes())) {
+      return client.getScopes();
+    } else {
+      String[] scopes = authorizationRequest.getScopes().split(",");
       List<String> clientScopes = Arrays.asList(client.getScopes().split(","));
       for (String scope : scopes) {
         if (!clientScopes.contains(scope)) {
-          return ValidationResponse.SCOPE_NOT_VALID;
+          throw new ValidationResponseException(ValidationResponse.SCOPE_NOT_VALID);
         }
-      } 
-    } else {
-      request.setScopes(client.getScopes());
+      }
+      return authorizationRequest.getScopes();
     }
-    return ValidationResponse.VALID;
+  }
+
+  protected String determineRedirectUri(AuthorizationRequest authorizationRequest, String responseType, Client client) {
+    String uris = client.getRedirectUris();
+    String redirectUri = authorizationRequest.getRedirectUri();
+    if (StringUtils.isBlank(redirectUri)) {
+      if (responseType.equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
+        throw new ValidationResponseException(ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI);
+      } else if (StringUtils.isBlank(uris)) {
+        throw new ValidationResponseException(ValidationResponse.REDIRECT_URI_REQUIRED);
+      } else {
+        String[] split = uris.split(",");
+        return split[0].trim();
+      }
+    } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
+      throw new ValidationResponseException(ValidationResponse.REDIRCT_URI_NOT_URI);
+    } else if (!StringUtils.isBlank(uris) && !Arrays.asList(uris.split(",")).contains(redirectUri)) {
+      throw new ValidationResponseException(ValidationResponse.REDIRCT_URI_NOT_VALID);
+    }
+    return redirectUri;
+  }
+
+  protected Client validateClient(AuthorizationRequest authorizationRequest) {
+    String clientId = authorizationRequest.getClientId();
+    Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
+    if (client == null) {
+      throw new ValidationResponseException(ValidationResponse.UNKNOWN_CLIENT_ID);
+    }
+    return client;
+  }
+
+  protected String validateResponseType(AuthorizationRequest authorizationRequest) {
+    String responseType = authorizationRequest.getResponseType();
+    if (StringUtils.isBlank(responseType) || !RESPONSE_TYPES.contains(responseType)) {
+      throw new ValidationResponseException(ValidationResponse.UNSUPPORTED_RESPONSE_TYPE);
+    }
+    return responseType;
+  }
+
+  protected void validateAuthorizationRequest(AuthorizationRequest authorizationRequest) {
+  }
+
+  @SuppressWarnings("serial")
+  class ValidationResponseException extends RuntimeException {
+    private ValidationResponse v;
+
+    public ValidationResponseException(ValidationResponse v) {
+      this.v = v;
+    }
   }
 
 }

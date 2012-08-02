@@ -16,15 +16,20 @@
 
 package org.surfnet.oaaas.simple;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+
+import com.sun.jersey.core.util.StringKeyIgnoreCaseMultivaluedMap;
 
 /**
  * Simple impl. of HttpHeaders to satisfy ViewMessageBodyWriter
@@ -63,5 +68,18 @@ class MockHttpHeaders implements HttpHeaders {
   @Override
   public Map<String, Cookie> getCookies() {
     return null;
+  }
+  
+  public static MultivaluedMap<String, Object> headersAsMap(HttpServletRequest request) {
+    MultivaluedMap<String, Object> result = new StringKeyIgnoreCaseMultivaluedMap<Object>();
+    final Enumeration<String> headerNames = request.getHeaderNames();
+    for (String headerName : Collections.list(headerNames)) {
+      List<Object> headerValues = new ArrayList<Object>();
+      for (String headerValue : Collections.list(request.getHeaders(headerName))) {
+        headerValues.add(headerValue);
+      }
+      result.put(headerName, headerValues);
+    }
+    return result;
   }
 }

@@ -28,12 +28,15 @@ import com.yammer.dropwizard.views.ViewBundle;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
+import org.surfnet.oaaas.auth.UserConsentFilter;
 import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
 import org.surfnet.oaaas.resource.VerifyResource;
+import org.surfnet.oaaas.simple.FormUserConsentHandler;
 
 public class Application extends Service<ApplicationConfiguration> {
 
@@ -69,6 +72,7 @@ public class Application extends Service<ApplicationConfiguration> {
     environment.addResource(ctx.getBean(VerifyResource.class));
 
     addAuthenticationHandling(configuration, environment, ctx);
+    addUserConsentHandling(configuration, environment, ctx);
 
     final AssetsBundle assetsBundle = new AssetsBundle("/client", CacheBuilderSpec.parse("maximumSize=0"), "/client");
     assetsBundle.initialize(environment);
@@ -88,13 +92,24 @@ public class Application extends Service<ApplicationConfiguration> {
     final AuthenticationFilter authzFilter = ctx.getBean(AuthenticationFilter.class);
     authzFilter.setAuthenticator(authnFilter);
     environment.addFilter(authzFilter, "/oauth2/authorize");
-    environment.addFilter(authnFilter, "/oauth2/authorize");
 
     AuthorizationServerFilter resourceServerFilter = ctx.getBean(AuthorizationServerFilter.class);
     resourceServerFilter.setAuthorizationServerUrl(configuration.getAdminService().getTokenVerificationUrl());
     resourceServerFilter.setResourceServerKey(configuration.getAdminService().getResourceServerKey());
     resourceServerFilter.setResourceServerSecret(configuration.getAdminService().getResourceServerSecret());
     environment.addFilter(resourceServerFilter, "/admin/*");
+  }
+  
+  protected void addUserConsentHandling(ApplicationConfiguration configuration, Environment environment,
+      ApplicationContext ctx) {
+    AbstractUserConsentHandler userConsentHandler
+       = (AbstractUserConsentHandler) ctx.getBean(FormUserConsentHandler.class);
+
+    final UserConsentFilter consentFilter = ctx.getBean(UserConsentFilter.class);
+    consentFilter.setUserConsentHandler(userConsentHandler);
+    environment.addFilter(consentFilter, "/oauth2/authorize");
+    environment.addFilter(consentFilter, "/oauth2/consent");
+    
   }
 
   private void initFlyway(DataSource datasource) {

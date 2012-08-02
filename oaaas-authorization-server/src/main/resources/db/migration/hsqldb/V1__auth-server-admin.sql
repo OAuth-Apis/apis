@@ -2,9 +2,13 @@ INSERT INTO resourceserver (id, contactEmail,  contactName, name, scopes, secret
 VALUES
 	(99999, 'foo@university.org','foo.bar','university-foo','read','58b749f7-acb3-44b7-a38c-53d5ad740cf6');
 
-INSERT INTO client (id, contactEmail, contactName, description, name, scopes, thumbNailUrl, resourceserver_id)
+INSERT INTO client (id, clientId, contactEmail, contactName, description, expireDuration, 
+					name, redirectUris, scopes, secret, skipConsent, thumbNailUrl, 
+					useRefreshTokens, resourceserver_id)
 VALUES
-    (99999, 'client@coolapp.com', 'john.doe', 'Cool app for doing awesome things', 'cool-app', 'read', 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 99999);
+    (99999, 'cool_app_id', 'client@coolapp.com', 'john.doe', 'Cool app for doing awesome things', 0,
+    'cool-app', 'http://localhost:8080/redirect', 'read', 'secret', 0, 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 
+    0, 99999);
 
 INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
 VALUES

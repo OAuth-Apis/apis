@@ -81,13 +81,12 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     }
   }
 
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain, java.lang.String, java.lang.String)
+   */
   @Override
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
-      ServletException {
-
-    HttpServletRequest request = (HttpServletRequest) req;
-    HttpServletResponse response = (HttpServletResponse) res;
-
+  public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+      String authStateValue, String returnUri) throws IOException, ServletException {
     LOG.debug("Hitting SAML Authenticator filter");
     
     if (isSAMLResponse(request)) {
@@ -108,8 +107,9 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         }
       }
     }
-    sendAuthnRequest(response, getAuthStateValue(request), getReturnUri(request));
+    sendAuthnRequest(response, authStateValue, getReturnUri(request));
   }
+  
 
   private RolesPrincipal convertToPrincipal(UserDetails ud) {
     Collection<? extends GrantedAuthority> authorities = ud.getAuthorities();
@@ -192,4 +192,6 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
   }
+
+
 }

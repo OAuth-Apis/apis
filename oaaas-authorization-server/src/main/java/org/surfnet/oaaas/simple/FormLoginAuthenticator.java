@@ -22,11 +22,13 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.inject.Named;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -37,58 +39,45 @@ import com.yammer.dropwizard.views.ViewMessageBodyWriter;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
-//@Named("theAuthenticationFilter")
+@Named("formAuthenticator")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
 
-  private String forwardUri = "/doAuthorize";
-
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet
+   * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+   * javax.servlet.FilterChain, java.lang.String, java.lang.String)
+   */
   @Override
-  public void doFilter(ServletRequest req, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    HttpServletRequest request = (HttpServletRequest) req;
-
+  public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+      String authStateValue, String returnUri) throws IOException, ServletException {
     if (request.getMethod().equals("POST")) {
       processForm(request);
       chain.doFilter(request, response);
     } else {
-      processInitial(request, response);
-
+      processInitial(request, response, returnUri, authStateValue);
     }
   }
 
-  private void processInitial(HttpServletRequest request, ServletResponse response) throws IOException {
-    final String uri = String.format("%s?forwardUri=%s&authState=%s",
-        forwardUri, getReturnUri(request), getAuthStateValue(request));
+  private void processInitial(HttpServletRequest request, ServletResponse response, String returnUri,
+      String authStateValue) throws IOException {
 
     ViewMessageBodyWriter w = new ViewMessageBodyWriter(new MockHttpHeaders());
-    View view = new LoginView(getReturnUri(request), getAuthStateValue(request));
+    View view = new LoginView(super.getReturnUri(request), authStateValue);
 
-    w.writeTo(view, LoginView.class, null, null, MediaType.TEXT_HTML_TYPE,
-        headersAsMap(request), response.getOutputStream());
+    w.writeTo(view, LoginView.class, null, null, MediaType.TEXT_HTML_TYPE, MockHttpHeaders.headersAsMap(request),
+        response.getOutputStream());
 
   }
 
   private void processForm(final HttpServletRequest request) {
-    // TODO: process POST parameters, actually perform authentication at user repository
+    // TODO: process POST parameters, actually perform authentication at user
+    // repository
 
     setAuthStateValue(request, request.getParameter("authState"));
     setPrincipal(request, new SimplePrincipal(request.getParameter("username")));
-  }
-
-  private MultivaluedMap<String,Object> headersAsMap(HttpServletRequest request) {
-    MultivaluedMap<String, Object> result = new StringKeyIgnoreCaseMultivaluedMap<Object>();
-    final Enumeration<String> headerNames = request.getHeaderNames();
-    for (String headerName : Collections.list(headerNames)) {
-      List<Object> headerValues = new ArrayList<Object>();
-      for (String headerValue : Collections.list(request.getHeaders(headerName))) {
-        headerValues.add(headerValue);
-      }
-      result.put(headerName, headerValues);
-    }
-    return result;
-  }
-
-  public void setForwardUri(String forwardUri) {
-    this.forwardUri = forwardUri;
   }
 
 }

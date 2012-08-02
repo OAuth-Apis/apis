@@ -16,25 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.simple;
+package org.surfnet.oaaas.freemarker;
 
-import com.yammer.dropwizard.views.View;
+import java.util.Map;
 
-public class LoginView extends View {
+/**
+ * Model for Freemarker
+ *
+ */
+public class Model {
+  
+  private Map<String, Object> model;
 
-  private Context context;
+  private String view;
 
-  public LoginView(String actionUri, String authState) {
-    super("login.ftl");
-    this.context = new Context(actionUri, authState);
+  public Model(Map<String, Object> model, String view) {
+    super();
+    this.model = model;
+    this.view = view;
+  }
 
+
+  /**
+   * @return the model
+   */
+  public Map<String, Object> getModel() {
+    return model;
   }
 
   /**
-   * @return the context
+   * @return the view
    */
-  public Context getContext() {
-    return context;
+  public String getView() {
+    return view;
   }
 
 }

@@ -28,9 +28,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.openjpa.persistence.jdbc.Unique;
+import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 
 /**
  * A representation of an <a
@@ -254,6 +256,14 @@ public class AuthorizationRequest extends AbstractEntity {
    */
   public void setRoles(String roles) {
     this.roles = roles;
+  }
+
+  /**
+   * @param principal2
+   */
+  public void complete(RolesPrincipal principal) {
+    setPrincipal(principal.getName());
+    setRoles(StringUtils.join(principal.getRoles(),","));
   }
  
 }

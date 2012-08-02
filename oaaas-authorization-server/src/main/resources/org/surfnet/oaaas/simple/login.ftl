@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="span8">
 				<form class="form-horizontal" id="registerHere" method="post"
-					action="/oauth2/authorize">
+					action="${context.actionUri}">
 					<fieldset>
 
 						<legend>Login with your identifier and password</legend>
@@ -39,8 +39,6 @@
 								<p class="help-block">Hint: can be anything</p>
 							</div>
 						</div>
-						<input type="hidden" name="forwardUri"
-							value="${context.forwardUri}" /> 
 						<input type="hidden" name="authState"
 							value="${context.authState}" /> 
 							

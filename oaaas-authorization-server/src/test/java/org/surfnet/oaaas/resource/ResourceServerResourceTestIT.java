@@ -23,6 +23,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import org.surfnet.oaaas.model.ResourceServer;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class ResourceServerResourceTestIT {
 
   private static final String BASE_URL = "http://localhost:8080/resourceServer";

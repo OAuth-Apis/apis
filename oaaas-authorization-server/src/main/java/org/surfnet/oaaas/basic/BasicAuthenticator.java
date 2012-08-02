@@ -21,8 +21,6 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,12 +35,22 @@ public class BasicAuthenticator extends AbstractAuthenticator {
 
   private String realm = "user: pietje, pass: puk";
 
-  @Override
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
-      ServletException {
-    HttpServletResponse response = (HttpServletResponse) res;
-    HttpServletRequest request = (HttpServletRequest) req;
 
+  private boolean authenticate(UserPassCredentials credentials) {
+    // TODO: actually perform authentication at user repository
+    return "pietje".equals(credentials.getUsername()) && "puk".equals(credentials.getPassword());
+  }
+
+  public void setRealm(String realm) {
+    this.realm = realm;
+  }
+
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain, java.lang.String, java.lang.String)
+   */
+  @Override
+  public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+      String authStateValue, String returnUri) throws IOException, ServletException {
     final UserPassCredentials credentials = new UserPassCredentials(request.getHeader("Authorization"));
 
 
@@ -57,14 +65,6 @@ public class BasicAuthenticator extends AbstractAuthenticator {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization required");
       response.flushBuffer();
     }
-  }
-
-  private boolean authenticate(UserPassCredentials credentials) {
-    // TODO: actually perform authentication at user repository
-    return "pietje".equals(credentials.getUsername()) && "puk".equals(credentials.getPassword());
-  }
-
-  public void setRealm(String realm) {
-    this.realm = realm;
+    
   }
 }

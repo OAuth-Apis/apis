@@ -18,15 +18,17 @@
  */
 package org.surfnet.oaaas.simple;
 
+import org.surfnet.oaaas.model.Client;
+
 import com.yammer.dropwizard.views.View;
 
-public class LoginView extends View {
+public class ConsentView extends View {
 
   private Context context;
 
-  public LoginView(String actionUri, String authState) {
-    super("login.ftl");
-    this.context = new Context(actionUri, authState);
+  public ConsentView(String actionUri, String authState, Client client) {
+    super("consent.ftl");
+    this.context = new Context(actionUri, authState, client);
 
   }
 

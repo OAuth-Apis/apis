@@ -26,9 +26,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.surfnet.oaaas.basic.UserPassCredentials;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:
+ * 
  * <pre>
  *         An application making protected resource requests on behalf of the resource owner and with its
  *         authorization.  The term client does not imply any particular implementation characteristics (e.g. whether
@@ -38,8 +40,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name="client")
-@Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
+@Table(name = "client")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Client extends AbstractEntity {
 
   @Column
@@ -66,30 +68,31 @@ public class Client extends AbstractEntity {
   @Column
   @NotNull
   private String scopes;
-  
-  @ManyToOne(optional=false)
+
+  @ManyToOne(optional = false)
   @JsonIgnore
-  @JoinColumn(name="resourceserver_id", nullable=false, updatable=false)
+  @JoinColumn(name = "resourceserver_id", nullable = false, updatable = false)
   private ResourceServer resourceServer;
 
   @Column
   private String thumbNailUrl;
-  
+
   @Column
   private String redirectUris;
-  
+
   @Column
   private boolean skipConsent;
-  
+
   /*
-   * Seconds for expire of the access token that is granted for users of this client
+   * Seconds for expire of the access token that is granted for users of this
+   * client
    */
   @Column
   private long expireDuration;
-  
+
   @Column
   private boolean useRefreshTokens;
-  
+
   public String getName() {
     return name;
   }
@@ -130,7 +133,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param scopes the scopes to set
+   * @param scopes
+   *          the scopes to set
    */
   public void setScopes(String scopes) {
     this.scopes = scopes;
@@ -144,7 +148,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param resourceServer the resourceServer to set
+   * @param resourceServer
+   *          the resourceServer to set
    */
   public void setResourceServer(ResourceServer resourceServer) {
     this.resourceServer = resourceServer;
@@ -158,13 +163,12 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param thumbNailUrl the thumbNailUrl to set
+   * @param thumbNailUrl
+   *          the thumbNailUrl to set
    */
   public void setThumbNailUrl(String thumbNailUrl) {
     this.thumbNailUrl = thumbNailUrl;
   }
-
- 
 
   /**
    * @return the skipConsent
@@ -174,7 +178,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param skipConsent the skipConsent to set
+   * @param skipConsent
+   *          the skipConsent to set
    */
   public void setSkipConsent(boolean skipConsent) {
     this.skipConsent = skipConsent;
@@ -188,7 +193,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param clientId the clientId to set
+   * @param clientId
+   *          the clientId to set
    */
   public void setClientId(String clientId) {
     this.clientId = clientId;
@@ -202,7 +208,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param secret the secret to set
+   * @param secret
+   *          the secret to set
    */
   public void setSecret(String secret) {
     this.secret = secret;
@@ -216,7 +223,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param redirectUris the redirectUris to set
+   * @param redirectUris
+   *          the redirectUris to set
    */
   public void setRedirectUris(String redirectUris) {
     this.redirectUris = redirectUris;
@@ -230,7 +238,8 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param useRefreshTokens the useRefreshTokens to set
+   * @param useRefreshTokens
+   *          the useRefreshTokens to set
    */
   public void setUseRefreshTokens(boolean useRefreshTokens) {
     this.useRefreshTokens = useRefreshTokens;
@@ -244,10 +253,17 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param expireDuration the expireDuration to set
+   * @param expireDuration
+   *          the expireDuration to set
    */
   public void setExpireDuration(long expireDuration) {
     this.expireDuration = expireDuration;
   }
-  
+
+  public boolean isExactMatch(UserPassCredentials credentials) {
+    return credentials != null && credentials.isValid() && credentials.getUsername().equals(clientId)
+        && credentials.getPassword().equals(secret);
+
+  }
+
 }

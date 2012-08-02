@@ -50,6 +50,12 @@ public class UserPassCredentials {
     password = userpass.substring(userpass.indexOf(SEMI_COLON) + 1);
   }
 
+  public UserPassCredentials(String username, String password) {
+    super();
+    this.username = username;
+    this.password = password;
+  }
+
   private void noValidAuthHeader() {
     username = null;
     password = null;

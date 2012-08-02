@@ -18,37 +18,39 @@
  */
 package org.surfnet.oaaas.simple;
 
+import org.surfnet.oaaas.model.Client;
+
 /**
- * Wrapper for dynamic {@link LoginView} values
+ * Wrapper for dynamic view values
  * 
  */
 public class Context {
 
-  private String forwardUri;
+  private String actionUri;
   private String authState;
+  private Client client;
 
-  public Context(String forwardUri, String authState) {
+  public Context(String actionUri, String authState) {
     super();
-    this.forwardUri = forwardUri;
+    this.actionUri = actionUri;
     this.authState = authState;
+  }
+
+  public Context(String actionUri, String authState, Client client) {
+    super();
+    this.actionUri = actionUri;
+    this.authState = authState;
+    this.client = client;
   }
 
   /**
    * @return the forwardUri
    */
-  public String getForwardUri() {
-    return forwardUri;
+  public String getActionUri() {
+    return actionUri;
   }
 
-  /**
-   * @param forwardUri
-   *          the forwardUri to set
-   */
-  public void setForwardUri(String forwardUri) {
-    this.forwardUri = forwardUri;
-  }
-
-  /**
+   /**
    * @return the authState
    */
   public String getAuthState() {
@@ -56,12 +58,10 @@ public class Context {
   }
 
   /**
-   * @param authState the authState to set
+   * @return the client
    */
-  public void setAuthState(String authState) {
-    this.authState = authState;
+  public Client getClient() {
+    return client;
   }
 
- 
-
-}
+ }
