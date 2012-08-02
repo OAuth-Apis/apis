@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.model;
+package org.surfnet.oaaas.auth;
 
 import java.io.Serializable;
 

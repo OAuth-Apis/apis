@@ -18,7 +18,7 @@
  */
 package org.surfnet.oaaas.simple;
 
-import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.auth.Client;
 
 /**
  * Wrapper for dynamic view values

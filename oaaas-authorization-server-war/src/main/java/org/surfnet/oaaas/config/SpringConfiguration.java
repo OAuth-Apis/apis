@@ -33,14 +33,17 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.OAuth2ValidatorImpl;
+import org.surfnet.oaaas.auth.UserConsentFilter;
 
 @Configuration
 @PropertySource("classpath:application.properties")
 // Scan all resources
-@ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
+@ComponentScan(basePackages = { "org.surfnet.oaaas.resource" })
 @ImportResource("classpath:spring-repositories.xml")
 @EnableTransactionManagement
 public class SpringConfiguration {
@@ -71,7 +74,6 @@ public class SpringConfiguration {
     return flyway;
   }
 
-
   @Bean
   public JpaTransactionManager transactionManager() {
     return new JpaTransactionManager();
@@ -94,21 +96,36 @@ public class SpringConfiguration {
   }
 
   @Bean
+  public Filter oauth2UserConsentFilter() {
+    final UserConsentFilter userConsentFilter = new UserConsentFilter();
+    userConsentFilter.setUserConsentHandler(userConsentHandler());
+    return userConsentFilter;
+  }
+
+  @Bean
   public OAuth2Validator oAuth2Validator() {
     return new OAuth2ValidatorImpl();
   }
+
   @Bean
-  public Filter authenticator() {
+  public AbstractAuthenticator authenticator() {
     try {
-      Class<?> authenticatorClass =
-          getClass().getClassLoader().loadClass(env.getProperty("authenticatorClass"));
-      return (Filter) authenticatorClass.newInstance();
-    } catch (InstantiationException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    } catch (ClassNotFoundException e) {
+      Class<?> authenticatorClass = getClass().getClassLoader().loadClass(env.getProperty("authenticatorClass"));
+      return (AbstractAuthenticator) authenticatorClass.newInstance();
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
+
+  @Bean
+  public AbstractUserConsentHandler userConsentHandler() {
+    try {
+      Class<?> userConsentHandlerClass = getClass().getClassLoader().loadClass(
+          env.getProperty("userConsentHandlerClass"));
+      return (AbstractUserConsentHandler) userConsentHandlerClass.newInstance();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.model;
+package org.surfnet.oaaas.auth;
 
 
 import java.util.List;

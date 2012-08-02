@@ -46,11 +46,23 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    */
   public static final String CLIENT = "CLIENT";
 
+  /**
+   * 
+   * Get the Client from the request context to use in handling user consent
+   * 
+   * @param request
+   *          the {@link ServletRequest}
+   * @return the Client which is asking for consent
+   */
+  public final Client getClient(ServletRequest request) {
+    return (Client) request.getAttribute(CLIENT);
+  }
+
   @Override
   public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
       ServletException {
     handleUserConsent((HttpServletRequest) request, (HttpServletResponse) response, chain, getAuthStateValue(request),
-        getReturnUri(request));
+        getReturnUri(request), getClient(request));
   }
 
   /**
@@ -68,7 +80,8 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    * pass-around for user agent communication</li>
    * <li>use {@link #getReturnUri(javax.servlet.ServletRequest)} if you need to
    * step out and return to the current location</li>
-   * <li>use {@link #getClient(javax.servlet.ServletRequest)} for accessing </li>
+   * <li>use {@link #getClient(javax.servlet.ServletRequest)} for accessing the
+   * {@link Client} data</li>
    * </ul>
    * <p>
    * When consent granted:
@@ -93,9 +106,11 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    * @param returnUri
    *          the startpoint of the chain if you want to return from a form or
    *          other (external) component
+   * @param client
+   *          the Client wished to obtain an access token
    */
   public abstract void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-      String authStateValue, String returnUri) throws IOException, ServletException;
+      String authStateValue, String returnUri, Client client) throws IOException, ServletException;
 
   /**
    * Set the scopes of the consent on the request. Note this optional , if this

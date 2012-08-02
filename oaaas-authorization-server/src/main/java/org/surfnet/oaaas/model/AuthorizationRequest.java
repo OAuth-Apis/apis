@@ -32,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.openjpa.persistence.jdbc.Unique;
+import org.surfnet.oaaas.auth.AbstractEntity;
+import org.surfnet.oaaas.auth.Client;
 import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 
 /**

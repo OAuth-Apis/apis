@@ -25,7 +25,6 @@ import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
 import org.surfnet.oaaas.model.AuthorizationRequest;
-import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
 /**

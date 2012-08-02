@@ -27,7 +27,6 @@
 
   <groupId>nl.surfnet.oaaas</groupId>
   <artifactId>oaaas-authorization-server</artifactId>
-  <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>OA-aaS - authorization server</name>
 
@@ -39,12 +38,10 @@
     <dependency>
       <groupId>com.yammer.dropwizard</groupId>
       <artifactId>dropwizard-core</artifactId>
-      <version>0.4.2</version>
     </dependency>
     <dependency>
       <groupId>com.yammer.dropwizard</groupId>
       <artifactId>dropwizard-views</artifactId>
-      <version>0.4.2</version>
     </dependency>
 
     <dependency>
@@ -77,7 +74,6 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
-      <version>1.1.0.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -91,7 +87,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
-      <version>${slf4j.version}</version>
     </dependency>
 
 
@@ -100,11 +95,6 @@
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>2.2.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa</artifactId>
     </dependency>
 
     <dependency>

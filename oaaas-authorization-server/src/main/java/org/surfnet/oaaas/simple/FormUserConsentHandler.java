@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.Client;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 import com.yammer.dropwizard.views.View;
@@ -56,12 +57,12 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
    */
   @Override
   public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-      String authStateValue, String returnUri) throws IOException, ServletException {
+      String authStateValue, String returnUri, Client client) throws IOException, ServletException {
     if (request.getMethod().equals("POST")) {
       processForm(request);
       chain.doFilter(request, response);
     } else {
-      processInitial(request, response, returnUri, authStateValue);
+      processInitial(request, response, returnUri, authStateValue, client);
     }
     
     //      http://freemarker.sourceforge.net/docs/pgui_quickstart_all.html
@@ -69,10 +70,10 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
   }
   
   private void processInitial(HttpServletRequest request, ServletResponse response, String returnUri,
-      String authStateValue) throws IOException {
+      String authStateValue, Client client) throws IOException {
 
     ViewMessageBodyWriter w = new ViewMessageBodyWriter(new MockHttpHeaders());
-    View view = new ConsentView(super.getReturnUri(request), authStateValue);
+    View view = new ConsentView(super.getReturnUri(request), authStateValue, client);
 
     w.writeTo(view, ConsentView.class, null, null, MediaType.TEXT_HTML_TYPE, MockHttpHeaders.headersAsMap(request),
         response.getOutputStream());

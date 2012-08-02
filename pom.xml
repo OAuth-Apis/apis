@@ -56,10 +56,18 @@
     <servlet-api.version>3.0.1</servlet-api.version>
     <slf4j.version>1.6.6</slf4j.version>
     <commons-validator.version>1.4.0</commons-validator.version>
+	<hibernate-validator.version>4.3.0.Final</hibernate-validator.version>
+	<spring-security-opensaml.version>2.8.1-SNAPSHOT</spring-security-opensaml.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+	    <dependency>
+	      <groupId>org.surfnet.coin</groupId>
+	      <artifactId>spring-security-opensaml</artifactId>
+	      <version>2.8.1-SNAPSHOT</version>
+	    </dependency>
+	
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-beans</artifactId>
@@ -84,6 +92,11 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate-validator.version}</version>
       </dependency>
       <dependency>
         <groupId>com.yammer.dropwizard</groupId>
@@ -175,6 +188,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>nl.surfnet.oaaas</groupId>
+        <artifactId>oaaas-authorization-server</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.surfnet.oaaas</groupId>
+        <artifactId>oaaas-authn</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
         <scope>provided</scope>
@@ -185,6 +208,28 @@
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
+	<dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+   <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     </dependencies>
   </dependencyManagement>
   <build>

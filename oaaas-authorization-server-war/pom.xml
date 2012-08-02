@@ -18,7 +18,6 @@
     <dependency>
       <groupId>nl.surfnet.oaaas</groupId>
       <artifactId>oaaas-authorization-server</artifactId>
-      <version>${project.version}</version>
       <exclusions>
         <!-- TODO: remove exlusions once DropWizard has been removed from the jar. -->
         <exclusion>
@@ -82,17 +81,14 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>log4j-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
-      <version>${slf4j.version}</version>
     </dependency>
 
     <dependency>

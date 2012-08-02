@@ -24,13 +24,16 @@ import java.util.Properties;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
+import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationException;
+import nl.surfnet.spring.security.opensaml.util.IDService;
+import nl.surfnet.spring.security.opensaml.util.TimeService;
+import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
+
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
@@ -49,13 +52,6 @@ import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
-
-import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
-import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
-import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationException;
-import nl.surfnet.spring.security.opensaml.util.IDService;
-import nl.surfnet.spring.security.opensaml.util.TimeService;
-import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
 
 @Component
 public class SAMLAuthenticator extends AbstractAuthenticator {

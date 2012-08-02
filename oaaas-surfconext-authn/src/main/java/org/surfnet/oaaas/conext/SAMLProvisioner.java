@@ -19,23 +19,18 @@ package org.surfnet.oaaas.conext;
 import java.util.Collections;
 import java.util.List;
 
+import nl.surfnet.spring.security.opensaml.Provisioner;
+
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import nl.surfnet.spring.security.opensaml.Provisioner;
-
 public class SAMLProvisioner implements Provisioner {
 
   private static final String UID = "urn:oid:1.3.6.1.4.1.1076.20.40.40.1";
-
-
-  private static final Logger LOG = LoggerFactory.getLogger(SAMLProvisioner.class);
 
   @Override
   public UserDetails provisionUser(Assertion assertion) {
