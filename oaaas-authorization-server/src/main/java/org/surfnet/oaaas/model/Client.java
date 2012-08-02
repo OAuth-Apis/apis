@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.auth;
+package org.surfnet.oaaas.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.surfnet.oaaas.basic.UserPassCredentials;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:

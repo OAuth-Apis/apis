@@ -28,6 +28,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.surfnet.oaaas.model.Client;
+
 /**
  * Responsible for handling user consent.
  * 

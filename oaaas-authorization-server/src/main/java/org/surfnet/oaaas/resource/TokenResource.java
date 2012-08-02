@@ -35,18 +35,21 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.Client;
+import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
-import org.surfnet.oaaas.auth.UserPassCredentials;
 import org.surfnet.oaaas.auth.principal.RolesPrincipal;
+import org.surfnet.oaaas.basic.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AccessTokenResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
@@ -82,15 +85,7 @@ public class TokenResource {
   }
 
   /**
-   * 
-   * We have two situations: either the {@link RolesPrincipal} is present on the
-   * {@link HttpServletRequest} as is the
-   * {@link AbstractAuthenticator#AUTH_STATE} or we already have saved the
-   * {@link RolesPrincipal} on the {@link AuthorizationRequest} and we haven
-   * relinquished control to the {@link UserConsentHandler} and we are in the
-   * Method POST of the consent screen and the
-   * {@link AbstractAuthenticator#AUTH_STATE} is a parameter.
-   * 
+   *  TODO document
    * 
    * @param request
    *          the {@link HttpServletRequest}
@@ -100,21 +95,46 @@ public class TokenResource {
   @Path("/authorize")
   public Response authorizeCallback(@Context
   HttpServletRequest request) {
+    return doProcess(request);
+  }
 
+  /**
+   *  TODO document
+   * 
+   * @param request
+   *          the {@link HttpServletRequest}
+   * @return Response the response
+   */
+  @POST
+  @Path("/consent")
+  public Response consentCallback(@Context
+  HttpServletRequest request) {
+    return doProcess(request);
+  }
+  
+  private Response doProcess(HttpServletRequest request) {
     AuthorizationRequest authReq = findAuthorizationRequest(request);
     if (authReq == null) {
       return serverError("Not a valid AbstractAuthenticator.AUTH_STATE on the Request");
     }
-    RolesPrincipal principal = (RolesPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL);
-    if (principal == null) {
-      return serverError("Not a valid AbstractAuthenticator.AUTH_STATE on the Request");
-    }
-
+    processScopes(authReq, request);
     if (authReq.getResponseType().equals(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE)) {
       AccessToken token = createAccessToken(authReq);
       return sendImplicitGrantResponse(authReq, token);
     } else {
       return sendAuthorizationCodeResponse(authReq);
+    }
+  }
+  
+  
+
+  /*
+   * In the user consent filter the scopes are (possible) set on the Request
+   */
+  private void processScopes(AuthorizationRequest authReq, HttpServletRequest request) {
+    String[] scopes = (String[]) request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES);
+    if (ArrayUtils.isNotEmpty(scopes)) {
+      authReq.setScopes(StringUtils.join(scopes, ","));
     }
   }
 

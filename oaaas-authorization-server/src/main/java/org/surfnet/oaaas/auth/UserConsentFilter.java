@@ -68,20 +68,26 @@ public class UserConsentFilter implements Filter {
     if (initialRequest(request)) {
       storePrincipal(request, response, authorizationRequest);
       request.setAttribute(AbstractAuthenticator.RETURN_URI, returnUri);
+      request.setAttribute(AbstractUserConsentHandler.CLIENT, authorizationRequest.getClient());
       if (!authorizationRequest.getClient().isSkipConsent()) {
         userConsentHandler.doFilter(request, response, chain);
+      } else {
+        chain.doFilter(request, response);
       }
     } else {
       /*
        * Ok, the consentHandler wants to have control again (because he stepped
        * out)
        */
-      chain.doFilter(request, response);
+      userConsentHandler.doFilter(request, response, chain);
     }
   }
 
   private AuthorizationRequest findAuthorizationRequest(HttpServletRequest request) {
     String authState = (String) request.getAttribute(AbstractAuthenticator.AUTH_STATE);
+    if (StringUtils.isBlank(authState)) {
+      authState = request.getParameter(AbstractAuthenticator.AUTH_STATE);
+    }
     return authorizationRequestRepository.findByAuthState(authState);
   }
 
@@ -117,11 +123,13 @@ public class UserConsentFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-//    this.returnUri = filterConfig.getInitParameter(MAPPING_URL);
-//    if (StringUtils.isBlank(returnUri)) {
-//      throw new ServletException("Must provide an init parameter '" + MAPPING_URL
-//          + "' that can serve as returnUri for AbstractUserConsentHandler instances (e.g. 'oauth2/consent') ");
-//    }
+    // this.returnUri = filterConfig.getInitParameter(MAPPING_URL);
+    // if (StringUtils.isBlank(returnUri)) {
+    // throw new ServletException("Must provide an init parameter '" +
+    // MAPPING_URL
+    // +
+    // "' that can serve as returnUri for AbstractUserConsentHandler instances (e.g. 'oauth2/consent') ");
+    // }
   }
 
   @Override

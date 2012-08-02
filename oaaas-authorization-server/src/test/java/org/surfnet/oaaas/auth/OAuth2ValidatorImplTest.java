@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
 import static org.junit.Assert.assertEquals;

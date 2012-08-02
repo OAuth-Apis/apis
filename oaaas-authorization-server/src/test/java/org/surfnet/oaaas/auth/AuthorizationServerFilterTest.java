@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -32,6 +33,7 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
 

@@ -41,7 +41,6 @@
 						</div>
 						<input type="hidden" name="authState"
 							value="${context.authState}" /> 
-							
 					</fieldset>
 					<div class="control-group">
 						<label class="control-label"></label>

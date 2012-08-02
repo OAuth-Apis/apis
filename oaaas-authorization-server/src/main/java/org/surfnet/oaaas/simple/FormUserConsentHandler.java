@@ -30,8 +30,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
-import org.surfnet.oaaas.auth.Client;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
+import org.surfnet.oaaas.model.Client;
 
 import com.yammer.dropwizard.views.View;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
@@ -64,14 +64,11 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     } else {
       processInitial(request, response, returnUri, authStateValue, client);
     }
-    
-    //      http://freemarker.sourceforge.net/docs/pgui_quickstart_all.html
-
   }
   
   private void processInitial(HttpServletRequest request, ServletResponse response, String returnUri,
       String authStateValue, Client client) throws IOException {
-
+    // TODO migrate to http://freemarker.sourceforge.net/docs/pgui_quickstart_all.html
     ViewMessageBodyWriter w = new ViewMessageBodyWriter(new MockHttpHeaders());
     View view = new ConsentView(super.getReturnUri(request), authStateValue, client);
 
@@ -82,8 +79,8 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
 
   private void processForm(final HttpServletRequest request) {
     if (Boolean.valueOf(request.getParameter(USER_OAUTH_APPROVAL))) {
-      setAuthStateValue(request, request.getParameter("authState"));
-      String[] scopes = request.getParameterValues("granted_scopes");
+      setAuthStateValue(request, request.getParameter(AUTH_STATE));
+      String[] scopes = request.getParameterValues(GRANTED_SCOPES);
       setScopes(request, scopes);
     }
   }

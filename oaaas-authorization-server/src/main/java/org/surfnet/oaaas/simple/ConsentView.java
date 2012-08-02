@@ -18,18 +18,20 @@
  */
 package org.surfnet.oaaas.simple;
 
-import org.surfnet.oaaas.auth.Client;
+import org.apache.commons.lang.StringUtils;
+import org.surfnet.oaaas.model.Client;
 
 import com.yammer.dropwizard.views.View;
 
 public class ConsentView extends View {
 
   private Context context;
+  private String[] scopes;
 
   public ConsentView(String actionUri, String authState, Client client) {
     super("consent.ftl");
     this.context = new Context(actionUri, authState, client);
-
+    this.scopes = StringUtils.isBlank(client.getScopes()) ? new String[] {} : client.getScopes().split(",");
   }
 
   /**
@@ -37,6 +39,13 @@ public class ConsentView extends View {
    */
   public Context getContext() {
     return context;
+  }
+
+  /**
+   * @return the scopes
+   */
+  public String[] getScopes() {
+    return scopes;
   }
 
 }

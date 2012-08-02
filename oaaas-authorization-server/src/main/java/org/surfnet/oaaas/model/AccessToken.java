@@ -27,8 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.surfnet.oaaas.auth.AbstractEntity;
-import org.surfnet.oaaas.auth.Client;
 
 /**
  * Representation of an <a

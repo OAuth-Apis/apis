@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.UserPassCredentials;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 /**

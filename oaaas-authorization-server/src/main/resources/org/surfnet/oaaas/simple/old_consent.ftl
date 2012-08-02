@@ -7,11 +7,20 @@
 
 		<title>Consent</title>
 
+		<link href="https://static.surfconext.nl/css/responsive/screen.css"
+			rel="stylesheet" type="text/css" media="screen" />
+		<link rel="stylesheet" href="/assets/bootstrap-2.0.2/css/bootstrap.css" />
+		<link rel="stylesheet" href="/assets/awesome-1.0.0/css/font-awesome.css" />
+		<link href="/assets/main.css" rel="stylesheet" type="text/css" media="screen" />
+
+		<script type="text/javascript" src="/assets/js/jquery-1.7.2.js"></script>
+		<script type="text/javascript"
+			src="/assets/bootstrap-2.0.2/js/bootstrap.js"></script>
 </head>
 <body>
 	<div id="wrapper">
   		<div id="main">
-    <h1>${context.client.name} (${context.client.description}) is asking consent for accessing:</h1>
+    <h1>${context.client.name} (${context.client.description}) is asking consent for accessing:"/></h1>
 
     <div class="logos">
         <img class="logo"
@@ -24,13 +33,11 @@
         <form id="accept" method="post" action="${context.actionUri}">
           <p>
             <input name="user_oauth_approval" value="true" type="hidden"/>
-     		<input type="hidden" name="AUTH_STATE"
-							value="${context.authState}" /> 
-	        <ul class="scopes">
+		      <ul class="scopes">
 		      	<#list scopes as scope>
-			        <li><input id="GRANTED_SCOPES" type="checkbox" name="GRANTED_SCOPES" checked="yes" value="${scope}"/>${scope}</li>
+			        <li><input id="granted_scopes" type="checkbox" name="granted_scopes" checked="yes" value="${scope}"/></li>
 				</#list>
-		    </ul>
+		      </ul>
 
             <input id="accept_terms_button"
                    class="submit bigbutton"

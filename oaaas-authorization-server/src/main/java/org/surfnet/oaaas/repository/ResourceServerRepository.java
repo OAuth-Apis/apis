@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.surfnet.oaaas.auth.ResourceServer;
+import org.surfnet.oaaas.model.ResourceServer;
 
 @Repository
 public interface ResourceServerRepository extends CrudRepository<ResourceServer, Long> {

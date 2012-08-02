@@ -20,7 +20,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
 import org.junit.Test;
-import org.surfnet.oaaas.auth.VerifyTokenResponse;
+import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import static org.junit.Assert.assertEquals;
 

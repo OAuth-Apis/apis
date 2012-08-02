@@ -22,7 +22,7 @@ import java.security.Principal;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.surfnet.oaaas.auth.VerifyTokenResponse;
+import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.client.Client;
