@@ -1,22 +1,19 @@
+MUST:
 - Delete all dropwizard dependencies from the oaaas-authorization-server
+- GUI
+- Documentation overall and README.md per submodule
+- Implement refresh tokens (optional to configure for the client)
 
-- implement refresh tokens (optional to configure for the client)
+SHOULD:
+- Implement generic Map<String, String> attributes on the client - for extensibility
+- Store the RolesPrincipal as serialized blob (http://stevedaskam.wordpress.com/2011/03/28/using-jpa-to-insert-and-retrieve-blobs-and-clobs/) for extensibility (the authentication plugin has a contract with the Resource Server) 
 
-- refactor VerifyResource and also use the OAuth2Validator here to validate and use the UserPassCredentials
+NICE:
+- Refactor VerifyResource and also use the OAuth2Validator here to validate and use the UserPassCredentials
 - ClientResource and ResourceServerResource must debug log all activity
 - TokenResource must use OAuth2Validator for validation
-- Introduce a token generator and default implementation
-- Refactor OAuth2Validator to have seperate methods for the validation (for extensibility) and document code <=> spec
-
-- refactor resource tests to integration tests (without dropwizard dependency)
-
-- GUI
-
-_____________________________________
-
-
-
-- Performance
-- VM?
+- Document OAuth2Validator to explain or comply to spec compliance
+- Performance JMeter tests
+- VM
 
 
