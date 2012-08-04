@@ -96,7 +96,7 @@ public class AuthorizationServerFilter implements Filter {
 
   /*
    * Base64-encoded concatenation of the name of the resource server and the
-   * secret separated with a semicolon
+   * secret separated with a colon
    */
   private String authorizationValue;
 
@@ -120,28 +120,36 @@ public class AuthorizationServerFilter implements Filter {
    * server
    */
   private Cache<String, VerifyTokenResponse> cache;
+
+  /*
+   * Key and secret obtained out-of-band to authenticate against the
+   * authorization server
+   */
   private String resourceServerKey;
   private String resourceServerSecret;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
 
-    // Only use filter config if parameters are present. Otherwise trust on setters.
+    // Only use filter config if parameters are present. Otherwise trust on
+    // setters.
     if (filterConfig.getInitParameter("resource-server-key") != null) {
       resourceServerKey = filterConfig.getInitParameter("resource-server-key");
       resourceServerSecret = filterConfig.getInitParameter("resource-server-secret");
       authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
     }
 
-    this.authorizationValue = new String(Base64.encodeBase64(
-        resourceServerKey.concat(":").concat(resourceServerSecret).getBytes()));
+    this.authorizationValue = new String(Base64.encodeBase64(resourceServerKey.concat(":").concat(resourceServerSecret)
+        .getBytes()));
     if (cacheAccessTokens()) {
-      this.cache = buildCache();
+      this.cache = buildCache(false);
     }
   }
 
-  protected Cache<String, VerifyTokenResponse> buildCache() {
-    return CacheBuilder.newBuilder().recordStats().maximumSize(100000).expireAfterAccess(10, TimeUnit.MINUTES).build();
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  protected Cache<String, VerifyTokenResponse> buildCache(boolean recordStats) {
+    CacheBuilder cacheBuilder = CacheBuilder.newBuilder().maximumSize(100000).expireAfterAccess(10, TimeUnit.MINUTES);
+    return recordStats ? cacheBuilder.recordStats().build() : cacheBuilder.build();
   }
 
   @Override
@@ -185,11 +193,8 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   private VerifyTokenResponse getVerifyTokenResponse(String accessToken) {
-    return client
-        .resource(String.format(
-            "%s?access_token=%s", authorizationServerUrl, accessToken))
-        .header(HttpHeaders.AUTHORIZATION, authorizationValue)
-        .accept("application/json")
+    return client.resource(String.format("%s?access_token=%s", authorizationServerUrl, accessToken))
+        .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
         .get(VerifyTokenResponse.class);
   }
 

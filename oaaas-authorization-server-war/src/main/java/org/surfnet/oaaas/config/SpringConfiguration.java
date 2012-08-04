@@ -109,20 +109,17 @@ public class SpringConfiguration {
 
   @Bean
   public AbstractAuthenticator authenticator() {
-    try {
-      Class<?> authenticatorClass = getClass().getClassLoader().loadClass(env.getProperty("authenticatorClass"));
-      return (AbstractAuthenticator) authenticatorClass.newInstance();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    return (AbstractAuthenticator) getConfiguredBean("authenticatorClass");
   }
 
   @Bean
   public AbstractUserConsentHandler userConsentHandler() {
+    return (AbstractUserConsentHandler) getConfiguredBean("userConsentHandlerClass");
+  }
+
+  private Object getConfiguredBean(String className) {
     try {
-      Class<?> userConsentHandlerClass = getClass().getClassLoader().loadClass(
-          env.getProperty("userConsentHandlerClass"));
-      return (AbstractUserConsentHandler) userConsentHandlerClass.newInstance();
+      return getClass().getClassLoader().loadClass(env.getProperty(className)).newInstance();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

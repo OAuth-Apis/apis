@@ -32,6 +32,7 @@ public class SpringConfigTest {
 
   @Inject
   private DataSource dataSource;
+  
   @Test
   public void wire() {
     assertNotNull(dataSource);
