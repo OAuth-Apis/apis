@@ -13,6 +13,7 @@
 
   <properties>
     <servlet.port>8080</servlet.port>
+    <jetty-maven-plugin.version>8.0.4.v20111024</jetty-maven-plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -103,12 +104,89 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+
+    <!--
+    Profile for integration tests.
+    Enable with -Pintegration
+
+    This profile enables the maven failsafe plugin with its standard configuration.
+    This means that test classes **TestIT.java will be run and **Test.java will be skipped.
+    Prior to running the tests, a Jetty container is started by the jetty-maven-plugin.
+    -->
+    <profile>
+      <id>integration</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>integration</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.12</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <version>${jetty-maven-plugin.version}</version>
+            <configuration>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+              <webAppConfig>
+                <contextPath>/</contextPath>
+                <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+              </webAppConfig>
+              <connectors>
+                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                  <port>${servlet.port}</port>
+                  <maxIdleTime>60000</maxIdleTime>
+                </connector>
+              </connectors>
+              <daemon>true</daemon>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+              <stopKey>foo</stopKey>
+              <stopPort>9966</stopPort>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-jetty</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-jetty</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>8.0.4.v20111024</version>
+        <version>${jetty-maven-plugin.version}</version>
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
