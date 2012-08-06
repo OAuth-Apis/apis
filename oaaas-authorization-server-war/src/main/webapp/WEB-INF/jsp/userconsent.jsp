@@ -11,25 +11,26 @@
 <body>
 	<div id="wrapper">
   		<div id="main">
-    <h1>${context.client.name} (${context.client.description}) is asking consent for accessing:</h1>
+    <h1>${client.name} (${client.description}) is asking consent for accessing:</h1>
 
     <div class="logos">
         <img class="logo"
-             alt="${context.client.name}"
-             title="${context.client.name}"
-             src="${context.client.thumbNailUrl}"/>
+             alt="${client.name}"
+             title="${client.name}"
+             src="${client.thumbNailUrl}"
+             />
       </div>
 
   <div id="approve">
-        <form id="accept" method="post" action="${context.actionUri}">
+        <form id="accept" method="post" action="${actionUri}">
           <p>
             <input name="user_oauth_approval" value="true" type="hidden"/>
      		<input type="hidden" name="AUTH_STATE"
-							value="${context.authState}" /> 
+     						value="${AUTH_STATE}"/>
 	        <ul class="scopes">
-		      	<#list scopes as scope>
+		      <c:forEach items="${client.scopes}" var="scope">
 			        <li><input id="GRANTED_SCOPES" type="checkbox" name="GRANTED_SCOPES" checked="yes" value="${scope}"/>${scope}</li>
-				</#list>
+			  </c:forEach>
 		    </ul>
 
             <input id="accept_terms_button"
@@ -41,7 +42,7 @@
         </form>
 	</div>
     <div id="deny">
-        <form id="reject" method="post" action="${context.actionUri}">
+        <form id="reject" method="post" action="${actionUri}">
           <p>
             <input name="user_oauth_approval" value="false" type="hidden"/>
 

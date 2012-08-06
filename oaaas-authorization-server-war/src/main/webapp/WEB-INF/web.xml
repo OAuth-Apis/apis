@@ -35,6 +35,17 @@
     </listener-class>
   </listener>
 
+<!--   <servlet>
+    <servlet-name>authorization-server</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>authorization-server</servlet-name>
+    <url-pattern>*.shtml</url-pattern>
+  </servlet-mapping>
+ -->
   <!-- TODO move to properties files -->
   <filter>
     <filter-name>adminAuthorizationFilter</filter-name>
@@ -92,13 +103,21 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-  <servlet-mapping>
+ <servlet-mapping>
     <servlet-name>default</servlet-name>
-    <url-pattern>/client/*</url-pattern>
+    <url-pattern>/assets/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>jersey</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/oauth2/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>jersey</servlet-name>
+    <url-pattern>v1/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>jersey</servlet-name>
+    <url-pattern>/admin/*</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -34,6 +34,10 @@ public class ErrorResponse {
   private String error;
   private String errorDescription;
 
+  public ErrorResponse() {
+    super();
+  }
+
   public ErrorResponse(String error, String errorDescription) {
     super();
     this.error = error;

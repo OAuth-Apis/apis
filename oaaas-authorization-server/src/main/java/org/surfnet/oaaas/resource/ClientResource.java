@@ -47,7 +47,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
  * JAX-RS Resource for CRUD operations on Clients. (clients in OAuth 2 context).
  */
 @Named
-@Path("/admin/resourceServer/{resourceServerId}/client")
+@Path("/resourceServer/{resourceServerId}/client")
 @Produces(MediaType.APPLICATION_JSON)
 public class ClientResource {
 

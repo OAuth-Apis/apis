@@ -47,7 +47,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
  * JAX-RS Resource for resource servers.
  */
 @Named
-@Path("/admin/resourceServer")
+@Path("/resourceServer")
 @Produces(MediaType.APPLICATION_JSON)
 public class ResourceServerResource {
 

@@ -14,7 +14,7 @@
 		<div class="row">
 			<div class="span8">
 				<form class="form-horizontal" id="registerHere" method="post"
-					action="${context.actionUri}">
+					action="${actionUri}">
 					<fieldset>
 
 						<legend>Login with your identifier and password</legend>
@@ -39,8 +39,8 @@
 								<p class="help-block">Hint: can be anything</p>
 							</div>
 						</div>
-						<input type="hidden" name="authState"
-							value="${context.authState}" /> 
+						<input type="hidden" name="AUTH_STATE"
+							value="${AUTH_STATE}" /> 
 					</fieldset>
 					<div class="control-group">
 						<label class="control-label"></label>

@@ -44,7 +44,7 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.principal.RolesPrincipal;
-import org.surfnet.oaaas.basic.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AccessTokenResponse;
@@ -62,7 +62,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * 
  */
 @Named
-@Path("/oauth2")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class TokenResource {
 
@@ -76,6 +76,14 @@ public class TokenResource {
 
   private static final String GRANT_TYPE = "authorization_code";
   private static final String BEARER = "bearer";
+
+  
+  @GET
+  @Path("/test")
+  public Response test(@Context
+  HttpServletRequest request) {
+    return Response.ok(new ErrorResponse("no_error","wtf")).build();
+  }
 
   @GET
   @Path("/authorize")

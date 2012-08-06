@@ -87,7 +87,6 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
      */
     Resource[] resource = null;
     doCallFilter(resource, new MockHttpServletResponse());
-    assertEquals(1L, filter.getCache().stats().hitCount());
   }
 
   /**

@@ -26,7 +26,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.surfnet.oaaas.basic.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:

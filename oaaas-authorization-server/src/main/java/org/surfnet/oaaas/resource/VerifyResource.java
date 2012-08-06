@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.basic.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
@@ -51,7 +51,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
  * 
  */
 @Named
-@Path("/v1/tokeninfo")
+@Path("/tokeninfo")
 @Produces(MediaType.APPLICATION_JSON)
 public class VerifyResource {
 

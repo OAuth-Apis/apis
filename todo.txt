@@ -7,6 +7,7 @@ MUST:
 SHOULD:
 - Implement generic Map<String, String> attributes on the client - for extensibility
 - Store the RolesPrincipal as serialized blob (http://stevedaskam.wordpress.com/2011/03/28/using-jpa-to-insert-and-retrieve-blobs-and-clobs/) for extensibility (the authentication plugin has a contract with the Resource Server) 
+- Example client (using an example REST server)
 
 NICE:
 - Refactor VerifyResource and also use the OAuth2Validator here to validate and use the UserPassCredentials

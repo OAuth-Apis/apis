@@ -16,13 +16,13 @@
 
 package it;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
-import static org.junit.Assert.assertEquals;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 
 public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
