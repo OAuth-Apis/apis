@@ -24,8 +24,8 @@
 
 	<dependencies>
 		<dependency>
-		  <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -39,10 +39,10 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -102,6 +102,11 @@
 			<artifactId>hsqldb</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.0-api</artifactId>
 			<version>1.0.0.Final</version>
@@ -156,32 +161,6 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.12</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-
-
-			<!-- Plugin disabled until it's useful. -->
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-shade-plugin</artifactId> 
-				<version>1.6</version> <configuration> <createDependencyReducedPom>true</createDependencyReducedPom> 
-				<filters> <filter> <artifact>*:*</artifact> <excludes> <exclude>META-INF/*.SF</exclude> 
-				<exclude>META-INF/*.DSA</exclude> <exclude>META-INF/*.RSA</exclude> </excludes> 
-				</filter> </filters> </configuration> <executions> <execution> <phase>package</phase> 
-				<goals> <goal>shade</goal> </goals> <configuration> <transformers> <transformer 
-				implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/> 
-				<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> 
-				<mainClass>org.surfnet.oaaas.boot.Application</mainClass> </transformer> 
-				</transformers> </configuration> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 </project>

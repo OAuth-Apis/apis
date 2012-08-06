@@ -1,8 +1,8 @@
 MUST:
-- Delete all dropwizard dependencies from the oaaas-authorization-server
 - GUI
 - Documentation overall and README.md per submodule
 - Implement refresh tokens (optional to configure for the client)
+- Implement how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
 
 SHOULD:
 - Implement generic Map<String, String> attributes on the client - for extensibility

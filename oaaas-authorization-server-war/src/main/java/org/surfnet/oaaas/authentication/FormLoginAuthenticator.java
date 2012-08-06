@@ -32,14 +32,21 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
 /**
- * {@link AbstractAuthenticator} that redirects to a form.
- *
+ * {@link AbstractAuthenticator} that redirects to a form. Note that other
+ * implementations can go wild because they have access to the
+ * {@link HttpServletRequest} and {@link HttpServletResponse}.
+ * 
  */
 @Named("formAuthenticator")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
 
-  /* (non-Javadoc)
-   * @see org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain, java.lang.String, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet
+   * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+   * javax.servlet.FilterChain, java.lang.String, java.lang.String)
    */
   @Override
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
@@ -60,9 +67,10 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
   }
 
   private void processForm(final HttpServletRequest request) {
-    // TODO: process POST parameters, actually perform authentication at user
-    // repository
-
+    /*
+     * Hook for actually go the database, ldap, whatever to perform
+     * authentication
+     */
     setAuthStateValue(request, request.getParameter(AUTH_STATE));
     setPrincipal(request, new SimplePrincipal(request.getParameter("username")));
   }

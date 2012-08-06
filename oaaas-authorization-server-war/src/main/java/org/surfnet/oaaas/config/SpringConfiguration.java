@@ -41,7 +41,9 @@ import com.googlecode.flyway.core.Flyway;
 
 @Configuration
 @PropertySource("classpath:application.properties")
-// Scan all resources
+/*
+ * The component scan can be used to add packages and exclusions to the default package
+ */
 @ComponentScan(basePackages = { "org.surfnet.oaaas.resource" })
 @ImportResource("classpath:spring-repositories.xml")
 @EnableTransactionManagement

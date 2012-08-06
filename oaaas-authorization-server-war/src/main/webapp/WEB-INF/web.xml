@@ -35,17 +35,6 @@
     </listener-class>
   </listener>
 
-<!--   <servlet>
-    <servlet-name>authorization-server</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>authorization-server</servlet-name>
-    <url-pattern>*.shtml</url-pattern>
-  </servlet-mapping>
- -->
   <!-- TODO move to properties files -->
   <filter>
     <filter-name>adminAuthorizationFilter</filter-name>
@@ -97,8 +86,8 @@
       com.sun.jersey.spi.spring.container.servlet.SpringServlet
     </servlet-class>
     <init-param>
-      <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>org.surfnet.oaaas.resource</param-value>
+      <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
+      <param-value>org.surfnet.oaaas.config.DefaultPackagesResourceConfig</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

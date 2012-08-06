@@ -14,6 +14,8 @@ INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
 VALUES
     (99999, 0, 'emma.blunt','read','74eccf5f-0995-4e1c-b08c-d05dd5a0f89b',99999);
 
+INSERT INTO client_attributes(client_id , attribute_name, attribute_value) values
+	(99999, 'university','foo-university');
 
 /*
 Local administration application
