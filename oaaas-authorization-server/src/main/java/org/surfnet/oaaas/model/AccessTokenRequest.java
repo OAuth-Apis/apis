@@ -20,7 +20,7 @@ package org.surfnet.oaaas.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.yammer.dropwizard.json.JsonSnakeCase;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Representation of the AccessToken request defined in the <a
@@ -28,12 +28,15 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
  * 
  */
 @XmlRootElement
-@JsonSnakeCase
 public class AccessTokenRequest {
+  @JsonProperty("grant_type")
   private String grantType;
   private String code;
+  @JsonProperty("redirect_uri")
   private String redirectUri;
+  @JsonProperty("client_id")
   private String clientId;
+  @JsonProperty("client_secret")
   private String clientSecret;
 
   /**

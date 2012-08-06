@@ -21,9 +21,6 @@
     <dependency>
       <groupId>nl.surfnet.oaaas</groupId>
       <artifactId>oaaas-authorization-server</artifactId>
-      <!-- exclusions> <exclusion> <groupId>com.yammer.dropwizard</groupId>
-           <artifactId>dropwizard-core</artifactId> </exclusion> <exclusion> <groupId>com.yammer.dropwizard</groupId>
-           <artifactId>dropwizard-views</artifactId> </exclusion> </exclusions -->
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>
@@ -34,7 +31,6 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-spring</artifactId>

@@ -24,12 +24,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
-			<artifactId>dropwizard-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
-			<artifactId>dropwizard-views</artifactId>
+		  <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -43,10 +39,10 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
-			<artifactId>dropwizard-testing</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -84,7 +80,6 @@
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
-			<version>1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -100,16 +95,6 @@
 		<dependency>
 			<groupId>org.surfnet.coin</groupId>
 			<artifactId>coin-test</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-server</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-util</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<dependency>

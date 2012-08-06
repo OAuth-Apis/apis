@@ -20,7 +20,7 @@ package org.surfnet.oaaas.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.yammer.dropwizard.json.JsonSnakeCase;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Bean representation of a Access Token response. See <a
@@ -29,12 +29,15 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
  * 
  */
 @XmlRootElement
-@JsonSnakeCase
 public class AccessTokenResponse {
 
+  @JsonProperty("access_token")
   private String accessToken;
+  @JsonProperty("token_type")
   private String tokenType;
+  @JsonProperty("expires_in")
   private long expiresIn;
+  @JsonProperty("refresh_token")
   private String refreshToken;
   private String scope;
 

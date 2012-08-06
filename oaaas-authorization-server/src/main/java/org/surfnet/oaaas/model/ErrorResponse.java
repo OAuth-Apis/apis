@@ -20,7 +20,7 @@ package org.surfnet.oaaas.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.yammer.dropwizard.json.JsonSnakeCase;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Representation an error response conform <a
@@ -28,10 +28,10 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
  * 
  */
 @XmlRootElement
-@JsonSnakeCase
 public class ErrorResponse {
 
   private String error;
+  @JsonProperty("error_description")
   private String errorDescription;
 
   public ErrorResponse() {

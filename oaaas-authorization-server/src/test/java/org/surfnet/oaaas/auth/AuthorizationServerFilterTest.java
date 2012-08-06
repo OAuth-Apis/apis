@@ -18,14 +18,23 @@
  */
 package org.surfnet.oaaas.auth;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.core.HttpHeaders;
 
+import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -33,13 +42,8 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
-
-import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
-
-import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * {@link Test} that uses a dummy http server to mock return values from the
@@ -49,6 +53,9 @@ import static org.junit.Assert.assertNull;
 public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
 
   private AuthorizationServerFilter filter;
+  private ObjectMapper objectMapper = new ObjectMapper().enable(
+      DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).setSerializationInclusion(
+      JsonSerialize.Inclusion.NON_NULL);
 
   @Before
   public void before() throws ServletException {
@@ -115,8 +122,8 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
 
   private MockFilterChain doCallFilter(VerifyTokenResponse recorderdResponse, MockHttpServletResponse response)
       throws IOException, ServletException {
-    return doCallFilter(new Resource[] { new ByteArrayResource(asJson(recorderdResponse).getBytes(), "json") },
-        response);
+    return doCallFilter(new Resource[] { new ByteArrayResource(objectMapper.writeValueAsString(recorderdResponse)
+        .getBytes(), "json") }, response);
   }
 
   private MockFilterChain doCallFilter(Resource[] resource, MockHttpServletResponse response) throws IOException,

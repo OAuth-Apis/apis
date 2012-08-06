@@ -25,7 +25,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>nl.surfnet.oaaas</groupId>
-			<artifactId>oaaas-client</artifactId>
+			<artifactId>oaaas-authorization-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
