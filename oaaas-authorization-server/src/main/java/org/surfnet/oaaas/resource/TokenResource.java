@@ -25,7 +25,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -33,9 +33,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.CollectionUtils;
+import com.sun.jersey.api.client.ClientResponse.Status;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
-import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AccessTokenRequest;
@@ -53,8 +54,6 @@ import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
-
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
@@ -162,9 +161,10 @@ public class TokenResource {
 
   @POST
   @Path("/token")
+  @Consumes("application/x-www-form-urlencoded")
   public Response token(@HeaderParam("Authorization")
-  String authorization, @Valid
-  AccessTokenRequest accessTokenRequest) {
+  String authorization, final MultivaluedMap<String, String> formParameters) {
+    AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
     AuthorizationRequest authReq = authorizationRequestRepository.findByAuthorizationCode(accessTokenRequest.getCode());
     if (authReq == null) {
       return sendErrorResponse("invalid_grant", "The authorization code is not valid");

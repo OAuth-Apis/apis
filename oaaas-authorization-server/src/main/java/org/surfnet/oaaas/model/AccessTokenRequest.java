@@ -18,6 +18,7 @@
  */
 package org.surfnet.oaaas.model;
 
+import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -114,4 +115,17 @@ public class AccessTokenRequest {
     this.clientSecret = clientSecret;
   }
 
+  public static AccessTokenRequest fromMultiValuedFormParameters(MultivaluedMap<String, String> formParameters) {
+    AccessTokenRequest atr = new AccessTokenRequest();
+    if (formParameters.get("client_id") != null) {
+      atr.setClientId(formParameters.get("client_id").get(0));
+    }
+    if (formParameters.get("client_secret") != null) {
+      atr.setClientSecret(formParameters.get("client_secret").get(0));
+    }
+    atr.setCode(formParameters.get("code").get(0));
+    atr.setGrantType(formParameters.get("grant_type").get(0));
+    atr.setRedirectUri(formParameters.get("redirect_uri").get(0));
+    return atr;
+  }
 }

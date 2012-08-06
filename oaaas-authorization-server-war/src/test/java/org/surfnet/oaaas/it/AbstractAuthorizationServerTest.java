@@ -32,7 +32,7 @@ public abstract class AbstractAuthorizationServerTest {
     return baseUrl().concat(suffix);
   }
 
-  public String authorizationBasic(String username, String password) {
+  public static String authorizationBasic(String username, String password) {
     String concatted = username + ":" + password;
     return "Basic " + new String(Base64.encodeBase64(concatted.getBytes()));
   }
