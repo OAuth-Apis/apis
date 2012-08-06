@@ -41,6 +41,7 @@
 		<servlet.port>8082</servlet.port>
 	</properties>
 
+  <!--
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -65,9 +66,11 @@
 							</properties>
 						</configuration>
 						<deployables>
+						-->
 							<!-- The project's artifact is automatically deployed if no deployable 
 								is defined. However, we define it here so that we can specify the context 
 								(we don't want the version to be included in the context). -->
+  <!--
 							<deployable>
 								<groupId>${project.groupId}</groupId>
 								<artifactId>${project.artifactId}</artifactId>
@@ -130,7 +133,8 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	-->
+<!--
 	<profiles>
 		<profile>
 			<id>jetty7x</id>
@@ -288,4 +292,5 @@
 			</build>
 		</profile>
 	</profiles>
+  -->
 </project>
