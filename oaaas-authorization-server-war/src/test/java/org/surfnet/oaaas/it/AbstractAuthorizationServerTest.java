@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package it;
+package org.surfnet.oaaas.it;
 
 import org.apache.commons.codec.binary.Base64;
 
