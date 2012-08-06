@@ -62,9 +62,8 @@ public class VerifyResource {
   private ResourceServerRepository resourceServerRepository;
 
   @GET
-  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
-  String authorization, @QueryParam("access_token")
-  String accessToken) {
+  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+                              @QueryParam("access_token") String accessToken) {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
     if (!credentialsValid(credentials)) {
