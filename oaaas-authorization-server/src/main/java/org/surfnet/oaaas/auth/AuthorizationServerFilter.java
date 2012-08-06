@@ -194,7 +194,8 @@ public class AuthorizationServerFilter implements Filter {
 
   private VerifyTokenResponse getVerifyTokenResponse(String accessToken) {
     return client.resource(String.format("%s?access_token=%s", authorizationServerUrl, accessToken))
-        .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
+        .header(HttpHeaders.AUTHORIZATION, "Basic " + authorizationValue)
+        .accept("application/json")
         .get(VerifyTokenResponse.class);
   }
 
