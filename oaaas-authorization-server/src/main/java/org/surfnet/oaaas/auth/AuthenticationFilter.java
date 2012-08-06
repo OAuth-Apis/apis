@@ -113,7 +113,7 @@ public class AuthenticationFilter implements Filter {
     String redirectUri = authReq.getRedirectUri();
     String state = authReq.getState();
     if (isValidUrl(redirectUri)) {
-      redirectUri.concat(redirectUri.contains("?") ? "&" : "?");
+      redirectUri = redirectUri.concat(redirectUri.contains("?") ? "&" : "?");
       redirectUri = redirectUri.concat("error=").concat(validate.getValue()).concat("&error_description=")
           .concat(validate.getDescription()).concat(StringUtils.isBlank(state) ? "" : "&state=".concat(state));
       LOG.info("Sending error response, a redirect to: {}", redirectUri);
