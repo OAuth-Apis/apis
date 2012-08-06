@@ -50,5 +50,8 @@ VALUES
     'it-test-client', 'somesecret');
 
 INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
+VALUES (99998, 0, 'admin-enduser','read,write','dad30fb8-ad90-4f24-af99-798bb71d27c8',99998);
+
+INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
 VALUES
     (99997, 0, 'it-test-enduser','read,write','00-11-22-33',99997);
