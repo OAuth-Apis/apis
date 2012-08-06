@@ -36,7 +36,7 @@
 		<flyway.version>1.5</flyway.version>
 		<hsqldb.version>2.2.8</hsqldb.version>
 		<junit.version>4.10</junit.version>
-		<commons.dbcp.version>1.4</commons.dbcp.version>
+		<tomcat-jdbc.version>7.0.29</tomcat-jdbc.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<openjpa.version>2.2.0</openjpa.version>
 		<commons-lang.version>2.6</commons-lang.version>
@@ -125,11 +125,11 @@
 				<artifactId>flyway-core</artifactId>
 				<version>${flyway.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>commons-dbcp</groupId>
-				<artifactId>commons-dbcp</artifactId>
-				<version>${commons.dbcp.version}</version>
-			</dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jdbc</artifactId>
+        <version>${tomcat-jdbc.version}</version>
+      </dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
@@ -196,7 +196,7 @@
 			</dependency>
 			<dependency>
 				<groupId>nl.surfnet.oaaas</groupId>
-				<artifactId>oaaas-authn</artifactId>
+				<artifactId>oaaas-surfconext-authn</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

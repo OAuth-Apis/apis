@@ -18,18 +18,17 @@ package org.surfnet.oaaas.config;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
-import javax.sql.DataSource;
 
 import com.googlecode.flyway.core.Flyway;
 
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -55,8 +54,8 @@ public class SpringConfiguration {
   Environment env;
 
   @Bean
-  public DataSource dataSource() {
-    DriverManagerDataSource dataSource = new DriverManagerDataSource();
+  public javax.sql.DataSource dataSource() {
+    DataSource dataSource = new DataSource();
     dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
     dataSource.setUrl(env.getProperty("jdbc.url"));
     dataSource.setUsername(env.getProperty("jdbc.username"));
