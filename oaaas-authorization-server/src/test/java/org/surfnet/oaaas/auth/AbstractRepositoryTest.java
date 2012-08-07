@@ -42,7 +42,7 @@ public class AbstractRepositoryTest {
   @BeforeClass
   public static void beforeClass() {
     DataSource dataSource = dataSource();
-    EntityManager entityManager = generateSchema(dataSource);
+    EntityManager entityManager = entityManager(dataSource);
     initFlyway(dataSource);
     factory = new JpaRepositoryFactory(entityManager);
   }
@@ -59,13 +59,17 @@ public class AbstractRepositoryTest {
     flyway.migrate();
   }
 
-  private static EntityManager generateSchema(DataSource dataSource) {
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  private static EntityManager entityManager(DataSource dataSource) {
     LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
     emfBean.setDataSource(dataSource);
     emfBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
     emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
     emfBean.afterPropertiesSet();
-    return emfBean.getObject().createEntityManager();
+    Map map = new HashMap<String, String>();
+    map.put("openjpa.Log", "SQL=Trace");
+    map.put("openjpa.ConnectionFactoryProperties", "PrintParameters=true");
+    return emfBean.getObject().createEntityManager(map);
   }
 
   private static DataSource dataSource() {
