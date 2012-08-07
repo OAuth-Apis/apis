@@ -10,9 +10,9 @@
 </pre>
 OA-aaS
 ======
-<em>(Work in Progress, development starts in august sponsored by SURFnet)</em>
+<em>(Work in Progress, sponsored by SURFnet)</em>
 
-OAuth Authorization as a Service (OA-aaS) is a generic OAuth2 provider that can be used to kickstart your API authentication. 
+OAuth Authorization as a Service (OA-aaS) is a generic OAuth2 provider that can be used to kickstart your API authentication.
 
 Features
 --------
@@ -29,8 +29,8 @@ Features
 
 ## Build / run Authorization Server
     mvn clean install
-    java -cp oaaas-authorization-server/target/oaaas-*.jar org.surfnet.oaaas.boot.Application
-Configuration resides in oaaas.yml.
+    cd oaaas-authorization-server-war
+    mvn jetty:run
 
 
 ## Resource Servers and Client apps registration
@@ -41,13 +41,13 @@ The GUI for Resource Servers and Client apps registration can be found at:
 The following URLs are available for the registration interface:
 
     GET     /admin/resourceServer
-    GET     /admin/resourceServer/{resourceServerId}.json
+    GET     /admin/resourceServer/{resourceServerId}
     PUT     /admin/resourceServer
-    POST    /admin/resourceServer/{resourceServerId}.json
-    DELETE  /admin/resourceServer/{resourceServerId}.json
+    POST    /admin/resourceServer/{resourceServerId}
+    DELETE  /admin/resourceServer/{resourceServerId}
 
-    GET     /admin/client
-    GET     /admin/client/{clientId}.json
-    PUT     /admin/client
-    POST    /admin/client/{clientId}.json
-    DELETE  /admin/client/{clientId}.json
+    GET     /admin/resourceServer/123/client
+    GET     /admin/resourceServer/123/client/{clientId}
+    PUT     /admin/resourceServer/123/client
+    POST    /admin/resourceServer/123/client/{clientId}
+    DELETE  /admin/resourceServer/123//client/{clientId}

@@ -51,7 +51,6 @@
 
 
   <modules>
-		<!--module>oaaas-client</module> -->
 		<module>oaaas-example-resource-server</module>
 		<module>oaaas-authorization-server</module>
 		<module>oaaas-authorization-server-war</module>
