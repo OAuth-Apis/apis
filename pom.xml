@@ -53,7 +53,8 @@
 		<spring-data-jpa.version>1.1.0.RELEASE</spring-data-jpa.version>
 		<javax-inject.version>1</javax-inject.version>
 		<mockito.version>1.9.0</mockito.version>
-	</properties>
+    <logback.version>1.0.6</logback.version>
+  </properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -230,11 +231,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
 				<artifactId>log4j-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
@@ -248,6 +244,11 @@
 				<artifactId>jul-to-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

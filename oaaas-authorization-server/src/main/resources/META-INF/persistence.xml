@@ -19,6 +19,7 @@
   <persistence-unit name="oaaas">
     <properties>
       <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
+      <property name="openjpa.Log" value="slf4j" />
     </properties>
   </persistence-unit>
 </persistence>

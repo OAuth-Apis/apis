@@ -21,13 +21,13 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import com.googlecode.flyway.core.Flyway;
+
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.junit.BeforeClass;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
-import com.googlecode.flyway.core.Flyway;
 
 /**
  * Test the flyway migrations.
@@ -67,7 +67,7 @@ public class AbstractRepositoryTest {
     emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
     emfBean.afterPropertiesSet();
     Map map = new HashMap<String, String>();
-    map.put("openjpa.Log", "SQL=Trace");
+//    map.put("openjpa.Log", "commons");
     map.put("openjpa.ConnectionFactoryProperties", "PrintParameters=true");
     return emfBean.getObject().createEntityManager(map);
   }
