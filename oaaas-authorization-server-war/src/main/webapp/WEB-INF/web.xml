@@ -107,7 +107,7 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>jersey</servlet-name>
-    <url-pattern>v1/*</url-pattern>
+    <url-pattern>/v1/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>jersey</servlet-name>
