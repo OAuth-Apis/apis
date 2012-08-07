@@ -138,7 +138,25 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
     // get token response
     String tokenResponse = authorizationCodeRequestHandler.getTokenResponseBlocking();
     LOG.debug("Token response: " + tokenResponse);
-    assertThat(tokenResponse, containsString("access_token: "));
-    assertThat(tokenResponse, containsString("scope: "));
+    assertThat(tokenResponse, containsString("access_token"));
+    assertThat(tokenResponse, containsString("token_type"));
+    assertThat(tokenResponse, containsString("expires_in"));
+    assertThat(tokenResponse, containsString("scope"));
+  }
+
+  @Test
+  public void invalidParams() {
+    final WebDriver webdriver = getWebDriver();
+    webdriver.get(baseUrlWith("/oauth2/authorize"));
+
+    assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
+
+    // Login end user.
+    webdriver.findElement(By.id("username")).sendKeys("enduser");
+    webdriver.findElement(By.id("password")).sendKeys("enduserpass");
+    webdriver.findElement(By.xpath("//form")).submit();
+    LOG.debug("response body: {}", webdriver.getPageSource());
+    // TODO: write a proper assertion. But the current response from the server does not make sense anyway: Error 400 No valid AbstractAuthenticator.AUTH_STATE on the Request
+    assertThat(webdriver.getCurrentUrl(), containsString("invalid parameters"));
   }
 }
