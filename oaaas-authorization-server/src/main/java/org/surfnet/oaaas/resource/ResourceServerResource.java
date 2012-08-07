@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,7 +66,7 @@ public class ResourceServerResource {
     String owner = getUserId(request);
     final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
 
-    if (resourceServers == null || !resourceServers.iterator().hasNext()) {
+    if (resourceServers == null || resourceServers.isEmpty()) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
     } else {
       responseBuilder = Response.ok(resourceServers);
@@ -77,7 +78,7 @@ public class ResourceServerResource {
    * Get one resource server.
    */
   @GET
-  @Path("/{resourceServerId}.json")
+  @Path("/{resourceServerId}")
   public Response getById(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
 
     String owner = getUserId(request);
@@ -115,7 +116,7 @@ public class ResourceServerResource {
    * Delete an existing resource server.
    */
   @DELETE
-  @Path("/{resourceServerId}.json")
+  @Path("/{resourceServerId}")
   public Response delete(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
     String owner = getUserId(request);
 
@@ -130,7 +131,7 @@ public class ResourceServerResource {
    * Update an existing resource server.
    */
   @POST
-  @Path("/{resourceServerId}.json")
+  @Path("/{resourceServerId}")
   public Response post(@Valid ResourceServer resourceServer,
                        @Context HttpServletRequest request,
                        @PathParam("resourceServerId") Long id) {
