@@ -87,7 +87,7 @@ public class ClientResource {
    * Get a specific Client.
    */
   @GET
-  @Path("/{clientId}.json")
+  @Path("/{clientId}")
   public Response getById(@Context HttpServletRequest request,
                           @PathParam("resourceServerId") Long resourceServerId,
                           @PathParam("clientId") Long id) {
@@ -134,7 +134,7 @@ public class ClientResource {
    * Delete a given client.
    */
   @DELETE
-  @Path("/{clientId}.json")
+  @Path("/{clientId}")
   public Response delete(@Context HttpServletRequest request,
                          @PathParam("clientId") Long id,
                          @PathParam("resourceServerId") Long resourceServerId) {
@@ -157,7 +157,7 @@ public class ClientResource {
    * Update an existing client.
    */
   @POST
-  @Path("/{clientId}.json")
+  @Path("/{clientId}")
   public Response post(@Valid Client newOne, @PathParam("clientId") Long id,
                        @Context HttpServletRequest request,
                        @PathParam("resourceServerId") Long resourceServerId

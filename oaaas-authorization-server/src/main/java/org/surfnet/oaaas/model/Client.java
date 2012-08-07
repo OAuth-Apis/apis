@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
@@ -46,6 +47,7 @@ import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 
 @SuppressWarnings("serial")
 @Entity
+@XmlRootElement
 @Table(name = "client")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Client extends AbstractEntity {

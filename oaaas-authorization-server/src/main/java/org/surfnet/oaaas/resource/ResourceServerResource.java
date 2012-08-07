@@ -67,8 +67,10 @@ public class ResourceServerResource {
     final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
 
     if (resourceServers == null || resourceServers.isEmpty()) {
+      LOG.debug("No resource servers found for owner {}", owner);
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
     } else {
+      LOG.debug("About to return all resource servers ({}) for owner {}", resourceServers.size(), owner);
       responseBuilder = Response.ok(resourceServers);
     }
     return responseBuilder.build();
@@ -91,6 +93,7 @@ public class ResourceServerResource {
     } else {
       responseBuilder = Response.ok(resourceServer);
     }
+    LOG.debug("About to return one resourceServer with id {}: {}", id, resourceServer);
     return responseBuilder.build();
   }
 
@@ -104,7 +107,9 @@ public class ResourceServerResource {
     newOne.setSecret(UUID.randomUUID().toString());
     newOne.setOwner(owner);
     final ResourceServer resourceServerSaved = resourceServerRepository.save(newOne);
-    LOG.debug("nr of entities in store now: {}", resourceServerRepository.count());
+    LOG.debug("New resourceServer has been saved: {}. Nr of entities in store now: {}",
+        newOne, resourceServerRepository.count());
+
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
     return Response
         .created(uri)
@@ -123,6 +128,7 @@ public class ResourceServerResource {
     if (resourceServerRepository.findByIdAndOwner(id, owner) == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
+    LOG.debug("About to delete resourceServer {}", id);
     resourceServerRepository.delete(id);
     return Response.noContent().build();
   }
@@ -143,6 +149,7 @@ public class ResourceServerResource {
     }
     resourceServer.setSecret(persistedResourceServer.getSecret());
     resourceServer.setOwner(owner);
+    LOG.debug("About to update existing resourceServer {} with new properties: {}", persistedResourceServer, resourceServer);
     ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
     return Response.ok(savedInstance).build();
   }

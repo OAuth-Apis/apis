@@ -84,10 +84,7 @@ public class VerifyResource {
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
         token.getScopes(), token.getRoles(), token.getPrincipal(), token.getExpires());
 
-    if (LOG.isDebugEnabled()) {
-      LOG.warn("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
-    }
-
+    LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
     return Response.ok(verifyTokenResponse).build();
   }
 
