@@ -27,13 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
-import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
-import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationException;
-import nl.surfnet.spring.security.opensaml.util.IDService;
-import nl.surfnet.spring.security.opensaml.util.TimeService;
-import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
-
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
@@ -52,6 +45,13 @@ import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.RolesPrincipal;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
+
+import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
+import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationException;
+import nl.surfnet.spring.security.opensaml.util.IDService;
+import nl.surfnet.spring.security.opensaml.util.TimeService;
+import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
 
 @Component
 public class SAMLAuthenticator extends AbstractAuthenticator {
@@ -77,9 +77,11 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     }
   }
 
-  /* (non-Javadoc)
-   * @see org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain, java.lang.String, java.lang.String)
-   */
+  @Override
+  public boolean canCommence(HttpServletRequest request) {
+    return isSAMLResponse(request);
+  }
+
   @Override
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {

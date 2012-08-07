@@ -45,13 +45,6 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   @Inject
   private ClientRepository clientRepository;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.surfnet.oaaas.auth.OAuth2Validator#validate(org.surfnet.oaaas.model
-   * .AuthorizationRequest)
-   */
   @Override
   public ValidationResponse validate(AuthorizationRequest authorizationRequest) {
     try {

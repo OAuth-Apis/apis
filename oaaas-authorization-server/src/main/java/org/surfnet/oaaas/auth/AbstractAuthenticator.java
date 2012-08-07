@@ -47,6 +47,18 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
   }
 
   /**
+   * Implement this method to state whether the given request is a continuation that can be handled.
+   * This method will be called for every consecutive request after the initial one.<br />
+   * Returning true means that the request is part of an ongoing authentication.<br />
+   * Returning false indicates to the framework that the request is not known.<br />
+   * Typically this can be determined by the http method or one or more request parameters/attributes being present.
+   *
+   * @param request the HttpServletRequest
+   */
+  public abstract boolean canCommence(HttpServletRequest request);
+
+
+  /**
    * Implement this method to perform the actual authentication. Use
    * {@link org.surfnet.oaaas.basic.BasicAuthenticator BasicAuthenticator} or
    * {@link org.surfnet.oaaas.simple.FormLoginAuthenticator
@@ -102,22 +114,11 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
     request.setAttribute(PRINCIPAL, principal);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-   */
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.servlet.Filter#destroy()
-   */
   @Override
   public void destroy() {
   }
-
 }

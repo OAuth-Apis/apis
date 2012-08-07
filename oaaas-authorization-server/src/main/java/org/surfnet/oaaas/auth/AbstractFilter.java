@@ -40,6 +40,10 @@ public abstract class AbstractFilter implements Filter {
    */
   public static final String AUTH_STATE = "AUTH_STATE";
 
+  /**
+   * Get the attribute value that serves as session statte.
+   * @param request the HttpServletRequest
+   */
   public final String getAuthStateValue(ServletRequest request) {
     return (String) request.getAttribute(AUTH_STATE);
   }

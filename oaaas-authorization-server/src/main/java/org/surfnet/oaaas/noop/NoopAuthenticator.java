@@ -19,10 +19,7 @@ package org.surfnet.oaaas.noop;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,9 +33,11 @@ import org.surfnet.oaaas.auth.principal.SimplePrincipal;
  */
 public class NoopAuthenticator extends AbstractAuthenticator {
 
-  /* (non-Javadoc)
-   * @see org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain, java.lang.String, java.lang.String)
-   */
+  @Override
+  public boolean canCommence(HttpServletRequest request) {
+    return getAuthStateValue(request) != null;
+  }
+
   @Override
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
@@ -46,7 +45,4 @@ public class NoopAuthenticator extends AbstractAuthenticator {
     super.setPrincipal(request, new SimplePrincipal("noop"));
     chain.doFilter(request, response);
   }
-
-  
-  
 }

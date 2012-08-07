@@ -149,14 +149,7 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
     final WebDriver webdriver = getWebDriver();
     webdriver.get(baseUrlWith("/oauth2/authorize"));
 
-    assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
-
-    // Login end user.
-    webdriver.findElement(By.id("username")).sendKeys("enduser");
-    webdriver.findElement(By.id("password")).sendKeys("enduserpass");
-    webdriver.findElement(By.xpath("//form")).submit();
     LOG.debug("response body: {}", webdriver.getPageSource());
-    // TODO: write a proper assertion. But the current response from the server does not make sense anyway: Error 400 No valid AbstractAuthenticator.AUTH_STATE on the Request
-    assertThat(webdriver.getCurrentUrl(), containsString("invalid parameters"));
+    assertThat(webdriver.getPageSource(), containsString("The supported response_type values are 'code' and 'token'"));
   }
 }

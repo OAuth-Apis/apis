@@ -16,7 +16,41 @@
 	<packaging>pom</packaging>
 	<name>OA-aaS</name>
 
-	<modules>
+
+  <inceptionYear>2012</inceptionYear>
+  <url>http://www.surfnet.nl/</url>
+
+  <organization>
+    <name>SURFnet bv, The Netherlands</name>
+    <url>http://www.surfnet.nl</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>oharsta</id>
+      <name>Okke Harsta</name>
+    </developer>
+    <developer>
+      <id>gvanderploeg</id>
+      <name>Geert van der Ploeg</name>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:oharsta/OA-aaS.git</connection>
+    <url>scm:git:git@github.com:oharsta/OA-aaS.git</url>
+    <developerConnection>scm:git:git@github.com:oharsta/OA-aaS.git</developerConnection>
+  </scm>
+
+
+  <modules>
 		<!--module>oaaas-client</module> -->
 		<module>oaaas-example-resource-server</module>
 		<module>oaaas-authorization-server</module>

@@ -27,7 +27,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpMethod;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 
@@ -40,18 +39,17 @@ import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 @Named("formAuthenticator")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.surfnet.oaaas.auth.AbstractAuthenticator#authenticate(javax.servlet
-   * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
-   * javax.servlet.FilterChain, java.lang.String, java.lang.String)
-   */
+  @Override
+  public boolean canCommence(HttpServletRequest request) {
+    return request.getMethod().equals("POST")
+        && request.getParameter(AUTH_STATE) != null
+        && request.getParameter("username") != null;
+  }
+
   @Override
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
-    if (request.getMethod().equals(HttpMethod.POST.toString())) {
+    if (request.getMethod().equals("POST")) {
       processForm(request);
       chain.doFilter(request, response);
     } else {

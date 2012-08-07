@@ -64,12 +64,17 @@ public class AuthenticationFilter implements Filter {
       if (handleInitialRequest(request, response, chain)) {
         authenticator.doFilter(request, response, chain);
       }
+    } else if (authenticator.canCommence(request)) {
+        /*
+        * Ok, the authenticator wants to have control again (because he stepped
+        * out)
+        */
+        authenticator.doFilter(request, response, chain);
     } else {
-      /*
-       * Ok, the authenticator wants to have control again (because he stepped
-       * out)
-       */
-      authenticator.doFilter(request, response, chain);
+      // not an initial request but authentication module cannot handle it either
+
+      final AuthorizationRequest authReq = new AuthorizationRequest();
+      sendError(response, authReq, oAuth2Validator.validate(authReq));
     }
   }
 
@@ -125,6 +130,8 @@ public class AuthenticationFilter implements Filter {
   }
 
   private boolean initialRequest(HttpServletRequest request) {
+    // TODO: all required parameters
+    // TODO: delegate to OAuth2Validator
     return StringUtils.isNotEmpty(request.getParameter("response_type"));
   }
 
