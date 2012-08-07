@@ -56,30 +56,31 @@ public class AuthenticationFilter implements Filter {
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
-    if (initialRequest(request)) {
+
+    /*
+     * Create an authorizationRequest from the request parameters.
+     * This can be either a valid or an invalid request, which will be determined by the oAuth2Validator.
+     */
+    AuthorizationRequest authorizationRequest = extractAuthorizationRequest(request);
+    final ValidationResponse validationResponse = oAuth2Validator.validate(authorizationRequest);
+
+    if (authenticator.canCommence(request)) {
       /*
-       * If the initial request is not handled properly then an error will be
-       * send
-       */
-      if (handleInitialRequest(request, response, chain)) {
-        authenticator.doFilter(request, response, chain);
-      }
-    } else if (authenticator.canCommence(request)) {
-        /*
-        * Ok, the authenticator wants to have control again (because he stepped
-        * out)
-        */
-        authenticator.doFilter(request, response, chain);
+      * Ok, the authenticator wants to have control again (because he stepped
+      * out)
+      */
+      authenticator.doFilter(request, response, chain);
+    } else if (validationResponse.valid()) {
+      // Request contains correct parameters to be a real OAuth2 request.
+      handleInitialRequest(authorizationRequest, request);
+      authenticator.doFilter(request, response, chain);
     } else {
       // not an initial request but authentication module cannot handle it either
-
-      final AuthorizationRequest authReq = new AuthorizationRequest();
-      sendError(response, authReq, oAuth2Validator.validate(authReq));
+      sendError(response, authorizationRequest, validationResponse);
     }
   }
 
-  private boolean handleInitialRequest(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-      throws ServletException, IOException {
+  protected AuthorizationRequest extractAuthorizationRequest(HttpServletRequest request) {
     String responseType = request.getParameter("response_type");
     String clientId = request.getParameter("client_id");
     String redirectUri = request.getParameter("redirect_uri");
@@ -87,11 +88,12 @@ public class AuthenticationFilter implements Filter {
     String state = request.getParameter("state");
     String authState = getAuthStateValue();
 
-    AuthorizationRequest authReq = new AuthorizationRequest(responseType, clientId, redirectUri, scope, state,
-        authState);
+    return new AuthorizationRequest(responseType, clientId, redirectUri, scope, state, authState);
+  }
 
-    ValidationResponse validate = oAuth2Validator.validate(authReq);
-    if (validate.valid()) {
+  private boolean handleInitialRequest(AuthorizationRequest authReq, HttpServletRequest request) throws
+      ServletException {
+
       try {
         authorizationRequestRepository.save(authReq);
       } catch (Exception e) {
@@ -99,13 +101,9 @@ public class AuthenticationFilter implements Filter {
         throw new ServletException("Cannot save authorization request");
       }
 
-      request.setAttribute(AbstractAuthenticator.AUTH_STATE, authState);
+      request.setAttribute(AbstractAuthenticator.AUTH_STATE, authReq.getAuthState());
       request.setAttribute(AbstractAuthenticator.RETURN_URI, request.getRequestURI());
       return true;
-    } else {
-      sendError(response, authReq, validate);
-      return false;
-    }
   }
 
   protected String getAuthStateValue() {
@@ -129,15 +127,10 @@ public class AuthenticationFilter implements Filter {
     }
   }
 
-  private boolean initialRequest(HttpServletRequest request) {
-    // TODO: all required parameters
-    // TODO: delegate to OAuth2Validator
-    return StringUtils.isNotEmpty(request.getParameter("response_type"));
-  }
-
   @Override
   public void destroy() {
   }
+
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
   }
