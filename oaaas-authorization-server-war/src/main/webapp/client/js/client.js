@@ -50,9 +50,9 @@ var resourceServersView = (function() {
     refresh: function(resourceServers) {
       $(domLocationSelector).replaceWith(Template.get(templateId)({resourceServers: resourceServers}));
 
-      $("#addServerButton").click(function() {
+      $("#addServerButton,#noServersAddOne").click(function() {
         windowController.onAddResourceServer();
-      })
+      });
     }
   }
 })();
@@ -69,7 +69,10 @@ var editResourceServerView = (function() {
       }));
 
       $("div#editResourceServerView").show();
-      $("form#editResourceServerForm").submit(windowController.onResourceServerSave);
+      $("form#editResourceServerForm").submit(function() {
+        windowController.onResourceServerSave(this);
+        return false; // prevent default submit
+      });
     }
   }
 })();
@@ -106,11 +109,21 @@ var windowController = {
     editResourceServerView.show("add");
   },
 
-  onResourceServerSave: function(form) {
-    data.saveResourceServer($.serialize(form), function(data) {
+  onResourceServerSave: function(form) { // TODO: move to editResourceServer controller?
+    var formAsObject = $(form).serializeObject();
+
+    var resourceServer = {
+      id: null,
+      name: formAsObject['name'],
+      description: formAsObject['description'],
+      scopes: formAsObject['scopes'],
+      contactName: formAsObject['contactName'],
+      contactEmail: formAsObject['contactEmail']
+    };
+
+    data.saveResourceServer(resourceServer, function(data) {
       console.log("resource server has been saved. Result from server: " + data);
     });
-    return false; // prevent default submit
   },
 
   onPageLoad: function() {

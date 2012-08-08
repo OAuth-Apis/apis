@@ -34,7 +34,7 @@
   </div>
   <div class="content" id="gridView">
 
-    <a class="btn btn-small btn-primary pull-right" href="#">Add another server</a>
+    <a class="btn btn-small btn-primary pull-right" id="addServerButton" href="#">Add another server</a>
     <h1>Resource servers</h1>
     <div id="placeholderResourceServerTable"></div>
 
@@ -110,27 +110,33 @@
   <form class="form-horizontal" id="editResourceServerForm">
     <fieldset>
       <div class="control-group">
+        <label class="control-label">Server name</label>
+        <div class="controls">
+          <input type="text" name="name" placeholder="server name">
+        </div>
+      </div>
+      <div class="control-group">
         <label class="control-label">Contact name</label>
         <div class="controls">
-          <input type="text" id="contactName" placeholder="your name">
+          <input type="text" name="contactName" placeholder="your name">
         </div>
       </div>
       <div class="control-group">
         <label class="control-label">Contact email address</label>
         <div class="controls">
-          <input type="email" id="contactEmail" placeholder="john@doe.com">
+          <input type="email" name="contactEmail" placeholder="john@doe.com">
         </div>
       </div>
       <div class="control-group">
         <label for="description" class="control-label">Description</label>
         <div class="controls">
-          <textarea rows="3" id="description" class="input"></textarea>
+          <textarea rows="3" id="description" name="description" class="input"></textarea>
         </div>
       </div>
       <div class="control-group">
         <label for="scopes" class="control-label">Scopes (comma separated)</label>
         <div class="controls">
-          <input type="text" id="scopes" placeholder="read,write">
+          <input type="text" id="scopes" name="scopes" placeholder="read,write">
         </div>
       </div>
 
@@ -169,7 +175,7 @@
         </tbody>
     </table>
   {{else}}
-    <p>No resource servers yet. <a id="addServerButton" href="#">Add one</a>.</p>
+    <p>No resource servers yet. <a id="noServersAddOne" href="#">Add one</a>.</p>
   {{/if}}
 </script>
 <script data-main="js/main" src="js/lib/require.js"></script>

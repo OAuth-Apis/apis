@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 SURFnet bv, The Netherlands
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var data = (function() {
   var accessToken = null;
 
@@ -8,10 +24,10 @@ var data = (function() {
     }
     options.beforeSend = function(xhr, settings) {
       originalBeforeSend && originalBeforeSend(xhr, settings);
-      xhr.setRequestHeader('Accept', "application/json");
       xhr.setRequestHeader('Authorization', "bearer " + accessToken);
     };
-    options.dataType = "json";
+    options.contentType = "application/json"; // we send json
+    options.dataType = "json"; // we expect json back.
 
     return $.ajax(options);
   };
@@ -25,10 +41,14 @@ var data = (function() {
       // TODO: distinct between create and update
       oauthAjax({
         url:"/admin/resourceServer",
-        data: resourceServer,
+        data: JSON.stringify(resourceServer),
+        type: "PUT",
         success: resultHandler,
+        always: function(one, two) {
+          resultHandler();
+        },
         error: function() {
-          resultHandler(); // failure: result handler with empty result. TODO: log?
+          resultHandler([]); // failure: result handler with empty result. TODO: log?
         }
       });
     },
