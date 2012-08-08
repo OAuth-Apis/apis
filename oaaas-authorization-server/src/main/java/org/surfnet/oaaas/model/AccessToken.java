@@ -24,8 +24,19 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.SerializationUtils;
+import org.springframework.util.Assert;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 
 /**
@@ -44,9 +55,12 @@ public class AccessToken extends AbstractEntity {
   @NotNull
   private String token;
 
-  @Column
+  @Transient
+  private AuthenticatedPrincipal principal;
+  
+  @Column(length=512)
   @NotNull
-  private String principal;
+  private String encodedPrincipal;
   
   @ManyToOne(optional=false) 
   @JoinColumn(name="client_id", nullable=false, updatable=false)
@@ -58,24 +72,40 @@ public class AccessToken extends AbstractEntity {
   @Column
   private String scopes;
 
-  @Column
-  private String roles;
-
   public AccessToken() {
     super();
   }
 
-  public AccessToken(String token, String principal, Client client, long expires, String scopes, String roles) {
+  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes) {
     super();
     this.token = token;
     this.principal = principal;
     this.client = client;
     this.expires = expires;
     this.scopes = scopes;
-    this.roles = roles;
+    invariant();
   }
 
-
+  private void invariant() {
+    Assert.notNull(token, "Token may not be null");
+    Assert.notNull(client, "Client may not be null");
+    Assert.notNull(principal, "AuthenticatedPrincipal may not be null");
+  }
+  
+  @PreUpdate
+  @PrePersist
+  public void encodePrincipal() {
+    byte[] binaryData = SerializationUtils.serialize(principal);
+    this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+  }
+  
+  @PostLoad
+  @PostPersist
+  @PostUpdate
+  public void decodePrincipal() {
+    byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+    this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+  }
 
   /**
    * @return the token
@@ -91,19 +121,7 @@ public class AccessToken extends AbstractEntity {
     this.token = token;
   }
 
-  /**
-   * @return the principal
-   */
-  public String getPrincipal() {
-    return principal;
-  }
-
-  /**
-   * @param principal the principal to set
-   */
-  public void setPrincipal(String principal) {
-    this.principal = principal;
-  }
+ 
 
   /**
    * @return the client
@@ -148,19 +166,34 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @return the roles
+   * @return the principal
    */
-  public String getRoles() {
-    return roles;
+  public AuthenticatedPrincipal getPrincipal() {
+    return principal;
   }
 
   /**
-   * @param roles the roles to set
+   * @param principal the principal to set
    */
-  public void setRoles(String roles) {
-    this.roles = roles;
+  private void setPrincipal(AuthenticatedPrincipal principal) {
+    this.principal = principal;
   }
 
+  /**
+   * @return the encodedPrincipal
+   */
+  public String getEncodedPrincipal() {
+    return encodedPrincipal;
+  }
+
+  /**
+   * @param encodedPrincipal the encodedPrincipal to set
+   */
+  private void setEncodedPrincipal(String encodedPrincipal) {
+    this.encodedPrincipal = encodedPrincipal;
+  }
+
+ 
   
   
 }

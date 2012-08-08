@@ -9,10 +9,13 @@ VALUES
     (99999, 'cool_app_id', 'client@coolapp.com', 'john.doe', 'Cool app for doing awesome things', 0,
     'cool-app', 'http://localhost:8080/redirect', 'read', 'secret', 0, 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 
     0, 99999);
-
-INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
+/*
+emma.blunt
+ */
+INSERT INTO accesstoken (id, expires, encodedPrincipal, scopes, token, client_id)
 VALUES
-    (99999, 0, 'emma.blunt','read','74eccf5f-0995-4e1c-b08c-d05dd5a0f89b',99999);
+    (99999, 0, 'rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AAplbW1hLmJsdW50c3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==',
+	'read','74eccf5f-0995-4e1c-b08c-d05dd5a0f89b',99999);
 
 INSERT INTO client_attributes(client_id , attribute_name, attribute_value) values
 	(99999, 'university','foo-university');
@@ -48,10 +51,16 @@ VALUES
     'it test client', 'read,write',
     'thumbnailurl', 99997,
     'it-test-client', 'somesecret');
-
-INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
-VALUES (99998, 0, 'admin-enduser','read,write','dad30fb8-ad90-4f24-af99-798bb71d27c8',99998);
-
-INSERT INTO accesstoken (id, expires, principal, scopes, token, client_id)
+/*
+admin-enduser
+ */
+INSERT INTO accesstoken (id, expires, encodedPrincipal, scopes, token, client_id)
+VALUES (99998, 0, 'rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA1hZG1pbi1lbmR1c2Vyc3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==',
+'read,write','dad30fb8-ad90-4f24-af99-798bb71d27c8',99998);
+/*
+it-test-enduser 
+ */
+INSERT INTO accesstoken (id, expires, encodedPrincipal, scopes, token, client_id)
 VALUES
-    (99997, 0, 'it-test-enduser','read,write','00-11-22-33',99997);
+    (99997, 0, 'rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA9pdC10ZXN0LWVuZHVzZXJzcgAaamF2YS51dGlsLkFycmF5cyRBcnJheUxpc3TZpDy+zYgG0gIAAVsAAWF0ABNbTGphdmEvbGFuZy9PYmplY3Q7eHB1cgATW0xqYXZhLmxhbmcuU3RyaW5nO63SVufpHXtHAgAAeHAAAAACdAAEdXNlcnQABWFkbWlu',
+'read,write','00-11-22-33',99997);

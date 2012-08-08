@@ -18,8 +18,7 @@
  */
 package org.surfnet.oaaas.example.api;
 
-import java.security.Principal;
-
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.example.api.resource.UniversityResource;
 
 import com.yammer.dropwizard.Service;
@@ -50,7 +49,7 @@ public class UniversityFooService extends Service<UniversityFooConfiguration> {
   protected void initialize(UniversityFooConfiguration configuration, Environment environment)
       throws ClassNotFoundException {
     environment
-        .addProvider(new OAuthProvider<Principal>(new OAuthAuthenticator(configuration), "protected-resources"));
+        .addProvider(new OAuthProvider<AuthenticatedPrincipal>(new OAuthAuthenticator(configuration), "protected-resources"));
     environment.addResource(new UniversityResource());
     
   }

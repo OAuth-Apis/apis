@@ -28,16 +28,15 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
   @Test
   public void withNoParams() {
-    final ClientResponse response = new Client()
+    final ClientResponse response = getClient()
         .resource(baseUrlWith("/v1/tokeninfo"))
         .get(ClientResponse.class);
     assertEquals(401, response.getStatus());
   }
-
-
+ 
   @Test
   public void withNoAuthorizationHeader() {
-    final ClientResponse response = new Client()
+    final ClientResponse response = getClient()
         .resource(baseUrlWith("/v1/tokeninfo"))
         .queryParam("access_token", "boobaa")
         .get(ClientResponse.class);
@@ -46,7 +45,7 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
   @Test
   public void withInvalidAuthorizationHeader() {
-    final ClientResponse response = new Client()
+    final ClientResponse response = getClient()
         .resource(baseUrlWith("/v1/tokeninfo"))
         .queryParam("access_token", "boobaa")
         .header("Authorization", "NotBasicButGarbage abb ccc dd")
@@ -56,7 +55,7 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
   @Test
   public void withValidAuthorizationHeaderButNoAccessToken() {
-    final ClientResponse response = new Client()
+    final ClientResponse response = getClient()
         .resource(baseUrlWith("/v1/tokeninfo"))
         .header("Authorization", authorizationBasic("user", "pass"))
         .get(ClientResponse.class);
@@ -65,13 +64,13 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
   @Test
   public void happy() {
-    final ClientResponse response = new Client()
+    final ClientResponse response = getClient()
         .resource(baseUrlWith("/v1/tokeninfo"))
         .queryParam("access_token", "00-11-22-33")
         .header("Authorization", authorizationBasic("it-test-resource-server", "somesecret"))
         .get(ClientResponse.class);
     assertEquals(200, response.getStatus());
     final VerifyTokenResponse verifyTokenResponse = response.getEntity(VerifyTokenResponse.class);
-    assertEquals("it-test-enduser", verifyTokenResponse.getUser_id());
+    assertEquals("it-test-enduser", verifyTokenResponse.getPrincipal().getName());
   }
 }

@@ -179,6 +179,6 @@ public class ClientResource {
   }
 
   private String getUserId(HttpServletRequest request) {
-    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getUser_id();
+    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getPrincipal().getName();
   }
 }

@@ -87,6 +87,7 @@
 		<spring-data-jpa.version>1.1.0.RELEASE</spring-data-jpa.version>
 		<javax-inject.version>1</javax-inject.version>
 		<mockito.version>1.9.0</mockito.version>
+		<jackson.version>1.9.2</jackson.version>
     <logback.version>1.0.6</logback.version>
   </properties>
 
@@ -131,6 +132,11 @@
 				<groupId>com.sun.jersey</groupId>
 				<artifactId>jersey-json</artifactId>
 				<version>${jersey.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mrbean</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>

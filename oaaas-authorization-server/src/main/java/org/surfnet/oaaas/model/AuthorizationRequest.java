@@ -24,13 +24,19 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.openjpa.persistence.jdbc.Unique;
-import org.surfnet.oaaas.auth.principal.RolesPrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 /**
  * A representation of an <a
@@ -51,6 +57,13 @@ public class AuthorizationRequest extends AbstractEntity {
   @Transient
   private String clientId;
 
+  @Transient
+  private AuthenticatedPrincipal principal;
+  
+  @Column(length=512)
+  @NotNull
+  private String encodedPrincipal;
+
   @ManyToOne(optional=false) 
   @JoinColumn(name="client_id", nullable=false, updatable=false)
   private Client client;
@@ -62,9 +75,6 @@ public class AuthorizationRequest extends AbstractEntity {
   @Column
   private String scopes;
   
-  @Column 
-  private String roles;
-
   @Column
   private String state;
 
@@ -74,14 +84,8 @@ public class AuthorizationRequest extends AbstractEntity {
   private String authState;
   
   @Column
-  private String principal;
-  
-  @Column
   @Unique
   private String authorizationCode;
-  
-  @Column
-  private boolean consentProvided;
   
   public AuthorizationRequest() {
     super();
@@ -97,6 +101,22 @@ public class AuthorizationRequest extends AbstractEntity {
     this.authState = authState;
   }
 
+  @PreUpdate
+  @PrePersist
+  public void encodePrincipal() {
+    byte[] binaryData = SerializationUtils.serialize(principal);
+    this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+  }
+  
+  @PostLoad
+  @PostPersist
+  @PostUpdate
+  public void decodePrincipal() {
+    byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+    this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+  }
+
+  
   /**
    * @return the responseType
    */
@@ -200,19 +220,6 @@ public class AuthorizationRequest extends AbstractEntity {
     this.client = client;
   }
 
-  /**
-   * @return the principal
-   */
-  public String getPrincipal() {
-    return principal;
-  }
-
-  /**
-   * @param principal the principal to set
-   */
-  public void setPrincipal(String principal) {
-    this.principal = principal;
-  }
 
   /**
    * @return the authorizationCode
@@ -229,39 +236,32 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @return the consentProvided
+   * @return the principal
    */
-  public boolean isConsentProvided() {
-    return consentProvided;
+  public AuthenticatedPrincipal getPrincipal() {
+    return principal;
   }
 
   /**
-   * @param consentProvided the consentProvided to set
+   * @param principal the principal to set
    */
-  public void setConsentProvided(boolean consentProvided) {
-    this.consentProvided = consentProvided;
+  public void setPrincipal(AuthenticatedPrincipal principal) {
+    this.principal = principal;
   }
 
   /**
-   * @return the roles
+   * @return the encodedPrincipal
    */
-  public String getRoles() {
-    return roles;
+  public String getEncodedPrincipal() {
+    return encodedPrincipal;
   }
 
   /**
-   * @param roles the roles to set
+   * @param encodedPrincipal the encodedPrincipal to set
    */
-  public void setRoles(String roles) {
-    this.roles = roles;
+  private void setEncodedPrincipal(String encodedPrincipal) {
+    this.encodedPrincipal = encodedPrincipal;
   }
 
-  /**
-   * @param principal2
-   */
-  public void complete(RolesPrincipal principal) {
-    setPrincipal(principal.getName());
-    setRoles(StringUtils.join(principal.getRoles(),","));
-  }
  
 }

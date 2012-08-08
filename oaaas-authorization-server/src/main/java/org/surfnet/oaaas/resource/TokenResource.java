@@ -92,7 +92,7 @@ public class TokenResource {
   }
 
   /**
-   *  TODO document
+   *  Entry point for the authorize call which needs to return an authorization code or (implicit grant) an access token
    * 
    * @param request
    *          the {@link HttpServletRequest}
@@ -106,7 +106,7 @@ public class TokenResource {
   }
 
   /**
-   *  TODO document
+   *  Called after the user has given consent
    * 
    * @param request
    *          the {@link HttpServletRequest}
@@ -149,8 +149,7 @@ public class TokenResource {
     Client client = authReq.getClient();
     long expireDuration = client.getExpireDuration();
     long expires = (expireDuration == 0L ? 0L : (System.currentTimeMillis() + (1000 * expireDuration)));
-    AccessToken token = new AccessToken(getTokenValue(), authReq.getPrincipal(), client, expires, authReq.getScopes(),
-        authReq.getRoles());
+    AccessToken token = new AccessToken(getTokenValue(), authReq.getPrincipal(), client, expires, authReq.getScopes());
     return accessTokenRepository.save(token);
   }
 

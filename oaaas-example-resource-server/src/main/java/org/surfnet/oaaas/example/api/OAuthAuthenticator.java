@@ -18,10 +18,9 @@
  */
 package org.surfnet.oaaas.example.api;
 
-import java.security.Principal;
-
 import javax.ws.rs.core.HttpHeaders;
 
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import com.google.common.base.Optional;
@@ -34,7 +33,7 @@ import com.yammer.dropwizard.auth.Authenticator;
  * {@link Authenticator} that ask the Authorization Server to check
  * 
  */
-public class OAuthAuthenticator implements Authenticator<String, Principal> {
+public class OAuthAuthenticator implements Authenticator<String, AuthenticatedPrincipal> {
 
   private String authorizationServerUrl;
   private String authorizationValue;
@@ -57,20 +56,12 @@ public class OAuthAuthenticator implements Authenticator<String, Principal> {
    * com.yammer.dropwizard.auth.Authenticator#authenticate(java.lang.Object)
    */
   @Override
-  public Optional<Principal> authenticate(String accessToken) throws AuthenticationException {
+  public Optional<AuthenticatedPrincipal> authenticate(String accessToken) throws AuthenticationException {
     final VerifyTokenResponse response = client
         .resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
         .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
         .get(VerifyTokenResponse.class);
-    Principal principal = null;
-    if (response.getUser_id() != null) {
-      principal = new Principal() {
-        @Override
-        public String getName() {
-          return response.getUser_id();
-        }
-      };
-    }
-    return Optional.fromNullable(principal);
+
+    return Optional.fromNullable(response.getPrincipal());
   }
 }

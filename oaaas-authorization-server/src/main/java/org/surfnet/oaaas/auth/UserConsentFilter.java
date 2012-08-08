@@ -17,9 +17,6 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,13 +28,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
-import org.surfnet.oaaas.auth.principal.RolesPrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
@@ -46,14 +41,13 @@ public class UserConsentFilter implements Filter {
 
   private static final Logger LOG = LoggerFactory.getLogger(UserConsentFilter.class);
 
-  private static final String MAPPING_URL = "mapping-url";
+  private static final String RETURN_URI = "/oauth2/consent";
 
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
 
   private AbstractUserConsentHandler userConsentHandler;
 
-  private String returnUri = "/oauth2/consent";
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -67,7 +61,7 @@ public class UserConsentFilter implements Filter {
     }
     if (initialRequest(request)) {
       storePrincipal(request, response, authorizationRequest);
-      request.setAttribute(AbstractAuthenticator.RETURN_URI, returnUri);
+      request.setAttribute(AbstractAuthenticator.RETURN_URI, RETURN_URI);
       request.setAttribute(AbstractUserConsentHandler.CLIENT, authorizationRequest.getClient());
       if (!authorizationRequest.getClient().isSkipConsent()) {
         userConsentHandler.doFilter(request, response, chain);
@@ -93,16 +87,16 @@ public class UserConsentFilter implements Filter {
 
   private void storePrincipal(HttpServletRequest request, HttpServletResponse response,
       AuthorizationRequest authorizationRequest) throws IOException {
-    RolesPrincipal principal = (RolesPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL);
+    AuthenticatedPrincipal principal = (AuthenticatedPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL);
     if (principal == null) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No valid AbstractAuthenticator.PRINCIPAL on the Request");
     }
-    authorizationRequest.complete(principal);
+    authorizationRequest.setPrincipal(principal);
     authorizationRequestRepository.save(authorizationRequest);
   }
 
   private boolean initialRequest(HttpServletRequest request) {
-    return (RolesPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL) != null;
+    return (AuthenticatedPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL) != null;
   }
 
   /**
@@ -123,18 +117,10 @@ public class UserConsentFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    // this.returnUri = filterConfig.getInitParameter(MAPPING_URL);
-    // if (StringUtils.isBlank(returnUri)) {
-    // throw new ServletException("Must provide an init parameter '" +
-    // MAPPING_URL
-    // +
-    // "' that can serve as returnUri for AbstractUserConsentHandler instances (e.g. 'oauth2/consent') ");
-    // }
   }
 
   @Override
   public void destroy() {
-
   }
 
 }

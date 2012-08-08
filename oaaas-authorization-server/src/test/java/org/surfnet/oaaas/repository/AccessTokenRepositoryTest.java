@@ -16,23 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.auth.principal;
+package org.surfnet.oaaas.repository;
 
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Set;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.surfnet.oaaas.model.AccessToken;
 
 /**
- * {@link Principal} with Roles
+ * {@link Test} for {@link AccessTokenRepository}
  *
  */
-public interface RolesPrincipal extends Principal {
+public class AccessTokenRepositoryTest extends AbstractRepositoryTest {
 
-  /**
-   * Get all Roles (String representation)
-   * 
-   * @return all off the Roles of the {@link Principal}
-   */
-  Collection<String> getRoles();
-  
+  @Test
+  public void testPrincipal() {
+    AccessTokenRepository repo = getRepository(AccessTokenRepository.class);
+    AccessToken token = repo.findByToken("00-11-22-33");
+    assertEquals("it-test-enduser",token.getPrincipal().getName());
+  }
+
 }

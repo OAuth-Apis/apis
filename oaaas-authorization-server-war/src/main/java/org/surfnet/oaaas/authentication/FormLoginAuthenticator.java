@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.principal.SimplePrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 /**
  * {@link AbstractAuthenticator} that redirects to a form. Note that other
@@ -70,7 +70,7 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
      * authentication
      */
     setAuthStateValue(request, request.getParameter(AUTH_STATE));
-    setPrincipal(request, new SimplePrincipal(request.getParameter("username")));
+    setPrincipal(request, new AuthenticatedPrincipal(request.getParameter("username")));
   }
 
 }

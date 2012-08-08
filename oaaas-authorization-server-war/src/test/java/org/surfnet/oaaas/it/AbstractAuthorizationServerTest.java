@@ -18,11 +18,22 @@ package org.surfnet.oaaas.it;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+
 
 public abstract class AbstractAuthorizationServerTest {
 
   protected int defaultServletPort = 8080;
+  private Client client = new Client();
 
+  protected Client getClient() {
+    return client;
+  }
+
+
+  
   public String baseUrl() {
     return String.format("http://localhost:%s",
         System.getProperty("servlet.port", String.valueOf(defaultServletPort)));

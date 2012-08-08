@@ -62,8 +62,9 @@ public class VerifyResource {
   private ResourceServerRepository resourceServerRepository;
 
   @GET
-  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
-                              @QueryParam("access_token") String accessToken) {
+  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
+  String authorization, @QueryParam("access_token")
+  String accessToken) {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
     if (!credentialsValid(credentials)) {
@@ -75,14 +76,14 @@ public class VerifyResource {
     if (token == null) {
       LOG.warn("Responding with 404 in VerifyResource#verifyToken for user {}", credentials);
       return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
-    } 
+    }
     if (tokenExpired(token)) {
       LOG.warn("Responding with 410 in VerifyResource#verifyToken for user {}", credentials);
       return Response.status(Status.GONE).entity(new VerifyTokenResponse("token_expired")).build();
     }
 
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
-        token.getScopes(), token.getRoles(), token.getPrincipal(), token.getExpires());
+        token.getScopes(), token.getPrincipal(), token.getExpires());
 
     LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
     return Response.ok(verifyTokenResponse).build();
@@ -92,7 +93,7 @@ public class VerifyResource {
     return token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis();
   }
 
-  private boolean credentialsValid(UserPassCredentials credentials ) {
+  private boolean credentialsValid(UserPassCredentials credentials) {
     String key = credentials.getUsername();
     ResourceServer resourceServer = resourceServerRepository.findByKey(key);
     String secret = credentials.getPassword();

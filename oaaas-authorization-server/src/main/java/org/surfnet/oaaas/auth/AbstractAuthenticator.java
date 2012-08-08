@@ -26,7 +26,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.surfnet.oaaas.auth.principal.RolesPrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 /**
  * To be implemented by various authentication methods.
@@ -110,7 +110,7 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
    * @param principal
    *          the Principal to set.
    */
-  protected final void setPrincipal(ServletRequest request, RolesPrincipal principal) {
+  protected final void setPrincipal(ServletRequest request, AuthenticatedPrincipal principal) {
     request.setAttribute(PRINCIPAL, principal);
   }
 

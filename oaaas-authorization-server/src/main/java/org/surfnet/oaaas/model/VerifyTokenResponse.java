@@ -22,6 +22,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+
 /**
  * Representation of the answer to the a Resource Server when asked to verify
  * the token.
@@ -44,17 +47,14 @@ public class VerifyTokenResponse implements Serializable {
    */
   private String scopes;
   /*
-   * The space delimited set of roles that the user consented to.
+   * The principal
    */
-  private String roles;
-  /*
-   * The userId
-   */
-  private String user_id;
+  private AuthenticatedPrincipal principal;
   /*
    * The number of seconds left in the lifetime of the token.
    */
-  private long expires_in;
+  @JsonProperty("expires_in")
+  private Long expiresIn;
 
   /*
    * If the token is no good then we return with an error
@@ -70,13 +70,12 @@ public class VerifyTokenResponse implements Serializable {
     this.error = error;
   }
 
-  public VerifyTokenResponse(String audience, String scopes, String roles, String userId, long expiresIn) {
+  public VerifyTokenResponse(String audience, String scopes, AuthenticatedPrincipal principal, Long expiresIn) {
     super();
     this.audience = audience;
     this.scopes = scopes;
-    this.roles = roles;
-    this.user_id = userId;
-    this.expires_in = expiresIn;
+    this.principal = principal;
+    this.expiresIn = expiresIn;
   }
 
   /**
@@ -124,60 +123,35 @@ public class VerifyTokenResponse implements Serializable {
     this.error = error;
   }
 
+  
+
   /**
-   * @return the user_id
+   * @return the expiresIn
    */
-  public String getUser_id() {
-    return user_id;
+  public Long getExpiresIn() {
+    return expiresIn;
   }
 
   /**
-   * @param user_id
-   *          the user_id to set
+   * @param expiresIn the expiresIn to set
    */
-  public void setUser_id(String user_id) {
-    this.user_id = user_id;
+  public void setExpiresIn(Long expiresIn) {
+    this.expiresIn = expiresIn;
   }
 
   /**
-   * @return the expires_in
+   * @return the principal
    */
-  public long getExpires_in() {
-    return expires_in;
+  public AuthenticatedPrincipal getPrincipal() {
+    return principal;
   }
 
   /**
-   * @param expires_in
-   *          the expires_in to set
+   * @param principal the principal to set
    */
-  public void setExpires_in(long expires_in) {
-    this.expires_in = expires_in;
+  public void setPrincipal(AuthenticatedPrincipal principal) {
+    this.principal = principal;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "VerifyTokenResponse [audience=" + audience + ", scopes=" + scopes + ", roles=" + roles + ", user_id="
-        + user_id + ", expires_in=" + expires_in + "]";
-  }
-
-  /**
-   * @return the roles
-   */
-  public String getRoles() {
-    return roles;
-  }
-
-  /**
-   * @param roles
-   *          the roles to set
-   */
-  public void setRoles(String roles) {
-    this.roles = roles;
-  }
 
 }

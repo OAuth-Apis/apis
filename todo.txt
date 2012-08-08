@@ -16,5 +16,6 @@ NICE:
 - Document OAuth2Validator to explain or comply to spec compliance
 - Performance JMeter tests
 - VM
+- Refactor authorizationRequest to not store it in the database, but in a request.getSession
 
 

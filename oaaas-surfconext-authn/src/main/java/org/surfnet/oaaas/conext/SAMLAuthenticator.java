@@ -43,8 +43,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.principal.RolesPrincipal;
-import org.surfnet.oaaas.auth.principal.SimplePrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
 import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
@@ -109,7 +109,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   }
   
 
-  private RolesPrincipal convertToPrincipal(UserDetails ud) {
+  private AuthenticatedPrincipal convertToPrincipal(UserDetails ud) {
     Collection<? extends GrantedAuthority> authorities = ud.getAuthorities();
     Collection<String> roles = new HashSet<String>();
     if (authorities != null) {
@@ -117,7 +117,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         roles.add(authority.getAuthority());
       }
     }
-    return new SimplePrincipal(ud.getUsername(), roles);
+    return new AuthenticatedPrincipal(ud.getUsername(), roles);
   }
   
   protected String getSAMLRelayState(HttpServletRequest request) {

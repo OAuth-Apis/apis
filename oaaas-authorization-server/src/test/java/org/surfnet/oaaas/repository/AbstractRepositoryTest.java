@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.auth;
+package org.surfnet.oaaas.repository;
 
 import java.util.HashMap;
 import java.util.Map;

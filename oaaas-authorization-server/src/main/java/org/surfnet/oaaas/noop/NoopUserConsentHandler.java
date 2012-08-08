@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.UserConsentFilter;
-import org.surfnet.oaaas.auth.principal.SimplePrincipal;
 import org.surfnet.oaaas.model.Client;
 
 /**

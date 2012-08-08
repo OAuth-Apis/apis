@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.principal.SimplePrincipal;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 /**
  * A mimimalistic implementation of AbstractAuthenticator that contains no authentication but only fulfills the
@@ -42,7 +42,7 @@ public class NoopAuthenticator extends AbstractAuthenticator {
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
     super.setAuthStateValue(request, authStateValue);
-    super.setPrincipal(request, new SimplePrincipal("noop"));
+    super.setPrincipal(request, new AuthenticatedPrincipal("noop"));
     chain.doFilter(request, response);
   }
 }

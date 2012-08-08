@@ -22,6 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -29,9 +32,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.junit.Before;
@@ -42,7 +43,7 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.surfnet.oaaas.model.ErrorResponse;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 /**
@@ -52,10 +53,9 @@ import org.surfnet.oaaas.model.VerifyTokenResponse;
  */
 public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
 
+  private static final ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+ 
   private AuthorizationServerFilter filter;
-  private ObjectMapper objectMapper = new ObjectMapper().enable(
-      DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).setSerializationInclusion(
-      JsonSerialize.Inclusion.NON_NULL);
 
   @Before
   public void before() throws ServletException {
@@ -77,7 +77,11 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
    */
   @Test
   public void testDoFilterHappyFlow() throws IOException, ServletException {
-    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read", "admin", "john.doe", 0);
+    Map<String, Object> attributes = new HashMap<String, Object>();
+    attributes.put("demo", Arrays.asList(new Integer[] { 1, 2, 3 }));
+    attributes.put("key", "value");
+    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read",
+        new AuthenticatedPrincipal("john.doe", Arrays.asList(new String[] { "user", "admin" }), attributes), 0L);
     MockFilterChain chain = doCallFilter(recorderdResponse);
     /*
      * Verify that the FilterChain#doFilter is called and the
@@ -85,7 +89,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
      */
     VerifyTokenResponse response = (VerifyTokenResponse) chain.getRequest().getAttribute(
         AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
-    assertEquals(recorderdResponse.toString(), response.toString());
+    assertEquals("value",response.getPrincipal().getAttributes().get("key"));
 
     /*
      * Also test the cache by repeating the call and setting the expected result
@@ -122,7 +126,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
 
   private MockFilterChain doCallFilter(VerifyTokenResponse recorderdResponse, MockHttpServletResponse response)
       throws IOException, ServletException {
-    return doCallFilter(new Resource[] { new ByteArrayResource(objectMapper.writeValueAsString(recorderdResponse)
+    return doCallFilter(new Resource[] { new ByteArrayResource(mapper.writeValueAsString(recorderdResponse)
         .getBytes(), "json") }, response);
   }
 
