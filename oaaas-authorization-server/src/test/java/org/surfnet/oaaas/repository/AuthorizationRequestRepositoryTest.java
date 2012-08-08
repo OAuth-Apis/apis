@@ -46,6 +46,7 @@ public class AuthorizationRequestRepositoryTest extends AbstractRepositoryTest {
         "state", authState);
     ClientRepository clientRepo = getRepository(ClientRepository.class);
     Client client = clientRepo.findByClientId(authReq.getClientId());
+    client.getAttributes();
     authReq.setClient(client);
     save(authReq, repo);
     authReq.setPrincipal(getPrincipal());
