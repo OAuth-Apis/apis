@@ -44,6 +44,9 @@ VALUES
 	(99997, 'it-test@example.com','it test','it-test-resource-server',
 	'it-test-resource-server', 'somesecret', 'read', 'it-test-enduser');
 
+/*
+Client not getting refresh tokens
+*/
 INSERT INTO client (id, contactEmail, contactName, description, name, scopes, thumbNailUrl, resourceserver_id,
 clientId, secret)
 VALUES
@@ -51,6 +54,18 @@ VALUES
     'it test client', 'read,write',
     'thumbnailurl', 99997,
     'it-test-client', 'somesecret');
+
+/*
+Client getting refresh tokens (and skips consent)
+*/
+INSERT INTO client (id, contactEmail, contactName, description, name, scopes, thumbNailUrl, resourceserver_id,
+clientId, secret, skipConsent, expireDuration, useRefreshTokens, notAllowedImplicitGrant)
+VALUES
+    (99996, 'it-test@example.com', 'john.doe', 'it test client no consent use refresh',
+    'it test client 2', 'read,write',
+    'thumbnailurl', 99997,
+    'it-test-client-no-consent-refresh', 'somesecret2', 1, 3600, 1, 1);
+    
 /*
 admin-enduser
  */

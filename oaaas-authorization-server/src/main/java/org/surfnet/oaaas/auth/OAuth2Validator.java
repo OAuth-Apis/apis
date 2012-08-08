@@ -15,6 +15,7 @@
  */
 package org.surfnet.oaaas.auth;
 
+import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 
 /**
@@ -27,6 +28,12 @@ public interface OAuth2Validator {
 
   String AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE = "code";
 
+  String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
+
+  String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+
+  String BEARER = "bearer";
+
   /**
    * Validate the {@link AuthorizationRequest}
    * 
@@ -36,16 +43,51 @@ public interface OAuth2Validator {
    */
   ValidationResponse validate(AuthorizationRequest request);
 
+  /**
+   * Validate the {@link AccessTokenRequest}
+   * 
+   * @param request
+   *          the AccessTokenRequest with the data send from the client
+   * @return A {@link ValidationResponse} specifying what is wrong (if any)
+   */
+  ValidationResponse validate(AccessTokenRequest request);
+
   enum ValidationResponse {
 
-    VALID("valid", "valid"), UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type",
-        "The supported response_type values are 'code' and 'token'"), UNKNOWN_CLIENT_ID("unauthorized_client",
-        "The client_id is unknown"), IMPLICIT_GRANT_REDIRECT_URI("invalid_request",
-        "For Implicit Grant the redirect_uri parameter is required"), REDIRECT_URI_REQUIRED("invalid_request",
-        "Client has no registrated redirect_uri, must provide run-time redirect_uri"), REDIRCT_URI_NOT_VALID(
-        "invalid_request", "The redirect_uri does not equals any of the registrated redirect_uri values"), REDIRCT_URI_NOT_URI(
-        "invalid_request", "The redirect_uri is not a valid URL"), SCOPE_NOT_VALID("invalid_scope",
-        "Invalid/unknown scope provided");
+    VALID("valid", "valid"),
+
+    UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type", String.format(
+        "The supported response_type values are '%s' and '%s'", IMPLICIT_GRANT_RESPONSE_TYPE,
+        AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE)),
+
+    UNKNOWN_CLIENT_ID("unauthorized_client", "The client_id is unknown"),
+
+    IMPLICIT_GRANT_REDIRECT_URI("invalid_request", "For Implicit Grant the redirect_uri parameter is required"),
+
+    REDIRECT_URI_REQUIRED("invalid_request",
+        "Client has no registrated redirect_uri, must provide run-time redirect_uri"),
+
+    REDIRCT_URI_NOT_VALID("invalid_request",
+        "The redirect_uri does not equals any of the registrated redirect_uri values"),
+
+    REDIRCT_URI_NOT_URI("invalid_request", "The redirect_uri is not a valid URL"),
+
+    REDIRECT_URI_DIFFERENT("invaid_request","The redirect_uri does not match the initial authorization request"),
+    
+    SCOPE_NOT_VALID("invalid_scope", "Invalid/unknown scope provided"),
+
+    IMPLICIT_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permisssion for implicit grant"),
+
+    REDIRECT_URI_FRAGMENT_COMPONENT("invalid_request",
+        "The redirect_uri endpoint must not include a fragment component"),
+
+    UNSUPPORTED_GRANT_TYPE("unsupported_grant_type", String.format("The supported grant_type values are '%s' and '%s'",
+        GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN)),
+
+    INVALID_GRANT_AUTHORIZATION_CODE("invalid_grant", "The authorization code is invalid"),
+
+    INVALID_GRANT_REFRESH_TOKEN("invalid_grant", "The refresh token is invalid");
+
     private String value;
     private String description;
 
@@ -54,7 +96,7 @@ public interface OAuth2Validator {
       this.description = description;
     }
 
-    boolean valid() {
+    public boolean valid() {
       return this.equals(VALID);
     }
 

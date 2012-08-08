@@ -37,6 +37,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @XmlRootElement
 @Entity
+@AbstractEntityValid
 public abstract class AbstractEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -88,5 +89,11 @@ public abstract class AbstractEntity implements Serializable {
   public String toString() {
     return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
   }
+
+  /**
+   * Abstract method that validates the state of an {@link AbstractEntity}. Can
+   * be used prior to saving/ updating the {@link AbstractEntity}
+   */
+  public abstract void validate();
 
 }

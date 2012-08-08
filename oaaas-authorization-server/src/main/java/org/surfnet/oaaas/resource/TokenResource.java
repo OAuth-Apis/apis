@@ -18,6 +18,8 @@
  */
 package org.surfnet.oaaas.resource;
 
+import static org.surfnet.oaaas.auth.OAuth2Validator.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
@@ -45,6 +47,9 @@ import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
+import org.surfnet.oaaas.auth.ValidationResponseException;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AccessTokenRequest;
@@ -65,23 +70,26 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 @Produces(MediaType.APPLICATION_JSON)
 public class TokenResource {
 
+  private static final String BASIC_REALM = "Basic realm=\"OAuth2 Secure\"";
+
+  private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
 
   @Inject
   private AccessTokenRepository accessTokenRepository;
 
+  @Inject
+  private OAuth2Validator oAuth2Validator;
+
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
 
-  private static final String GRANT_TYPE = "authorization_code";
-  private static final String BEARER = "bearer";
-
-  
   @GET
   @Path("/test")
   public Response test(@Context
   HttpServletRequest request) {
-    return Response.ok(new ErrorResponse("no_error","wtf")).build();
+    return Response.ok(new ErrorResponse("no_error", "wtf")).build();
   }
 
   @GET
@@ -92,7 +100,8 @@ public class TokenResource {
   }
 
   /**
-   *  Entry point for the authorize call which needs to return an authorization code or (implicit grant) an access token
+   * Entry point for the authorize call which needs to return an authorization
+   * code or (implicit grant) an access token
    * 
    * @param request
    *          the {@link HttpServletRequest}
@@ -106,7 +115,7 @@ public class TokenResource {
   }
 
   /**
-   *  Called after the user has given consent
+   * Called after the user has given consent
    * 
    * @param request
    *          the {@link HttpServletRequest}
@@ -118,7 +127,7 @@ public class TokenResource {
   HttpServletRequest request) {
     return doProcess(request);
   }
-  
+
   private Response doProcess(HttpServletRequest request) {
     AuthorizationRequest authReq = findAuthorizationRequest(request);
     if (authReq == null) {
@@ -126,14 +135,12 @@ public class TokenResource {
     }
     processScopes(authReq, request);
     if (authReq.getResponseType().equals(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE)) {
-      AccessToken token = createAccessToken(authReq);
+      AccessToken token = createAccessToken(authReq, true);
       return sendImplicitGrantResponse(authReq, token);
     } else {
       return sendAuthorizationCodeResponse(authReq);
     }
   }
-  
-  
 
   /*
    * In the user consent filter the scopes are (possible) set on the Request
@@ -145,11 +152,13 @@ public class TokenResource {
     }
   }
 
-  private AccessToken createAccessToken(AuthorizationRequest authReq) {
-    Client client = authReq.getClient();
+  private AccessToken createAccessToken(AuthorizationRequest request, boolean isImplicitGrant) {
+    Client client = request.getClient();
     long expireDuration = client.getExpireDuration();
     long expires = (expireDuration == 0L ? 0L : (System.currentTimeMillis() + (1000 * expireDuration)));
-    AccessToken token = new AccessToken(getTokenValue(), authReq.getPrincipal(), client, expires, authReq.getScopes());
+    String refeshToken = (client.isUseRefreshTokens() && !isImplicitGrant) ? getTokenValue(true) : null;
+    AccessToken token = new AccessToken(getTokenValue(false), request.getPrincipal(), client, expires,
+        request.getScopes(), refeshToken);
     return accessTokenRepository.save(token);
   }
 
@@ -164,30 +173,60 @@ public class TokenResource {
   public Response token(@HeaderParam("Authorization")
   String authorization, final MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
+    ValidationResponse vr = oAuth2Validator.validate(accessTokenRequest);
+    if (!vr.valid()) {
+      return sendErrorResponse(vr);
+    }
+    String grantType = accessTokenRequest.getGrantType();
+    AuthorizationRequest request;
+    try {
+      if (GRANT_TYPE_AUTHORIZATION_CODE.equals(grantType)) {
+        request = authorizationCodeToken(accessTokenRequest);
+      } else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
+        request = refreshTokenToken(accessTokenRequest);
+      } else {
+        return sendErrorResponse(ValidationResponse.UNSUPPORTED_GRANT_TYPE);
+      }
+    } catch (ValidationResponseException e) {
+      return sendErrorResponse(e.v);
+    }
+    UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
+    if (!request.getClient().isExactMatch(credentials)) {
+      return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
+    }
+    AccessToken token = createAccessToken(request, false);
+
+    AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, request.getClient()
+        .getExpireDuration(), token.getRefreshToken(), token.getScopes());
+    return Response.ok().entity(response).build();
+
+  }
+
+  private AuthorizationRequest authorizationCodeToken(AccessTokenRequest accessTokenRequest) {
     AuthorizationRequest authReq = authorizationRequestRepository.findByAuthorizationCode(accessTokenRequest.getCode());
     if (authReq == null) {
-      return sendErrorResponse("invalid_grant", "The authorization code is not valid");
+      throw new ValidationResponseException(ValidationResponse.INVALID_GRANT_AUTHORIZATION_CODE);
     }
-    Client client = authReq.getClient();
-    UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
-
-    if (!client.isExactMatch(credentials)) {
-      return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"OAuth2 Secure\"").build();
-    }
-    
-    if (!GRANT_TYPE.equals(accessTokenRequest.getGrantType())) {
-      return sendErrorResponse("unsupported_grant_type", "Grant Type must be 'authorization_code'");
-    }
-    
     String uri = accessTokenRequest.getRedirectUri();
     if (!authReq.getRedirectUri().equalsIgnoreCase(uri)) {
-      return sendErrorResponse("invalid_request", "The redirect_uri does not match the initial authorization request");
+      throw new ValidationResponseException(ValidationResponse.INVALID_GRANT_AUTHORIZATION_CODE);
     }
-    
-    AccessToken token = createAccessToken(authReq);
-    AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, client.getExpireDuration(),
-        null, token.getScopes());
-    return Response.ok().entity(response).build();
+    authorizationRequestRepository.delete(authReq);
+    return authReq;
+  }
+
+  private AuthorizationRequest refreshTokenToken(AccessTokenRequest accessTokenRequest) {
+    AccessToken accessToken = accessTokenRepository.findByRefreshToken(accessTokenRequest.getRefreshToken());
+    if (accessToken == null) {
+      throw new ValidationResponseException(ValidationResponse.INVALID_GRANT_REFRESH_TOKEN);
+    }
+    AuthorizationRequest request = new AuthorizationRequest();
+    request.setClient(accessToken.getClient());
+    request.setPrincipal(request.getPrincipal());
+    request.setScopes(accessToken.getScopes());
+    accessTokenRepository.delete(accessToken);
+    return request;
+
   }
 
   /*
@@ -211,16 +250,20 @@ public class TokenResource {
     return redirect(uri);
   }
 
-  protected String getTokenValue() {
+  protected String getTokenValue(boolean isRefreshToken) {
     return UUID.randomUUID().toString();
   }
 
   protected String getAuthorizationCodeValue() {
-    return getTokenValue();
+    return getTokenValue(false);
   }
 
   private Response sendErrorResponse(String error, String description) {
     return Response.status(Status.BAD_REQUEST).entity(new ErrorResponse(error, description)).build();
+  }
+
+  private Response sendErrorResponse(ValidationResponse response) {
+    return sendErrorResponse(response.getValue(), response.getDescription());
   }
 
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
@@ -268,5 +311,12 @@ public class TokenResource {
     this.accessTokenRepository = accessTokenRepository;
   }
 
+  /**
+   * @param oAuth2Validator
+   *          the oAuth2Validator to set
+   */
+  public void setoAuth2Validator(OAuth2Validator oAuth2Validator) {
+    this.oAuth2Validator = oAuth2Validator;
+  }
 
 }

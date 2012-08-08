@@ -45,17 +45,9 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
     webdriver.get(url);
     assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
 
-    // Login end user.
-    webdriver.findElement(By.id("username")).sendKeys("enduser");
-    webdriver.findElement(By.id("password")).sendKeys("enduserpass");
-    webdriver.findElement(By.xpath("//form")).submit();
-
-    // consent form
-    assertThat(webdriver.getPageSource(), containsString("Yes, grant access"));
-    webdriver.findElement(By.id("accept_terms_button")).click();
+    login(webdriver, true);
 
     // Token response
-    final String responseUrl = webdriver.getCurrentUrl();
     URI responseURI = URI.create(webdriver.getCurrentUrl());
 
     assertThat(responseURI.getFragment(), containsString("access_token="));

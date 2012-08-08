@@ -18,9 +18,13 @@
  */
 package org.surfnet.oaaas.model;
 
+import java.util.List;
+
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -32,13 +36,40 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class AccessTokenRequest {
   @JsonProperty("grant_type")
   private String grantType;
+
   private String code;
+
   @JsonProperty("redirect_uri")
   private String redirectUri;
+
   @JsonProperty("client_id")
   private String clientId;
+
   @JsonProperty("client_secret")
   private String clientSecret;
+
+  @JsonProperty("refresh_token")
+  private String refreshToken;
+
+  @JsonProperty("scope")
+  private String scope;
+
+  public static AccessTokenRequest fromMultiValuedFormParameters(MultivaluedMap<String, String> formParameters) {
+    AccessTokenRequest atr = new AccessTokenRequest();
+    atr.setClientId(nullSafeGetFormParameter("client_id", formParameters));
+    atr.setClientSecret(nullSafeGetFormParameter("client_secret", formParameters));
+    atr.setCode(nullSafeGetFormParameter("code", formParameters));
+    atr.setGrantType(nullSafeGetFormParameter("grant_type", formParameters));
+    atr.setRedirectUri(nullSafeGetFormParameter("redirect_uri", formParameters));
+    atr.setRefreshToken(nullSafeGetFormParameter("refresh_token", formParameters));
+    atr.setScope(nullSafeGetFormParameter("scope", formParameters));
+    return atr;
+  }
+
+  private static String nullSafeGetFormParameter(String parameterName, MultivaluedMap<String, String> formParameters) {
+    List<String> params = formParameters.get(parameterName);
+    return CollectionUtils.isEmpty(params) ? null : params.get(0);
+  }
 
   /**
    * @return the grantType
@@ -115,17 +146,33 @@ public class AccessTokenRequest {
     this.clientSecret = clientSecret;
   }
 
-  public static AccessTokenRequest fromMultiValuedFormParameters(MultivaluedMap<String, String> formParameters) {
-    AccessTokenRequest atr = new AccessTokenRequest();
-    if (formParameters.get("client_id") != null) {
-      atr.setClientId(formParameters.get("client_id").get(0));
-    }
-    if (formParameters.get("client_secret") != null) {
-      atr.setClientSecret(formParameters.get("client_secret").get(0));
-    }
-    atr.setCode(formParameters.get("code").get(0));
-    atr.setGrantType(formParameters.get("grant_type").get(0));
-    atr.setRedirectUri(formParameters.get("redirect_uri").get(0));
-    return atr;
+  /**
+   * @return the refreshToken
+   */
+  public String getRefreshToken() {
+    return refreshToken;
+  }
+
+  /**
+   * @param refreshToken
+   *          the refreshToken to set
+   */
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
+  /**
+   * @return the scope
+   */
+  public String getScope() {
+    return scope;
+  }
+
+  /**
+   * @param scope
+   *          the scope to set
+   */
+  public void setScope(String scope) {
+    this.scope = scope;
   }
 }

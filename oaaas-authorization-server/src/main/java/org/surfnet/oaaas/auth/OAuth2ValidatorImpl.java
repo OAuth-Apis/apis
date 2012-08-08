@@ -15,6 +15,20 @@
  */
 package org.surfnet.oaaas.auth;
 
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.IMPLICIT_GRANT_NOT_PERMITTED;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.INVALID_GRANT_AUTHORIZATION_CODE;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.INVALID_GRANT_REFRESH_TOKEN;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRCT_URI_NOT_URI;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRCT_URI_NOT_VALID;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRECT_URI_FRAGMENT_COMPONENT;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRECT_URI_REQUIRED;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.SCOPE_NOT_VALID;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNKNOWN_CLIENT_ID;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNSUPPORTED_GRANT_TYPE;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNSUPPORTED_RESPONSE_TYPE;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.VALID;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +38,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
+import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
@@ -37,9 +52,14 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
 
   private static final Set<String> RESPONSE_TYPES = new HashSet<String>();
 
+  private static final Set<String> GRANT_TYPES = new HashSet<String>();
+
   static {
     RESPONSE_TYPES.add(IMPLICIT_GRANT_RESPONSE_TYPE);
     RESPONSE_TYPES.add(AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE);
+    
+    GRANT_TYPES.add(GRANT_TYPE_AUTHORIZATION_CODE);
+    GRANT_TYPES.add(GRANT_TYPE_REFRESH_TOKEN);
   }
 
   @Inject
@@ -64,7 +84,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     } catch (ValidationResponseException e) {
       return e.v;
     }
-    return ValidationResponse.VALID;
+    return VALID;
   }
 
   protected String determineScopes(AuthorizationRequest authorizationRequest, Client client) {
@@ -75,7 +95,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       List<String> clientScopes = Arrays.asList(client.getScopes().split(","));
       for (String scope : scopes) {
         if (!clientScopes.contains(scope)) {
-          throw new ValidationResponseException(ValidationResponse.SCOPE_NOT_VALID);
+          throw new ValidationResponseException(SCOPE_NOT_VALID);
         }
       }
       return authorizationRequest.getScopes();
@@ -87,17 +107,21 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     String redirectUri = authorizationRequest.getRedirectUri();
     if (StringUtils.isBlank(redirectUri)) {
       if (responseType.equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
-        throw new ValidationResponseException(ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI);
+        throw new ValidationResponseException(IMPLICIT_GRANT_REDIRECT_URI);
       } else if (StringUtils.isBlank(uris)) {
-        throw new ValidationResponseException(ValidationResponse.REDIRECT_URI_REQUIRED);
+        throw new ValidationResponseException(REDIRECT_URI_REQUIRED);
       } else {
         String[] split = uris.split(",");
         return split[0].trim();
       }
     } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
-      throw new ValidationResponseException(ValidationResponse.REDIRCT_URI_NOT_URI);
-    } else if (!StringUtils.isBlank(uris) && !Arrays.asList(uris.split(",")).contains(redirectUri)) {
-      throw new ValidationResponseException(ValidationResponse.REDIRCT_URI_NOT_VALID);
+      throw new ValidationResponseException(REDIRCT_URI_NOT_URI);
+    } else if (redirectUri.contains("#")) {
+      throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
+    } else if (!StringUtils.isBlank(uris)
+        && !Arrays.asList(uris.split(",")).contains(
+            redirectUri.contains("?") ? redirectUri.substring(0, redirectUri.indexOf("?")) : redirectUri)) {
+      throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
     }
     return redirectUri;
   }
@@ -106,7 +130,11 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     String clientId = authorizationRequest.getClientId();
     Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
     if (client == null) {
-      throw new ValidationResponseException(ValidationResponse.UNKNOWN_CLIENT_ID);
+      throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
+    }
+    if (client.isNotAllowedImplicitGrant()
+        && authorizationRequest.getResponseType().equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
+      throw new ValidationResponseException(IMPLICIT_GRANT_NOT_PERMITTED);
     }
     return client;
   }
@@ -114,7 +142,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   protected String validateResponseType(AuthorizationRequest authorizationRequest) {
     String responseType = authorizationRequest.getResponseType();
     if (StringUtils.isBlank(responseType) || !RESPONSE_TYPES.contains(responseType)) {
-      throw new ValidationResponseException(ValidationResponse.UNSUPPORTED_RESPONSE_TYPE);
+      throw new ValidationResponseException(UNSUPPORTED_RESPONSE_TYPE);
     }
     return responseType;
   }
@@ -122,13 +150,46 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   protected void validateAuthorizationRequest(AuthorizationRequest authorizationRequest) {
   }
 
-  @SuppressWarnings("serial")
-  class ValidationResponseException extends RuntimeException {
-    private ValidationResponse v;
 
-    public ValidationResponseException(ValidationResponse v) {
-      this.v = v;
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.auth.OAuth2Validator#validate(org.surfnet.oaaas.model.AccessTokenRequest)
+   */
+  @Override
+  public ValidationResponse validate(AccessTokenRequest request) {
+    try {
+      validateGrantType(request);
+      
+      validateAttributes(request);
+      
+      validateAccessTokenRequest(request);
+      
+    } catch (ValidationResponseException e) {
+      return e.v;
     }
+    return VALID;
+  }
+  
+  protected void validateGrantType(AccessTokenRequest request) {
+    String grantType = request.getGrantType();
+    if (StringUtils.isBlank(grantType) || !GRANT_TYPES.contains(grantType)) {
+      throw new ValidationResponseException(UNSUPPORTED_GRANT_TYPE);
+    }
+  }
+
+  protected void validateAttributes(AccessTokenRequest request) {
+    String grantType = request.getGrantType();
+    if (GRANT_TYPE_AUTHORIZATION_CODE.equals(grantType)) {
+      if (StringUtils.isBlank(request.getCode())) {
+        throw new ValidationResponseException(INVALID_GRANT_AUTHORIZATION_CODE);
+      }
+    } else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
+      if (StringUtils.isBlank(request.getRefreshToken())) {
+        throw new ValidationResponseException(INVALID_GRANT_REFRESH_TOKEN);
+      }
+    }
+  }
+  
+  protected void validateAccessTokenRequest(AccessTokenRequest accessTokenRequest) {
   }
 
 }

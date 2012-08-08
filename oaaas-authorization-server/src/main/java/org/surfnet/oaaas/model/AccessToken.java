@@ -55,6 +55,9 @@ public class AccessToken extends AbstractEntity {
   @NotNull
   private String token;
 
+  @Column(unique = true, nullable = true)
+  private String refreshToken;
+  
   @Transient
   private AuthenticatedPrincipal principal;
 
@@ -77,6 +80,10 @@ public class AccessToken extends AbstractEntity {
   }
 
   public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes) {
+    this(token, principal, client, expires, scopes, null );
+  }
+
+  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes, String refreshToken) {
     super();
     this.token = token;
     this.principal = principal;
@@ -84,6 +91,7 @@ public class AccessToken extends AbstractEntity {
     this.client = client;
     this.expires = expires;
     this.scopes = scopes;
+    this.refreshToken = refreshToken;
     invariant();
   }
 
@@ -200,6 +208,28 @@ public class AccessToken extends AbstractEntity {
    */
   private void setEncodedPrincipal(String encodedPrincipal) {
     this.encodedPrincipal = encodedPrincipal;
+  }
+
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.model.AbstractEntity#validate()
+   */
+  @Override
+  public void validate() {
+    //all is covered by not nulls
+  }
+
+  /**
+   * @return the refreshToken
+   */
+  public String getRefreshToken() {
+    return refreshToken;
+  }
+
+  /**
+   * @param refreshToken the refreshToken to set
+   */
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
   }
 
 }

@@ -59,7 +59,7 @@ public class ResourceServer extends AbstractEntity {
   @NotNull
   private String secret;
 
-  @Column
+  @Column(nullable = false, updatable = false)
   @NotNull
   private String contactName;
   
@@ -179,5 +179,12 @@ public class ResourceServer extends AbstractEntity {
    */
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.model.AbstractEntity#validate()
+   */
+  @Override
+  public void validate() {
   }
 }

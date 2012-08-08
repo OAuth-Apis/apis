@@ -272,4 +272,17 @@ public class AuthorizationRequest extends AbstractEntity {
     this.encodedPrincipal = encodedPrincipal;
   }
 
+  /* (non-Javadoc)
+   * @see org.surfnet.oaaas.model.AbstractEntity#validate()
+   */
+  @Override
+  public void validate() {
+    if (StringUtils.isNotBlank(redirectUri)) {
+      if (redirectUri.contains("#")) {
+        throw new RuntimeException("Fragment component is not allowed in redirectUri");
+      }
+    }
+    
+  }
+
 }

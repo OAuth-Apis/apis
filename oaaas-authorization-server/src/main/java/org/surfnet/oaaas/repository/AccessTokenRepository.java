@@ -24,4 +24,6 @@ import org.surfnet.oaaas.model.AccessToken;
 public interface AccessTokenRepository extends CrudRepository<AccessToken, Long> {
   
   AccessToken findByToken(String token);
+
+  AccessToken findByRefreshToken(String refreshToken);
 }

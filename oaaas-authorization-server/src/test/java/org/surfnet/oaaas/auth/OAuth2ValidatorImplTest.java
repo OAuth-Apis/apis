@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
@@ -29,7 +30,7 @@ import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link Test} for {@link OAuth2ValidatorImpl}
@@ -42,7 +43,7 @@ public class OAuth2ValidatorImplTest {
 
   @InjectMocks
   private OAuth2ValidatorImpl validator = new OAuth2ValidatorImpl();
-  
+
   private AuthorizationRequest request;
 
   @Before
@@ -52,8 +53,6 @@ public class OAuth2ValidatorImplTest {
     when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
     this.request = getAuthorizationRequest(client);
   }
-
-  
 
   /**
    * Test method for
@@ -67,18 +66,49 @@ public class OAuth2ValidatorImplTest {
   }
 
   @Test
+  public void testInvalidRedirectUriFragment() {
+    request.setRedirectUri(request.getRedirectUri() + "#fragment");
+    validate(ValidationResponse.REDIRECT_URI_FRAGMENT_COMPONENT);
+  }
+
+  @Test
+  public void testClientNotPermittedImplicitGrant() {
+    /*
+     * Need to change default behavior of the Client repo
+     */
+    reset(clientRepository);
+    Client client = createClient("client-app");
+    client.setNotAllowedImplicitGrant(true);
+    when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
+
+    request.setResponseType(OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE);
+    validate(ValidationResponse.IMPLICIT_GRANT_NOT_PERMITTED);
+  }
+
+  @Test
+  public void testHappyFlow() {
+    validate(ValidationResponse.VALID);
+  }
+
+  @Test
+  public void testRedirectUriWithQueryParameter() {
+    request.setRedirectUri(request.getRedirectUri() + "?param=example&param2=test");
+    validate(ValidationResponse.VALID);
+  }
+
+  @Test
   public void testValidateClientId() {
     request.setClientId("unknown_client");
     validate(ValidationResponse.UNKNOWN_CLIENT_ID);
   }
-  
+
   @Test
   public void testValidateImplicitGrant() {
     request.setResponseType(OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE);
     request.setRedirectUri(" ");
     validate(ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI);
   }
-  
+
   @Test
   public void testValidateResponseType() {
     request.setResponseType("not-existing-response-type");
@@ -96,6 +126,7 @@ public class OAuth2ValidatorImplTest {
     request.setRedirectUri("qwert://no-valid-url");
     validate(ValidationResponse.REDIRCT_URI_NOT_URI);
   }
+
   private Client createClient(String clientId) {
     Client client = new Client();
     client.setName("Client App");

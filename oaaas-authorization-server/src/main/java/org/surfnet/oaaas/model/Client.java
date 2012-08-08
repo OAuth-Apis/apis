@@ -60,8 +60,7 @@ public class Client extends AbstractEntity {
   @NotNull
   private String clientId;
 
-  @Column(unique = true)
-  @NotNull
+  @Column(unique = true, nullable = false)
   private String secret;
 
   @Column
@@ -74,7 +73,6 @@ public class Client extends AbstractEntity {
   private String contactEmail;
 
   @Column
-  @NotNull
   private String scopes;
 
   @ManyToOne(optional = false)
@@ -87,7 +85,7 @@ public class Client extends AbstractEntity {
   @Column(name = "attribute_value")
   @CollectionTable(name = "client_attributes", joinColumns = @JoinColumn(name = "client_id"))
   Map<String, String> attributes = new HashMap<String, String>();
-  
+
   @Column
   private String thumbNailUrl;
 
@@ -106,7 +104,7 @@ public class Client extends AbstractEntity {
 
   @Column
   private boolean useRefreshTokens;
-  
+
   @Column
   private boolean notAllowedImplicitGrant;
 
@@ -306,10 +304,24 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @param notAllowedImplicitGrant the notAllowedImplicitGrant to set
+   * @param notAllowedImplicitGrant
+   *          the notAllowedImplicitGrant to set
    */
   public void setNotAllowedImplicitGrant(boolean notAllowedImplicitGrant) {
     this.notAllowedImplicitGrant = notAllowedImplicitGrant;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.surfnet.oaaas.model.AbstractEntity#validate()
+   */
+  @Override
+  public void validate() {
+    if (isUseRefreshTokens() && getExpireDuration() == 0L) {
+      throw new RuntimeException("If refresh tokens are to be used then the expiry duration must be greater then 0");
+    }
+
   }
 
 }

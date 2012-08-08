@@ -17,5 +17,6 @@ NICE:
 - Performance JMeter tests
 - VM
 - Refactor authorizationRequest to not store it in the database, but in a request.getSession
+- Support for MAC Access Token Type http://tools.ietf.org/html/draft-ietf-oauth-v2-http-mac-01
 
 
