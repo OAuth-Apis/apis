@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SURF OAuth 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/style-additional.css" rel="stylesheet">
+
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+<div class="head">
+  <img src="img/surf-oauth.png"/>
+</div>
+<div class="main">
+  <div class="side-nav">
+    <ul>
+      <li class="side-nav-servers"><a href="#" class="cur">Servers</a></li>
+      <li class="side-nav-apps"><a href="#">Client apps</a></li>
+      <li class="side-nav-keys"><a href="#">Access</a></li>
+      <li class="side-nav-stats"><a href="#">Statistics</a></li>
+      <li class="side-nav-stats"><a id="loginbutton" href="#">Login</a></li>
+    </ul>
+  </div>
+  <div class="content" id="gridView">
+
+    <a class="btn btn-small btn-primary pull-right" href="#">Add another server</a>
+    <h1>Resource servers</h1>
+    <div id="placeholderResourceServerTable"></div>
+
+    <a class="btn btn-small btn-primary pull-right" href="#">Add another server</a>
+    <h1>Client applications</h1>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Username</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><img src="img/icon-example.png"></td>
+        <td><a href="#">Rest API Universiteit delft</a><br>
+          Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
+          Nulla vitae fermentum risus. Vivamus odio nisi.
+        </td>
+        <td>Mail, Rooster,
+          Adresboek,
+          Persoonsgegevens</td>
+        <td>Wes Oudshoorn<br>
+          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+      </tr>
+      <tr>
+        <td><img src="img/icon-example.png"></td>
+        <td><a href="#">Rest API Universiteit delft</a><br>
+          Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
+          Nulla vitae fermentum risus. Vivamus odio nisi.
+        </td>
+        <td>Mail, Rooster,
+          Adresboek,
+          Persoonsgegevens</td>
+        <td>Wes Oudshoorn<br>
+          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+      </tr>
+      <tr>
+        <td><img src="img/icon-example.png"></td>
+        <td><a href="#">Rest API Universiteit delft</a><br>
+          Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
+          Nulla vitae fermentum risus. Vivamus odio nisi.
+        </td>
+        <td>Mail, Rooster,
+          Adresboek,
+          Persoonsgegevens</td>
+        <td>Wes Oudshoorn<br>
+          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="content" id="editResourceServerView">
+    <div id="placeholderEditResourceServer"></div>
+  </div>
+</div>
+
+<div class="foot">
+  <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
+</div>
+
+<script id="tplEditResourceServer" type="text/x-handlebars-template">
+  <div class="page-header">
+    <h1>{{formTitle}}</h1>
+  </div>
+  <form class="form-horizontal" id="editResourceServerForm">
+    <fieldset>
+      <div class="control-group">
+        <label class="control-label">Contact name</label>
+        <div class="controls">
+          <input type="text" id="contactName" placeholder="your name">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Contact email address</label>
+        <div class="controls">
+          <input type="email" id="contactEmail" placeholder="john@doe.com">
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="description" class="control-label">Description</label>
+        <div class="controls">
+          <textarea rows="3" id="description" class="input"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="scopes" class="control-label">Scopes (comma separated)</label>
+        <div class="controls">
+          <input type="text" id="scopes" placeholder="read,write">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <button class="btn">Cancel</button>
+      </div>
+    </fieldset>
+  </form>
+</script>
+
+<script id="tplResourceServerTable" type="text/x-handlebars-template">
+  {{#if resourceServers}}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Icon</th>
+            <th>Resource server</th>
+            <th>Scopes</th>
+            <th>About</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each resourceServers}}
+        <tr>
+            <td><img src="{{thumbNailUrl}}"></td>
+            <td><a href="#">{{name}}</a><br>
+                {{description}}
+            </td>
+            <td>{{scopes}}</td>
+            <td>{{contactName}} <a href="mailto:{{contactEmail}}">mail</a><br>
+                <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+                <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+  {{else}}
+    <p>No resource servers yet. <a id="addServerButton" href="#">Add one</a>.</p>
+  {{/if}}
+</script>
+<script data-main="js/main" src="js/lib/require.js"></script>
+
+</body>
+</html>
