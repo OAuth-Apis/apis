@@ -35,6 +35,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.openjpa.persistence.jdbc.Unique;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
@@ -46,8 +47,8 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name="authorizationrequest")
-@Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
+@Table(name = "authorizationrequest")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class AuthorizationRequest extends AbstractEntity {
 
   @Column
@@ -59,22 +60,21 @@ public class AuthorizationRequest extends AbstractEntity {
 
   @Transient
   private AuthenticatedPrincipal principal;
-  
-  @Column(length=512)
-  @NotNull
+
+  @Column(length = 512)
   private String encodedPrincipal;
 
-  @ManyToOne(optional=false) 
-  @JoinColumn(name="client_id", nullable=false, updatable=false)
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "client_id", nullable = false, updatable = false)
   private Client client;
-  
+
   @Column
   @NotNull
   private String redirectUri;
 
   @Column
   private String scopes;
-  
+
   @Column
   private String state;
 
@@ -82,16 +82,17 @@ public class AuthorizationRequest extends AbstractEntity {
   @NotNull
   @Unique
   private String authState;
-  
+
   @Column
   @Unique
   private String authorizationCode;
-  
+
   public AuthorizationRequest() {
     super();
   }
 
-  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scopes, String state, String authState) {
+  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scopes, String state,
+      String authState) {
     super();
     this.responseType = responseType;
     this.clientId = clientId;
@@ -104,19 +105,22 @@ public class AuthorizationRequest extends AbstractEntity {
   @PreUpdate
   @PrePersist
   public void encodePrincipal() {
-    byte[] binaryData = SerializationUtils.serialize(principal);
-    this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+    if (principal != null) {
+      byte[] binaryData = SerializationUtils.serialize(principal);
+      this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+    }
   }
-  
+
   @PostLoad
   @PostPersist
   @PostUpdate
   public void decodePrincipal() {
-    byte[] objectData = Base64.decodeBase64(encodedPrincipal);
-    this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+    if (StringUtils.isNotBlank(encodedPrincipal)) {
+      byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+      this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+    }
   }
 
-  
   /**
    * @return the responseType
    */
@@ -200,7 +204,8 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @param authState the authState to set
+   * @param authState
+   *          the authState to set
    */
   public void setAuthState(String authState) {
     this.authState = authState;
@@ -214,12 +219,12 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @param client the client to set
+   * @param client
+   *          the client to set
    */
   public void setClient(Client client) {
     this.client = client;
   }
-
 
   /**
    * @return the authorizationCode
@@ -229,7 +234,8 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @param authorizationCode the authorizationCode to set
+   * @param authorizationCode
+   *          the authorizationCode to set
    */
   public void setAuthorizationCode(String authorizationCode) {
     this.authorizationCode = authorizationCode;
@@ -243,10 +249,12 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @param principal the principal to set
+   * @param principal
+   *          the principal to set
    */
   public void setPrincipal(AuthenticatedPrincipal principal) {
     this.principal = principal;
+    this.encodePrincipal();
   }
 
   /**
@@ -257,11 +265,11 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @param encodedPrincipal the encodedPrincipal to set
+   * @param encodedPrincipal
+   *          the encodedPrincipal to set
    */
   private void setEncodedPrincipal(String encodedPrincipal) {
     this.encodedPrincipal = encodedPrincipal;
   }
 
- 
 }

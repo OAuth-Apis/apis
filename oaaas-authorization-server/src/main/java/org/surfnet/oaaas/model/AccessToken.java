@@ -35,9 +35,9 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-
 
 /**
  * Representation of an <a
@@ -47,8 +47,8 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name="accesstoken")
-@Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
+@Table(name = "accesstoken")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class AccessToken extends AbstractEntity {
 
   @Column(unique = true)
@@ -57,13 +57,13 @@ public class AccessToken extends AbstractEntity {
 
   @Transient
   private AuthenticatedPrincipal principal;
-  
-  @Column(length=512)
+
+  @Column(length = 512)
   @NotNull
   private String encodedPrincipal;
-  
-  @ManyToOne(optional=false) 
-  @JoinColumn(name="client_id", nullable=false, updatable=false)
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "client_id", nullable = false, updatable = false)
   private Client client;
 
   @Column
@@ -80,6 +80,7 @@ public class AccessToken extends AbstractEntity {
     super();
     this.token = token;
     this.principal = principal;
+    this.encodePrincipal();
     this.client = client;
     this.expires = expires;
     this.scopes = scopes;
@@ -91,20 +92,24 @@ public class AccessToken extends AbstractEntity {
     Assert.notNull(client, "Client may not be null");
     Assert.notNull(principal, "AuthenticatedPrincipal may not be null");
   }
-  
+
   @PreUpdate
   @PrePersist
   public void encodePrincipal() {
-    byte[] binaryData = SerializationUtils.serialize(principal);
-    this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+    if (principal != null) {
+      byte[] binaryData = SerializationUtils.serialize(principal);
+      this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+    }
   }
-  
+
   @PostLoad
   @PostPersist
   @PostUpdate
   public void decodePrincipal() {
-    byte[] objectData = Base64.decodeBase64(encodedPrincipal);
-    this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+    if (StringUtils.isNotBlank(encodedPrincipal)) {
+      byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+      this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+    }
   }
 
   /**
@@ -115,13 +120,12 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param token the token to set
+   * @param token
+   *          the token to set
    */
   public void setToken(String token) {
     this.token = token;
   }
-
- 
 
   /**
    * @return the client
@@ -131,7 +135,8 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param client the client to set
+   * @param client
+   *          the client to set
    */
   public void setClient(Client client) {
     this.client = client;
@@ -145,7 +150,8 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param expires the expires to set
+   * @param expires
+   *          the expires to set
    */
   public void setExpires(long expires) {
     this.expires = expires;
@@ -159,7 +165,8 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param scopes the scopes to set
+   * @param scopes
+   *          the scopes to set
    */
   public void setScopes(String scopes) {
     this.scopes = scopes;
@@ -173,7 +180,8 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param principal the principal to set
+   * @param principal
+   *          the principal to set
    */
   private void setPrincipal(AuthenticatedPrincipal principal) {
     this.principal = principal;
@@ -187,13 +195,11 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param encodedPrincipal the encodedPrincipal to set
+   * @param encodedPrincipal
+   *          the encodedPrincipal to set
    */
   private void setEncodedPrincipal(String encodedPrincipal) {
     this.encodedPrincipal = encodedPrincipal;
   }
 
- 
-  
-  
 }
