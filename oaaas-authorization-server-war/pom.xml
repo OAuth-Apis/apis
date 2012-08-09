@@ -13,7 +13,7 @@
 
   <properties>
     <servlet.port>8080</servlet.port>
-    <jetty-maven-plugin.version>8.0.4.v20111024</jetty-maven-plugin.version>
+    <jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>
     <selenium.version>2.25.0</selenium.version>
   </properties>
 

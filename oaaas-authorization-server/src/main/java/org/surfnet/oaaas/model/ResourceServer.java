@@ -38,7 +38,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="resourceserver", uniqueConstraints =
-    @UniqueConstraint(columnNames = {"id", "name"})
+    @UniqueConstraint(columnNames = {"owner", "name"})
 )
 @XmlRootElement
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
