@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<configuration>
+<configuration scan="true">
 
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -36,11 +36,17 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </logger>
-
-  <logger name="openjpa">
-    <level value="warn"/>
+<!--
+  <logger name="openjpa.jdbc.SQL">
+    <level value="trace"/>
     <appender-ref ref="console"/>
   </logger>
+
+  <logger name="openjpa.jdbc.Query">
+    <level value="trace"/>
+    <appender-ref ref="console"/>
+  </logger>
+  -->
 
   <root level="debug">
     <appender-ref ref="console"/>

@@ -18,8 +18,6 @@
  */
 package org.surfnet.oaaas.model;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +26,8 @@ import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test to generate {@link Base64} encoded and decoded {@link String} for
@@ -43,7 +42,7 @@ public class AccessTokenTest {
    */
   @Test
   public void testEncodePrincipal() {
-    List<String> asList = Arrays.asList(new String[] { "user", "admin" });
+    List<String> asList = Arrays.asList("user", "admin");
 
     String emmaBlunt = generateEncodedPrincipal("emma.blunt", asList);
     assertEquals(

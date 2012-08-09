@@ -18,9 +18,6 @@
  */
 package org.surfnet.oaaas.auth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,11 +27,7 @@ import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.HttpHeaders;
 
-import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
-
-import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
@@ -45,6 +38,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
+
+import nl.surfnet.coin.mock.AbstractMockHttpServerTest;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * {@link Test} that uses a dummy http server to mock return values from the
@@ -78,10 +76,10 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
   @Test
   public void testDoFilterHappyFlow() throws IOException, ServletException {
     Map<String, Object> attributes = new HashMap<String, Object>();
-    attributes.put("demo", Arrays.asList(new Integer[] { 1, 2, 3 }));
+    attributes.put("demo", Arrays.asList(1, 2, 3));
     attributes.put("key", "value");
     VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read",
-        new AuthenticatedPrincipal("john.doe", Arrays.asList(new String[] { "user", "admin" }), attributes), 0L);
+        new AuthenticatedPrincipal("john.doe", Arrays.asList("user", "admin"), attributes), 0L);
     MockFilterChain chain = doCallFilter(recorderdResponse);
     /*
      * Verify that the FilterChain#doFilter is called and the
