@@ -42,62 +42,139 @@ var Template = (function() {
 
 var resourceServerGridView = (function() {
 
-  var templateId = "tplResourceServerTable";
-  var domLocationSelector = "#placeholderResourceServerTable";
+  var templateId = "tplResourceServerGrid";
+  var containerSelector = "#contentView";
+  var handleSelector = "#resourceServerGrid";
 
   return {
 
     refresh: function(resourceServers) {
-      $(domLocationSelector).replaceWith(Template.get(templateId)({resourceServers: resourceServers}));
+      this.hide();
+      this.show(resourceServers);
+    },
 
+    show: function(resourceServers) {
+      $(containerSelector).append(Template.get(templateId)({resourceServers: resourceServers}));
       $("#addServerButton,#noServersAddOne").click(function() {
         windowController.onAddResourceServer();
       });
+    },
+
+    hide: function() {
+      $(handleSelector).remove();
     }
   }
 })();
 
-var landingView = (function() {
+var resourceServerGridController = (function() {
 
-  var templateId = "tplLanding";
-  var domLocationSelector = "#placeholderLanding";
+  var view = resourceServerGridView;
 
   return {
     show: function() {
-      $(domLocationSelector).replaceWith(Template.get(templateId)());
+      // get list of resource servers. With this data, show the grid view.
+      data.getResourceServers(function(data) {
+        view.show(data);
+      });
+    },
+    hide: function() {
+      view.hide();
     }
   }
 })();
+
+
 
 var editResourceServerView = (function() {
 
   var templateId = "tplEditResourceServer";
-  var domLocationSelector = "#placeholderEditResourceServer";
+  var containerSelector = "#contentView";
+  var handleSelector = "#editResourceServer";
 
   return {
     show: function(mode) {
-      $(domLocationSelector).replaceWith(Template.get(templateId)({
+      $(containerSelector).append(Template.get(templateId)({
         formTitle: mode == "add"?"Add resource server" : "Edit resource server"
       }));
 
-      $("div#editResourceServerView").show();
-      $("form#editResourceServerForm").submit(function() {
-        windowController.onResourceServerSave(this);
+      $("#editResourceServerForm button.cancel").click(function() {
+        resourceServerFormController.onCancel();
+      });
+
+      $("#editResourceServerForm").submit(function() {
+        resourceServerFormController.onSubmit(this);
         return false; // prevent default submit
       });
     },
+    hide: function() {
+      $(handleSelector).remove();
+    },
+
     showMessage: function(type, text) {
       if (type == "error")
       var html = Template.get("tplAlert")({
         title: type == "error" ? "Error" : "Notice",
         text: text
       });
-      $("#editResourceServerForm").prepend(html);
-
+      $("form#editResourceServerForm").prepend(html);
     }
   }
 })();
 
+var resourceServerFormController = (function() {
+
+  var view = editResourceServerView;
+
+  return {
+    show: function(mode) {
+      view.show(mode);
+    },
+
+    onSubmit: function(form) {
+      var formAsObject = $(form).serializeObject();
+
+      var resourceServer = {
+        id: null,
+        name: formAsObject['name'],
+        description: formAsObject['description'],
+        scopes: formAsObject['scopes'],
+        contactName: formAsObject['contactName'],
+        contactEmail: formAsObject['contactEmail']
+      };
+
+      data.saveResourceServer(resourceServer, function(data) {
+        console.log("resource server has been saved. Result from server: " + JSON.stringify(data));
+        view.hide();
+        windowController.onCloseEditResourceServer();
+      }, function (errorMessage) {
+        console.log("error while saving data: " + errorMessage);
+        view.showMessage("error", errorMessage);
+      });
+    },
+    onCancel: function() {
+      view.hide();
+      windowController.onCloseEditResourceServer();
+    }
+  }
+})();
+
+
+var landingView = (function() {
+
+
+  var templateId = "tplLanding";
+  var handleSelector = "#landing";
+  var containerSelector = "#contentView";
+
+  return {
+    hide: function() {
+      $(handleSelector).remove();
+    },
+    show: function() {
+      $(containerSelector).append(Template.get(templateId)());
+    }
+  }
+})();
 
 var windowController = {
 
@@ -120,42 +197,24 @@ var windowController = {
       return false;
     });
   },
-  onLogin: function() {
+  onLoggedIn: function() {
     // Refresh the data grid.
     this.refresh();
   },
 
   refresh: function() {
-    // get list of resource servers. With this data, refresh the grid view.
-    data.getResourceServers(function(data) {
-      resourceServerGridView.refresh(data);
-    });
+    resourceServerGridController.show();
+  },
+
+  onCloseEditResourceServer: function() {
+    resourceServerGridController.show();
   },
 
   onAddResourceServer: function() {
-    $("div#gridView").hide(); // TODO: delegate to view?
-    editResourceServerView.show("add");
+    resourceServerGridController.hide();
+    resourceServerFormController.show("add");
   },
 
-  onResourceServerSave: function(form) { // TODO: move to editResourceServer controller?
-    var formAsObject = $(form).serializeObject();
-
-    var resourceServer = {
-      id: null,
-      name: formAsObject['name'],
-      description: formAsObject['description'],
-      scopes: formAsObject['scopes'],
-      contactName: formAsObject['contactName'],
-      contactEmail: formAsObject['contactEmail']
-    };
-
-    data.saveResourceServer(resourceServer, function(data) {
-      console.log("resource server has been saved. Result from server: " + data);
-    }, function (errorMessage) {
-      console.log("error while saving data: " + errorMessage);
-      editResourceServerView.showMessage("error", errorMessage);
-    });
-  },
 
   onPageLoad: function() {
     if (this.oauth.isTokenPresent()) { // This will be true upon return from authentication step-out.
@@ -164,7 +223,7 @@ var windowController = {
       data.setAccessToken(this.oauth.extractTokenInfo());
 
       // Effectively we're logged in. We can do API calls now.
-      this.onLogin();
+      this.onLoggedIn();
     } else {
       this.onLanding();
     }

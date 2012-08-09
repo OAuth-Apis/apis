@@ -31,16 +31,7 @@
       <li class="side-nav-stats"><a href="#">Statistics</a></li>
     </ul>
   </div>
-  <div class="content" id="landingView">
-    <div id="placeholderLanding"></div>
-  </div>
-
-  <div class="content" id="gridView">
-    <div id="placeholderResourceServerTable"></div>
-  </div>
-
-  <div class="content" id="editResourceServerView">
-    <div id="placeholderEditResourceServer"></div>
+  <div class="content" id="contentView">
   </div>
 
   <!--
@@ -104,52 +95,58 @@
   <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
 </div>
 
-<script id="tplEditResourceServer" type="text/x-handlebars-template">
-  <div class="page-header">
-    <h1>{{formTitle}}</h1>
-  </div>
-  <form class="form-horizontal" id="editResourceServerForm">
-    <fieldset>
-      <div class="control-group">
-        <label class="control-label">Server name</label>
-        <div class="controls">
-          <input type="text" name="name" placeholder="server name">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">Contact name</label>
-        <div class="controls">
-          <input type="text" name="contactName" placeholder="your name">
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label">Contact email address</label>
-        <div class="controls">
-          <input type="email" name="contactEmail" placeholder="john@doe.com">
-        </div>
-      </div>
-      <div class="control-group">
-        <label for="description" class="control-label">Description</label>
-        <div class="controls">
-          <textarea rows="3" id="description" name="description" class="input"></textarea>
-        </div>
-      </div>
-      <div class="control-group">
-        <label for="scopes" class="control-label">Scopes (comma separated)</label>
-        <div class="controls">
-          <input type="text" id="scopes" name="scopes" placeholder="read,write">
-        </div>
-      </div>
+<script data-main="js/main" src="js/lib/require.js"></script>
 
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Save changes</button>
-        <button type="button" class="btn">Cancel</button>
-      </div>
-    </fieldset>
-  </form>
+<script id="tplEditResourceServer" type="text/x-handlebars-template">
+  <div id="editResourceServer">
+    <div class="page-header">
+      <h1>{{formTitle}}</h1>
+    </div>
+    <form class="form-horizontal" id="editResourceServerForm">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label">Server name</label>
+          <div class="controls">
+            <input type="text" name="name" placeholder="server name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact name</label>
+          <div class="controls">
+            <input type="text" name="contactName" placeholder="your name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact email address</label>
+          <div class="controls">
+            <input type="email" name="contactEmail" placeholder="john@doe.com">
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="description" class="control-label">Description</label>
+          <div class="controls">
+            <textarea rows="3" id="description" name="description" class="input"></textarea>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="scopes" class="control-label">Scopes (comma separated)</label>
+          <div class="controls">
+            <input type="text" id="scopes" name="scopes" placeholder="read,write">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="cancel btn">Cancel</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
 </script>
 
-<script id="tplResourceServerTable" type="text/x-handlebars-template">
+<script id="tplResourceServerGrid" type="text/x-handlebars-template">
+  <div id="resourceServerGrid">
+
   <a class="btn btn-small btn-primary pull-right" id="addServerButton" href="#">Add another server</a>
   <h1>Resource servers</h1>
   {{#if resourceServers}}
@@ -180,6 +177,7 @@
   {{else}}
     <p>No resource servers yet. <a id="noServersAddOne" href="#">Add one</a>.</p>
   {{/if}}
+  </div>
 </script>
 <script id="tplAlert" type="text/x-handlebars-template">
   <div class="alert">
@@ -189,7 +187,7 @@
 </script>
 
 <script id="tplLanding" type="text/x-handlebars-template">
-  <div class="hero-unit">
+  <div id="landing" class="hero-unit">
     <h1>OAuth 2.0. But dead simple.</h1>
     <p>Can you imagine getting an OAuth2 client <em>(and server, if you want)</em> up in a matter of minutes? Wait and see. By the way, SURF Oauth lets you authorize against any backend.</p>
     <p>
@@ -200,7 +198,6 @@
   </div>
 </script>
 
-<script data-main="js/main" src="js/lib/require.js"></script>
 
 </body>
 </html>
