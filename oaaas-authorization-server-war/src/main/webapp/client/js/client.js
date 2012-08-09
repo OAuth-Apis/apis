@@ -38,129 +38,7 @@ var Template = (function() {
   }
 })();
 
-
-
-var resourceServerGridView = (function() {
-
-  var templateId = "tplResourceServerGrid";
-  var containerSelector = "#contentView";
-  var handleSelector = "#resourceServerGrid";
-
-  return {
-
-    refresh: function(resourceServers) {
-      this.hide();
-      this.show(resourceServers);
-    },
-
-    show: function(resourceServers) {
-      $(containerSelector).append(Template.get(templateId)({resourceServers: resourceServers}));
-      $("#addServerButton,#noServersAddOne").click(function() {
-        windowController.onAddResourceServer();
-      });
-    },
-
-    hide: function() {
-      $(handleSelector).remove();
-    }
-  }
-})();
-
-var resourceServerGridController = (function() {
-
-  var view = resourceServerGridView;
-
-  return {
-    show: function() {
-      // get list of resource servers. With this data, show the grid view.
-      data.getResourceServers(function(data) {
-        view.show(data);
-      });
-    },
-    hide: function() {
-      view.hide();
-    }
-  }
-})();
-
-
-
-var editResourceServerView = (function() {
-
-  var templateId = "tplEditResourceServer";
-  var containerSelector = "#contentView";
-  var handleSelector = "#editResourceServer";
-
-  return {
-    show: function(mode) {
-      $(containerSelector).append(Template.get(templateId)({
-        formTitle: mode == "add"?"Add resource server" : "Edit resource server"
-      }));
-
-      $("#editResourceServerForm button.cancel").click(function() {
-        resourceServerFormController.onCancel();
-      });
-
-      $("#editResourceServerForm").submit(function() {
-        resourceServerFormController.onSubmit(this);
-        return false; // prevent default submit
-      });
-    },
-    hide: function() {
-      $(handleSelector).remove();
-    },
-
-    showMessage: function(type, text) {
-      if (type == "error")
-      var html = Template.get("tplAlert")({
-        title: type == "error" ? "Error" : "Notice",
-        text: text
-      });
-      $("form#editResourceServerForm").prepend(html);
-    }
-  }
-})();
-
-var resourceServerFormController = (function() {
-
-  var view = editResourceServerView;
-
-  return {
-    show: function(mode) {
-      view.show(mode);
-    },
-
-    onSubmit: function(form) {
-      var formAsObject = $(form).serializeObject();
-
-      var resourceServer = {
-        id: null,
-        name: formAsObject['name'],
-        description: formAsObject['description'],
-        scopes: formAsObject['scopes'],
-        contactName: formAsObject['contactName'],
-        contactEmail: formAsObject['contactEmail']
-      };
-
-      data.saveResourceServer(resourceServer, function(data) {
-        console.log("resource server has been saved. Result from server: " + JSON.stringify(data));
-        view.hide();
-        windowController.onCloseEditResourceServer();
-      }, function (errorMessage) {
-        console.log("error while saving data: " + errorMessage);
-        view.showMessage("error", errorMessage);
-      });
-    },
-    onCancel: function() {
-      view.hide();
-      windowController.onCloseEditResourceServer();
-    }
-  }
-})();
-
-
 var landingView = (function() {
-
 
   var templateId = "tplLanding";
   var handleSelector = "#landing";
@@ -175,6 +53,7 @@ var landingView = (function() {
     }
   }
 })();
+
 
 var windowController = {
 
@@ -210,6 +89,11 @@ var windowController = {
     resourceServerGridController.show();
   },
 
+  onEditResourceServer: function(id) {
+    resourceServerGridController.hide();
+    resourceServerFormController.show("edit", id);
+  },
+
   onAddResourceServer: function() {
     resourceServerGridController.hide();
     resourceServerFormController.show("add");
@@ -232,6 +116,8 @@ var windowController = {
 
 // On DOM ready
 $(function() {
+
+  // Attach global listeners
   $(".alert").alert();
 
   // Initialisation of window controller.

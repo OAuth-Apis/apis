@@ -51,6 +51,16 @@ var data = (function() {
       });
     },
 
+    getResourceServer: function(id, resultHandler) {
+      oauthAjax({
+        url:"/admin/resourceServer/" + id,
+        success: resultHandler,
+        error: function() { // On failure, call result handler anyway, with empty result.
+          resultHandler({});
+        }
+      });
+    },
+
     getResourceServers:function (resultHandler) {
       oauthAjax({
         url:"/admin/resourceServer",

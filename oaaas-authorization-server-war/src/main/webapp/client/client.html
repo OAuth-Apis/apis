@@ -111,18 +111,6 @@
           </div>
         </div>
         <div class="control-group">
-          <label class="control-label">Contact name</label>
-          <div class="controls">
-            <input type="text" name="contactName" placeholder="your name">
-          </div>
-        </div>
-        <div class="control-group">
-          <label class="control-label">Contact email address</label>
-          <div class="controls">
-            <input type="email" name="contactEmail" placeholder="john@doe.com">
-          </div>
-        </div>
-        <div class="control-group">
           <label for="description" class="control-label">Description</label>
           <div class="controls">
             <textarea rows="3" id="description" name="description" class="input"></textarea>
@@ -132,6 +120,24 @@
           <label for="scopes" class="control-label">Scopes (comma separated)</label>
           <div class="controls">
             <input type="text" id="scopes" name="scopes" placeholder="read,write">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Thumbnail URL</label>
+          <div class="controls">
+            <input type="url" name="thumbNailUrl" placeholder="http://your-thumbnail-url">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact name</label>
+          <div class="controls">
+            <input type="text" name="contactName" placeholder="your name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact email address</label>
+          <div class="controls">
+            <input type="email" name="contactEmail" placeholder="john@doe.com">
           </div>
         </div>
 
@@ -161,9 +167,9 @@
         </thead>
         <tbody>
         {{#each resourceServers}}
-        <tr>
-            <td><img src="{{thumbNailUrl}}"></td>
-            <td><a href="#">{{name}}</a><br>
+        <tr data-resourceServerId="{{id}}">
+            <td><a href="#" class="editResourceServer"><img src="{{thumbNailUrl}}"></a></td>
+            <td><a class="editResourceServer" href="#">{{name}}</a><br>
                 {{description}}
             </td>
             <td>{{scopes}}</td>

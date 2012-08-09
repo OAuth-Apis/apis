@@ -48,7 +48,9 @@ requirejs.config({
         'lib/bootstrap.min',
         'lib/bootstrap-alert',
         'lib/handlebars',
-        'data'
+        'data',
+        'resourceServerForm',
+        'resourceServerGrid'
       ]
     }
   }
