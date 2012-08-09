@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>SURF OAuth 2</title>
+  <title>SURF OAuth</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
@@ -29,74 +29,75 @@
       <li class="side-nav-apps"><a href="#">Client apps</a></li>
       <li class="side-nav-keys"><a href="#">Access</a></li>
       <li class="side-nav-stats"><a href="#">Statistics</a></li>
-      <li class="side-nav-stats"><a id="loginbutton" href="#">Login</a></li>
     </ul>
   </div>
-  <div class="content" id="gridView">
-
-    <a class="btn btn-small btn-primary pull-right" id="addServerButton" href="#">Add another server</a>
-    <h1>Resource servers</h1>
-    <div id="placeholderResourceServerTable"></div>
-
-    <a class="btn btn-small btn-primary pull-right" href="#">Add another server</a>
-    <h1>Client applications</h1>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Username</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td><img src="img/icon-example.png"></td>
-        <td><a href="#">Rest API Universiteit delft</a><br>
-          Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
-          Nulla vitae fermentum risus. Vivamus odio nisi.
-        </td>
-        <td>Mail, Rooster,
-          Adresboek,
-          Persoonsgegevens</td>
-        <td>Wes Oudshoorn<br>
-          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-      </tr>
-      <tr>
-        <td><img src="img/icon-example.png"></td>
-        <td><a href="#">Rest API Universiteit delft</a><br>
-          Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
-          Nulla vitae fermentum risus. Vivamus odio nisi.
-        </td>
-        <td>Mail, Rooster,
-          Adresboek,
-          Persoonsgegevens</td>
-        <td>Wes Oudshoorn<br>
-          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-      </tr>
-      <tr>
-        <td><img src="img/icon-example.png"></td>
-        <td><a href="#">Rest API Universiteit delft</a><br>
-          Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
-          Nulla vitae fermentum risus. Vivamus odio nisi.
-        </td>
-        <td>Mail, Rooster,
-          Adresboek,
-          Persoonsgegevens</td>
-        <td>Wes Oudshoorn<br>
-          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-      </tr>
-      </tbody>
-    </table>
+  <div class="content" id="landingView">
+    <div id="placeholderLanding"></div>
   </div>
 
+  <div class="content" id="gridView">
+    <div id="placeholderResourceServerTable"></div>
+  </div>
 
   <div class="content" id="editResourceServerView">
     <div id="placeholderEditResourceServer"></div>
   </div>
+
+  <!--
+      <a class="btn btn-small btn-primary pull-right" href="#">Add another server</a>
+      <h1>Client applications</h1>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Username</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><img src="img/icon-example.png"></td>
+          <td><a href="#">Rest API Universiteit delft</a><br>
+            Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
+            Nulla vitae fermentum risus. Vivamus odio nisi.
+          </td>
+          <td>Mail, Rooster,
+            Adresboek,
+            Persoonsgegevens</td>
+          <td>Wes Oudshoorn<br>
+            <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+            <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+        </tr>
+        <tr>
+          <td><img src="img/icon-example.png"></td>
+          <td><a href="#">Rest API Universiteit delft</a><br>
+            Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
+            Nulla vitae fermentum risus. Vivamus odio nisi.
+          </td>
+          <td>Mail, Rooster,
+            Adresboek,
+            Persoonsgegevens</td>
+          <td>Wes Oudshoorn<br>
+            <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+            <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+        </tr>
+        <tr>
+          <td><img src="img/icon-example.png"></td>
+          <td><a href="#">Rest API Universiteit delft</a><br>
+            Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
+            Nulla vitae fermentum risus. Vivamus odio nisi.
+          </td>
+          <td>Mail, Rooster,
+            Adresboek,
+            Persoonsgegevens</td>
+          <td>Wes Oudshoorn<br>
+            <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+            <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
+        </tr>
+        </tbody>
+      </table>
+  -->
 </div>
 
 <div class="foot">
@@ -142,13 +143,15 @@
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Save changes</button>
-        <button class="btn">Cancel</button>
+        <button type="button" class="btn">Cancel</button>
       </div>
     </fieldset>
   </form>
 </script>
 
 <script id="tplResourceServerTable" type="text/x-handlebars-template">
+  <a class="btn btn-small btn-primary pull-right" id="addServerButton" href="#">Add another server</a>
+  <h1>Resource servers</h1>
   {{#if resourceServers}}
     <table class="table table-striped">
         <thead>
@@ -178,6 +181,25 @@
     <p>No resource servers yet. <a id="noServersAddOne" href="#">Add one</a>.</p>
   {{/if}}
 </script>
+<script id="tplAlert" type="text/x-handlebars-template">
+  <div class="alert">
+    <button class="close" data-dismiss="alert">×</button>
+    <strong>{{title}}!</strong> {{text}}
+  </div>
+</script>
+
+<script id="tplLanding" type="text/x-handlebars-template">
+  <div class="hero-unit">
+    <h1>OAuth 2.0. But dead simple.</h1>
+    <p>Can you imagine getting an OAuth2 client <em>(and server, if you want)</em> up in a matter of minutes? Wait and see. By the way, SURF Oauth lets you authorize against any backend.</p>
+    <p>
+      <a id="loginbutton" class="btn btn-primary btn-large">
+        Login
+      </a>
+    </p>
+  </div>
+</script>
+
 <script data-main="js/main" src="js/lib/require.js"></script>
 
 </body>

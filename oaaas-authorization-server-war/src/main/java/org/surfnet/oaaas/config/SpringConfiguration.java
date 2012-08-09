@@ -19,6 +19,8 @@ package org.surfnet.oaaas.config;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 
+import com.googlecode.flyway.core.Flyway;
+
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.context.annotation.Bean;
@@ -36,8 +38,8 @@ import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.OAuth2ValidatorImpl;
 import org.surfnet.oaaas.auth.UserConsentFilter;
-
-import com.googlecode.flyway.core.Flyway;
+import org.surfnet.oaaas.repository.ExceptionTranslator;
+import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 
 @Configuration
 @PropertySource("classpath:application.properties")
@@ -118,6 +120,11 @@ public class SpringConfiguration {
     return (AbstractUserConsentHandler) getConfiguredBean("userConsentHandlerClass");
   }
 
+  @Bean
+  public ExceptionTranslator exceptionTranslator() {
+    return new OpenJPAExceptionTranslator();
+  }
+
   private Object getConfiguredBean(String className) {
     try {
       return getClass().getClassLoader().loadClass(env.getProperty(className)).newInstance();
@@ -125,5 +132,6 @@ public class SpringConfiguration {
       throw new RuntimeException(e);
     }
   }
+
 
 }

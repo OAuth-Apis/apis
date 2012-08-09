@@ -23,35 +23,41 @@ requirejs.config({
   },
 
   shim: {
+
     'lib/bootstrap.min': {
-      //These script dependencies should be loaded before loading
-      //backbone.js
       deps: ['lib/jquery']
-      //Once loaded, use the global 'Bootstrap' as the
-      //module value.
     },
 
-    'data': {
-      deps: ['lib/jquery']
+    "lib/bootstrap-alert": {
+      deps: ['lib/bootstrap.min']
     },
+
     'jquery-extensions': {
       deps: ['lib/jquery']
     },
-    'client': {
-      deps: ['oauth', 'lib/jquery','jquery-extensions', 'lib/bootstrap.min', 'lib/handlebars', 'data']
+
+    'data': {
+      deps: [
+        'lib/jquery'
+      ]},
+
+ 'client': {
+      deps: [
+        'oauth',
+        'jquery-extensions',
+        'lib/bootstrap.min',
+        'lib/bootstrap-alert',
+        'lib/handlebars',
+        'data'
+      ]
     }
   }
 });
+
 require([
-  "lib/jquery",
   "jquery-extensions",
   "lib/handlebars",
   "lib/bootstrap.min",
-  "oauth",
-  "data",
+  "lib/bootstrap-alert",
   "client"
-  ],
-  function($){
-    return $;
-  }
-);
+]);

@@ -17,12 +17,13 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityExistsException;
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.DELETE;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
+import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 /**
@@ -53,9 +55,12 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 public class ResourceServerResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResource.class);
-  
+
   @Inject
   private ResourceServerRepository resourceServerRepository;
+
+  @Inject
+  private ExceptionTranslator exceptionTranslator;
 
   /**
    * Get all existing resource servers for the provided credentials (== owner).
@@ -104,16 +109,42 @@ public class ResourceServerResource {
   public Response put(@Context HttpServletRequest request, @Valid ResourceServer newOne) {
     String owner = getUserId(request);
 
+    newOne.setKey(UUID.randomUUID().toString()); // TODO not simply a UUID
     newOne.setSecret(UUID.randomUUID().toString());
     newOne.setOwner(owner);
-    final ResourceServer resourceServerSaved = resourceServerRepository.save(newOne);
+
+    ResourceServer resourceServerSaved;
+    try {
+      resourceServerSaved = resourceServerRepository.save(newOne);
+    } catch (RuntimeException e) {
+      return buildErrorResponse(newOne, e);
+    }
+
     LOG.debug("New resourceServer has been saved: {}. Nr of entities in store now: {}",
-        newOne, resourceServerRepository.count());
+        resourceServerSaved, resourceServerRepository.count());
 
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
     return Response
         .created(uri)
         .entity(resourceServerSaved)
+        .build();
+  }
+
+  private Response buildErrorResponse(ResourceServer newOne, RuntimeException e) {
+    final Throwable jpaException = exceptionTranslator.translate(e);
+    Response.Status s;
+    String reason;
+    if (jpaException instanceof EntityExistsException) {
+      s = Response.Status.BAD_REQUEST;
+      reason = "Violating unique constraints";
+    } else {
+      s = Response.Status.INTERNAL_SERVER_ERROR;
+      reason = "Internal server error";
+    }
+    LOG.info("Responding with error '" + s + "', '" + reason + "'. Cause attached.", e);
+    return Response
+        .status(s)
+        .entity(reason)
         .build();
   }
 

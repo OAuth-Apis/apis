@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 var data = (function() {
   var accessToken = null;
 
@@ -37,18 +38,15 @@ var data = (function() {
       accessToken = newAccessToken;
     },
 
-    saveResourceServer: function(resourceServer, resultHandler) {
+    saveResourceServer: function(resourceServer, success, failure) {
       // TODO: distinct between create and update
       oauthAjax({
         url:"/admin/resourceServer",
         data: JSON.stringify(resourceServer),
         type: "PUT",
-        success: resultHandler,
-        always: function(one, two) {
-          resultHandler();
-        },
-        error: function() {
-          resultHandler([]); // failure: result handler with empty result. TODO: log?
+        success: success,
+        error: function(xhr, textStatus, errorThrown) {
+          failure(xhr.responseText);
         }
       });
     },

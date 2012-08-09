@@ -25,6 +25,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,12 +37,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name="resourceserver")
+@Table(name="resourceserver", uniqueConstraints =
+    @UniqueConstraint(columnNames = {"id", "name"})
+)
 @XmlRootElement
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class ResourceServer extends AbstractEntity {
 
-  @Column(unique = true)
+  @Column
   @NotNull
   private String name;
 

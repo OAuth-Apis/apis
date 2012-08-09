@@ -40,7 +40,7 @@ var Template = (function() {
 
 
 
-var resourceServersView = (function() {
+var resourceServerGridView = (function() {
 
   var templateId = "tplResourceServerTable";
   var domLocationSelector = "#placeholderResourceServerTable";
@@ -53,6 +53,18 @@ var resourceServersView = (function() {
       $("#addServerButton,#noServersAddOne").click(function() {
         windowController.onAddResourceServer();
       });
+    }
+  }
+})();
+
+var landingView = (function() {
+
+  var templateId = "tplLanding";
+  var domLocationSelector = "#placeholderLanding";
+
+  return {
+    show: function() {
+      $(domLocationSelector).replaceWith(Template.get(templateId)());
     }
   }
 })();
@@ -73,6 +85,15 @@ var editResourceServerView = (function() {
         windowController.onResourceServerSave(this);
         return false; // prevent default submit
       });
+    },
+    showMessage: function(type, text) {
+      if (type == "error")
+      var html = Template.get("tplAlert")({
+        title: type == "error" ? "Error" : "Notice",
+        text: text
+      });
+      $("#editResourceServerForm").prepend(html);
+
     }
   }
 })();
@@ -92,6 +113,13 @@ var windowController = {
     this.oauth.authorize();
   },
 
+  onLanding: function() {
+    landingView.show();
+    $("a#loginbutton").click(function(){
+      windowController.login();
+      return false;
+    });
+  },
   onLogin: function() {
     // Refresh the data grid.
     this.refresh();
@@ -100,7 +128,7 @@ var windowController = {
   refresh: function() {
     // get list of resource servers. With this data, refresh the grid view.
     data.getResourceServers(function(data) {
-      resourceServersView.refresh(data);
+      resourceServerGridView.refresh(data);
     });
   },
 
@@ -123,6 +151,9 @@ var windowController = {
 
     data.saveResourceServer(resourceServer, function(data) {
       console.log("resource server has been saved. Result from server: " + data);
+    }, function (errorMessage) {
+      console.log("error while saving data: " + errorMessage);
+      editResourceServerView.showMessage("error", errorMessage);
     });
   },
 
@@ -134,17 +165,16 @@ var windowController = {
 
       // Effectively we're logged in. We can do API calls now.
       this.onLogin();
+    } else {
+      this.onLanding();
     }
-
-    $("a#loginbutton").click(function(){
-      windowController.login();
-      return false;
-    });
   }
 };
 
 // On DOM ready
 $(function() {
+  $(".alert").alert();
+
   // Initialisation of window controller.
   windowController.onPageLoad();
 });

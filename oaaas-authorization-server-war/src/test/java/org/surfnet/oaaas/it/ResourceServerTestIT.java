@@ -74,6 +74,22 @@ public class ResourceServerTestIT extends AbstractAuthorizationServerTest {
   }
 
   @Test
+  public void putInvalid() {
+    ResourceServer resourceServer = buildResourceServer();
+
+    final ClientResponse response = webResource
+        .header("Authorization", authorizationBearer(ACCESS_TOKEN))
+        .put(ClientResponse.class, resourceServer);
+
+    assertEquals(201, response.getStatus());
+
+    final ClientResponse response2 = webResource
+        .header("Authorization", authorizationBearer(ACCESS_TOKEN))
+        .put(ClientResponse.class, resourceServer);
+    assertEquals("putting the same server twice should not work because id+name combination has unique constraint",
+        400, response2.getStatus());
+  }
+  @Test
   public void get() {
     // First get a non existing resource server
     ClientResponse response = webResource
