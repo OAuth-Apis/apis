@@ -30,23 +30,27 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
+import org.surfnet.oaaas.auth.OAuth2Validator;
 
 public class AuthorizationCodeRequestHandler implements HttpRequestHandler {
 
+  private String grantType;
   private String clientId;
   private String secret;
-
-  public AuthorizationCodeRequestHandler(String redirectUri, String oauthServerBaseUrl, String clientId, String secret) {
-    this.redirectUri = redirectUri;
-    this.oauthServerBaseUrl = oauthServerBaseUrl;
-    this.clientId = clientId;
-    this.secret = secret;
-  }
 
   private String oauthServerBaseUrl;
   private String redirectUri;
 
   private String tokenResponse;
+
+  public AuthorizationCodeRequestHandler(String redirectUri, String oauthServerBaseUrl, String clientId, String secret,
+      String grantType) {
+    this.redirectUri = redirectUri;
+    this.oauthServerBaseUrl = oauthServerBaseUrl;
+    this.clientId = clientId;
+    this.secret = secret;
+    this.grantType = grantType;
+  }
 
   /**
    * Get the token response, wait for it if not set yet.
@@ -64,8 +68,7 @@ public class AuthorizationCodeRequestHandler implements HttpRequestHandler {
     String authorizationCode = uri.substring(uri.indexOf("code=") + 5);
 
     final HttpPost tokenRequest = new HttpPost(oauthServerBaseUrl + "/oauth2/token");
-    String postBody = String.format("grant_type=authorization_code&code=%s&redirect_uri=%s",
-        authorizationCode, redirectUri);
+    String postBody = getPostBody(authorizationCode, grantType);
 
     tokenRequest.setEntity(new ByteArrayEntity(postBody.getBytes()));
     tokenRequest.addHeader("Authorization", AuthorizationCodeTestIT.authorizationBasic(clientId, secret));
@@ -76,5 +79,10 @@ public class AuthorizationCodeRequestHandler implements HttpRequestHandler {
     String responseAsString = new Scanner(responseContent).useDelimiter("\\A").next();
     responseContent.close();
     tokenResponse = responseAsString;
+  }
+
+  private String getPostBody(String authorizationCode, String grantType) {
+    String postBody = String.format("grant_type=%s&code=%s&redirect_uri=%s", grantType, authorizationCode, redirectUri);
+    return postBody;
   }
 }

@@ -70,9 +70,9 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 @Produces(MediaType.APPLICATION_JSON)
 public class TokenResource {
 
-  private static final String BASIC_REALM = "Basic realm=\"OAuth2 Secure\"";
+  public static final String BASIC_REALM = "Basic realm=\"OAuth2 Secure\"";
 
-  private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+  public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
 
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
@@ -84,13 +84,6 @@ public class TokenResource {
   private OAuth2Validator oAuth2Validator;
 
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
-
-  @GET
-  @Path("/test")
-  public Response test(@Context
-  HttpServletRequest request) {
-    return Response.ok(new ErrorResponse("no_error", "wtf")).build();
-  }
 
   @GET
   @Path("/authorize")
@@ -222,7 +215,7 @@ public class TokenResource {
     }
     AuthorizationRequest request = new AuthorizationRequest();
     request.setClient(accessToken.getClient());
-    request.setPrincipal(request.getPrincipal());
+    request.setPrincipal(accessToken.getPrincipal());
     request.setScopes(accessToken.getScopes());
     accessTokenRepository.delete(accessToken);
     return request;

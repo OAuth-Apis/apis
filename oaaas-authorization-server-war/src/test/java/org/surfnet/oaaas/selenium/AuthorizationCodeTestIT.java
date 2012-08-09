@@ -16,28 +16,30 @@
 
 package org.surfnet.oaaas.selenium;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+import org.surfnet.oaaas.model.AccessTokenResponse;
 
 /**
  * Integration test (using Selenium) for the Authorization Code flow.
  */
 public class AuthorizationCodeTestIT extends SeleniumSupport {
-  private String accessTokenRedirectUri;
+  
   private String clientId = "it-test-client";
   private String secret = "somesecret";
 
-  @Before
-  public void setupOauthClientServer() throws Exception {
-    accessTokenRedirectUri = startAuthorizationCallbackServer(clientId, secret);
-  }
 
   @Test
-  public void authCode() {
+  public void authCode() throws Exception {
+    String accessTokenRedirectUri = startAuthorizationCallbackServer(clientId, secret);
+
     WebDriver webdriver = getWebDriver();
     String responseType = "code";
     String url = String.format(
@@ -51,10 +53,13 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
     // get token response
     String tokenResponse = getAuthorizationCodeRequestHandler().getTokenResponseBlocking();
     
-    assertThat(tokenResponse, containsString("access_token"));
-    assertThat(tokenResponse, containsString("token_type"));
-    assertThat(tokenResponse, containsString("expires_in"));
-    assertThat(tokenResponse, containsString("scope"));
+    AccessTokenResponse accessTokenResponse = getMapper().readValue(tokenResponse, AccessTokenResponse.class);
+
+    assertTrue(StringUtils.isNotBlank(accessTokenResponse.getAccessToken()));
+    assertTrue(StringUtils.isBlank(accessTokenResponse.getRefreshToken()));
+    assertTrue(StringUtils.isNotBlank(accessTokenResponse.getScope()));
+    assertTrue(StringUtils.isNotBlank(accessTokenResponse.getTokenType()));
+    assertEquals(accessTokenResponse.getExpiresIn(), 0L);
   }
 
   @Test

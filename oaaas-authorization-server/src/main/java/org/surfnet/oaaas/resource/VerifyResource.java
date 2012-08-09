@@ -18,6 +18,9 @@
  */
 package org.surfnet.oaaas.resource;
 
+import static org.surfnet.oaaas.resource.TokenResource.BASIC_REALM;
+import static org.surfnet.oaaas.resource.TokenResource.WWW_AUTHENTICATE;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.GET;
@@ -101,8 +104,7 @@ public class VerifyResource {
   }
 
   protected Response unauthorized() {
-    return Response.status(Status.UNAUTHORIZED).header("WWW-Authenticate", "Basic realm=\"Authorization Server\"")
-        .build();
+    return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
   }
 
   /**

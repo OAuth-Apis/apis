@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -29,7 +30,7 @@
      						value="${AUTH_STATE}"/>
 	        <ul class="scopes">
 		      <c:forEach items="${client.scopes}" var="scope">
-			        <li><input id="GRANTED_SCOPES" type="checkbox" name="GRANTED_SCOPES" checked="yes" value="${scope}"/>${scope}</li>
+			        <li><input id="GRANTED_SCOPES" type="checkbox" name="GRANTED_SCOPES" checked value="${scope}"/>${scope}</li>
 			  </c:forEach>
 		    </ul>
 
