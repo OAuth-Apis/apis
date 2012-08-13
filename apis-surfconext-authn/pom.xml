@@ -13,14 +13,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>nl.surfnet.oaaas</groupId>
-		<artifactId>oaaas-parent</artifactId>
+		<groupId>nl.surfnet.apis</groupId>
+		<artifactId>apis-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>nl.surfnet.oaaas</groupId>
-	<artifactId>oaaas-surfconext-authn</artifactId>
-	<name>OA-aaS - conext authentication plugin</name>
+	<groupId>nl.surfnet.apis</groupId>
+	<artifactId>apis-surfconext-authn</artifactId>
+	<name>API Secure - conext authentication plugin</name>
 
 	<dependencies>
 		<dependency>
@@ -28,8 +28,8 @@
 			<artifactId>spring-security-opensaml</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>nl.surfnet.oaaas</groupId>
-			<artifactId>oaaas-authorization-server</artifactId>
+			<groupId>nl.surfnet.apis</groupId>
+			<artifactId>apis-authorization-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

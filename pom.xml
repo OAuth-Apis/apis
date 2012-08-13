@@ -10,11 +10,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>nl.surfnet.oaaas</groupId>
-	<artifactId>oaaas-parent</artifactId>
+	<groupId>nl.surfnet.apis</groupId>
+	<artifactId>apis-parent</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>OA-aaS</name>
+	<name>API Secure</name>
 
 
   <inceptionYear>2012</inceptionYear>
@@ -51,14 +51,11 @@
 
 
   <modules>
-		<module>oaaas-example-resource-server</module>
-		<module>oaaas-authorization-server</module>
-		<module>oaaas-authorization-server-war</module>
-		<module>oaaas-surfconext-authn</module>
-		<module>oaaas-example-resource-server-war</module>
-		<!--<module>oaaas-performance</module> -->
-		<!--<module>oaaas-vm</module> -->
-		<!--<module>oaaas-gui</module> -->
+		<module>apis-example-resource-server</module>
+		<module>apis-authorization-server</module>
+		<module>apis-authorization-server-war</module>
+		<module>apis-surfconext-authn</module>
+		<module>apis-example-resource-server-war</module>
 	</modules>
 
 	<properties>
@@ -243,18 +240,13 @@
 				<version>${commons-lang.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>nl.surfnet.oaaas</groupId>
-				<artifactId>oaaas-client</artifactId>
+				<groupId>nl.surfnet.apis</groupId>
+				<artifactId>apis-authorization-server</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>nl.surfnet.oaaas</groupId>
-				<artifactId>oaaas-authorization-server</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>nl.surfnet.oaaas</groupId>
-				<artifactId>oaaas-surfconext-authn</artifactId>
+				<groupId>nl.surfnet.apis</groupId>
+				<artifactId>apis-surfconext-authn</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

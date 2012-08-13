@@ -1,18 +1,57 @@
 <pre>
 
-   ____                           _____ 
-  / __ \   /\                    / ____|
- | |  | | /  \ ______ __ _  __ _| (___  
- | |  | |/ /\ \______/ _` |/ _` |\___ \ 
- | |__| / ____ \    | (_| | (_| |____) |
-  \____/_/    \_\    \__,_|\__,_|_____/ 
+
+                                                     MMMMM    M. MM
+                                                     MMM MM  MMM ,M.
+                                                    .NMM 8M .MMM  O
+                                                     .MN MMD.NMMMM
+                                                      MM.NMMM. MMN.   :
+                                                 M.  .M .MMMMD. MM   N
+                                                  M   M MM:MMM  MM.  M
+                                                   N  ,7MM MMMM ?M  M
+                                                   M..,MMM   IM  M. M
+                                                   OM MM.     .M.M,N
+                                                   .MMMM.       :NM.
+                                                    .MMM.      M MM
+                                                     MMMM     M~MMM
+                                                    .MMMMMMMMMMMM.M
+                                                     ..  MMMMMM
+                                                   .NNMMMMM   MM
+                                               ?MMMMMMMMMMM    MM
+                                            MMM8MMZDN,Z  8    MMMM
+                                         NMMM.MDMMMMMM.  . M ,MMM.
+            MMMMMMMMMMM..         ...MMMNM, MMMD,~M8MN   .MM,  . M
+         =MMN,...:M MMMMMMMMMMMMM8MMMMMDD?M  MM?                  M
+        .MD   M.MMMM MM MMMOMM,:MMZMMM   M,:  M:8  M. M    .M     .
+        .DMMM ,.N . MM MMM MM . ..  .. ... . MM+.  MMMM. MMMMM.    N.
+        +. MM . MM 7M.NM   MMM  D  ~  OM..   ,MM.~ M ,   .,M,. M  MM.
+        N: .        IM.    MMM  ..M.. :M, ...    M   N.MD.     .,..
+        8D:M., =M.    ,.          .       ,.M    M. .MMNN
+        MMM,   8M .  NMMM.  .,Z   D. M   .~ MM    N    8N
+        MNM  .  ,     ..N   .~    . , .  OM  .    M,N,.N
+        MM  =M. N,  .M8      .    M$ ..NMM ,..MM  O M.M
+        MM OMM ,.  MN,               .. MM ..:..  MMD
+       .MM M   M  .M  MMMMMMM?  .   .   MMN N ,..M . M
+       ... M MMM  ..NM  .               M .?   8,  NM
+       MM  M MMN:  .MM. .               M. .N.. .. M.
+     ,D M M    D,   M = .               ,: M     ? M M
+     M .  ,M  M        ..              MN $.      MM ~.
+     O~.N..          . ,:              MM.N.      .M
+     MMMM.  Z           :.              .M         NM M
+     MM .. M         D .DM.            . .         ,MM
+     MM   7M           M. M           M..           .  M
+    :M8  . M            7  M          M M            M N,
+     M  MM M             M  N.       .. M             +DM8
+    N    7.MM            NM$,D,       M,MM            ,MM:M
+          $:=M,            MMNM7       MMMN            ,+MMN
+   .MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMZ
 
 </pre>
-OA-aaS
+API Secure
 ======
 <em>(Work in Progress, sponsored by SURFnet)</em>
 
-OAuth Authorization as a Service (OA-aaS) is a generic OAuth2 provider that can be used to kickstart your API authentication.
+API Secure (Apis) is a generic OAuth2 provider that can be used to kickstart your API authentication.
 
 Features
 --------

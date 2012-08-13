@@ -12,20 +12,20 @@
 
 	<parent>
 		<relativePath>../pom.xml</relativePath>
-		<groupId>nl.surfnet.oaaas</groupId>
-		<artifactId>oaaas-parent</artifactId>
+		<groupId>nl.surfnet.apis</groupId>
+		<artifactId>apis-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>nl.surfnet.oaaas</groupId>
-	<artifactId>oaaas-example-resource-server-war</artifactId>
+	<groupId>nl.surfnet.apis</groupId>
+	<artifactId>apis-example-resource-server-war</artifactId>
 	<packaging>war</packaging>
-	<name>OA-aaS - example resource server war</name>
+	<name>API Secure - example resource server war</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>nl.surfnet.oaaas</groupId>
-			<artifactId>oaaas-authorization-server</artifactId>
+			<groupId>nl.surfnet.apis</groupId>
+			<artifactId>apis-authorization-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

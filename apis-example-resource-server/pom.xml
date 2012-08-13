@@ -12,20 +12,20 @@
 
 	<parent>
 		<relativePath>../pom.xml</relativePath>
-		<groupId>nl.surfnet.oaaas</groupId>
-		<artifactId>oaaas-parent</artifactId>
+		<groupId>nl.surfnet.apis</groupId>
+		<artifactId>apis-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>nl.surfnet.oaaas</groupId>
-	<artifactId>oaaas-example-resource-server</artifactId>
+	<groupId>nl.surfnet.apis</groupId>
+	<artifactId>apis-example-resource-server</artifactId>
 	<packaging>jar</packaging>
-	<name>OA-aaS - example resource server</name>
+	<name>API Secure - example resource server</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>nl.surfnet.oaaas</groupId>
-			<artifactId>oaaas-authorization-server</artifactId>
+			<groupId>nl.surfnet.apis</groupId>
+			<artifactId>apis-authorization-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -107,7 +107,7 @@
 				<goals> <goal>shade</goal> </goals> <configuration> <transformers> <transformer 
 				implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" 
 				/> <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> 
-				<mainClass>org.surfnet.oaaas.example.api.UniversityFooService</mainClass> 
+				<mainClass>org.surfnet.apis.example.api.UniversityFooService</mainClass> 
 				</transformer> </transformers> </configuration> </execution> </executions> 
 				</plugin> -->
 		</plugins>
