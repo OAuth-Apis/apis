@@ -10,7 +10,6 @@
   <packaging>war</packaging>
   <name>API Secure - authorization server webapp</name>
 
-
   <properties>
     <servlet.port>8080</servlet.port>
     <jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>

@@ -63,8 +63,7 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
 
   private boolean isUserConsentPost(HttpServletRequest request) {
     String oauthApproval = request.getParameter(USER_OAUTH_APPROVAL);
-    return request.getMethod().equals(HttpMethod.POST.toString())
-        && StringUtils.isNotBlank(oauthApproval);
+    return request.getMethod().equals(HttpMethod.POST.toString()) && StringUtils.isNotBlank(oauthApproval);
   }
 
   private void processInitial(HttpServletRequest request, ServletResponse response, String returnUri,
@@ -72,7 +71,18 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     request.setAttribute("client", client);
     request.setAttribute(AUTH_STATE, authStateValue);
     request.setAttribute("actionUri", returnUri);
-    request.getRequestDispatcher("/WEB-INF/jsp/userconsent.jsp").forward(request, response);
+    request.getRequestDispatcher(getUserConsentUrl()).forward(request, response);
+  }
+
+  /**
+   * 
+   * Return the path to the User Consent page. Subclasses can use this hook by
+   * providing a custom html/jsp.
+   * 
+   * @return the path to the User Consent page
+   */
+  protected String getUserConsentUrl() {
+    return "/WEB-INF/jsp/userconsent.jsp";
   }
 
   private void processForm(final HttpServletRequest request) {
