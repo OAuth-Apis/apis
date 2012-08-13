@@ -10,7 +10,6 @@ NICE:
 - ClientResource and ResourceServerResource must debug log all activity
 - Document OAuth2Validator to explain or comply to spec compliance
 - Performance JMeter tests
-- VM
 - Refactor authorizationRequest to not store it in the database, but in a request.getSession
 - Support for MAC Access Token Type http://tools.ietf.org/html/draft-ietf-oauth-v2-http-mac-01
 

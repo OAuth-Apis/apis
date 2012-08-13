@@ -31,8 +31,6 @@ public abstract class AbstractAuthorizationServerTest {
   protected Client getClient() {
     return client;
   }
-
-
   
   public String baseUrl() {
     return String.format("http://localhost:%s",
@@ -47,6 +45,7 @@ public abstract class AbstractAuthorizationServerTest {
     String concatted = username + ":" + password;
     return "Basic " + new String(Base64.encodeBase64(concatted.getBytes()));
   }
+  
   public static String authorizationBearer(String token) {
     return "bearer " + token;
   }
