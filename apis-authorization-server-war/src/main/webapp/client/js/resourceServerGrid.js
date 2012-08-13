@@ -20,9 +20,6 @@ var resourceServerGridView = (function() {
   var containerSelector = "#contentView";
   var handleSelector = "#resourceServerGrid";
 
-
-
-
   return {
 
     refresh: function(resourceServers) {
@@ -45,10 +42,15 @@ var resourceServerGridView = (function() {
       });
 
     },
-
+    isVisible: function() {
+      return $(handleSelector).is(':visible');
+    },
     hide: function() {
       $(containerSelector).css("height", $(containerSelector).height()); // set a fixed height to prevent wild swapping of the footer
       $(handleSelector).remove();
+    },
+    focus: function() {
+      $(handleSelector).focus();
     }
   }
 })();
@@ -64,9 +66,10 @@ var resourceServerGridController = (function() {
         view.show(data);
       });
     },
-    hide: function() {
-      view.hide();
-    }
+
+    hide: view.hide,
+    focus: view.focus,
+    isVisible: view.isVisible
   }
 })();
 

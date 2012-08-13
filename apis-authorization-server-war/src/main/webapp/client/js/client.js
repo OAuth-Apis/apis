@@ -79,6 +79,13 @@ var windowController = {
   onLoggedIn: function() {
     // Refresh the data grid.
     this.refresh();
+
+
+    // On click of nav link, remove 'current' from all, add to actual current.
+    $("div.side-nav a").click(function() {
+      $("div.side-nav a").removeClass("cur");
+      $(this).addClass("cur");
+    })
   },
 
   refresh: function() {

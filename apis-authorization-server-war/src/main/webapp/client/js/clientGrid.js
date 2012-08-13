@@ -46,9 +46,15 @@ var clientGridView = (function() {
 
     },
 
+    isVisible: function() {
+      return $(handleSelector).is(':visible');
+    },
     hide: function() {
       $(containerSelector).css("height", $(containerSelector).height()); // set a fixed height to prevent wild swapping of the footer
       $(handleSelector).remove();
+    },
+    focus: function() {
+      $(handleSelector).focus();
     }
   }
 })();
@@ -73,9 +79,10 @@ var clientGridController = (function() {
         });
       });
     },
-    hide: function() {
-      view.hide();
-    }
+
+    hide: view.hide,
+    focus: view.focus,
+    isVisible: view.isVisible
   }
 })();
 
