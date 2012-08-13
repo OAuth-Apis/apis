@@ -41,8 +41,7 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
 
   @Override
   public boolean canCommence(HttpServletRequest request) {
-    return request.getMethod().equals("POST")
-        && request.getParameter(AUTH_STATE) != null
+    return request.getMethod().equals("POST") && request.getParameter(AUTH_STATE) != null
         && request.getParameter("username") != null;
   }
 
@@ -64,11 +63,15 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
     request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
   }
 
-  private void processForm(final HttpServletRequest request) {
-    /*
-     * Hook for actually go the database, ldap, whatever to perform
-     * authentication
-     */
+  /**
+   * 
+   * Hook for actually validating the username/ password against a database,
+   * ldap, external webservice or whatever to perform authentication
+   * 
+   * @param request
+   *          the {@link HttpServletRequest}
+   */
+  protected void processForm(final HttpServletRequest request) {
     setAuthStateValue(request, request.getParameter(AUTH_STATE));
     setPrincipal(request, new AuthenticatedPrincipal(request.getParameter("username")));
   }

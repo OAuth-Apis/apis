@@ -42,9 +42,10 @@ import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:apis.application.properties")
 /*
- * The component scan can be used to add packages and exclusions to the default package
+ * The component scan can be used to add packages and exclusions to the default
+ * package
  */
 @ComponentScan(basePackages = { "org.surfnet.oaaas.resource" })
 @ImportResource("classpath:spring-repositories.xml")
@@ -110,6 +111,12 @@ public class SpringConfiguration {
     return new OAuth2ValidatorImpl();
   }
 
+  /**
+   * Returns the {@link AbstractAuthenticator} that is responsible for the
+   * authentication of Resource Owners.
+   * 
+   * @return an {@link AbstractAuthenticator}
+   */
   @Bean
   public AbstractAuthenticator authenticator() {
     return (AbstractAuthenticator) getConfiguredBean("authenticatorClass");
@@ -132,6 +139,5 @@ public class SpringConfiguration {
       throw new RuntimeException(e);
     }
   }
-
 
 }
