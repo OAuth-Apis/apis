@@ -57,7 +57,6 @@ public class Client extends AbstractEntity {
   private String name;
 
   @Column(unique = true)
-  @NotNull
   private String clientId;
 
   @Column(unique = true, nullable = false)

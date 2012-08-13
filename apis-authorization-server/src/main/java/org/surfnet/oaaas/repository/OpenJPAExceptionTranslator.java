@@ -34,6 +34,8 @@ public class OpenJPAExceptionTranslator implements ExceptionTranslator {
     Class c = e.getClass();
     if (c.equals(org.apache.openjpa.persistence.EntityExistsException.class)) {
       return new javax.persistence.EntityExistsException(e.getMessage(), e);
+    } else if (c.equals(javax.validation.ConstraintViolationException.class)) {
+      return (Exception) e;
     }
     LOG.info("Cannot translate '{}' to specific subtype, will return generic PersistenceException",
         e.getClass().getName());

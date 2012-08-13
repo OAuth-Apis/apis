@@ -34,61 +34,6 @@
   <div class="content" id="contentView">
   </div>
 
-  <!--
-      <a class="btn btn-small btn-primary pull-right" href="#">Add another server</a>
-      <h1>Client applications</h1>
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>#</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Username</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td><img src="img/icon-example.png"></td>
-          <td><a href="#">Rest API Universiteit delft</a><br>
-            Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
-            Nulla vitae fermentum risus. Vivamus odio nisi.
-          </td>
-          <td>Mail, Rooster,
-            Adresboek,
-            Persoonsgegevens</td>
-          <td>Wes Oudshoorn<br>
-            <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-            <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-        </tr>
-        <tr>
-          <td><img src="img/icon-example.png"></td>
-          <td><a href="#">Rest API Universiteit delft</a><br>
-            Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
-            Nulla vitae fermentum risus. Vivamus odio nisi.
-          </td>
-          <td>Mail, Rooster,
-            Adresboek,
-            Persoonsgegevens</td>
-          <td>Wes Oudshoorn<br>
-            <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-            <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-        </tr>
-        <tr>
-          <td><img src="img/icon-example.png"></td>
-          <td><a href="#">Rest API Universiteit delft</a><br>
-            Sed enim sem, hendrerit vitae rutrum non, scelerisque a leo.
-            Nulla vitae fermentum risus. Vivamus odio nisi.
-          </td>
-          <td>Mail, Rooster,
-            Adresboek,
-            Persoonsgegevens</td>
-          <td>Wes Oudshoorn<br>
-            <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-            <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-        </tr>
-        </tbody>
-      </table>
-  -->
 </div>
 
 <div class="foot">
@@ -103,41 +48,42 @@
       <h1>{{formTitle}}</h1>
     </div>
     <form class="form-horizontal" id="editResourceServerForm">
+      <input type="hidden" name="id" value="{{id}}" />
       <fieldset>
         <div class="control-group">
           <label class="control-label">Server name</label>
           <div class="controls">
-            <input type="text" name="name" placeholder="server name">
+            <input type="text" name="name" value="{{name}}" placeholder="server name">
           </div>
         </div>
         <div class="control-group">
           <label for="description" class="control-label">Description</label>
           <div class="controls">
-            <textarea rows="3" id="description" name="description" class="input"></textarea>
+            <textarea rows="3" id="description" value="{{description}}" name="description" class="input"></textarea>
           </div>
         </div>
         <div class="control-group">
           <label for="scopes" class="control-label">Scopes (comma separated)</label>
           <div class="controls">
-            <input type="text" id="scopes" name="scopes" placeholder="read,write">
+            <input type="text" id="scopes" name="scopes" value="{{scopes}}" placeholder="read,write">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label">Thumbnail URL</label>
           <div class="controls">
-            <input type="url" name="thumbNailUrl" placeholder="http://your-thumbnail-url">
+            <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label">Contact name</label>
           <div class="controls">
-            <input type="text" name="contactName" placeholder="your name">
+            <input type="text" name="contactName" value="{{contactName}}" placeholder="your name">
           </div>
         </div>
         <div class="control-group">
           <label class="control-label">Contact email address</label>
           <div class="controls">
-            <input type="email" name="contactEmail" placeholder="john@doe.com">
+            <input type="email" name="contactEmail" value="{{contactEmail}}" placeholder="john@doe.com">
           </div>
         </div>
 
@@ -149,6 +95,7 @@
     </form>
   </div>
 </script>
+
 
 <script id="tplResourceServerGrid" type="text/x-handlebars-template">
   <div id="resourceServerGrid">
@@ -189,6 +136,124 @@
   <div class="alert">
     <button class="close" data-dismiss="alert">×</button>
     <strong>{{title}}!</strong> {{text}}
+  </div>
+</script>
+
+
+
+<script id="tplClientGrid" type="text/x-handlebars-template">
+  <div id="clientGrid">
+    <a class="btn btn-small btn-primary pull-right" id="addClientButton" href="#">Add another client app</a>
+    <h1>Client applications</h1>
+    {{#if clients}}
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Client ID</th>
+        <th>Scopes</th>
+        <th>Credentials</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#each clients}}
+      <tr>
+        <td><a href="#" class="editClient"><img src="{{thumbNailUrl}}"></a></td>
+        <td><a class="editClient" href="#">{{name}}</a><br>
+          {{description}}<br>
+          <strong>Connected to</strong> <a href="#">{{resourceServerName}}</a>
+        </td>
+        <td>{{clientId}}</td>
+        <td>{{scopes}}</td>
+        <td>{{contactName}} <a href="mailto:{{contactEmail}}">mail</a><br>
+          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
+          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a>
+        </td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p>No clients yet. <a id="noClientsAddOne" href="#">Add one</a>.</p>
+    {{/if}}
+  </div>
+</script>
+
+<script id="tplEditClient" type="text/x-handlebars-template">
+  <div id="editClient">
+    <div class="page-header">
+      <h1>{{formTitle}}</h1>
+    </div>
+    <form class="form-horizontal" id="editClientForm">
+      <input type="hidden" name="id" value="{{id}}" />
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label">Client name</label>
+          <div class="controls">
+            <input type="text" required="required" name="name" value="{{name}}" placeholder="client name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Resource Server</label>
+          <div class="controls">
+            {{#if availableResourceServers}}
+            <select required="required" name="resourceServerId">
+              {{#each availableResourceServers}}
+              <option value="{{id}}">{{name}}</option>
+              {{/each}}
+            </select>
+            {{else}}
+              <span>{{resourceServer}}</span>
+            {{/if}}
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="description" class="control-label">Description</label>
+          <div class="controls">
+            <textarea rows="3" id="description" value="{{description}}" name="description" class="input"></textarea>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="scopes" class="control-label">Scopes (comma separated)</label>
+          <div class="controls">
+            <input type="text" required="required" id="scopes" name="scopes" value="{{scopes}}"
+                   placeholder="read,write">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Thumbnail URL</label>
+          <div class="controls">
+            <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact name</label>
+          <div class="controls">
+            <input type="text" name="contactName" required="required" value="{{contactName}}" placeholder="your name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact email address</label>
+          <div class="controls">
+            <input type="email" name="contactEmail" value="{{contactEmail}}" placeholder="john@doe.com">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Additional information</label>
+          <div class="controls">
+            To: do<br />
+            To: do<br />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="cancel btn">Cancel</button>
+        </div>
+      </fieldset>
+    </form>
   </div>
 </script>
 

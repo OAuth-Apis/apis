@@ -50,7 +50,9 @@ requirejs.config({
         'lib/handlebars',
         'data',
         'resourceServerForm',
-        'resourceServerGrid'
+        'resourceServerGrid',
+        'clientForm',
+        'clientGrid'
       ]
     }
   }

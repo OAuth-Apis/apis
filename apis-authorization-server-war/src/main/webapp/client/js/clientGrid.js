@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-var resourceServerGridView = (function() {
+var clientGridView = (function() {
 
-  var templateId = "tplResourceServerGrid";
+  var templateId = "tplClientGrid";
   var containerSelector = "#contentView";
-  var handleSelector = "#resourceServerGrid";
+  var handleSelector = "#clientGrid";
 
 
 
 
   return {
 
-    refresh: function(resourceServers) {
+    refresh: function(clients) {
       this.hide();
-      this.show(resourceServers);
+      this.show(clients);
     },
 
-    show: function(resourceServers) {
+    show: function(clients) {
 
-      $(containerSelector).append(Template.get(templateId)({resourceServers: resourceServers}));
+      $(containerSelector).append(Template.get(templateId)({clients: clients}));
       $(containerSelector).css("height", ""); // clear the fixed height
 
-      $("#addServerButton,#noServersAddOne").click(function() {
-        windowController.onAddResourceServer();
+      $("#addClientButton,#noClientsAddOne").click(function() {
+        windowController.onAddClient();
       });
 
-      $("a.editResourceServer").click(function(e) {
-        var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
-        windowController.onEditResourceServer(resourceServerId);
+      $("a.editClient").click(function(e) {
+        var clientId = $(e.target).closest("tr").attr("data-clientId");
+        windowController.onEditClient(clientId);
       });
 
     },
@@ -53,15 +53,24 @@ var resourceServerGridView = (function() {
   }
 })();
 
-var resourceServerGridController = (function() {
+var clientGridController = (function() {
 
-  var view = resourceServerGridView;
+  var view = clientGridView;
 
   return {
     show: function() {
-      // get list of resource servers. With this data, show the grid view.
-      data.getResourceServers(function(data) {
-        view.show(data);
+
+      // get list of resource servers. With this data, query each of them for all their clients.
+      data.getResourceServers(function(resourceServers) {
+
+        var resourceServerIds = [];
+        for (var i=0; i<resourceServers.length; i++) {
+          resourceServerIds.push(resourceServers[i].id);
+        }
+
+        data.getClientsForResourceServers(resourceServerIds, function(data) {
+          view.show(data);
+        });
       });
     },
     hide: function() {

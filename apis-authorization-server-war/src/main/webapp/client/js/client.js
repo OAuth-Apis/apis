@@ -83,20 +83,43 @@ var windowController = {
 
   refresh: function() {
     resourceServerGridController.show();
+    clientGridController.show();
   },
 
+  /**
+   * Resource server events.
+   */
   onCloseEditResourceServer: function() {
     resourceServerGridController.show();
+    clientGridController.show();
   },
-
   onEditResourceServer: function(id) {
     resourceServerGridController.hide();
+    clientGridController.hide();
     resourceServerFormController.show("edit", id);
   },
-
   onAddResourceServer: function() {
     resourceServerGridController.hide();
+    clientGridController.hide();
     resourceServerFormController.show("add");
+  },
+
+  /**
+   * Clients events.
+   */
+  onEditClient: function(id) {
+    resourceServerGridController.hide();
+    clientGridController.hide();
+    clientFormController.show("edit", id);
+  },
+  onAddClient: function() {
+    resourceServerGridController.hide();
+    clientGridController.hide();
+    clientFormController.show("add");
+  },
+  onCloseEditClient: function() {
+    resourceServerGridController.show();
+    clientGridController.show();
   },
 
 

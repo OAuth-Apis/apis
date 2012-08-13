@@ -15,27 +15,27 @@
  */
 
 
-var resourceServerFormView = (function() {
+var clientFormView = (function() {
 
-  var templateId = "tplEditResourceServer";
+  var templateId = "tplEditClient";
   var containerSelector = "#contentView";
-  var handleSelector = "#editResourceServer";
+  var handleSelector = "#editClient";
 
   return {
-    show: function(mode, resourceServer) {
+    show: function(mode, client) {
 
-      var model = resourceServer || {}; // empty in case of new one
+      var model = client || {}; // empty in case of new one
 
-      model.formTitle = (mode == "add")?"Add resource server" : "Edit resource server";
+      model.formTitle = (mode == "add")?"Add client app" : "Edit client app";
       $(containerSelector).append(Template.get(templateId)(model));
       $(containerSelector).css("height", ""); // clear the fixed height
 
-      $("#editResourceServerForm button.cancel").click(function() {
-        resourceServerFormController.onCancel();
+      $("#editClientForm button.cancel").click(function() {
+        clientFormController.onCancel();
       });
 
-      $("#editResourceServerForm").submit(function() {
-        resourceServerFormController.onSubmit(this);
+      $("#editClientForm").submit(function() {
+        clientFormController.onSubmit(this);
         return false; // prevent default submit
       });
     },
@@ -50,43 +50,51 @@ var resourceServerFormView = (function() {
           title: type == "error" ? "Error" : "Notice",
           text: text
         });
-      $("form#editResourceServerForm").prepend(html);
+      $("form#editClientForm").prepend(html);
     }
   }
 })();
 
-var resourceServerFormController = (function() {
+var clientFormController = (function() {
 
-  var view = resourceServerFormView;
+  var view = clientFormView;
 
   return {
     show: function(mode, id) {
+
       if (mode == "edit") {
-        data.getResourceServer(id, function(resourceServer){
-          view.show(mode, resourceServer);
+        // retrieve current data for this client.
+        data.getClient(id, function(client){
+          view.show(mode, client);
         });
       } else {
-        view.show(mode);
+        // retrieve possible resource servers to put this new client under.
+        data.getResourceServers(function(resourceServers) {
+          var model = {};
+          model.availableResourceServers = resourceServers;
+          view.show(mode, model);
+        });
       }
     },
 
     onSubmit: function(form) {
       var formAsObject = $(form).serializeObject();
 
-      var resourceServer = {
+      var client = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,
         name: formAsObject['name'],
         description: formAsObject['description'],
+        clientId: formAsObject['clientId'],
         scopes: formAsObject['scopes'],
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
         thumbNailUrl: formAsObject['thumbNailUrl']
       };
 
-      data.saveResourceServer(resourceServer, function(data) {
-        console.log("resource server has been saved. Result from server: " + JSON.stringify(data));
+      data.saveClient(formAsObject['resourceServerId'], client, function(data) {
+        console.log("client has been saved. Result from server: " + JSON.stringify(data));
         view.hide();
-        windowController.onCloseEditResourceServer();
+        windowController.onCloseEditClient();
       }, function (errorMessage) {
         console.log("error while saving data: " + errorMessage);
         view.showMessage("error", errorMessage);
@@ -94,7 +102,7 @@ var resourceServerFormController = (function() {
     },
     onCancel: function() {
       view.hide();
-      windowController.onCloseEditResourceServer();
+      windowController.onCloseEditClient();
     }
   }
 })();

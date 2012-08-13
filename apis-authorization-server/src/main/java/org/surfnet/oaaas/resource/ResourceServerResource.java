@@ -52,15 +52,12 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 @Named
 @Path("/resourceServer")
 @Produces(MediaType.APPLICATION_JSON)
-public class ResourceServerResource {
+public class ResourceServerResource extends AbstractResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ResourceServerResource.class);
 
   @Inject
   private ResourceServerRepository resourceServerRepository;
-
-  @Inject
-  private ExceptionTranslator exceptionTranslator;
 
   /**
    * Get all existing resource servers for the provided credentials (== owner).
@@ -109,15 +106,16 @@ public class ResourceServerResource {
   public Response put(@Context HttpServletRequest request, @Valid ResourceServer newOne) {
     String owner = getUserId(request);
 
-    newOne.setKey(UUID.randomUUID().toString()); // TODO not simply a UUID
-    newOne.setSecret(UUID.randomUUID().toString());
+    // Read only fields
+    newOne.setKey(generateKey());
+    newOne.setSecret(generateSecret());
     newOne.setOwner(owner);
 
     ResourceServer resourceServerSaved;
     try {
       resourceServerSaved = resourceServerRepository.save(newOne);
     } catch (RuntimeException e) {
-      return buildErrorResponse(newOne, e);
+      return buildErrorResponse(e);
     }
 
     LOG.debug("New resourceServer has been saved: {}. Nr of entities in store now: {}",
@@ -127,24 +125,6 @@ public class ResourceServerResource {
     return Response
         .created(uri)
         .entity(resourceServerSaved)
-        .build();
-  }
-
-  private Response buildErrorResponse(ResourceServer newOne, RuntimeException e) {
-    final Throwable jpaException = exceptionTranslator.translate(e);
-    Response.Status s;
-    String reason;
-    if (jpaException instanceof EntityExistsException) {
-      s = Response.Status.BAD_REQUEST;
-      reason = "Violating unique constraints";
-    } else {
-      s = Response.Status.INTERNAL_SERVER_ERROR;
-      reason = "Internal server error";
-    }
-    LOG.info("Responding with error '" + s + "', '" + reason + "'. Cause attached.", e);
-    return Response
-        .status(s)
-        .entity(reason)
         .build();
   }
 
@@ -178,14 +158,23 @@ public class ResourceServerResource {
     if (persistedResourceServer == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
+
+    // Copy over read-only fields
     resourceServer.setSecret(persistedResourceServer.getSecret());
+    resourceServer.setKey(persistedResourceServer.getKey());
     resourceServer.setOwner(owner);
+
     LOG.debug("About to update existing resourceServer {} with new properties: {}", persistedResourceServer, resourceServer);
     ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
     return Response.ok(savedInstance).build();
   }
 
-  private String getUserId(HttpServletRequest request) {
-    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getPrincipal().getName();
+  protected String generateKey() {
+    return super.generateRandom();
   }
+
+  protected String generateSecret() {
+    return super.generateRandom();
+  }
+
 }

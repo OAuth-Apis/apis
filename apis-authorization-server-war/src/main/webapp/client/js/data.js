@@ -39,11 +39,21 @@ var data = (function() {
     },
 
     saveResourceServer: function(resourceServer, success, failure) {
-      // TODO: distinct between create and update
+
+      var httpMethod, url;
+      if (resourceServer.id) {
+        httpMethod = "POST";
+        url = "/admin/resourceServer/" + resourceServer.id;
+      } else {
+        httpMethod = "PUT";
+        url = "/admin/resourceServer";
+
+      }
+
       oauthAjax({
-        url:"/admin/resourceServer",
+        url: url,
         data: JSON.stringify(resourceServer),
-        type: "PUT",
+        type: httpMethod,
         success: success,
         error: function(xhr, textStatus, errorThrown) {
           failure(xhr.responseText);
@@ -60,13 +70,80 @@ var data = (function() {
         }
       });
     },
-
     getResourceServers:function (resultHandler) {
       oauthAjax({
         url:"/admin/resourceServer",
         success: resultHandler,
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler([]);
+        }
+      });
+    },
+
+    /**
+     * Get all clients for all given resource servers.
+     * Due to the way the REST service is setup, we cannot query for all clients overall but only for a specific resource server.
+     * Here we query each resource servers' clients synchronously and concatenate the results.
+     */
+    getClientsForResourceServers:function (resourceServerIds, resultHandler) {
+      var resultData = [];
+      var receivedResponses = 0;
+      for (var i = 0; i< resourceServerIds.length; i++) {
+        var resourceServerId = resourceServerIds[i];
+        oauthAjax({
+          url:"/admin/resourceServer/" + resourceServerId + "/client",
+          async: false,
+          success: function(data) {
+            resultData = resultData.concat(data);
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log("error: " + textStatus);
+          },
+          complete: function() {
+            receivedResponses++;
+            if (receivedResponses == resourceServerIds.length) {
+              resultHandler(resultData);
+            }
+          }
+        });
+      }
+    },
+    getClients:function (resourceServerId, resultHandler) {
+      oauthAjax({
+        url:"/admin/resourceServer/" + resourceServerId + "/client",
+        success: resultHandler,
+        error: function() { // On failure, call result handler anyway, with empty result.
+          resultHandler([]);
+        }
+      });
+    },
+    getClient: function(resourceServerId, clientId, resultHandler) {
+      oauthAjax({
+        url:"/admin/resourceServer/" + resourceServerId + "/client/" + clientId,
+        success: resultHandler,
+        error: function() { // On failure, call result handler anyway, with empty result.
+          resultHandler({});
+        }
+      });
+    },
+
+    saveClient: function(resourceServerId, client, success, failure) {
+
+      var httpMethod, url;
+      if (client.id) {
+        httpMethod = "POST";
+        url = "/admin/resourceServer/" + resourceServerId + "/client/" + client.id;
+      } else {
+        httpMethod = "PUT";
+        url = "/admin/resourceServer/" + resourceServerId + "/client";
+      }
+      oauthAjax({
+        url: url,
+        data: JSON.stringify(client),
+        type: httpMethod,
+        success: success,
+        error: function(xhr, textStatus, errorThrown) {
+          failure(xhr.responseText);
         }
       });
     }

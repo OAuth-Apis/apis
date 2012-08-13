@@ -36,10 +36,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
@@ -49,9 +47,10 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 @Named
 @Path("/resourceServer/{resourceServerId}/client")
 @Produces(MediaType.APPLICATION_JSON)
-public class ClientResource {
+public class ClientResource extends AbstractResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ClientResource.class);
+  private static final String FILTERED_CLIENT_ID_CHARS = "[^a-z0-9_]";
 
   @Inject
   private ClientRepository clientRepository;
@@ -118,8 +117,16 @@ public class ClientResource {
     final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
 
     client.setResourceServer(resourceServer);
+    client.setClientId(generateClientId(client));
+    client.setSecret(generateSecret());
+    Client clientSaved;
 
-    final Client clientSaved = clientRepository.save(client);
+    try {
+      clientSaved = clientRepository.save(client);
+    } catch (RuntimeException e) {
+      return buildErrorResponse(e);
+    }
+
     if (LOG.isDebugEnabled()) {
       LOG.debug("Saved client: {}", clientSaved);
     }
@@ -128,6 +135,10 @@ public class ClientResource {
         .created(uri)
         .entity(clientSaved)
         .build();
+  }
+
+  protected String generateSecret() {
+    return super.generateRandom();
   }
 
   /**
@@ -170,15 +181,48 @@ public class ClientResource {
     if (clientFromStore == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    clientFromStore.setResourceServer(resourceServer);
-    Client savedInstance = clientRepository.save(newOne);
+
+    // Copy over read-only fields
+    newOne.setResourceServer(resourceServer);
+    newOne.setClientId(clientFromStore.getClientId());
+    newOne.setSecret(clientFromStore.getSecret());
+
+    Client savedInstance;
+    try {
+      savedInstance = clientRepository.save(newOne);
+    } catch (RuntimeException e) {
+      return buildErrorResponse(e);
+    }
+
     if (LOG.isDebugEnabled()) {
       LOG.debug("Saving client: {}", savedInstance);
     }
     return Response.ok(savedInstance).build();
   }
 
-  private String getUserId(HttpServletRequest request) {
-    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getPrincipal().getName();
+  /**
+   * Method that generates a unique client id, taking into account existing clientIds in the backend.
+   * @param client the client for whom to generate an id.
+   * @return the generated id. Callers are responsible themselves for actually calling {@link Client#setClientId(String)}
+   */
+  protected String generateClientId(Client client) {
+    String clientId = sanitizeClientName(client.getName());
+    if (clientRepository.findByClientId(clientId) != null) {
+
+      String baseClientId = clientId;
+
+      /* if one with such name exists already, the next one would actually be number 2. Therefore,
+       * start counting with 2.
+       */
+      int i=2;
+      do {
+        clientId = baseClientId + (i++);
+      } while (clientRepository.findByClientId(clientId) != null);
+    }
+    return clientId;
+  }
+
+  protected String sanitizeClientName(String name) {
+    return name.replaceAll(FILTERED_CLIENT_ID_CHARS, "");
   }
 }
