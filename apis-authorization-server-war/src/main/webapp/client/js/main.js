@@ -28,10 +28,6 @@ requirejs.config({
       deps: ['lib/jquery']
     },
 
-    "lib/bootstrap-alert": {
-      deps: ['lib/bootstrap.min']
-    },
-
     'jquery-extensions': {
       deps: ['lib/jquery']
     },
@@ -46,7 +42,6 @@ requirejs.config({
         'oauth',
         'jquery-extensions',
         'lib/bootstrap.min',
-        'lib/bootstrap-alert',
         'lib/handlebars',
         'data',
         'resourceServerForm',
@@ -62,6 +57,5 @@ require([
   "jquery-extensions",
   "lib/handlebars",
   "lib/bootstrap.min",
-  "lib/bootstrap-alert",
   "client"
 ]);

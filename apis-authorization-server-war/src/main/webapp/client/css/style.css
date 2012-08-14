@@ -1832,7 +1832,8 @@ select:focus:required:invalid:focus {
   -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.025);
 }
-:-moz-placeholder {
+:-moz-placeholder,
+input:-moz-placeholder {
   color: #999999;
 }
 :-ms-input-placeholder {
@@ -2036,7 +2037,8 @@ select:focus:required:invalid:focus {
   margin-right: 3px;
   margin-left: 0;
 }
-.control-group {
+.control-group,
+.multiple-fields {
   margin-bottom: 9px;
 }
 legend + .control-group {
@@ -3243,9 +3245,9 @@ h1 {
   background: #f8f8f8;
   }
 
-
-
-
+img.thumbnail {
+	max-width: 80px;
+}
 
 
 

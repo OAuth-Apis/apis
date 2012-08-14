@@ -30,6 +30,26 @@ var clientFormView = (function() {
       $(containerSelector).append(Template.get(templateId)(model));
       $(containerSelector).css("height", ""); // clear the fixed height
 
+      // Remove attribute on click of delete-button (click on holder-div, delegated to button)
+      $("div#attributesHolder").on("click", "button.removeAttribute", function() {
+        $(this).closest("div").remove();
+      });
+
+      // On click of the + button
+      $("button.addAttribute").on("click", function() {
+
+        // Save the state to the list of 'current' attributes
+        $("div#newAttribute").before(Template.get("tplClientAttribute")({
+          attributeName: $("#newAttributeName").val(),
+          attributeValue: $("#newAttributeValue").val()
+        }));
+
+        // reset fields for new values.
+        $("#newAttributeName").val("").focus();
+        $("#newAttributeValue").val("");
+        // Focus on input field
+      });
+
       $("#editClientForm button.cancel").click(function() {
         clientFormController.onCancel();
       });
@@ -60,11 +80,24 @@ var clientFormController = (function() {
   var view = clientFormView;
 
   return {
-    show: function(mode, id) {
+    show: function(mode, resourceServerId, clientId) {
 
       if (mode == "edit") {
         // retrieve current data for this client.
-        data.getClient(id, function(client){
+        data.getClient(resourceServerId, clientId, function(client){
+
+          // See the comment in the onSubmit about transformation of attributeName/value and back again.
+          var rewrittenAttributes = [];
+          for (var attributeName in client.attributes) {
+            if (client.attributes.hasOwnProperty(attributeName)) {
+              rewrittenAttributes.push({
+                "attributeName": attributeName,
+                "attributeValue": attributeValue
+              });
+              client.attributeValue.push(client.attributes[attributeName]);
+            }
+          }
+          client.attributes = rewrittenAttributes;
           view.show(mode, client);
         });
       } else {
@@ -80,6 +113,23 @@ var clientFormController = (function() {
     onSubmit: function(form) {
       var formAsObject = $(form).serializeObject();
 
+      /*
+      Attributes are submitted in the form:
+      {
+        "attributeName": ['name1', 'name2', 'name3'],
+        "attributeValue": ['val1', 'val2', 'val3']
+      }
+      But we want to post them in the form:
+      attributes {"name1": "val1", "name2": "val2"}
+       */
+      var attributes = {};
+      for (var i = 0; i < formAsObject['attributeName'].length; i++) {
+        if (formAsObject['attributeName'][i]) { // skip empty names
+          attributes[formAsObject['attributeName'][i]] = formAsObject['attributeValue'][i];
+        }
+      }
+
+
       var client = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,
         name: formAsObject['name'],
@@ -88,7 +138,8 @@ var clientFormController = (function() {
         scopes: formAsObject['scopes'],
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
-        thumbNailUrl: formAsObject['thumbNailUrl']
+        thumbNailUrl: formAsObject['thumbNailUrl'],
+        attributes: attributes
       };
 
       data.saveClient(formAsObject['resourceServerId'], client, function(data) {

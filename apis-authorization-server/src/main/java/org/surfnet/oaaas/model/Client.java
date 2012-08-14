@@ -23,6 +23,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -79,7 +80,7 @@ public class Client extends AbstractEntity {
   @JoinColumn(name = "resourceserver_id", nullable = false, updatable = false)
   private ResourceServer resourceServer;
 
-  @ElementCollection
+  @ElementCollection(fetch= FetchType.EAGER)
   @MapKeyColumn(name = "attribute_name")
   @Column(name = "attribute_value")
   @CollectionTable(name = "client_attributes", joinColumns = @JoinColumn(name = "client_id"))

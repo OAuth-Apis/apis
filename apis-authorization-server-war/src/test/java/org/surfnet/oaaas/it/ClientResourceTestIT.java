@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.it;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
@@ -31,8 +32,11 @@ import org.junit.Test;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
@@ -104,8 +108,8 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
         .header("Authorization", authorizationBearer(ACCESS_TOKEN))
         .get(Client.class);
 
-    assertEquals(returnedFromGet.getId(), c.getId());
-    assertEquals(returnedFromGet.getSecret(), c.getSecret());
+    assertEquals(c.getId(), returnedFromGet.getId());
+    assertEquals(c.getAttributes(), returnedFromGet.getAttributes());
   }
 
   @Test
@@ -114,8 +118,12 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
     Client putResult = webResource
         .header("Authorization", authorizationBearer(ACCESS_TOKEN))
         .put(Client.class, c);
-    assertEquals(c.getSecret(), putResult.getSecret());
+    assertThat("Server should override provided secret with a generated one",
+        putResult.getSecret(),not(equalTo(c.getSecret())));
+
     assertNotNull(putResult.getId());
+
+    assertEquals(c.getAttributes(), putResult.getAttributes());
   }
 
   @Test
@@ -159,6 +167,11 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
     c.setScopes("read");
     c.setSecret(r);
     c.setDescription("Some description");
+    final HashMap<String, String> attributes = new HashMap<String, String>();
+    attributes.put("myKey", "myValue");
+    attributes.put("myKey2", "myValue2");
+    attributes.put("myKey3", "myValue3");
+    c.setAttributes(attributes);
     return c;
   }
 

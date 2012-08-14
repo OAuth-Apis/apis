@@ -94,6 +94,10 @@ var data = (function() {
           url:"/admin/resourceServer/" + resourceServerId + "/client",
           async: false,
           success: function(data) {
+            // set the resourceServerId on the client
+            for (var i = 0; i < data.length; i++) {
+              data[i].resourceServerId = resourceServerId;
+            }
             resultData = resultData.concat(data);
           },
           error: function(jqXHR, textStatus, errorThrown) {
@@ -111,7 +115,13 @@ var data = (function() {
     getClients:function (resourceServerId, resultHandler) {
       oauthAjax({
         url:"/admin/resourceServer/" + resourceServerId + "/client",
-        success: resultHandler,
+        success: function(data) {
+          for (var i = 0; i < data.length; i++) {
+            // Put the resourceServerId in the client, we do not get it back from the request.
+            data[i].resourceServerId = resourceServerId;
+          }
+          resultHandler(data);
+        },
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler([]);
         }
@@ -120,7 +130,11 @@ var data = (function() {
     getClient: function(resourceServerId, clientId, resultHandler) {
       oauthAjax({
         url:"/admin/resourceServer/" + resourceServerId + "/client/" + clientId,
-        success: resultHandler,
+        success: function(client) {
+          // Put the resourceServerId in the client, we do not get it back from the request.
+          client.resourceServerId = resourceServerId;
+          resultHandler(client);
+        },
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler({});
         }

@@ -40,8 +40,9 @@ var clientGridView = (function() {
       });
 
       $("a.editClient").click(function(e) {
+        var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
         var clientId = $(e.target).closest("tr").attr("data-clientId");
-        windowController.onEditClient(clientId);
+        windowController.onEditClient(resourceServerId, clientId);
       });
 
     },

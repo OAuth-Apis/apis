@@ -116,16 +116,26 @@
         <tbody>
         {{#each resourceServers}}
         <tr data-resourceServerId="{{id}}">
-            <td><a href="#" class="editResourceServer"><img src="{{thumbNailUrl}}"></a></td>
+            <td><a href="#" class="editResourceServer"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
             <td><a class="editResourceServer" href="#">{{name}}</a><br>
                 {{description}}
             </td>
-            <td>{{#each clients}}{{name}}<br>{{/each}}</td>
-            <td>{{scopes}}</td>
-            <td>{{contactName}} <a href="mailto:{{contactEmail}}">mail</a><br>
-                <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-                <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a></td>
-        </tr>
+          <td>{{scopes}}</td>
+          <td></td>
+            <td>
+              <strong class="key-secret">Owner:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+              <strong class="key-secret">Key <i data-original-title="Key and secret"
+                                                data-content="And here's some amazing content. It's very engaging. right?"
+                                                rel="popover" class="icon-question-sign"></i>:</strong> <a
+                title="On clicking '{{key}}' will be copied to you clipboard" rel="tooltip"
+                href="#">copy to clipboard</a><br>
+              <strong class="key-secret">Secret <i data-original-title="Key and secret"
+                                                   data-content="And here's some amazing content. It's very engaging. right?"
+                                                   rel="popover" class="icon-question-sign"></i>:</strong> <a
+                title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip"
+                href="#">copy to clipboard</a>
+            </td>
+          </tr>
         {{/each}}
         </tbody>
     </table>
@@ -160,17 +170,26 @@
       </thead>
       <tbody>
       {{#each clients}}
-      <tr>
-        <td><a href="#" class="editClient"><img src="{{thumbNailUrl}}"></a></td>
+      <tr data-clientId="{{id}}" data-resourceServerId="{{resourceServerId}}">
+        <td><a href="#" class="editClient"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
         <td><a class="editClient" href="#">{{name}}</a><br>
           {{description}}<br>
           <strong>Connected to</strong> <a href="#">{{resourceServerName}}</a>
         </td>
         <td>{{clientId}}</td>
         <td>{{scopes}}</td>
-        <td>{{contactName}} <a href="mailto:{{contactEmail}}">mail</a><br>
-          <span class="key-secret">Key (?):</span> 		<a href="#">show &amp; copy</a><br>
-          <span class="key-secret">Secret (?):</span> 		<a href="#">show &amp; copy</a>
+        <td>
+          <strong class="key-secret">Owner:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+          <strong class="key-secret">Client ID <i data-original-title="Client ID and secret"
+                                            data-content="And here's some amazing content. It's very engaging. right?"
+                                            rel="popover" class="icon-question-sign"></i>:</strong> <a
+            title="On clicking '{{clientId}}' will be copied to you clipboard" rel="tooltip"
+            href="#">copy to clipboard</a><br>
+          <strong class="key-secret">Secret <i data-original-title="Key and secret"
+                                               data-content="And here's some amazing content. It's very engaging. right?"
+                                               rel="popover" class="icon-question-sign"></i>:</strong> <a
+            title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip"
+            href="#">copy to clipboard</a>
         </td>
       </tr>
       {{/each}}
@@ -206,20 +225,21 @@
               {{/each}}
             </select>
             {{else}}
+              <input type="hidden" name="resourceServerId" value="{{resourceServerId}}">
               <span>{{resourceServer}}</span>
             {{/if}}
           </div>
         </div>
         <div class="control-group">
-          <label for="description" class="control-label">Description</label>
+          <label for="clientDescription" class="control-label">Description</label>
           <div class="controls">
-            <textarea rows="3" id="description" value="{{description}}" name="description" class="input"></textarea>
+            <textarea rows="3" id="clientDescription" name="description" class="input">{{description}}</textarea>
           </div>
         </div>
         <div class="control-group">
-          <label for="scopes" class="control-label">Scopes (comma separated)</label>
+          <label for="clientScopes" class="control-label">Scopes (comma separated)</label>
           <div class="controls">
-            <input type="text" required="required" id="scopes" name="scopes" value="{{scopes}}"
+            <input type="text" required="required" id="clientScopes" name="scopes" value="{{scopes}}"
                    placeholder="read,write">
           </div>
         </div>
@@ -243,10 +263,20 @@
         </div>
 
         <div class="control-group">
-          <label class="control-label">Additional information</label>
-          <div class="controls">
-            To: do<br />
-            To: do<br />
+          <label class="control-label">Additional attributes</label>
+          <div class="controls" id="attributesHolder">
+            {{#each attributes}}
+            <div class="input multiple-fields">
+              <input class="span2" type="text" name="attributeName" value="{{attributeName}}">
+              <input class="span2" type="text" name="attributeValue" value="{{attributeValue}}">
+              <button class="btn removeAttribute" type="button"><i class="icon-trash"></i></button>
+            </div>
+            {{/each}}
+            <div id="newAttribute" class="input multiple-fields">
+              <input class="span2" type="text" name="attributeName" id="newAttributeName" placeholder="key">
+              <input class="span2" type="text" name="attributeValue" id="newAttributeValue" placeholder="value">
+              <button type="button" class="btn btn-success addAttribute"><i class="icon-plus icon-white"></i></button>
+            </div>
           </div>
         </div>
 
@@ -271,6 +301,13 @@
   </div>
 </script>
 
+<script id="tplClientAttribute" type="text/x-handlebars-template">
+  <div class="input multiple-fields">
+    <input class="span2" type="text" name="attributeName" value="{{attributeName}}">
+    <input class="span2" type="text" name="attributeValue" value="{{attributeValue}}">
+    <button class="btn removeAttribute" type="button"><i class="icon-trash"></i></button>
+  </div>
+</script>
 
 </body>
 </html>

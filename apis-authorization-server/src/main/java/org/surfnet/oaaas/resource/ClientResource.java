@@ -73,7 +73,8 @@ public class ClientResource extends AbstractResource {
 
     final Iterable<Client> clients = clientRepository.findByResourceServer(resourceServer);
 
-    if (clients == null || !clients.iterator().hasNext()) {
+    // Only return 404 in case resource server wasn't found. If no clients, just return empty list.
+    if (clients == null) {
       responseBuilder = Response.status(Response.Status.NOT_FOUND);
     } else {
       responseBuilder = Response.ok(clients);

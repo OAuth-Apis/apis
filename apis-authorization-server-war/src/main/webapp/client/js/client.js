@@ -114,10 +114,10 @@ var windowController = {
   /**
    * Clients events.
    */
-  onEditClient: function(id) {
+  onEditClient: function(resourceServerId, clientId) {
     resourceServerGridController.hide();
     clientGridController.hide();
-    clientFormController.show("edit", id);
+    clientFormController.show("edit", resourceServerId, clientId);
   },
   onAddClient: function() {
     resourceServerGridController.hide();
@@ -149,6 +149,13 @@ $(function() {
 
   // Attach global listeners
   $(".alert").alert();
+
+  $('body').tooltip({
+    selector: '[rel=tooltip]'
+  });
+  $('body').popover({
+    selector: '[rel=popover]'
+  });
 
   // Initialisation of window controller.
   windowController.onPageLoad();

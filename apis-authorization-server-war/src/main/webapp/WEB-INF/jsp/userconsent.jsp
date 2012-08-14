@@ -25,12 +25,14 @@
 
 
     <div class="page-header">
-      <h1><strong>Surf oAuth</strong> wants to share data with <strong>${client.name} (${client.description})</strong>
-      </h1>
+      <h1><strong>${client.name}</strong> wants to retrieve data
+        from <strong>${client.resourceServer.name}</strong></h1>
     </div>
 
     <div class="consent">
-      <img src="http://iosicongallery.com/wp-content/uploads/2012/08/mza_8237602483494857486-175x175.png">
+      <img alt="${client.resourceServer.name}"
+           title="${client.resourceServer.name}"
+           src="${client.resourceServer.thumbNailUrl}">
       <img src="/client/img/arrow.png">
       <img alt="${client.name}"
            title="${client.name}" src="${client.thumbNailUrl}">
@@ -62,7 +64,5 @@
 <div class="foot">
   <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
 </div>
-<script src="/client/js/lib/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
-
 </body>
 </html>
