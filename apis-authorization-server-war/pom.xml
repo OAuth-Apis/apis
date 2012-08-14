@@ -12,8 +12,6 @@
 
   <properties>
     <servlet.port>8080</servlet.port>
-    <jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>
-    <selenium.version>2.25.0</selenium.version>
   </properties>
 
   <dependencies>
@@ -24,7 +22,6 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-servlet</artifactId>
-      <version>${jersey.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>

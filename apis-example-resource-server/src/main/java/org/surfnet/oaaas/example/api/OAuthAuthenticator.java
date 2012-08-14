@@ -46,7 +46,7 @@ public class OAuthAuthenticator implements Authenticator<String, AuthenticatedPr
   public OAuthAuthenticator(UniversityFooConfiguration configuration) {
     AuthConfiguration auth = configuration.getAuth();
     authorizationServerUrl = auth.getAuthorizationServerUrl();
-    authorizationValue = new String(Base64.encode(auth.getName().concat(":").concat(auth.getSecret())));
+    authorizationValue = new String(Base64.encode(auth.getKey().concat(":").concat(auth.getSecret())));
   }
 
   /*

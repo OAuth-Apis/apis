@@ -19,7 +19,9 @@
 package org.surfnet.oaaas.consent;
 
 import java.io.IOException;
+import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -27,10 +29,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpMethod;
+import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.repository.AccessTokenRepository;
 
 /**
  * Example {@link AbstractUserConsentHandler} that forwards to a form.
@@ -40,6 +47,9 @@ import org.surfnet.oaaas.model.Client;
 public class FormUserConsentHandler extends AbstractUserConsentHandler {
 
   private static final String USER_OAUTH_APPROVAL = "user_oauth_approval";
+
+  @Inject
+  private AccessTokenRepository accessTokenRepository;
 
   /*
    * (non-Javadoc)
@@ -54,10 +64,11 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
   public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri, Client client) throws IOException, ServletException {
     if (isUserConsentPost(request)) {
-      processForm(request);
-      chain.doFilter(request, response);
+      if (processForm(request, response)) {
+        chain.doFilter(request, response);
+      }
     } else {
-      processInitial(request, response, returnUri, authStateValue, client);
+      processInitial(request, response, chain, returnUri, authStateValue, client);
     }
   }
 
@@ -66,12 +77,19 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     return request.getMethod().equals(HttpMethod.POST.toString()) && StringUtils.isNotBlank(oauthApproval);
   }
 
-  private void processInitial(HttpServletRequest request, ServletResponse response, String returnUri,
-      String authStateValue, Client client) throws IOException, ServletException {
-    request.setAttribute("client", client);
-    request.setAttribute(AUTH_STATE, authStateValue);
-    request.setAttribute("actionUri", returnUri);
-    request.getRequestDispatcher(getUserConsentUrl()).forward(request, response);
+  private void processInitial(HttpServletRequest request, ServletResponse response, FilterChain chain,
+      String returnUri, String authStateValue, Client client) throws IOException, ServletException {
+    AuthenticatedPrincipal principal = (AuthenticatedPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL);
+    List<AccessToken> tokens = accessTokenRepository.findByResourceOwnerIdAndClient(principal.getName(), client);
+    if (!CollectionUtils.isEmpty(tokens)) {
+      chain.doFilter(request, response);
+    } else {
+      request.setAttribute("client", client);
+      request.setAttribute(AUTH_STATE, authStateValue);
+      request.setAttribute("actionUri", returnUri);
+      request.getRequestDispatcher(getUserConsentUrl()).forward(request, response);
+    }
+
   }
 
   /**
@@ -85,12 +103,24 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     return "/WEB-INF/jsp/userconsent.jsp";
   }
 
-  private void processForm(final HttpServletRequest request) {
+  private boolean processForm(final HttpServletRequest request, final HttpServletResponse response)
+      throws ServletException, IOException {
     if (Boolean.valueOf(request.getParameter(USER_OAUTH_APPROVAL))) {
       setAuthStateValue(request, request.getParameter(AUTH_STATE));
       String[] scopes = request.getParameterValues(GRANTED_SCOPES);
       setScopes(request, scopes);
+      return true;
+    } else {
+      request.getRequestDispatcher(getUserConsentDeniedUrl()).forward(request, response);
+      return false;
     }
+  }
+
+  /**
+   * @return
+   */
+  protected String getUserConsentDeniedUrl() {
+    return "/WEB-INF/jsp/userconsent_denied.jsp";
   }
 
 }

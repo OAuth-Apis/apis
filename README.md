@@ -1,10 +1,10 @@
 apis 
 ======
-The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can be used to kickstart your API authentication. In essence it enables you to focus on your actual resource endpoints and use the out-of-the-box authorization server to authenticate resource owners and subsequently validate the access tokens that were granted to the Client applications. We will offer more details in later sections.
+The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can be used to kickstart your API authentication. In essence it enables you to focus on your actual resource endpoints and use the out-of-the-box authorization server to authenticate resource owners and subsequently validate the access tokens that were granted to the Client applications. We will describe the typical use cases in more details in sections below.
 
 ## Features
 
-- An OAuth2 Authorization Server compliant with [the draft v2-30 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-30)
+- An OAuth2 Authorization Server compliant with [the draft v2-31 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-31)
   * Pluggable authentication and userConsent handling (with default implementations provided)
   * Support for authorization code and implicit grant
   * GUI included for the registration of Resource Servers and Client apps
@@ -29,11 +29,30 @@ Go the authorization-server-war and start the application
     cd apis-authorization-server-war
     mvn jetty:run
 
-The authorization-server-war application is capable of authenticating users and granting access tokens (and optional refresh tokens). It also offers a JavaScript application to manage Resource Servers and Client application instances. 
+The authorization-server-war application is capable of authenticating Resource Owners and granting and validating Access Tokens (and optional Refresh Tokens) on behalf of Resource Servers that are receiving resource calls from a Client app. It also offers a JavaScript application to manage Resource Servers and Client application instances. 
 
-### Run Example Resource Server
+### Run Example Resource Server (war & standalone modus)
 
-Go to the  
+We have provided two example resource servers. One (apis-example-resource-server-war) is a very simple Java web application
+that only demonstrates how a Resource Server can communicate with the Authorization Server using the `org.surfnet.oaaas.auth.AuthorizationServerFilter` (which is a simple `javax.servlet.Filter`). The `AuthorizationServerFilter` only protects a single JSP page in the apis-example-resource-server-war module. 
+
+The other example resource server (apis-example-resource-server) is build using [Dropwizard](http://dropwizard.codahale.com/). We will start this one to demonstrate the entire flow (new Terminal session):
+
+    cd apis-example-resource-server-war
+    java -jar target/apis-example-resource-server-0.1-SNAPSHOT.jar
+
+### Run Example Client App
+
+We have now an Authorization Server running and an example Resource Server (and we have not much to show for it, yet!). To demonstrate the entire flow we will start an example Client Application which will communicate with:
+
+- first the Authorization Server to obtain an Access Token
+  * Note that this only works because we have configured both the example-resource-server and the example-client-app in the dummy data defined in /apis-authorization-server/src/main/resources/db/migration/hsqldb/V1__auth-server-admin.sql
+- then the example Resource Server to make an REST API call using the obtained OAuth Access Token
+  * Note that the example Resource Server communicates with the Authorization Server to validate the token
+
+Start the example-client-app (new Terminal session)
+
+    cd 
 
 ### Resource Servers and Client apps GUI registration
 

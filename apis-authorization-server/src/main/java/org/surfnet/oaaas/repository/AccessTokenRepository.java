@@ -16,14 +16,20 @@
 
 package org.surfnet.oaaas.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.surfnet.oaaas.model.AccessToken;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
 
 @Repository
 public interface AccessTokenRepository extends CrudRepository<AccessToken, Long> {
-  
+
   AccessToken findByToken(String token);
 
   AccessToken findByRefreshToken(String refreshToken);
+
+  List<AccessToken> findByResourceOwnerIdAndClient(String resourceOwnerId, Client client);
 }

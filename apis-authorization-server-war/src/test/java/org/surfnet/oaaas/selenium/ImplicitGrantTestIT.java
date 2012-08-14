@@ -16,15 +16,14 @@
 
 package org.surfnet.oaaas.selenium;
 
-import java.net.URI;
-
-import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
+
+import java.net.URI;
+
+import org.junit.Test;
+import org.openqa.selenium.WebDriver;
 
 /**
  * Integration test (using Selenium) for the Implicit Grant flow.
@@ -33,10 +32,18 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
 
   @Test
   public void implicitGrant() {
+    performImplicitGrant(true);
+    /*
+     * The second time no consent is required (as we have already an access token for the client/ principal name
+     */
+    performImplicitGrant(false);
+  }
+
+  private void performImplicitGrant(boolean needConsent) {
     WebDriver webdriver = getWebDriver();
 
     String responseType = "token";
-    String clientId = "it-test-client";
+    String clientId = "it-test-client-grant";
     String redirectUri = "http://localhost:8080/fourOhFour";
 
     String url = String.format(
@@ -45,7 +52,7 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
     webdriver.get(url);
     assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
 
-    login(webdriver, true);
+    login(webdriver, needConsent);
 
     // Token response
     URI responseURI = URI.create(webdriver.getCurrentUrl());

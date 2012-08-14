@@ -57,7 +57,7 @@ public class AccessToken extends AbstractEntity {
 
   @Column(unique = true, nullable = true)
   private String refreshToken;
-  
+
   @Transient
   private AuthenticatedPrincipal principal;
 
@@ -75,19 +75,25 @@ public class AccessToken extends AbstractEntity {
   @Column
   private String scopes;
 
+  @Column
+  @NotNull
+  private String resourceOwnerId;
+
   public AccessToken() {
     super();
   }
 
   public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes) {
-    this(token, principal, client, expires, scopes, null );
+    this(token, principal, client, expires, scopes, null);
   }
 
-  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes, String refreshToken) {
+  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes,
+      String refreshToken) {
     super();
     this.token = token;
     this.principal = principal;
     this.encodePrincipal();
+    this.resourceOwnerId = principal.getName();
     this.client = client;
     this.expires = expires;
     this.scopes = scopes;
@@ -99,6 +105,7 @@ public class AccessToken extends AbstractEntity {
     Assert.notNull(token, "Token may not be null");
     Assert.notNull(client, "Client may not be null");
     Assert.notNull(principal, "AuthenticatedPrincipal may not be null");
+    Assert.isTrue(StringUtils.isNotBlank(principal.getName()), "AuthenticatedPrincipal#name may not be null");
   }
 
   @PreUpdate
@@ -210,12 +217,14 @@ public class AccessToken extends AbstractEntity {
     this.encodedPrincipal = encodedPrincipal;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.surfnet.oaaas.model.AbstractEntity#validate()
    */
   @Override
   public void validate() {
-    //all is covered by not nulls
+    // all is covered by not nulls
   }
 
   /**
@@ -226,10 +235,26 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param refreshToken the refreshToken to set
+   * @param refreshToken
+   *          the refreshToken to set
    */
   public void setRefreshToken(String refreshToken) {
     this.refreshToken = refreshToken;
+  }
+
+  /**
+   * @return the resourceOwnerId
+   */
+  public String getResourceOwnerId() {
+    return resourceOwnerId;
+  }
+
+  /**
+   * @param resourceOwnerId
+   *          the resourceOwnerId to set
+   */
+  private void setResourceOwnerId(String resourceOwnerId) {
+    this.resourceOwnerId = resourceOwnerId;
   }
 
 }

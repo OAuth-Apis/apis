@@ -23,14 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.localserver.LocalTestServer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.it.AbstractAuthorizationServerTest;
@@ -49,8 +46,8 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
   
   private ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
 
-  @Before
-  public void initializeOnce() {
+  @BeforeClass
+  public static void initializeOnce() {
     if (driver == null) {
       if ("firefox".equals(System.getProperty("selenium.webdriver", "firefox"))) {
         initFirefoxDriver();
@@ -79,15 +76,15 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
     return authorizationCodeRequestHandler;
   }
 
-  private void initHtmlUnitDriver() {
+  private static void initHtmlUnitDriver() {
     initDriver(new HtmlUnitDriver());
   }
 
-  private void initFirefoxDriver() {
+  private static void initFirefoxDriver() {
     initDriver(new FirefoxDriver());
   }
 
-  private void initDriver(WebDriver remoteWebDriver) {
+  private static void initDriver(WebDriver remoteWebDriver) {
     SeleniumSupport.driver = remoteWebDriver;
     SeleniumSupport.driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     Runtime.getRuntime().addShutdownHook(new Thread() {
