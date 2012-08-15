@@ -130,15 +130,12 @@
 							<div class="accordion-inner">
 								<fieldset>
 									<div class="control-group">
-										<label class="control-label">Authorization URL</label>
-										<div class="controls">
-											<p class="break-word">
-												<c:out value="${settings.authorizationURLComplete}" />
-											</p>
-											<form:hidden path="authorizationURLComplete" id="authorizationURLComplete"
-													name="authorizationURLComplete"  />
-											<p class="help-block">Note: this is the URL to redirect
-												to for user authentication</p>
+										<label class="control-label" for="authorizationURLComplete">Authorization URL</label>
+										<div class="controls break-word">
+											<form:textarea path="authorizationURLComplete" id="authorizationURLComplete" name="authorizationURLComplete"
+												rows="5" class="input-xxlarge" readonly="true"/>
+											<p class="help-block">This is the URL to redirect to for user authentication. It is based on the authorization url of the Authorization Server and the registered client 
+													in /apis-authorization-server/src/main/resources/db/migration/hsqldb/V1__auth-server-admin.sql</p>	
 										</div>
 									</div>
 									<div class="form-actions">

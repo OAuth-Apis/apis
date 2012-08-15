@@ -36,6 +36,12 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
+/**
+ * 
+ * {@link Filter} that ensures the Resource Owner grants consent for the use of
+ * the Resource Server data to the Client app.
+ * 
+ */
 @Named
 public class UserConsentFilter implements Filter {
 
@@ -47,7 +53,6 @@ public class UserConsentFilter implements Filter {
   private AuthorizationRequestRepository authorizationRequestRepository;
 
   private AbstractUserConsentHandler userConsentHandler;
-
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

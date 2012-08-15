@@ -19,7 +19,7 @@
 package org.surfnet.oaaas.web;
 
 /**
- * Form object
+ * Form object for the test page
  * 
  */
 public class ClientSettings {

@@ -1,16 +1,13 @@
 MUST:
-- GUI
+- GUI finished
 - Documentation overall and README.md per submodule
 - Document how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
-
-SHOULD:
-- Example client (using an example REST server)
+- Add tooltips in the GUI for info about the attributes
 
 NICE:
 - ClientResource and ResourceServerResource must debug log all activity
 - Document OAuth2Validator to explain or comply to spec compliance
 - Performance JMeter tests
-- Refactor authorizationRequest to not store it in the database, but in a request.getSession
 - Support for MAC Access Token Type http://tools.ietf.org/html/draft-ietf-oauth-v2-http-mac-01
 
 

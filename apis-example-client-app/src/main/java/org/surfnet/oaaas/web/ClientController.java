@@ -50,7 +50,7 @@ import com.sun.jersey.core.header.OutBoundHeaders;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
- * Entry point for testing the resource server
+ * Entry point for testing the resource server. Listens to http://localhost:8084/test
  * 
  */
 @Controller
@@ -59,7 +59,8 @@ public class ClientController {
   private static final String AUTHORIZATION = "Authorization";
   private static final String REDIRECT_URI = "http://localhost:8084/redirect";
   private static final String SETTINGS = "settings";
-  private static final String br = System.getProperty("line.separator");
+  private static final String BR = System.getProperty("line.separator");
+  
   private static final ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
 
   private Client client;
@@ -73,18 +74,13 @@ public class ClientController {
   @RequestMapping(value = { "test" }, method = RequestMethod.GET)
   public String socialQueries(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    modelMap.addAttribute(SETTINGS, createDefaultSettings());
+    modelMap.addAttribute(SETTINGS, createDefaultSettings(false));
     return "oauth-client";
   }
 
   @RequestMapping(value = "test", method = RequestMethod.POST, params = "step1")
   public String step1(ModelMap modelMap, @ModelAttribute("settings")
   ClientSettings settings, HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String responseType = "code";
-    settings.setAuthorizationURLComplete(String.format(
-        settings.getAuthorizationURL()
-            .concat("?response_type=%s&client_id=%s&redirect_uri=%s&scope=read&state=example"), responseType, settings
-            .getOauthKey(), REDIRECT_URI));
     settings.setStep("step2");
     modelMap.addAttribute(SETTINGS, settings);
     return "oauth-client";
@@ -100,7 +96,7 @@ public class ClientController {
   public String redirect(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
       throws JsonParseException, JsonMappingException, IOException {
     String code = request.getParameter("code");
-    ClientSettings settings = createDefaultSettings();
+    ClientSettings settings = createDefaultSettings(false);
 
     MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
     formData.add("grant_type", "authorization_code");
@@ -120,8 +116,8 @@ public class ClientController {
     modelMap.put(SETTINGS, settings);
     modelMap.put(
         "requestInfo",
-        "Method: POST".concat(br).concat("URL: ").concat(settings.getAccessTokenEndPoint()).concat(br)
-            .concat("Headers: ").concat(headers.toString()).concat(br).concat("Body: ").concat(formData.toString()));
+        "Method: POST".concat(BR).concat("URL: ").concat(settings.getAccessTokenEndPoint()).concat(BR)
+            .concat("Headers: ").concat(headers.toString()).concat(BR).concat("Body: ").concat(formData.toString()));
     addResponseInfo(modelMap, clientResponse);
     modelMap.put("rawResponseInfo", json);
     return "oauth-client";
@@ -138,7 +134,7 @@ public class ClientController {
     String json = IOUtils.toString(clientResponse.getEntityInputStream());
     settings.setStep("step3");
     modelMap.put(SETTINGS, settings);
-    modelMap.put("requestInfo", "Method: GET".concat(br).concat("URL: ").concat(settings.getRequestURL()).concat(br)
+    modelMap.put("requestInfo", "Method: GET".concat(BR).concat("URL: ").concat(settings.getRequestURL()).concat(BR)
         .concat("Headers: ").concat(headers.toString()));
     addResponseInfo(modelMap, clientResponse);
     modelMap.put("rawResponseInfo", json);
@@ -149,7 +145,7 @@ public class ClientController {
   private void addResponseInfo(ModelMap modelMap, ClientResponse clientResponse) {
     modelMap.put(
         "responseInfo",
-        "Status: ".concat(String.valueOf(clientResponse.getStatus()).concat(br).concat("Headers:")
+        "Status: ".concat(String.valueOf(clientResponse.getStatus()).concat(BR).concat("Headers:")
             .concat(clientResponse.getHeaders().toString())));
   }
 
@@ -168,9 +164,19 @@ public class ClientController {
     }
   }
 
-
-  private ClientSettings createDefaultSettings() {
-    return new ClientSettings("http://localhost:8080/oauth2/token", "cool_app_id", "secret",
+  /** 
+   * See /apis-authorization-server/src/main/resources/db/migration/hsqldb/V1__auth-server-admin.sql
+   * 
+   */
+  protected ClientSettings createDefaultSettings(boolean implicitGrant) {
+    String responseType = implicitGrant ? "token" : "code";
+    ClientSettings settings = new ClientSettings("http://localhost:8080/oauth2/token", "cool_app_id", "secret",
         "http://localhost:8080/oauth2/authorize", "step1", "http://localhost:8180/v1/api/course");
+    settings.setAuthorizationURLComplete(String.format(
+        settings.getAuthorizationURL()
+            .concat("?response_type=%s&client_id=%s&redirect_uri=%s&scope=read&state=example"), responseType, settings
+            .getOauthKey(), REDIRECT_URI));
+    return settings;
+
   }
 }

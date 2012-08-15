@@ -24,11 +24,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.surfnet.oaaas.auth.AbstractAuthenticator;
+
 /**
- * {@link Principal} that can contain roles and additional attributes.
+ * {@link Principal} that can contain roles and additional attributes. This is
+ * the return Object for {@link AbstractAuthenticator} implementations. Note
+ * that the key and values of the {@link AuthenticatedPrincipal#attributes} must
+ * be {@link Serializable}.
  * 
  */
-public class AuthenticatedPrincipal  implements Serializable, Principal{
+public class AuthenticatedPrincipal implements Serializable, Principal {
 
   private static final long serialVersionUID = 1L;
 
@@ -40,19 +45,22 @@ public class AuthenticatedPrincipal  implements Serializable, Principal{
    * Extra attributes, depending on the authentication implementation
    */
   private Map<String, Object> attributes;
-  
+
   public AuthenticatedPrincipal() {
     super();
   }
+
   public AuthenticatedPrincipal(String username) {
-    this(username, Collections.<String>emptyList());
+    this(username, Collections.<String> emptyList());
   }
+
   public AuthenticatedPrincipal(String username, Collection<String> roles) {
-    this(username, roles, Collections.<String, Object>emptyMap());
+    this(username, roles, Collections.<String, Object> emptyMap());
   }
+
   public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, Object> attributes) {
     this.name = username;
-    this.roles = roles;    
+    this.roles = roles;
     this.attributes = attributes;
   }
 
@@ -70,7 +78,9 @@ public class AuthenticatedPrincipal  implements Serializable, Principal{
     return attributes;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.security.Principal#getName()
    */
   @Override
@@ -78,7 +88,9 @@ public class AuthenticatedPrincipal  implements Serializable, Principal{
     return name;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override
@@ -87,24 +99,27 @@ public class AuthenticatedPrincipal  implements Serializable, Principal{
   }
 
   /**
-   * @param name the name to set
+   * @param name
+   *          the name to set
    */
   public void setName(String name) {
     this.name = name;
   }
 
   /**
-   * @param roles the roles to set
+   * @param roles
+   *          the roles to set
    */
   public void setRoles(Collection<String> roles) {
     this.roles = roles;
   }
 
   /**
-   * @param attributes the attributes to set
+   * @param attributes
+   *          the attributes to set
    */
   public void setAttributes(Map<String, Object> attributes) {
     this.attributes = attributes;
   }
-  
+
 }

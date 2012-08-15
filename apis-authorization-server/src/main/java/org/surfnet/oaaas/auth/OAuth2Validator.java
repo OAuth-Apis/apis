@@ -52,6 +52,11 @@ public interface OAuth2Validator {
    */
   ValidationResponse validate(AccessTokenRequest request);
 
+  /**
+   * 
+   * See <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2#section-5.2"> the spec</a>
+   *
+   */
   enum ValidationResponse {
 
     VALID("valid", "valid"),

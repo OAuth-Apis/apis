@@ -41,6 +41,16 @@ import org.surfnet.oaaas.auth.UserConsentFilter;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 
+/**
+ * 
+ * The SpringConfiguration is a {@link Configuration} that can be overridden if
+ * you want to plugin your own implementations. Note that the two most likely
+ * candidates to change are the {@link AbstractAuthenticator} an
+ * {@link AbstractUserConsentHandler}. You can change the implementation by
+ * editing the application.apis.properties file where the implementations are
+ * configured.
+ * 
+ */
 @Configuration
 @PropertySource("classpath:apis.application.properties")
 /*

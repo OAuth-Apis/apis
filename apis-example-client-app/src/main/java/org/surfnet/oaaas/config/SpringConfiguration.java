@@ -28,22 +28,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 /**
- * Main spring configuration class
- *
+ * Main spring configuration class. See <a
+ * href="http://rstoyanchev.github.com/spring-mvc-31-update/#1">this link</a>
+ * 
  */
 @Configuration
 @ComponentScan("org.surfnet.oaaas.web")
 @EnableWebMvc
-public class SpringConfiguration extends  WebMvcConfigurerAdapter{
+public class SpringConfiguration extends WebMvcConfigurerAdapter {
 
   @Bean
   public ViewResolver viewResolver() {
-      InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-      viewResolver.setPrefix("/WEB-INF/jsp/");
-      viewResolver.setSuffix(".jsp");
-      return viewResolver;
+    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+    viewResolver.setPrefix("/WEB-INF/jsp/");
+    viewResolver.setSuffix(".jsp");
+    return viewResolver;
   }
-  
+
   @Override
   public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
     configurer.enable();

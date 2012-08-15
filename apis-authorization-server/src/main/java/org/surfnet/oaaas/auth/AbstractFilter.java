@@ -22,7 +22,7 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 
 /**
- * Shared functionality of the different authorization Filters
+ * Shared functionality of the different authorization and userconsent Filters
  * 
  */
 public abstract class AbstractFilter implements Filter {
