@@ -85,7 +85,7 @@ var windowController = {
     $("div.side-nav a").click(function() {
       $("div.side-nav a").removeClass("cur");
       $(this).addClass("cur");
-    })
+    });
   },
 
   refresh: function() {

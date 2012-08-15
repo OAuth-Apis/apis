@@ -127,6 +127,36 @@ var clientFormController = (function() {
 
   var view = clientFormView;
 
+  var formArrayAttributesToHash = function (names, values) {
+    /*
+     Attributes are submitted in the form:
+     {
+     "attributeName": ['name1', 'name2', 'name3'],
+     "attributeValue": ['val1', 'val2', 'val3']
+     }
+     But we want to post them in the form:
+     attributes {"name1": "val1", "name2": "val2"}
+
+     */
+    var attributes = {};
+    if ($.isArray(names)) {
+      for (var i = 0; i < names.length; i++) {
+        if (names[i]) { // skip empty names
+          attributes[names[i]] = values[i];
+        }
+      }
+    } else if (names) {
+      /*
+       Of special interest is the case where only 1 name and 1 value are given.
+       Then names is not an array but a string. (same goes for 'values')
+       */
+      attributes[names] = values;
+    } else {
+      // No attribute at all
+    }
+    return attributes;
+  };
+
   return {
     show: function(mode, resourceServerId, clientId) {
 
@@ -192,21 +222,7 @@ var clientFormController = (function() {
     onSubmit: function(form) {
       var formAsObject = $(form).serializeObject();
 
-      /*
-      Attributes are submitted in the form:
-      {
-        "attributeName": ['name1', 'name2', 'name3'],
-        "attributeValue": ['val1', 'val2', 'val3']
-      }
-      But we want to post them in the form:
-      attributes {"name1": "val1", "name2": "val2"}
-       */
-      var attributes = {};
-      for (var i = 0; i < formAsObject['attributeName'].length; i++) {
-        if (formAsObject['attributeName'][i]) { // skip empty names
-          attributes[formAsObject['attributeName'][i]] = formAsObject['attributeValue'][i];
-        }
-      }
+      var attributes = formArrayAttributesToHash(formAsObject['attributeName'], formAsObject['attributeValue']);
 
       var redirectUris = formArrayToString(formAsObject['redirectUri'], "\n");
 

@@ -64,19 +64,29 @@ var resourceServerFormView = (function() {
        Scopes
        */
       // Remove attribute on click of delete-button (click on holder-div, delegated to button)
-      $("tbody#currentScopes").on("click", "a.removeScope", function() {
-        $(this).closest("tr").remove();
+      $("div#currentScopes").on("click", "button.removeScope", function() {
+        $(this).closest("div").remove();
         return false;
       });
       // On click of the + button
       $("button#addScope").on("click", function() {
         // Save the state to the list of 'current' scopes
-        $("tbody#currentScopes").append(Template.get("tplResourceServerScope")({
+        $("div#newScope").before(Template.get("tplResourceServerScope")({
           scope: $("#newScopeField").val()
         }));
 
+
         // reset field for new value and focus.
         $("#newScopeField").val("").focus();
+      });
+
+
+      $("div#currentScopes").one("change", "input", function() { // Mind you, we use a "one" event handler. Runs only once per form.
+        $("<div />")
+            .addClass("alert fade in")
+            .append($('<button class="close" data-dismiss="alert" type="button">x</button>'))
+            .append("Changing existing scopes might have effect on configured client apps. Make sure all client app configurations reflect the changes made here.")
+            .prependTo("div#currentScopes");
       });
 
 

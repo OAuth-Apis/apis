@@ -40,6 +40,9 @@
   <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
 </div>
 
+</body>
+</html>
+
 <script data-main="js/main" src="js/lib/require.js"></script>
 
 <script id="tplEditResourceServer" type="text/x-handlebars-template">
@@ -65,24 +68,16 @@
 
         <div class="control-group">
           <label for="newScopeField" class="control-label">Scopes</label>
-          <div class="controls">
 
-            <table style="width: 255px; margin-bottom: 15px;" class="table table-bordered">
-              <tbody id="currentScopes">
-              {{#each scopes}}
-              <tr>
+          <div class="controls" id="currentScopes">
+            {{#each scopes}}
+            <div class="input multiple-fields">
+              <input type="text" name="scopes" size="16" class="input-append" value="{{this}}">
+              <button type="button" class="btn removeScope"><i class="icon-trash"></i></button>
+            </div>
+            {{/each}}
 
-                <td>{{this}}<input type="hidden" name="scopes" value="{{this}}" /></td>
-                <td style="width: 17px">
-                  <a rel="tooltip" href="#" class="removeScope"
-                     data-original-title="remove"><i class="icon-trash"></i></a>
-                </td>
-              </tr>
-              {{/each}}
-              </tbody>
-            </table>
-
-            <div class="input-append">
+            <div class="input multiple-fields" id="newScope">
               <input type="text" placeholder="scope" size="16" id="newScopeField" name="scopes"
                      class="span3
                      input-append">
@@ -364,11 +359,8 @@
 </script>
 
 <script id="tplResourceServerScope" type="text/x-handlebars-template">
-  <tr>
-    <td style="width: 17px">{{scope}}<input type="hidden" name="scopes" value="{{scope}}" /></td>
-    <td><a rel="tooltip" href="#" class="removeScope" data-original-title="remove"><i class="icon-trash"></i></a></td>
-  </tr>
+  <div class="input multiple-fields">
+    <input  type="text" name="redirectUri" value="{{scope}}">
+    <button class="btn removeScope" type="button"><i class="icon-trash"></i></button>
+  </div>
 </script>
-
-</body>
-</html>
