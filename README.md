@@ -52,7 +52,10 @@ We have now an Authorization Server running and an example Resource Server (and 
 
 Start the example-client-app (new Terminal session)
 
-    cd 
+    cd apis-example-client-app
+    mvn jetty:run
+
+Now start your browser and go to <a href="http://localhost:8084/test" target="_blank">http://localhost:8084/test</a>. In three steps you can see what the client app has to do to make a REST call to example Resource Server.
 
 ### Resource Servers and Client apps GUI registration
 
@@ -78,6 +81,8 @@ After the login you will need to grant consent (the Authorization Server GUI is 
 After this you can add your own ResourceServer and Client instances. See the tooltip's in the insert/ edit forms for more information about the attributes of Resource Servers and Clients. 
 
 ### Component overview
+
+The following diagram shows all components and how they play together.
 
 ![Deployment overview](https://raw.github.com/oharsta/apis/master/apis-images/apis_deployment_diagram.png)
 
@@ -178,7 +183,7 @@ You can use the exposed REST interface of the ResourceServerResource and ClientR
 
 ### Tests
 
-Optionally you can build the entire project with the integration tests enables
+Optionally you can build the entire project with the integration and selenium tests enabled
 
 mvn clean install -P integration
 

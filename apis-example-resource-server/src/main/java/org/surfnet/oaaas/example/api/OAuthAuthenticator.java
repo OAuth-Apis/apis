@@ -20,12 +20,12 @@ package org.surfnet.oaaas.example.api;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.codec.binary.Base64;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.core.util.Base64;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 
@@ -46,7 +46,7 @@ public class OAuthAuthenticator implements Authenticator<String, AuthenticatedPr
   public OAuthAuthenticator(UniversityFooConfiguration configuration) {
     AuthConfiguration auth = configuration.getAuth();
     authorizationServerUrl = auth.getAuthorizationServerUrl();
-    authorizationValue = new String(Base64.encode(auth.getKey().concat(":").concat(auth.getSecret())));
+    authorizationValue = "Basic ".concat( new String(Base64.encodeBase64(auth.getKey().concat(":").concat(auth.getSecret()).getBytes())));
   }
 
   /*

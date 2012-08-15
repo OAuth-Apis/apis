@@ -7,7 +7,7 @@ INSERT INTO client (id, clientId, contactEmail, contactName, description, expire
 					useRefreshTokens, resourceserver_id)
 VALUES
     (99999, 'cool_app_id', 'client@coolapp.com', 'john.doe', 'Cool app for doing awesome things', 0,
-    'cool-app', 'http://localhost:8080/redirect', 'read', 'secret', 0, 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 
+    'cool-app', 'http://localhost:8084/redirect', 'read', 'secret', 0, 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 
     0, 99999);
 /*
 emma.blunt

@@ -129,4 +129,13 @@ public class AccessTokenResponse {
     this.scope = scope;
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return "AccessTokenResponse [accessToken=" + accessToken + ", tokenType=" + tokenType + ", expiresIn=" + expiresIn
+        + ", refreshToken=" + refreshToken + ", scope=" + scope + "]";
+  }
+
 }
