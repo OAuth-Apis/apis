@@ -7,10 +7,15 @@ The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can
 - An OAuth2 Authorization Server compliant with [the draft v2-31 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-31)
   * Pluggable authentication and userConsent handling (with default implementations provided)
   * Support for authorization code and implicit grant
+  * Implementation of a Filter to be used in Resource Servers for all required communication with the Authorization Server
   * GUI included for the registration of Resource Servers and Client apps
 
-- An OAuth2 demo Resource Server
-  * In-memory JSON-based backend with limited functionality only to demo the OAuth Authorization Server
+- Two OAuth2 demo Resource Servers
+  * DropWizard stand-alone Resource Server with limited functionality (using in-memory JSON-based backend) to demo the OAuth Authorization Server
+  * Standard Java web application to showcase the use of the communication between typical Resource Servers and the Authorization Server 
+
+- An example Client App implementation to demo the OAuth flow for a typical (possible native) Client App
+  * This 'involves' a running (example) Resource Server and the Authorization Server
 
 - An implementation add-on for connecting to a compliant SAML IdP for authentication
 
@@ -55,7 +60,7 @@ Start the example-client-app (new Terminal session)
     cd apis-example-client-app
     mvn jetty:run
 
-Now start your browser and go to <a href="http://localhost:8084/test" target="_blank">http://localhost:8084/test</a>. In three steps you can see what the client app has to do to make a REST call to example Resource Server.
+Now start your browser and go to <a href="http://localhost:8084/test" target="_blank">http://localhost:8084/test</a>. In three steps you can see what the client app has to do to make a REST call to example Resource Server. You can also very easily test this against any Resource Server (or for that case an Authorization Server running on a different environment then localhost) by changing the values in the client.apis.properties file.
 
 ### Resource Servers and Client apps GUI registration
 
@@ -85,6 +90,8 @@ After this you can add your own ResourceServer and Client instances. See the too
 The following diagram shows all components and how they play together.
 
 ![Deployment overview](https://raw.github.com/oharsta/apis/master/apis-images/apis_deployment_diagram.png)
+
+TODO: add description of the main components and their typical deployment typology
 
 ## Extending the defaults
 
