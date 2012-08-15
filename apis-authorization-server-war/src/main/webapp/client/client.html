@@ -146,7 +146,7 @@
           <td>{{scopes}}</td>
           <td></td>
             <td>
-              <strong class="key-secret">Owner:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+              <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
               <strong class="key-secret">Key <i data-original-title="Key and secret"
                                                 data-content="And here's some amazing content. It's very engaging. right?"
                                                 rel="popover" class="icon-question-sign"></i>:</strong> <a
@@ -193,16 +193,16 @@
       </thead>
       <tbody>
       {{#each clients}}
-      <tr data-clientId="{{id}}" data-resourceServerId="{{resourceServerId}}">
+      <tr data-clientId="{{id}}" data-resourceServerId="{{resourceServer.id}}">
         <td><a href="#" class="editClient"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
         <td><a class="editClient" href="#">{{name}}</a><br>
           {{description}}<br>
-          <strong>Connected to</strong> <a href="#">{{resourceServerName}}</a>
+          <strong>Connected to</strong> <a href="#">{{resourceServer.name}}</a>
         </td>
         <td>{{clientId}}</td>
         <td>{{scopes}}</td>
         <td>
-          <strong class="key-secret">Owner:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+          <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
           <strong class="key-secret">Client ID <i data-original-title="Client ID and secret"
                                             data-content="And here's some amazing content. It's very engaging. right?"
                                             rel="popover" class="icon-question-sign"></i>:</strong> <a
@@ -242,14 +242,14 @@
           <label class="control-label">Resource Server</label>
           <div class="controls">
             {{#if availableResourceServers}}
-            <select required="required" name="resourceServerId">
+            <select required="required" name="resourceServerId" id="clientResourceServer">
               {{#each availableResourceServers}}
               <option value="{{id}}">{{name}}</option>
               {{/each}}
             </select>
             {{else}}
-              <input type="hidden" name="resourceServerId" value="{{resourceServerId}}">
-              <span>{{resourceServer}}</span>
+              <input type="hidden" name="resourceServerId" value="{{resourceServer.id}}">
+              <label class="control-label">{{resourceServer.name}}</label>
             {{/if}}
           </div>
         </div>
@@ -259,17 +259,20 @@
             <textarea rows="3" id="clientDescription" name="description" class="input">{{description}}</textarea>
           </div>
         </div>
-        <div class="control-group">
-          <label for="clientScopes" class="control-label">Scopes</label>
-          <div class="controls">
 
-            <select name="scopes" multiple="multiple" id="clientScopes">
-              {{#each scopes}}
-              <option selected="{{isSelected}}">{{scopeName}}</option>
-              {{/each}}
-            </select>
+        <div class="control-group">
+          <label class="control-label">Scopes</label>
+          <div class="controls" id="clientScopesHolder">
+            {{#each availableScopes}}
+            <label class="checkbox">
+              <input type="checkbox" value="{{scopeName}}" name="scopes"
+              {{#if currentlySelected}}checked="checked"{{/if}}>
+              {{scopeName}}
+            </label>
+            {{/each}}
           </div>
         </div>
+
         <div class="control-group">
           <label class="control-label">Thumbnail URL</label>
           <div class="controls">
@@ -362,7 +365,7 @@
 
 <script id="tplResourceServerScope" type="text/x-handlebars-template">
   <tr>
-    <td>{{scope}}<input type="hidden" name="scopes" value="{{scope}}" /></td>
+    <td style="width: 17px">{{scope}}<input type="hidden" name="scopes" value="{{scope}}" /></td>
     <td><a rel="tooltip" href="#" class="removeScope" data-original-title="remove"><i class="icon-trash"></i></a></td>
   </tr>
 </script>

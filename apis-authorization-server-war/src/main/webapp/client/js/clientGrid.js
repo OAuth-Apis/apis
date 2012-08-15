@@ -70,12 +70,15 @@ var clientGridController = (function() {
       // get list of resource servers. With this data, query each of them for all their clients.
       data.getResourceServers(function(resourceServers) {
 
-        var resourceServerIds = [];
-        for (var i=0; i<resourceServers.length; i++) {
-          resourceServerIds.push(resourceServers[i].id);
-        }
+        var resourceServersByIds = {};
+        $(resourceServers).each(function(i, resourceServer) {
+          resourceServersByIds[resourceServer.id] = resourceServer;
+        })
 
-        data.getClientsForResourceServers(resourceServerIds, function(data) {
+        data.getClientsForResourceServers(Object.keys(resourceServersByIds), function(data) {
+          $(data).each(function(i, client) {
+            client.resourceServer = resourceServersByIds[client.resourceServerId];
+          });
           view.show(data);
         });
       });

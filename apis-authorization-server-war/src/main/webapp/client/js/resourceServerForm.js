@@ -15,6 +15,35 @@
  */
 
 
+/**
+ * Accept values from a serialized form, transform them to a string delimited by given delimiter, filtering out duplicates and empty elements.
+ * It handles the special case of 1 item. In that case, the array isn't an array actually, but simple the item itself.
+ *
+ * @param arrayOfStrings
+ * @param delimiter
+ * @return {String}
+ */
+var formArrayToString = function(arrayOfStrings, delimiter) {
+
+  var cleanArray = [];
+
+  if ($.isArray(arrayOfStrings)) {
+    arrayOfStrings = $.unique(arrayOfStrings); // mind you, we rely on a modified version of $.unique, working for non-dom-elements
+    for (var i=0; i < arrayOfStrings.length; i++) {
+      var oneScope = arrayOfStrings[i];
+      if (oneScope) { // skip empty items
+        cleanArray.push(arrayOfStrings[i]);
+      }
+    }
+  } else if (arrayOfStrings.length) {
+    cleanArray.push(arrayOfStrings);
+  } else {
+    // not even one item
+  }
+
+  return cleanArray.join(delimiter);
+};
+
 var resourceServerFormView = (function() {
 
   var templateId = "tplEditResourceServer";
@@ -80,38 +109,11 @@ var resourceServerFormController = (function() {
 
   var view = resourceServerFormView;
 
-  /**
-   * Accept the scopes from the form, transform them to a comma separated string, filtering out duplicates and empty elements.
-   *
-   * @param arrayOfScopes
-   * @return {String}
-   */
-  var scopesToString = function(arrayOfScopes) {
-
-    var scopes = [];
-
-    if ($.isArray(arrayOfScopes)) {
-      arrayOfScopes = $.unique(arrayOfScopes); // mind you, we rely on a modified version of $.unique, working for non-dom-elements
-      for (var i=0; i < arrayOfScopes.length; i++) {
-        var oneScope = arrayOfScopes[i];
-        if (oneScope) { // skip empty items
-          scopes.push(arrayOfScopes[i]);
-        }
-      }
-    } else if (arrayOfScopes.length) {
-      scopes.push(arrayOfScopes);
-    } else {
-      // not even one scope
-    }
-
-    return scopes.join(",");
-  };
-
   return {
     onSubmit: function(form) {
       var formAsObject = $(form).serializeObject();
 
-      var scopes = scopesToString(formAsObject['scopes']);
+      var scopes = formArrayToString(formAsObject['scopes'], ",");
 
       var resourceServer = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,

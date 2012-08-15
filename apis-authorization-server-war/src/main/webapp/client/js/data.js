@@ -128,16 +128,18 @@ var data = (function() {
       });
     },
     getClient: function(resourceServerId, clientId, resultHandler) {
-      oauthAjax({
-        url:"/admin/resourceServer/" + resourceServerId + "/client/" + clientId,
-        success: function(client) {
-          // Put the resourceServerId in the client, we do not get it back from the request.
-          client.resourceServerId = resourceServerId;
-          resultHandler(client);
-        },
-        error: function() { // On failure, call result handler anyway, with empty result.
-          resultHandler({});
-        }
+      this.getResourceServer(resourceServerId, function(resourceServer) {
+        oauthAjax({
+          url:"/admin/resourceServer/" + resourceServerId + "/client/" + clientId,
+          success: function(client) {
+            // Put the resourceServer in the client, we do not get it back from the request.
+            client.resourceServer = resourceServer;
+            resultHandler(client);
+          },
+          error: function() { // On failure, call result handler anyway, with empty result.
+            resultHandler({});
+          }
+        });
       });
     },
 

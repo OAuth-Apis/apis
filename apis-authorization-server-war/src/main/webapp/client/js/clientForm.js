@@ -30,7 +30,15 @@ var clientFormView = (function() {
       $(containerSelector).append(Template.get(templateId)(model));
       $(containerSelector).css("height", ""); // clear the fixed height
 
+      $("select#clientResourceServer").on("change", function() {
+        clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
+      });
 
+
+      if (mode == "new") {
+        // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.
+        clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
+      }
       /*
        Attributes
       */
@@ -82,6 +90,23 @@ var clientFormView = (function() {
         return false; // prevent default submit
       });
     },
+
+    updateAvailableScopes: function(scopes) {
+      // Remove current scopes
+      $("div#clientScopesHolder label").remove();
+
+      // TODO: move to template?
+      // Add new ones
+      $.each(scopes, function(index, scope) {
+        $("<label />")
+            .addClass("checkbox")
+            .append($('<input type="checkbox" name="scopes"/>')
+            .val(scope))
+            .append(scope)
+            .appendTo("#clientScopesHolder");
+      });
+    },
+
     hide: function() {
       $(containerSelector).css("height", $(containerSelector).height()); // set a fixed height to prevent wild swapping of the footer
       $(handleSelector).remove();
@@ -105,9 +130,25 @@ var clientFormController = (function() {
   return {
     show: function(mode, resourceServerId, clientId) {
 
+
       if (mode == "edit") {
         // retrieve current data for this client.
         data.getClient(resourceServerId, clientId, function(client){
+
+          client.scopes = client.scopes ? client.scopes.split(",") : [];
+
+          // TODO: this duplicates functionality in the resourceServerFormController. Somehow this should be abstracted away.
+          client.resourceServer.scopes = client.resourceServer.scopes ? client.resourceServer.scopes.split(",") : [];
+
+          client.availableScopes = [];
+          for (var i=0; i< client.resourceServer.scopes.length; i++) {
+            var scope = client.resourceServer.scopes[i];
+            client.availableScopes.push({
+              scopeName: scope,
+              currentlySelected: ($.inArray(scope, client.scopes)>-1) ? 1 : 0
+            });
+          }
+
 
           // See the comment in the onSubmit about transformation of attributeName/value and back again.
           var rewrittenAttributes = [];
@@ -138,6 +179,16 @@ var clientFormController = (function() {
       }
     },
 
+    onChangeResourceServer: function(resourceServerId) {
+      data.getResourceServer(resourceServerId, function(resourceServer) {
+
+        // TODO: the third place where this is duplicated!
+        var scopes = resourceServer.scopes ? resourceServer.scopes.split(",") : [];
+
+        view.updateAvailableScopes(scopes);
+      });
+    },
+
     onSubmit: function(form) {
       var formAsObject = $(form).serializeObject();
 
@@ -157,17 +208,19 @@ var clientFormController = (function() {
         }
       }
 
+      var redirectUris = formArrayToString(formAsObject['redirectUri'], "\n");
+
       var client = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,
         name: formAsObject['name'],
         description: formAsObject['description'],
         clientId: formAsObject['clientId'],
-        scopes: formAsObject['scopes'],
+        scopes:$.isArray(formAsObject['scopes']) ? formAsObject['scopes'].join(",") : formAsObject['scopes'],
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
         thumbNailUrl: formAsObject['thumbNailUrl'],
         attributes: attributes,
-        redirectUris:$.isArray(formAsObject['redirectUri']) ? formAsObject['redirectUri'].join("\n") : formAsObject['redirectUri']
+        redirectUris:redirectUris
       };
 
       data.saveClient(formAsObject['resourceServerId'], client, function(data) {
