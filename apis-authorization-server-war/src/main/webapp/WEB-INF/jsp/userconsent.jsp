@@ -42,12 +42,13 @@
       <input type="hidden" name="AUTH_STATE" value="${AUTH_STATE}"/>
 
       <h2>This data will be shared</h2>
-      <ul>
-        <c:forEach items="${client.scopes}" var="scope">
-          <li><input id="GRANTED_SCOPES" type="checkbox" name="GRANTED_SCOPES" checked value="${scope}"/>${scope}</li>
-        </c:forEach>
-      </ul>
 
+      <fieldset>
+        <c:forEach items="${client.scopes}" var="scope">
+			<input type="checkbox" id="GRANTED_SCOPES" name="GRANTED_SCOPES" checked value="${scope}"/>
+			<span class="consent-label">${scope}</span><br/>
+        </c:forEach>
+	  </fieldset>	
       <fieldset>
         <div class="form-actions">
           <button name="user_oauth_approval" value="true" type="submit"

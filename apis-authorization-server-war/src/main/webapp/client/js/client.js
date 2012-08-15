@@ -60,7 +60,7 @@ var windowController = {
   oauth: new OAuth({
     context:window,
     redirectUri: window.location, // Current location as redirect URI: after authorization we get back control.
-    authorizationEndpoint:"/oauth2/authorize", // TODO: configurable?
+    authorizationEndpoint:"/oauth2/authorize", 
     clientId:"authorization-server-admin-js-client"
   }),
 
@@ -154,7 +154,12 @@ $(function() {
     selector: '[rel=tooltip]'
   });
   $('body').popover({
-    selector: '[rel=popover]'
+    selector: '[rel=popover]',
+    title: function(elem) {
+    	var att = this.attributes;
+    	var name = att['name'];
+    	return 'aaa';
+    }
   });
 
   // Initialisation of window controller.

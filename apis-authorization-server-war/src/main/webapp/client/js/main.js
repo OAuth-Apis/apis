@@ -24,7 +24,7 @@ requirejs.config({
 
   shim: {
 
-    'lib/bootstrap.min': {
+    'lib/bootstrap': {
       deps: ['lib/jquery']
     },
 
@@ -41,7 +41,7 @@ requirejs.config({
       deps: [
         'oauth',
         'jquery-extensions',
-        'lib/bootstrap.min',
+        'lib/bootstrap',
         'lib/handlebars',
         'data',
         'resourceServerForm',
@@ -56,6 +56,6 @@ requirejs.config({
 require([
   "jquery-extensions",
   "lib/handlebars",
-  "lib/bootstrap.min",
+  "lib/bootstrap",
   "client"
 ]);
