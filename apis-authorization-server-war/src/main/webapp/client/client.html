@@ -62,12 +62,35 @@
             <textarea rows="3" id="description" value="{{description}}" name="description" class="input"></textarea>
           </div>
         </div>
+
         <div class="control-group">
-          <label for="scopes" class="control-label">Scopes (comma separated)</label>
+          <label for="newScopeField" class="control-label">Scopes</label>
           <div class="controls">
-            <input type="text" id="scopes" name="scopes" value="{{scopes}}" placeholder="read,write">
+
+            <table style="width: 255px; margin-bottom: 15px;" class="table table-bordered">
+              <tbody id="currentScopes">
+              {{#each scopes}}
+              <tr>
+
+                <td>{{this}}<input type="hidden" name="scopes" value="{{this}}" /></td>
+                <td style="width: 17px">
+                  <a rel="tooltip" href="#" class="removeScope"
+                     data-original-title="remove"><i class="icon-trash"></i></a>
+                </td>
+              </tr>
+              {{/each}}
+              </tbody>
+            </table>
+
+            <div class="input-append">
+              <input type="text" placeholder="scope" size="16" id="newScopeField" name="scopes"
+                     class="span3
+                     input-append">
+              <button type="button" id="addScope" class="btn btn-success"><i class="icon-plus icon-white"></i></button>
+            </div>
           </div>
         </div>
+
         <div class="control-group">
           <label class="control-label">Thumbnail URL</label>
           <div class="controls">
@@ -237,10 +260,14 @@
           </div>
         </div>
         <div class="control-group">
-          <label for="clientScopes" class="control-label">Scopes (comma separated)</label>
+          <label for="clientScopes" class="control-label">Scopes</label>
           <div class="controls">
-            <input type="text" required="required" id="clientScopes" name="scopes" value="{{scopes}}"
-                   placeholder="read,write">
+
+            <select name="scopes" multiple="multiple" id="clientScopes">
+              {{#each scopes}}
+              <option selected="{{isSelected}}">{{scopeName}}</option>
+              {{/each}}
+            </select>
           </div>
         </div>
         <div class="control-group">
@@ -259,6 +286,23 @@
           <label class="control-label">Contact email address</label>
           <div class="controls">
             <input type="email" name="contactEmail" value="{{contactEmail}}" placeholder="john@doe.com">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Redirect URIs</label>
+          <div class="controls" id="redirectUrisHolder">
+            {{#each redirectUris}}
+            <div class="input multiple-fields">
+              <input type="url" name="redirectUri" size="16" class="input-append" value="{{uri}}">
+              <button type="button" class="btn removeRedirectUri"><i class="icon-trash"></i></button>
+            </div>
+            {{/each}}
+            <div class="input multiple-fields" id="newRedirectUri">
+              <input type="url" id="newRedirectUriField" name="redirectUri"
+                     placeholder="http://your-apps-uri/" size="16" class="input-append">
+              <button type="button" class="btn btn-success addRedirectUri"><i class="icon-plus icon-white"></i></button>
+            </div>
           </div>
         </div>
 
@@ -307,6 +351,20 @@
     <input class="span2" type="text" name="attributeValue" value="{{attributeValue}}">
     <button class="btn removeAttribute" type="button"><i class="icon-trash"></i></button>
   </div>
+</script>
+
+<script id="tplClientRedirectUri" type="text/x-handlebars-template">
+  <div class="input multiple-fields">
+    <input  type="text" name="redirectUri" value="{{uri}}">
+    <button class="btn removeRedirectUri" type="button"><i class="icon-trash"></i></button>
+  </div>
+</script>
+
+<script id="tplResourceServerScope" type="text/x-handlebars-template">
+  <tr>
+    <td>{{scope}}<input type="hidden" name="scopes" value="{{scope}}" /></td>
+    <td><a rel="tooltip" href="#" class="removeScope" data-original-title="remove"><i class="icon-trash"></i></a></td>
+  </tr>
 </script>
 
 </body>

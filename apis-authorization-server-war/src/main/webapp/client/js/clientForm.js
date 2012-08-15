@@ -30,6 +30,10 @@ var clientFormView = (function() {
       $(containerSelector).append(Template.get(templateId)(model));
       $(containerSelector).css("height", ""); // clear the fixed height
 
+
+      /*
+       Attributes
+      */
       // Remove attribute on click of delete-button (click on holder-div, delegated to button)
       $("div#attributesHolder").on("click", "button.removeAttribute", function() {
         $(this).closest("div").remove();
@@ -44,11 +48,30 @@ var clientFormView = (function() {
           attributeValue: $("#newAttributeValue").val()
         }));
 
-        // reset fields for new values.
+        // reset fields for new values and focus
         $("#newAttributeName").val("").focus();
         $("#newAttributeValue").val("");
-        // Focus on input field
       });
+
+      /*
+       Redirect URIs
+     */
+      // Remove attribute on click of delete-button (click on holder-div, delegated to button)
+      $("div#redirectUrisHolder").on("click", "button.removeRedirectUri", function() {
+        $(this).closest("div").remove();
+      });
+      // On click of the + button
+      $("button.addRedirectUri").on("click", function() {
+
+        // Save the state to the list of 'current' attributes
+        $("div#newRedirectUri").before(Template.get("tplClientRedirectUri")({
+          uri: $("#newRedirectUriField").val()
+        }));
+
+        // reset field for new value and focus.
+        $("#newRedirectUriField").val("").focus();
+      });
+
 
       $("#editClientForm button.cancel").click(function() {
         clientFormController.onCancel();
@@ -92,12 +115,17 @@ var clientFormController = (function() {
             if (client.attributes.hasOwnProperty(attributeName)) {
               rewrittenAttributes.push({
                 "attributeName": attributeName,
-                "attributeValue": attributeValue
+                "attributeValue": client.attributes[attributeName]
               });
-              client.attributeValue.push(client.attributes[attributeName]);
             }
           }
           client.attributes = rewrittenAttributes;
+
+          var redirecturisAsList = (client.redirectUris) ? client.redirectUris.split("\n") : [];
+          client.redirectUris = [];
+          $.each(redirecturisAsList, function(index, value) {
+            client.redirectUris.push({"uri": value});
+          });
           view.show(mode, client);
         });
       } else {
@@ -129,7 +157,6 @@ var clientFormController = (function() {
         }
       }
 
-
       var client = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,
         name: formAsObject['name'],
@@ -139,7 +166,8 @@ var clientFormController = (function() {
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
         thumbNailUrl: formAsObject['thumbNailUrl'],
-        attributes: attributes
+        attributes: attributes,
+        redirectUris:$.isArray(formAsObject['redirectUri']) ? formAsObject['redirectUri'].join("\n") : formAsObject['redirectUri']
       };
 
       data.saveClient(formAsObject['resourceServerId'], client, function(data) {
