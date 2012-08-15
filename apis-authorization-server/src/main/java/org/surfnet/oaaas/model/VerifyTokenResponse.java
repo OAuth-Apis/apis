@@ -29,10 +29,6 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
  * Representation of the answer to the a Resource Server when asked to verify
  * the token.
  * 
- * We don't use conversion of camelCase to snakeCase as this class is
- * potentially used by clients which have different dependencies where
- * JsonSnakeCase is ignored.
- * 
  */
 
 @SuppressWarnings("serial")

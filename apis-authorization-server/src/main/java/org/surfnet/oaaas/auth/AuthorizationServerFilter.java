@@ -136,7 +136,8 @@ public class AuthorizationServerFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    //TODO move to properties file, this will produce an environment specific war
+    // TODO move to properties file, this will produce an environment specific
+    // war
     // Only use filter config if parameters are present. Otherwise trust on
     // setters.
     if (filterConfig.getInitParameter("resource-server-key") != null) {
@@ -180,13 +181,20 @@ public class AuthorizationServerFilter implements Filter {
       throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
+    /*
+     * The Access Token from the Client app as documented in
+     * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-7
+     */
     final String accessToken = getAccessToken(request);
     if (accessToken == null) {
-      LOG.info("No accesstoken on request. Will respond with error response");
+      LOG.warn("No accesstoken on request. Will respond with error response");
       sendError(response, HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint requires valid access token");
       return;
     } else {
       VerifyTokenResponse tokenResponse = null;
+      /*
+       * Get the 'Validate Access Token' response from the Authorization Server either live or from the cache
+       */
       try {
         tokenResponse = cacheAccessTokens() ? cache.get(accessToken, getCallable(accessToken, response))
             : getVerifyTokenResponse(accessToken, response);
@@ -195,7 +203,9 @@ public class AuthorizationServerFilter implements Filter {
         sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot verify access token");
         return;
       }
-
+      /*
+       * The presence of the principal is the check to ensure that the access token is ok. 
+       */
       if (tokenResponse != null && tokenResponse.getPrincipal() != null) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
@@ -216,9 +226,8 @@ public class AuthorizationServerFilter implements Filter {
 
   protected VerifyTokenResponse getVerifyTokenResponse(String accessToken, final HttpServletResponse response) {
     ClientResponse res = client.resource(String.format("%s?access_token=%s", authorizationServerUrl, accessToken))
-                .header(HttpHeaders.AUTHORIZATION, "Basic " + authorizationValue)
-                .accept("application/json")
-                .get(ClientResponse.class);
+        .header(HttpHeaders.AUTHORIZATION, "Basic " + authorizationValue).accept("application/json")
+        .get(ClientResponse.class);
     /*
      * Can't use directly jersey, as we need the mr bean module
      */
@@ -229,8 +238,6 @@ public class AuthorizationServerFilter implements Filter {
       return new VerifyTokenResponse(e.getMessage());
     }
   }
-
- 
 
   protected void sendError(HttpServletResponse response, int statusCode, String reason) {
     try {
@@ -270,12 +277,7 @@ public class AuthorizationServerFilter implements Filter {
   public Cache<String, VerifyTokenResponse> getCache() {
     return cache;
   }
-//  /**
-//   * @return the objectMapper
-//   */
-//  public ObjectMapper getObjectMapper() {
-//    return objectMapper;
-//  }
+
   public void setAuthorizationServerUrl(String authorizationServerUrl) {
     this.authorizationServerUrl = authorizationServerUrl;
   }
@@ -287,6 +289,5 @@ public class AuthorizationServerFilter implements Filter {
   public void setResourceServerKey(String resourceServerKey) {
     this.resourceServerKey = resourceServerKey;
   }
-
 
 }
