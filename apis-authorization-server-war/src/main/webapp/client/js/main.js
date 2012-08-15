@@ -47,7 +47,8 @@ requirejs.config({
         'resourceServerForm',
         'resourceServerGrid',
         'clientForm',
-        'clientGrid'
+        'clientGrid',
+        'popoverBundle'
       ]
     }
   }

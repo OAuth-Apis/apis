@@ -153,12 +153,15 @@ $(function() {
   $('body').tooltip({
     selector: '[rel=tooltip]'
   });
+  
   $('body').popover({
     selector: '[rel=popover]',
-    title: function(elem) {
-    	var att = this.attributes;
-    	var name = att['name'];
-    	return 'aaa';
+    //See popoverBunble
+    title: function() {
+    	return popoverBundle.getTitle(this.attributes['name'].nodeValue);
+    },
+    content: function() {
+    	return popoverBundle.getContent(this.attributes['name'].nodeValue);
     }
   });
 
