@@ -53,7 +53,7 @@
     <div class="subcontent">
 	<div class="row">
 		<div class="span11 columns">
-			<p>The client app simulates a (native) application that uses the example Resource Server to access protected resources.</p>
+			<p>The client app simulates a (native) application that first obtaines an Access Token from the Authorization Server and then uses the example Resource Server to access protected resources.</p>
 		</div>
 	</div>
 

@@ -79,6 +79,19 @@ var data = (function() {
         }
       });
     },
+    deleteResourceServer: function(resourceServerId, success, failure) {
+      var httpMethod, url;
+      httpMethod = "DELETE";
+      url = "/admin/resourceServer/" + resourceServerId ;
+      oauthAjax({
+        url: url,
+        type: httpMethod,
+        success: success,
+        error: function(xhr, textStatus, errorThrown) {
+          failure(xhr.responseText);
+        }
+      });
+    },
 
     /**
      * Get all clients for all given resource servers.
@@ -162,6 +175,57 @@ var data = (function() {
           failure(xhr.responseText);
         }
       });
+    },
+    deleteClient: function(resourceServerId, clientId, success, failure) {
+
+      var httpMethod, url;
+      httpMethod = "DELETE";
+      url = "/admin/resourceServer/" + resourceServerId + "/client/" + clientId;
+      oauthAjax({
+        url: url,
+        type: httpMethod,
+        success: success,
+        error: function(xhr, textStatus, errorThrown) {
+          failure(xhr.responseText);
+        }
+      });
+    },
+    
+    /**
+     * Access token REST
+     */
+    getAccessToken: function(id, resultHandler) {
+      oauthAjax({
+        url:"/admin/accessToken/" + id,
+        success: resultHandler,
+        error: function() { // On failure, call result handler anyway, with empty result.
+          resultHandler({});
+        }
+      });
+    },
+    getAccessTokens:function (resultHandler) {
+      oauthAjax({
+        url:"/admin/accessToken",
+        success: resultHandler,
+        error: function() { // On failure, call result handler anyway, with empty result.
+          resultHandler([]);
+        }
+      });
+    },
+    deleteAccessToken: function(accessTokenId, success, failure) {
+
+      var httpMethod, url;
+      httpMethod = "DELETE";
+      url = "/admin/accessToken/" + accessTokenId;
+      oauthAjax({
+        url: url,
+        type: httpMethod,
+        success: success,
+        error: function(xhr, textStatus, errorThrown) {
+          failure(xhr.responseText);
+        }
+      });
     }
+    
   }
 })();

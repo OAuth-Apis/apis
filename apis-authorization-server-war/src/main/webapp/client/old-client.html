@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SURF OAuth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/style-additional.css" rel="stylesheet">
+
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+<div class="head">
+  <img src="img/surf-oauth.png"/>
+</div>
+<div class="main">
+  <div class="side-nav">
+    <ul>
+      <li class="side-nav-servers"><a id="nav-resource-servers" href="#resourceServerGrid">Resource Servers</a></li>
+      <li class="side-nav-apps"><a id="nav-clients-apps" href="#clientAppsGrid">Client Applications</a></li>
+      <li class="side-nav-keys"><a id="nav-access-token" href="#accessTokensGrid">Access Tokens</a></li>
+      <li class="side-nav-stats"><a href="#">Statistics</a></li>
+    </ul>
+  </div>
+  <div class="content" id="contentView">
+  </div>
+
+</div>
+
+<div class="foot">
+  <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
+</div>
+
+</body>
+</html>
+
+<script data-main="js/main" src="js/lib/require.js"></script>
+
+<script id="tplEditResourceServer" type="text/x-handlebars-template">
+  <div id="editResourceServer">
+    <div class="page-header">
+      <h1>{{formTitle}}</h1>
+    </div>
+    <form class="form-horizontal" id="editResourceServerForm">
+      <input type="hidden" name="id" value="{{id}}" />
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label">Server name</label>
+          <div class="controls">
+            <input type="text" name="name" value="{{name}}" placeholder="server name">
+			<i class="icon-question-sign icon-blue" rel="popover" name="resource-server-name"></i>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="description" class="control-label">Description</label>
+          <div class="controls">
+            <textarea rows="3" id="description" value="{{description}}" name="description" class="input"></textarea>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="newScopeField" class="control-label">Scopes</label>
+
+          <div class="controls" id="currentScopes">
+            {{#each scopes}}
+            <div class="input multiple-fields">
+              <input type="text" name="scopes" size="16" class="input-append" value="{{this}}">
+              <button type="button" class="btn removeScope"><i class="icon-trash"></i></button>
+            </div>
+            {{/each}}
+
+            <div class="input multiple-fields" id="newScope">
+              <input type="text" placeholder="scope" size="16" id="newScopeField" name="scopes"
+                     class="span3
+                     input-append">
+              <button type="button" id="addScope" class="btn btn-success"><i class="icon-plus icon-white"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Thumbnail URL</label>
+          <div class="controls">
+            <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact name</label>
+          <div class="controls">
+            <input type="text" name="contactName" value="{{contactName}}" placeholder="your name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact email address</label>
+          <div class="controls">
+            <input type="email" name="contactEmail" value="{{contactEmail}}" placeholder="john@doe.com">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="cancel btn">Cancel</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</script>
+
+
+<script id="tplResourceServerGrid" type="text/x-handlebars-template">
+  <div id="resourceServerGrid">
+
+  <a class="btn btn-small btn-primary pull-right" id="addServerButton" href="#">Add another server</a>
+  <h1>Resource servers</h1>
+  {{#if resourceServers}}
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th class="col-icon">Icon</th>
+            <th class="col-about">Resource server</th>
+            <th>Scopes</th>
+            <th>Client apps</th>
+            <th class="col-meta">About</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each resourceServers}}
+        <tr data-resourceServerId="{{id}}">
+            <td><a href="#" class="editResourceServer"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
+            <td><a class="editResourceServer" href="#">{{name}}</a><br>
+                {{description}}
+            </td>
+          <td>{{scopes}}</td>
+          <td></td>
+            <td>
+              <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+              <strong class="key-secret">Key <i data-original-title="Key and secret"
+                                                data-content="And here's some amazing content. It's very engaging. right?"
+                                                rel="popover" class="icon-question-sign"></i>:</strong> <a
+                title="On clicking '{{key}}' will be copied to you clipboard" rel="tooltip"
+                href="#">copy to clipboard</a><br>
+              <strong class="key-secret">Secret <i data-original-title="Key and secret"
+                                                   data-content="And here's some amazing content. It's very engaging. right?"
+                                                   rel="popover" class="icon-question-sign"></i>:</strong> <a
+                title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip"
+                href="#">copy to clipboard</a>
+            </td>
+          </tr>
+        {{/each}}
+        </tbody>
+    </table>
+  {{else}}
+    <p>No resource servers yet. <a id="noServersAddOne" href="#">Add one</a>.</p>
+	<p>After you have added a resource server, you can start adding client applications that actually do something with the protected resources of your resource server.
+  {{/if}}
+  </div>
+</script>
+<script id="tplAlert" type="text/x-handlebars-template">
+  <div class="alert">
+    <button class="close" data-dismiss="alert">×</button>
+    <strong>{{title}}!</strong> {{text}}
+  </div>
+</script>
+
+
+
+<script id="tplClientGrid" type="text/x-handlebars-template">
+  <div id="clientGrid" tabindex="100">
+    <a class="btn btn-small btn-primary pull-right" id="addClientButton" href="#">Add another client app</a>
+    <h1>Client applications</h1>
+    {{#if clients}}
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th class="col-icon">Icon</th>
+        <th class="col-about">Name</th>
+        <th>Client ID</th>
+        <th>Scopes</th>
+        <th class="col-meta">Credentials</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#each clients}}
+      <tr data-clientId="{{id}}" data-resourceServerId="{{resourceServer.id}}">
+        <td><a href="#" class="editClient"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
+        <td><a class="editClient" href="#">{{name}}</a><br>
+          {{description}}<br>
+          <strong>Connected to</strong> <a href="#">{{resourceServer.name}}</a>
+        </td>
+        <td>{{clientId}}</td>
+        <td>{{scopes}}</td>
+        <td>
+          <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+          <strong class="key-secret">Client ID <i data-original-title="Client ID and secret"
+                                            data-content="And here's some amazing content. It's very engaging. right?"
+                                            rel="popover" class="icon-question-sign"></i>:</strong> <a
+            title="On clicking '{{clientId}}' will be copied to you clipboard" rel="tooltip"
+            href="#">copy to clipboard</a><br>
+          <strong class="key-secret">Secret <i data-original-title="Key and secret"
+                                               data-content="And here's some amazing content. It's very engaging. right?"
+                                               rel="popover" class="icon-question-sign"></i>:</strong> <a
+            title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip"
+            href="#">copy to clipboard</a>
+        </td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p>No clients yet. <a id="noClientsAddOne" href="#">Add one</a>.</p>
+    {{/if}}
+  </div>
+</script>
+
+<script id="tplEditClient" type="text/x-handlebars-template">
+  <div id="editClient">
+    <div class="page-header">
+      <h1>{{formTitle}}</h1>
+    </div>
+    <form class="form-horizontal" id="editClientForm">
+      <input type="hidden" name="id" value="{{id}}" />
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label">Client name</label>
+          <div class="controls">
+            <input type="text" required="required" name="name" value="{{name}}" placeholder="client name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Resource Server</label>
+          <div class="controls">
+            {{#if availableResourceServers}}
+            <select required="required" name="resourceServerId" id="clientResourceServer">
+              {{#each availableResourceServers}}
+              <option value="{{id}}">{{name}}</option>
+              {{/each}}
+            </select>
+            {{else}}
+              <input type="hidden" name="resourceServerId" value="{{resourceServer.id}}">
+              <label class="control-label">{{resourceServer.name}}</label>
+            {{/if}}
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="clientDescription" class="control-label">Description</label>
+          <div class="controls">
+            <textarea rows="3" id="clientDescription" name="description" class="input">{{description}}</textarea>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Scopes</label>
+          <div class="controls" id="clientScopesHolder">
+            {{#each availableScopes}}
+            <label class="checkbox">
+              <input type="checkbox" value="{{scopeName}}" name="scopes"
+              {{#if currentlySelected}}checked="checked"{{/if}}>
+              {{scopeName}}
+            </label>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Thumbnail URL</label>
+          <div class="controls">
+            <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact name</label>
+          <div class="controls">
+            <input type="text" name="contactName" required="required" value="{{contactName}}" placeholder="your name">
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label">Contact email address</label>
+          <div class="controls">
+            <input type="email" name="contactEmail" value="{{contactEmail}}" placeholder="john@doe.com">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Redirect URIs</label>
+          <div class="controls" id="redirectUrisHolder">
+            {{#each redirectUris}}
+            <div class="input multiple-fields">
+              <input type="url" name="redirectUri" size="16" class="input-append" value="{{uri}}">
+              <button type="button" class="btn removeRedirectUri"><i class="icon-trash"></i></button>
+            </div>
+            {{/each}}
+            <div class="input multiple-fields" id="newRedirectUri">
+              <input type="url" id="newRedirectUriField" name="redirectUri"
+                     placeholder="http://your-apps-uri/" size="16" class="input-append">
+              <button type="button" class="btn btn-success addRedirectUri"><i class="icon-plus icon-white"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Additional attributes</label>
+          <div class="controls" id="attributesHolder">
+            {{#each attributes}}
+            <div class="input multiple-fields">
+              <input class="span2" type="text" name="attributeName" value="{{attributeName}}">
+              <input class="span2" type="text" name="attributeValue" value="{{attributeValue}}">
+              <button class="btn removeAttribute" type="button"><i class="icon-trash"></i></button>
+            </div>
+            {{/each}}
+            <div id="newAttribute" class="input multiple-fields">
+              <input class="span2" type="text" name="attributeName" id="newAttributeName" placeholder="key">
+              <input class="span2" type="text" name="attributeValue" id="newAttributeValue" placeholder="value">
+              <button type="button" class="btn btn-success addAttribute"><i class="icon-plus icon-white"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="cancel btn">Cancel</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</script>
+
+<script id="tplLanding" type="text/x-handlebars-template">
+  <div id="landing" class="hero-unit">
+    <h1>OAuth 2.0. But dead simple.</h1>
+    <p>Can you imagine getting an OAuth2 compliant Authorization Server <em>(and this client apparantly)</em> up in a matter of minutes? Wait and see. By the way, the Apis Authorization Server lets you authenticate against any possible backend of your choice.</p>
+    <p>
+      <a id="loginbutton" class="btn btn-primary btn-large">
+        Login
+      </a>
+    </p>
+  </div>
+</script>
+
+<script id="tplClientAttribute" type="text/x-handlebars-template">
+  <div class="input multiple-fields">
+    <input class="span2" type="text" name="attributeName" value="{{attributeName}}">
+    <input class="span2" type="text" name="attributeValue" value="{{attributeValue}}">
+    <button class="btn removeAttribute" type="button"><i class="icon-trash"></i></button>
+  </div>
+</script>
+
+<script id="tplClientRedirectUri" type="text/x-handlebars-template">
+  <div class="input multiple-fields">
+    <input  type="text" name="redirectUri" value="{{uri}}">
+    <button class="btn removeRedirectUri" type="button"><i class="icon-trash"></i></button>
+  </div>
+</script>
+
+<script id="tplResourceServerScope" type="text/x-handlebars-template">
+  <div class="input multiple-fields">
+    <input  type="text" name="redirectUri" value="{{scope}}">
+    <button class="btn removeScope" type="button"><i class="icon-trash"></i></button>
+  </div>
+</script>

@@ -21,7 +21,10 @@
  * Use as:
  *
  * var model = {"id":"123"};
- * Template.get("idOfTemplate")(model);
+ * Template.get(templateId, function(template) {
+ *       $(containerSelector).append(template(model));
+ *
+ * });
  *
  */
 var Template = (function() {
@@ -29,11 +32,22 @@ var Template = (function() {
 
   return {
 
-  get: function(name) {
-    if (!tplCache[name]) {
-      tplCache[name] = Handlebars.compile($("#" + name).html());
+  get: function(templateName, callback) {
+    if (!tplCache[templateName]) {
+      template = $("#" + templateName);
+      if (template.size() == 0) {
+        $.get("templates/" + templateName + ".html", function(data) {
+          tplCache[templateName] = Handlebars.compile(data);
+          callback(tplCache[templateName]);
+        });
+      } else {
+        tplCache[templateName] = Handlebars.compile(template.html());
+        callback(tplCache[templateName]);
+      }
+    } else {
+      callback(tplCache[templateName]);
     }
-    return tplCache[name];
+    //return tplCache[templateName];
   }
   }
 })();
@@ -49,7 +63,13 @@ var landingView = (function() {
       $(handleSelector).remove();
     },
     show: function() {
-      $(containerSelector).append(Template.get(templateId)());
+      Template.get(templateId, function(template) {
+        $(containerSelector).append(template());
+        $("a#loginbutton").click(function(){
+          windowController.login();
+          return false;
+        });
+      });
     }
   }
 })();
@@ -71,10 +91,6 @@ var windowController = {
 
   onLanding: function() {
     landingView.show();
-    $("a#loginbutton").click(function(){
-      windowController.login();
-      return false;
-    });
   },
   onLoggedIn: function() {
     // Refresh the data grid.
@@ -86,19 +102,31 @@ var windowController = {
       $("div.side-nav a").removeClass("cur");
       $(this).addClass("cur");
     });
+    
+    $("#nav-resource-servers").click(function() {
+    	windowController.refresh();
+    });
+
+    $("#nav-clients-apps").click(function() {
+      windowController.refresh();
+    });
+    
   },
 
   refresh: function() {
-    resourceServerGridController.show();
-    clientGridController.show();
+    resourceServerFormController.hide();
+    clientFormController.hide();
+    data.getResourceServers(function(resourceServers) {
+      resourceServerGridController.show(resourceServers);
+      clientGridController.show(resourceServers);
+    });
   },
 
   /**
    * Resource server events.
    */
   onCloseEditResourceServer: function() {
-    resourceServerGridController.show();
-    clientGridController.show();
+    this.refresh();
   },
   onEditResourceServer: function(id) {
     resourceServerGridController.hide();
@@ -109,6 +137,9 @@ var windowController = {
     resourceServerGridController.hide();
     clientGridController.hide();
     resourceServerFormController.show("add");
+  },
+  onDeleteResourceServer: function() {
+    this.refresh();
   },
 
   /**
@@ -125,8 +156,10 @@ var windowController = {
     clientFormController.show("add");
   },
   onCloseEditClient: function() {
-    resourceServerGridController.show();
-    clientGridController.show();
+     this.refresh();
+  },
+  onDeleteClient: function() {
+    this.refresh();
   },
 
 
@@ -165,6 +198,6 @@ $(function() {
     }
   });
 
-  // Initialisation of window controller.
+  // Initialization of window controller.
   windowController.onPageLoad();
 });

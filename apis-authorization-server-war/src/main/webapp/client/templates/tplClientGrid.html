@@ -1,0 +1,42 @@
+<div id="clientGrid" tabindex="100">
+  <a class="btn btn-small btn-primary pull-right" id="addClientButton" href="#">Add another client app</a>
+  <h1>Client applications</h1>
+  {{#if clients}}
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th class="col-icon">Icon</th>
+      <th class="col-about">Name</th>
+      <th>Client ID</th>
+      <th>Scopes</th>
+      <th class="col-meta">Credentials</th>
+      <th>Actions</th>
+      
+    </tr>
+    </thead>
+    <tbody>
+    {{#each clients}}
+    <tr data-clientId="{{id}}" data-resourceServerId="{{resourceServer.id}}">
+      <td><a href="#" class="editClient"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
+      <td><a class="editClient" href="#">{{name}}</a><br>
+        {{description}}<br>
+        <strong>Connected to</strong> <a href="#">{{resourceServer.name}}</a>
+      </td>
+      <td>{{clientId}}</td>
+      <td>{{scopes}}</td>
+      <td>
+        <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
+        <strong class="key-secret">Client ID <i rel="popover" class="icon-question-sign" name="client-key"></i>:</strong> 
+        <a class="copy-clipboard" id="{{clientId}}" title="On clicking '{{clientId}}' will be copied to you clipboard" rel="tooltip" href="#">copy to clipboard</a><br>
+        <strong class="key-secret">Secret <i rel="popover" class="icon-question-sign" name="client-secret"></i>:</strong> 
+        <a class="copy-clipboard" id="{{secret}}" title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip" href="#">copy to clipboard</a>
+      </td>
+      <td><a class="deleteClientButton btn btn-small btn-warning pull-right" href="#">Delete</a></td>
+    </tr>
+    {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p>No clients yet. <a id="noClientsAddOne" href="#">Add one</a>.</p>
+  {{/if}}
+</div>

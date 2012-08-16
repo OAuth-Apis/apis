@@ -28,17 +28,43 @@ var resourceServerGridView = (function() {
     },
 
     show: function(resourceServers) {
+      Template.get(templateId, function(template) {
+        $(containerSelector).append(template({resourceServers: resourceServers}));
+        $(containerSelector).css("height", ""); // clear the fixed height
 
-      $(containerSelector).append(Template.get(templateId)({resourceServers: resourceServers}));
-      $(containerSelector).css("height", ""); // clear the fixed height
-
-      $("#addServerButton,#noServersAddOne").click(function() {
-        windowController.onAddResourceServer();
-      });
-
-      $("a.editResourceServer").click(function(e) {
-        var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
-        windowController.onEditResourceServer(resourceServerId);
+        $("#addServerButton,#noServersAddOne").click(function() {
+          windowController.onAddResourceServer();
+        });
+        
+        $("a.editResourceServer").click(function(e) {
+          var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
+          windowController.onEditResourceServer(resourceServerId);
+        });
+        
+        $("a.deleteServerButton").click(function(e) {
+          var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
+          /**
+           * TODO
+            * This currently does not work as of Bootstrap css 
+            *          
+            *  bootbox.confirm("Are you sure you want to delete this Resource Server?", function(result) {        
+            *    if (result) {        
+            *      resourceServerGridController.onDelete(resourceServerId);    
+            *    }
+            */
+          if (confirm("Are you sure you want to delete this Resource Server?")) {
+            resourceServerGridController.onDelete(resourceServerId);   
+          }
+        });
+        /*
+         * TODO does not work
+         */
+        $("a.copy-clipboard").zclip({
+          path : "flash/ZeroClipboard.swf",
+          copy : function() {
+            return $(this).prop("id");
+          },
+        });
       });
 
     },
@@ -60,10 +86,19 @@ var resourceServerGridController = (function() {
   var view = resourceServerGridView;
 
   return {
-    show: function() {
-      // get list of resource servers. With this data, show the grid view.
-      data.getResourceServers(function(data) {
-        view.show(data);
+    show: function(resourceServers) {
+      // first hide to view to prevent multiple views displayed
+      view.hide();
+      view.show(resourceServers);
+    },
+    
+    onDelete: function(resourceServerId) {
+      data.deleteResourceServer(resourceServerId, function(data) {
+        console.log("resource server has been deleted.");
+        windowController.onDeleteResourceServer();
+      }, function (errorMessage) {
+        console.log("error while saving data: " + errorMessage);
+        view.showMessage("error", errorMessage);
       });
     },
 

@@ -1,0 +1,109 @@
+<div id="editClient">
+  <div class="page-header">
+    <h1>{{formTitle}}</h1>
+  </div>
+  <form class="form-horizontal" id="editClientForm">
+    <input type="hidden" name="id" value="{{id}}" />
+    <fieldset>
+      <div class="control-group">
+        <label class="control-label">Client name</label>
+        <div class="controls">
+          <input type="text" required="required" name="name" value="{{name}}" placeholder="client name">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Resource Server</label>
+        <div class="controls">
+          {{#if availableResourceServers}}
+          <select required="required" name="resourceServerId" id="clientResourceServer">
+            {{#each availableResourceServers}}
+            <option value="{{id}}">{{name}}</option>
+            {{/each}}
+          </select>
+          {{else}}
+            <input type="hidden" name="resourceServerId" value="{{resourceServer.id}}">
+            <label class="control-label">{{resourceServer.name}}</label>
+          {{/if}}
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="clientDescription" class="control-label">Description</label>
+        <div class="controls">
+          <textarea rows="3" id="clientDescription" name="description" class="input">{{description}}</textarea>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Scopes</label>
+        <div class="controls" id="clientScopesHolder">
+          {{#each availableScopes}}
+          <label class="checkbox">
+            <input type="checkbox" value="{{scopeName}}" name="scopes"
+            {{#if currentlySelected}}checked="checked"{{/if}}>
+            {{scopeName}}
+          </label>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Thumbnail URL</label>
+        <div class="controls">
+          <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Contact name</label>
+        <div class="controls">
+          <input type="text" name="contactName" required="required" value="{{contactName}}" placeholder="your name">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Contact email address</label>
+        <div class="controls">
+          <input type="email" name="contactEmail" required="required" value="{{contactEmail}}" placeholder="john@doe.com">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Redirect URIs</label>
+        <div class="controls" id="redirectUrisHolder">
+          {{#each redirectUris}}
+          <div class="input multiple-fields">
+            <input type="url" name="redirectUri" size="16" class="input-append" value="{{uri}}">
+            <button type="button" class="btn removeRedirectUri"><i class="icon-trash"></i></button>
+          </div>
+          {{/each}}
+          <div class="input multiple-fields" id="newRedirectUri">
+            <input type="url" id="newRedirectUriField" name="redirectUri"
+                   placeholder="http://your-apps-uri/" size="16" class="input-append">
+            <button type="button" class="btn btn-success addRedirectUri"><i class="icon-plus icon-white"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Additional attributes</label>
+        <div class="controls" id="attributesHolder">
+          {{#each attributes}}
+          <div class="input multiple-fields">
+            <input class="span2" type="text" name="attributeName" value="{{attributeName}}">
+            <input class="span2" type="text" name="attributeValue" value="{{attributeValue}}">
+            <button class="btn removeAttribute" type="button"><i class="icon-trash"></i></button>
+          </div>
+          {{/each}}
+          <div id="newAttribute" class="input multiple-fields">
+            <input class="span2" type="text" name="attributeName" id="newAttributeName" placeholder="key">
+            <input class="span2" type="text" name="attributeValue" id="newAttributeValue" placeholder="value">
+            <button type="button" class="btn btn-success addAttribute"><i class="icon-plus icon-white"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <button type="button" class="cancel btn">Cancel</button>
+      </div>
+    </fieldset>
+  </form>
+</div>

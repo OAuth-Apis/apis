@@ -27,67 +27,70 @@ var clientFormView = (function() {
       var model = client || {}; // empty in case of new one
 
       model.formTitle = (mode == "add")?"Add client app" : "Edit client app";
-      $(containerSelector).append(Template.get(templateId)(model));
-      $(containerSelector).css("height", ""); // clear the fixed height
+      Template.get(templateId, function(template) {
+        $(containerSelector).append(template(model));
+        $(containerSelector).css("height", ""); // clear the fixed height
 
-      $("select#clientResourceServer").on("change", function() {
-        clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
-      });
+        $("select#clientResourceServer").on("change", function() {
+          clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
+        });
+
+        if (mode == "new") {
+          // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.
+          clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
+        }
+        /*
+         Attributes
+        */
+        // Remove attribute on click of delete-button (click on holder-div, delegated to button)
+        $("div#attributesHolder").on("click", "button.removeAttribute", function() {
+          $(this).closest("div").remove();
+        });
+
+        // On click of the + button
+        $("button.addAttribute").on("click", function() {
+
+          // Save the state to the list of 'current' attributes
+          Template.get("tplClientAttribute", function(template) {
+            $("div#newAttribute").before(template({
+              attributeName: $("#newAttributeName").val(),
+              attributeValue: $("#newAttributeValue").val()
+            }));
+            // reset fields for new values and focus
+            $("#newAttributeName").val("").focus();
+            $("#newAttributeValue").val("");
+          });
+        });
+
+        /*
+         Redirect URIs
+       */
+        // Remove attribute on click of delete-button (click on holder-div, delegated to button)
+        $("div#redirectUrisHolder").on("click", "button.removeRedirectUri", function() {
+          $(this).closest("div").remove();
+        });
+        // On click of the + button
+        $("button.addRedirectUri").on("click", function() {
+          // Save the state to the list of 'current' attributes
+          Template.get("tplClientRedirectUri", function(template) {
+            $("div#newRedirectUri").before(template({
+              uri: $("#newRedirectUriField").val()
+            }));
+            // reset field for new value and focus.
+            $("#newRedirectUriField").val("").focus();
+          });
+        });
 
 
-      if (mode == "new") {
-        // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.
-        clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
-      }
-      /*
-       Attributes
-      */
-      // Remove attribute on click of delete-button (click on holder-div, delegated to button)
-      $("div#attributesHolder").on("click", "button.removeAttribute", function() {
-        $(this).closest("div").remove();
-      });
+        $("#editClientForm button.cancel").click(function() {
+          clientFormController.onCancel();
+        });
 
-      // On click of the + button
-      $("button.addAttribute").on("click", function() {
+        $("#editClientForm").submit(function() {
+          clientFormController.onSubmit(this);
+          return false; // prevent default submit
+        });
 
-        // Save the state to the list of 'current' attributes
-        $("div#newAttribute").before(Template.get("tplClientAttribute")({
-          attributeName: $("#newAttributeName").val(),
-          attributeValue: $("#newAttributeValue").val()
-        }));
-
-        // reset fields for new values and focus
-        $("#newAttributeName").val("").focus();
-        $("#newAttributeValue").val("");
-      });
-
-      /*
-       Redirect URIs
-     */
-      // Remove attribute on click of delete-button (click on holder-div, delegated to button)
-      $("div#redirectUrisHolder").on("click", "button.removeRedirectUri", function() {
-        $(this).closest("div").remove();
-      });
-      // On click of the + button
-      $("button.addRedirectUri").on("click", function() {
-
-        // Save the state to the list of 'current' attributes
-        $("div#newRedirectUri").before(Template.get("tplClientRedirectUri")({
-          uri: $("#newRedirectUriField").val()
-        }));
-
-        // reset field for new value and focus.
-        $("#newRedirectUriField").val("").focus();
-      });
-
-
-      $("#editClientForm button.cancel").click(function() {
-        clientFormController.onCancel();
-      });
-
-      $("#editClientForm").submit(function() {
-        clientFormController.onSubmit(this);
-        return false; // prevent default submit
       });
     },
 
@@ -114,11 +117,13 @@ var clientFormView = (function() {
 
     showMessage: function(type, text) {
       if (type == "error")
-        var html = Template.get("tplAlert")({
-          title: type == "error" ? "Error" : "Notice",
-          text: text
+        Template.get("tplAlert", function(template) {
+          $("form#editClientForm").prepend(template({
+            title: type == "error" ? "Error" : "Notice",
+                text: text
+              }));
         });
-      $("form#editClientForm").prepend(html);
+
     }
   }
 })();
@@ -251,6 +256,10 @@ var clientFormController = (function() {
     onCancel: function() {
       view.hide();
       windowController.onCloseEditClient();
+    },
+    
+    hide: function() {
+      view.hide();
     }
   }
 })();

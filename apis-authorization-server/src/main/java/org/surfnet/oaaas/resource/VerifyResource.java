@@ -70,13 +70,15 @@ public class VerifyResource {
   String accessToken) {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
-    if (!credentialsValid(credentials)) {
+    
+    ResourceServer resourceServer = getResourceServer(credentials);
+    if (resourceServer  == null || resourceServer.getSecret().equals(credentials.getPassword() )) {
       LOG.warn("Responding with 401 in VerifyResource#verifyToken for user {}", credentials);
       return unauthorized();
     }
 
     AccessToken token = accessTokenRepository.findByToken(accessToken);
-    if (token == null) {
+    if (token == null || !resourceServer.containsClient(token.getClient())) {
       LOG.warn("Responding with 404 in VerifyResource#verifyToken for user {}", credentials);
       return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
     }
@@ -96,11 +98,9 @@ public class VerifyResource {
     return token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis();
   }
 
-  private boolean credentialsValid(UserPassCredentials credentials) {
+  private ResourceServer getResourceServer(UserPassCredentials credentials) {
     String key = credentials.getUsername();
-    ResourceServer resourceServer = resourceServerRepository.findByKey(key);
-    String secret = credentials.getPassword();
-    return resourceServer != null && resourceServer.getSecret().equals(secret);
+    return resourceServerRepository.findByKey(key);
   }
 
   protected Response unauthorized() {

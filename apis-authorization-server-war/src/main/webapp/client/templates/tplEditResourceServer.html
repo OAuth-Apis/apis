@@ -1,0 +1,72 @@
+<div id="editResourceServer">
+  <div class="page-header">
+    <h1>{{formTitle}}</h1>
+  </div>
+  <form class="form-horizontal" id="editResourceServerForm">
+    <input type="hidden" name="id" value="{{id}}" />
+    <fieldset>
+      <div class="control-group">
+        <label class="control-label">Server name</label>
+        <div class="controls">
+          <input type="text" name="name" required="required" value="{{name}}" placeholder="server name">
+		  <i class="icon-question-sign icon-blue" rel="popover" name="resource-server-name"></i>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="description" class="control-label">Description</label>
+        <div class="controls">
+          <textarea rows="3" id="description" value="{{description}}" name="description" class="input"></textarea>
+		  <i class="icon-question-sign icon-blue" rel="popover" name="resource-server-description"></i>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="newScopeField" class="control-label">Scopes</label>
+
+        <div class="controls" id="currentScopes">
+          {{#each scopes}}
+          <div class="input multiple-fields">
+            <input type="text" name="scopes" size="16" class="input-append" value="{{this}}">
+            <button type="button" class="btn removeScope"><i class="icon-trash"></i></button>
+          </div>
+          {{/each}}
+
+          <div class="input multiple-fields" id="newScope">
+            <input type="text" placeholder="scope" size="16" id="newScopeField" name="scopes"
+                   class="span3
+                   input-append">
+            <button type="button" id="addScope" class="btn btn-success"><i class="icon-plus icon-white"></i></button>
+            <i class="icon-question-sign icon-blue" rel="popover" name="resource-server-scope"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Thumbnail URL</label>
+        <div class="controls">
+          <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
+          <i class="icon-question-sign icon-blue" rel="popover" name="resource-server-thumbNailUrl"></i>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Contact name</label>
+        <div class="controls">
+          <input type="text" name="contactName" required="required" value="{{contactName}}" placeholder="your name">
+          <i class="icon-question-sign icon-blue" rel="popover" name="resource-server-contactName"></i>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Contact email address</label>
+        <div class="controls">
+          <input type="email" name="contactEmail" required="required" value="{{contactEmail}}" placeholder="john@doe.com">
+          <i class="icon-question-sign icon-blue" rel="popover" name="resource-server-contactEmail"></i>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <button type="button" class="cancel btn">Cancel</button>
+      </div>
+    </fieldset>
+  </form>
+</div>

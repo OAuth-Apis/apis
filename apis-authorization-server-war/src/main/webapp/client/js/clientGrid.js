@@ -20,7 +20,7 @@ var clientGridView = (function() {
   var containerSelector = "#contentView";
   var handleSelector = "#clientGrid";
 
-
+  
 
 
   return {
@@ -31,18 +31,28 @@ var clientGridView = (function() {
     },
 
     show: function(clients) {
+      Template.get(templateId, function(template) {
+        $(containerSelector).append(template({clients: clients}));
+        $(containerSelector).css("height", ""); // clear the fixed height
 
-      $(containerSelector).append(Template.get(templateId)({clients: clients}));
-      $(containerSelector).css("height", ""); // clear the fixed height
+        $("#addClientButton,#noClientsAddOne").click(function() {
+          windowController.onAddClient();
+        });
 
-      $("#addClientButton,#noClientsAddOne").click(function() {
-        windowController.onAddClient();
-      });
+        $("a.editClient").click(function(e) {
+          var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
+          var clientId = $(e.target).closest("tr").attr("data-clientId");
+          windowController.onEditClient(resourceServerId, clientId);
+        });
+        
+        $("a.deleteClientButton").click(function(e) {
+          var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
+          var clientId = $(e.target).closest("tr").attr("data-clientId");
+          if (confirm("Are you sure you want to delete this Client?")) {
+            clientGridController.onDelete(resourceServerId, clientId);   
+          }
+        });
 
-      $("a.editClient").click(function(e) {
-        var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
-        var clientId = $(e.target).closest("tr").attr("data-clientId");
-        windowController.onEditClient(resourceServerId, clientId);
       });
 
     },
@@ -65,24 +75,35 @@ var clientGridController = (function() {
   var view = clientGridView;
 
   return {
-    show: function() {
+    show: function(resourceServers) {
+      // first hide to view to prevent multiple views displayed
+      view.hide();
+      
+      // with the resourceServers, query each of them for all their clients.
 
-      // get list of resource servers. With this data, query each of them for all their clients.
-      data.getResourceServers(function(resourceServers) {
+      var resourceServersByIds = {};
+      $(resourceServers).each(function(i, resourceServer) {
+        resourceServersByIds[resourceServer.id] = resourceServer;
+      })
 
-        var resourceServersByIds = {};
-        $(resourceServers).each(function(i, resourceServer) {
-          resourceServersByIds[resourceServer.id] = resourceServer;
-        })
-
-        data.getClientsForResourceServers(Object.keys(resourceServersByIds), function(data) {
-          $(data).each(function(i, client) {
-            client.resourceServer = resourceServersByIds[client.resourceServerId];
-          });
-          view.show(data);
+      data.getClientsForResourceServers(Object.keys(resourceServersByIds), function(data) {
+        $(data).each(function(i, client) {
+          client.resourceServer = resourceServersByIds[client.resourceServerId];
         });
+        view.show(data);
       });
     },
+    
+    onDelete: function(resourceServerId, clientId) {
+      data.deleteClient(resourceServerId, clientId, function(data) {
+        console.log("client has been deleted.");
+        windowController.onDeleteClient();
+      }, function (errorMessage) {
+        console.log("error while saving data: " + errorMessage);
+        view.showMessage("error", errorMessage);
+      });
+    },
+
 
     hide: view.hide,
     focus: view.focus,

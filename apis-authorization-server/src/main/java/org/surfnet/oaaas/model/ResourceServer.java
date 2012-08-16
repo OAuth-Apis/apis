@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -189,5 +190,14 @@ public class ResourceServer extends AbstractEntity {
    */
   @Override
   public void validate() {
+  }
+  
+  /**
+   * 
+   * @param client the Client
+   * @return if the Client is part of this ResourceServer
+   */
+  public boolean containsClient(Client client) {
+    return CollectionUtils.isEmpty(clients) ? false : clients.contains(client);
   }
 }

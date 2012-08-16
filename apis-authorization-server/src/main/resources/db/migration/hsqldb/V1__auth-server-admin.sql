@@ -1,13 +1,14 @@
-INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, scopes, secret )
+INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, scopes, secret, thumbNailUrl )
 VALUES
-	(99999, 'foo@university.org','foo.bar','university-foo','university-foo','read','58b749f7-acb3-44b7-a38c-53d5ad740cf6');
+	(99999, 'foo@university.org','foo.bar','university-foo','university-foo','read','58b749f7-acb3-44b7-a38c-53d5ad740cf6',
+	'http://yourimagehost.com/is.php?i=52124&img=P1060355.JPG');
 
 INSERT INTO client (id, clientId, contactEmail, contactName, description, expireDuration, 
 					name, redirectUris, scopes, secret, skipConsent, thumbNailUrl, 
 					useRefreshTokens, resourceserver_id)
 VALUES
     (99999, 'cool_app_id', 'client@coolapp.com', 'john.doe', 'Cool app for doing awesome things', 0,
-    'cool-app', 'http://localhost:8084/redirect', 'read', 'secret', 0, 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif', 
+    'cool-app', 'http://localhost:8084/redirect', 'read', 'secret', 0, 'http://startyourownsmallbiz.com/wp-content/uploads/2012/04/iphone-apps.jpg', 
     0, 99999);
 /*
 emma.blunt
@@ -26,7 +27,7 @@ Local administration application
 INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, secret, scopes, owner, thumbNailUrl)
 VALUES
 	(99998, 'localadmin@example.com','local admin','Authorization Server Apis',
-	'authorization-server-admin', 'cafebabe-cafe-babe-cafe-babecafebabe', 'read', null, 'http://www.aldokkan.com/religion/apis.jpg');
+	'authorization-server-admin', 'cafebabe-cafe-babe-cafe-babecafebabe', 'read', null, 'http://t1.gstatic.com/images?q=tbn:ANd9GcSnOLLzxcshwfjmNc2goWd-0-mR0Okn_NK83lLNhc3ocGDYy4OX');
 
 	
 INSERT INTO client (id, contactEmail, contactName, description, name, scopes, thumbNailUrl, resourceserver_id,
@@ -34,7 +35,7 @@ clientId, secret)
 VALUES
     (99998, 'client@coolapp.com', 'john.doe', 'Javascript application for authorization server administration',
     'Authorization Server Admin Client', 'read,write',
-    'http://www.artyfactory.com/egyptian_art/egyptian_gods/images/apis.jpg', 99998,
+    'http://apis.paradigma.net/img/apis_logo_trans.png', 99998,
     'authorization-server-admin-js-client', '');
 
 /*

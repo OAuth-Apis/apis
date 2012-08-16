@@ -56,48 +56,50 @@ var resourceServerFormView = (function() {
       var model = resourceServer || {}; // empty in case of new one
 
       model.formTitle = (mode == "add")?"Add resource server" : "Edit resource server";
-      $(containerSelector).append(Template.get(templateId)(model));
-      $(containerSelector).css("height", ""); // clear the fixed height
+      Template.get(templateId, function(template) {
+        $(containerSelector).append(template(model));
+        $(containerSelector).css("height", ""); // clear the fixed height
+
+        /*
+         Scopes
+         */
+        // Remove attribute on click of delete-button (click on holder-div, delegated to button)
+        $("div#currentScopes").on("click", "button.removeScope", function() {
+          $(this).closest("div").remove();
+          return false;
+        });
+        // On click of the + button
+        $("button#addScope").on("click", function() {
+          // Save the state to the list of 'current' scopes
+          Template.get("tplResourceServerScope", function(template) {
+            $("div#newScope").before(template({
+              scope: $("#newScopeField").val()
+            }));
+            // reset field for new value and focus.
+            $("#newScopeField").val("").focus();
+          });
+        });
 
 
-      /*
-       Scopes
-       */
-      // Remove attribute on click of delete-button (click on holder-div, delegated to button)
-      $("div#currentScopes").on("click", "button.removeScope", function() {
-        $(this).closest("div").remove();
-        return false;
+        $("div#currentScopes").one("change", "input", function() { // Mind you, we use a "one" event handler. Runs only once per form.
+          $("<div />")
+              .addClass("alert fade in")
+              .append($('<button class="close" data-dismiss="alert" type="button">x</button>'))
+              .append("Changing existing scopes might have effect on configured client apps. Make sure all client app configurations reflect the changes made here.")
+              .prependTo("div#currentScopes");
+        });
+
+
+        $("#editResourceServerForm button.cancel").click(function() {
+          resourceServerFormController.onCancel();
+        });
+
+        $("#editResourceServerForm").submit(function() {
+          resourceServerFormController.onSubmit(this);
+          return false; // prevent default submit
+        });
       });
-      // On click of the + button
-      $("button#addScope").on("click", function() {
-        // Save the state to the list of 'current' scopes
-        $("div#newScope").before(Template.get("tplResourceServerScope")({
-          scope: $("#newScopeField").val()
-        }));
 
-
-        // reset field for new value and focus.
-        $("#newScopeField").val("").focus();
-      });
-
-
-      $("div#currentScopes").one("change", "input", function() { // Mind you, we use a "one" event handler. Runs only once per form.
-        $("<div />")
-            .addClass("alert fade in")
-            .append($('<button class="close" data-dismiss="alert" type="button">x</button>'))
-            .append("Changing existing scopes might have effect on configured client apps. Make sure all client app configurations reflect the changes made here.")
-            .prependTo("div#currentScopes");
-      });
-
-
-      $("#editResourceServerForm button.cancel").click(function() {
-        resourceServerFormController.onCancel();
-      });
-
-      $("#editResourceServerForm").submit(function() {
-        resourceServerFormController.onSubmit(this);
-        return false; // prevent default submit
-      });
     },
     hide: function() {
       $(containerSelector).css("height", $(containerSelector).height()); // set a fixed height to prevent wild swapping of the footer
@@ -105,12 +107,14 @@ var resourceServerFormView = (function() {
     },
 
     showMessage: function(type, text) {
-      if (type == "error")
-        var html = Template.get("tplAlert")({
-          title: type == "error" ? "Error" : "Notice",
-          text: text
+      if (type == "error") { 
+        Template.get("tplAlert", function(template) {
+          $("form#editResourceServerForm").prepend(template({
+            title: type == "error" ? "Error" : "Notice",
+            text: text
+          }));
         });
-      $("form#editResourceServerForm").prepend(html);
+      }  
     }
   }
 })();
@@ -158,6 +162,10 @@ var resourceServerFormController = (function() {
     onCancel: function() {
       view.hide();
       windowController.onCloseEditResourceServer();
+    },
+    
+    hide: function() {
+      view.hide();
     }
   }
 })();

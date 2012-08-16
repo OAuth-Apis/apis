@@ -32,6 +32,14 @@ requirejs.config({
       deps: ['lib/jquery']
     },
 
+    'lib/jquery.zclip': {
+      deps: ['lib/jquery']
+    },
+
+    'lib/bootbox.min': {
+      deps: ['lib/bootstrap']
+    },
+
     'data': {
       deps: [
         'lib/jquery'
@@ -48,7 +56,9 @@ requirejs.config({
         'resourceServerGrid',
         'clientForm',
         'clientGrid',
-        'popoverBundle'
+        'popoverBundle',
+        'lib/jquery.zclip',
+        'lib/bootbox.min'
       ]
     }
   }

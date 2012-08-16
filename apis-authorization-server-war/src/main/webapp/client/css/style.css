@@ -3201,7 +3201,8 @@ h1 {
 
 .content {
   margin-left: 200px;
-  padding: 25px 50px;
+  min-height: 200px;
+  padding: 25px 50px 45px;
   border-left: 1px solid #efefef;
 }
 

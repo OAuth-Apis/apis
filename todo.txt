@@ -1,8 +1,11 @@
 MUST:
 - GUI finished
+	- Add tooltips in the GUI for info about the attributes
+	- Delete client and resource server (with confirmation)
+	- Fix $("a.copy-clipboard").zclip({ to work
+	- 
 - Documentation overall and README.md per submodule
 - Document how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
-- Add tooltips in the GUI for info about the attributes
 - Refactor scopes and redirect-uri to seperate tables
 
 NICE:
