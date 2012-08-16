@@ -31,24 +31,25 @@ var Template = (function() {
   var tplCache = [];
 
   return {
-
-  get: function(templateName, callback) {
-    if (!tplCache[templateName]) {
-      template = $("#" + templateName);
-      if (template.size() == 0) {
-        $.get("templates/" + templateName + ".html", function(data) {
-          tplCache[templateName] = Handlebars.compile(data);
+    /**
+     * We support both inline templates as external templates 
+     */
+    get: function(templateName, callback) {
+      if (!tplCache[templateName]) {
+        template = $("#" + templateName);
+        if (template.size() == 0) {
+          $.get("templates/" + templateName + ".html", function(data) {
+            tplCache[templateName] = Handlebars.compile(data);
+            callback(tplCache[templateName]);
+          });
+        } else {
+          tplCache[templateName] = Handlebars.compile(template.html());
           callback(tplCache[templateName]);
-        });
+        }
       } else {
-        tplCache[templateName] = Handlebars.compile(template.html());
         callback(tplCache[templateName]);
       }
-    } else {
-      callback(tplCache[templateName]);
     }
-    //return tplCache[templateName];
-  }
   }
 })();
 
@@ -108,6 +109,9 @@ var windowController = {
     });
 
     $("#nav-clients-apps").click(function() {
+      /*
+       * TODO scroll/animate to the start of the client section, but to be done after ajax calls
+       */
       windowController.refresh();
     });
     
@@ -128,16 +132,19 @@ var windowController = {
   onCloseEditResourceServer: function() {
     this.refresh();
   },
+  
   onEditResourceServer: function(id) {
     resourceServerGridController.hide();
     clientGridController.hide();
     resourceServerFormController.show("edit", id);
   },
+  
   onAddResourceServer: function() {
     resourceServerGridController.hide();
     clientGridController.hide();
     resourceServerFormController.show("add");
   },
+  
   onDeleteResourceServer: function() {
     this.refresh();
   },
@@ -150,14 +157,17 @@ var windowController = {
     clientGridController.hide();
     clientFormController.show("edit", resourceServerId, clientId);
   },
+  
   onAddClient: function() {
     resourceServerGridController.hide();
     clientGridController.hide();
     clientFormController.show("add");
   },
+  
   onCloseEditClient: function() {
      this.refresh();
   },
+  
   onDeleteClient: function() {
     this.refresh();
   },
@@ -189,7 +199,7 @@ $(function() {
   
   $('body').popover({
     selector: '[rel=popover]',
-    //See popoverBunble
+    //See popoverBundle.js
     title: function() {
     	return popoverBundle.getTitle(this.attributes['name'].nodeValue);
     },

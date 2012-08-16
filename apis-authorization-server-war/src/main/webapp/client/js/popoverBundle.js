@@ -36,7 +36,6 @@ var popoverBundle = (function() {
     getContent: function(name) {
       return bundle[name][1];
     }
-    
 
   }
 })();
