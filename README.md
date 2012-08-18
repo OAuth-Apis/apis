@@ -150,13 +150,13 @@ The Authorization Server is wired up using a Spring configuration. The class `or
 
 In real life deployment you will need to provide the authorization server with an external apis.application.properties file. We have not put this into the war file as you would end up with an environment specific war application.The apis.application.properties file contains all environment specific variables like database settings and the authentication implementation:
 
-```java
+<pre>
 # The authentication module
 authenticatorClass=org.surfnet.oaaas.authentication.FormLoginAuthenticator
 
 # The user consent module
 userConsentHandlerClass=org.surfnet.oaaas.consent.FormUserConsentHandler
-```
+</pre>
 If you would prefer a different approach you can override the `org.surfnet.oaaas.config.SpringConfiguration` and implement your own logic to wire your Authentication implementation:
 
 ```java
@@ -187,6 +187,19 @@ You can use the exposed REST interface of the ResourceServerResource and ClientR
     PUT     /admin/resourceServer/123/client
     POST    /admin/resourceServer/123/client/{clientId}
     DELETE  /admin/resourceServer/123//client/{clientId}
+
+While we were working on the JavaScript Admin client included in the Authorization Server war we disabled locally the login and consent to speed up the local feedback cycle when developing in 'jetty-modus':
+
+<pre>
+# The authentication module
+# authenticatorClass=org.surfnet.oaaas.authentication.FormLoginAuthenticator
+authenticatorClass=org.surfnet.oaaas.noop.NoopAuthenticator
+
+# The user consent module
+# userConsentHandlerClass=org.surfnet.oaaas.consent.FormUserConsentHandler
+userConsentHandlerClass=org.surfnet.oaaas.noop.NoopUserConsentHandler
+	
+</pre>	
 
 ### Tests
 
