@@ -7,7 +7,7 @@ The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can
 - An OAuth2 Authorization Server compliant with [the draft v2-31 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-31)
   * Pluggable authentication and userConsent handling (with default implementations provided)
   * Support for authorization code and implicit grant
-  * Implementation of a Filter to be used in Resource Servers for all required communication with the Authorization Server
+  * Implementation of a Java Filter to be used in Resource Servers for all required communication with the Authorization Server
   * GUI included for the registration of Resource Servers and Client apps
 
 - Two OAuth2 demo Resource Servers
@@ -172,7 +172,7 @@ public AbstractAuthenticator authenticator() {
 }
 ```
 
-### The GUI
+### The REST interface to build your own GUI
 
 You can use the exposed REST interface of the ResourceServerResource and ClientResource to build your own GUI. The following URLs are available for a custom registration interface:
 
@@ -188,6 +188,9 @@ You can use the exposed REST interface of the ResourceServerResource and ClientR
     POST    /admin/resourceServer/123/client/{clientId}
     DELETE  /admin/resourceServer/123//client/{clientId}
 
+TODO add access token urls
+TODO explain where the key-secret can be configured
+
 While we were working on the JavaScript Admin client included in the Authorization Server war we disabled locally the login and consent to speed up the local feedback cycle when developing in 'jetty-modus':
 
 <pre>
@@ -200,6 +203,10 @@ authenticatorClass=org.surfnet.oaaas.noop.NoopAuthenticator
 userConsentHandlerClass=org.surfnet.oaaas.noop.NoopUserConsentHandler
 	
 </pre>	
+
+### SURFConext Authn Authenticator
+
+TODO add documentation
 
 ### Tests
 
