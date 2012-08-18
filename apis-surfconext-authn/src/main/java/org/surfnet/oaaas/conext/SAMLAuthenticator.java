@@ -68,7 +68,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     super.init(filterConfig);
 
     try {
-      final Properties properties = PropertiesLoaderUtils.loadAllProperties("conext.properties");
+      final Properties properties = PropertiesLoaderUtils.loadAllProperties("surfconext.authn.properties");
       openSAMLContext = new OpenSAMLContext(properties, new SAMLProvisioner());
 
       ssoUrl = properties.getProperty("ssoUrl", "no-property-named-ssoUrl");

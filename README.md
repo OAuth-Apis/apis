@@ -207,6 +207,7 @@ userConsentHandlerClass=org.surfnet.oaaas.noop.NoopUserConsentHandler
 ### SURFConext Authn Authenticator
 
 TODO add documentation
+TODO explain /apis-authorization-server-war/src/test/resources/surfconext.authn.properties and how to install on premise
 
 ### Tests
 
