@@ -1,8 +1,9 @@
 MUST:
+- Consistent scope between client = resource server force when updating scopes resource server (SERVER SIDE VALIDATION)
 - GUI finished
 	- Add tooltips in the GUI for info about all the attributes
 	- Delete client and resource server need different -styled- confirmation
-	- Fix $("a.copy-clipboard").zclip( to work
+	- Remove $("a.copy-clipboard").zclip and do normal control copy by user
 	- Add Access Tokens readonly and delete views
 - Documentation overall and README.md per submodule (especially surfconext-authn)
 - Document how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
@@ -11,7 +12,5 @@ MUST:
 NICE:
 - ClientResource and ResourceServerResource must debug log all activity
 - Document OAuth2Validator to explain or comply to spec compliance
-- Performance JMeter tests
-- Support for MAC Access Token Type http://tools.ietf.org/html/draft-ietf-oauth-v2-http-mac-01
 
 
