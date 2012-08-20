@@ -18,13 +18,15 @@
  */
 package org.surfnet.oaaas.model;
 
-import static org.junit.Assert.assertEquals;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test for validation of Client
@@ -34,13 +36,17 @@ public class ClientTest extends AbstractEntityTest {
 
   @Test
   public void testValidation() {
+    final List<String> uris = Arrays.asList("uri1", "uri2");
+
     Client client = new Client();
     client.setName("not-null");
     client.setClientId("not-null");
     client.setUseRefreshTokens(true);
     client.setExpireDuration(60 * 60);
+    client.setRedirectUris(uris);
     Set<ConstraintViolation<Client>> violations = validator.validate(client);
     assertEquals(0, violations.size());
+    assertEquals(uris, client.getRedirectUris());
   }
 
 }

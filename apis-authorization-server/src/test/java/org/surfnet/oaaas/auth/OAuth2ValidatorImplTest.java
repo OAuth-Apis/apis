@@ -18,11 +18,12 @@
  */
 package org.surfnet.oaaas.auth;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
@@ -30,7 +31,9 @@ import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link Test} for {@link OAuth2ValidatorImpl}
@@ -125,13 +128,48 @@ public class OAuth2ValidatorImplTest {
   public void testValidateRedirectUri() {
     request.setRedirectUri("qwert://no-valid-url");
     validate(ValidationResponse.REDIRCT_URI_NOT_URI);
+
+  }
+
+  @Test
+  public void determineRedirectUri() {
+    request.setRedirectUri("http://gothere.nl");
+    validator.determineRedirectUri(request, "code", createClient("clientId"));
+    validate(ValidationResponse.VALID);
+
+  }
+
+  @Test
+  public void implicitGrantNoRedirectGivenShouldUseDefault() {
+    Client client = createClient("any");
+    final String uri = "http://implicit-grant-uri/";
+    request.setRedirectUri("");
+    client.setRedirectUris(Arrays.asList(uri));
+    try {
+      final String determinedUri = validator.determineRedirectUri(request,
+          OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE, client);
+      fail();
+    } catch (ValidationResponseException e) {
+      assertEquals(ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI, e.v);
+    }
+  }
+
+  @Test
+  public void determineUrlValidImplicitGrant() {
+    Client client = createClient("any");
+    final String uri = "http://implicit-grant-uri/";
+    request.setRedirectUri(uri);
+    client.setRedirectUris(Arrays.asList(uri));
+    final String determinedUri = validator.determineRedirectUri(request,
+        OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE, client);
+    assertEquals(uri, determinedUri);
   }
 
   private Client createClient(String clientId) {
     Client client = new Client();
     client.setName("Client App");
     client.setClientId(clientId);
-    client.setRedirectUris("http://gothere.nl,http://gohere.nl");
+    client.setRedirectUris(Arrays.asList("http://gothere.nl", "http://gohere.nl"));
     client.setScopes("read,update");
     return client;
   }

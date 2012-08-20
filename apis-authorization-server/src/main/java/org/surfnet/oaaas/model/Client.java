@@ -16,7 +16,9 @@
 
 package org.surfnet.oaaas.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -89,8 +91,8 @@ public class Client extends AbstractEntity {
   @Column
   private String thumbNailUrl;
 
-  @Column
-  private String redirectUris;
+  @ElementCollection(fetch= FetchType.EAGER)
+  private List<String> redirectUris = new ArrayList<String>();
 
   @Column
   private boolean skipConsent;
@@ -231,17 +233,18 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @return the redirectUris
+   * Get the redirectUris
+   * @return List of String
    */
-  public String getRedirectUris() {
+  public List<String> getRedirectUris() {
     return redirectUris;
   }
 
   /**
-   * @param redirectUris
-   *          the redirectUris to set
+   * Set the redirectUris
+   * @param redirectUris   the redirectUris to use.
    */
-  public void setRedirectUris(String redirectUris) {
+  public void setRedirectUris(List<String> redirectUris) {
     this.redirectUris = redirectUris;
   }
 

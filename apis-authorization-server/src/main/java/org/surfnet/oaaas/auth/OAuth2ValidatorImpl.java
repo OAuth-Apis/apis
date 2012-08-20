@@ -103,23 +103,21 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   }
 
   protected String determineRedirectUri(AuthorizationRequest authorizationRequest, String responseType, Client client) {
-    String uris = client.getRedirectUris();
+    List<String> uris = client.getRedirectUris();
     String redirectUri = authorizationRequest.getRedirectUri();
     if (StringUtils.isBlank(redirectUri)) {
       if (responseType.equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
         throw new ValidationResponseException(IMPLICIT_GRANT_REDIRECT_URI);
-      } else if (StringUtils.isBlank(uris)) {
+      } else if (uris == null || uris.isEmpty()) {
         throw new ValidationResponseException(REDIRECT_URI_REQUIRED);
       } else {
-        String[] split = uris.split(",");
-        return split[0].trim();
+        return uris.get(0);
       }
     } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
       throw new ValidationResponseException(REDIRCT_URI_NOT_URI);
     } else if (redirectUri.contains("#")) {
       throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
-    } else if (!StringUtils.isBlank(uris)
-        && !Arrays.asList(uris.split(",")).contains(
+    } else if (uris != null && !uris.contains(
             redirectUri.contains("?") ? redirectUri.substring(0, redirectUri.indexOf("?")) : redirectUri)) {
       throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
     }
