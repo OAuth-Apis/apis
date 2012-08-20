@@ -1,7 +1,6 @@
 MUST:
 - Consistent scope between client = resource server force when updating scopes resource server (SERVER SIDE VALIDATION)
 - GUI finished
-	- Add tooltips in the GUI for info about all the attributes
 	- Delete client and resource server need different -styled- confirmation
 	- Remove $("a.copy-clipboard").zclip and do normal control copy by user
 	- Add Access Tokens readonly and delete views

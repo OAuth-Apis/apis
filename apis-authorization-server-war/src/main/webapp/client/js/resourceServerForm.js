@@ -81,12 +81,14 @@ var resourceServerFormView = (function() {
         });
 
 
-        $("div#currentScopes").one("change", "input", function() { // Mind you, we use a "one" event handler. Runs only once per form.
-          $("<div />")
-              .addClass("alert fade in")
-              .append($('<button class="close" data-dismiss="alert" type="button">x</button>'))
-              .append("Changing existing scopes might have effect on configured client apps. Make sure all client app configurations reflect the changes made here.")
-              .prependTo("div#currentScopes");
+        $("button.removeScope").one("click", function() { 
+          if (model.id) {
+            Template.get("tplDeleteScopeWarning ", function(template) {
+              $("#currentScopes").before(template());
+            });
+            return false; 
+          }
+          return true;
         });
 
 

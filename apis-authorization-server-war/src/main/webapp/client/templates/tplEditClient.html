@@ -9,6 +9,7 @@
         <label class="control-label">Client name</label>
         <div class="controls">
           <input type="text" required="required" name="name" value="{{name}}" placeholder="client name">
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-name"></i>
         </div>
       </div>
       <div class="control-group">
@@ -20,9 +21,11 @@
             <option value="{{id}}">{{name}}</option>
             {{/each}}
           </select>
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-resource-server"></i>
           {{else}}
             <input type="hidden" name="resourceServerId" value="{{resourceServer.id}}">
             <label class="control-label">{{resourceServer.name}}</label>
+	        <i class="icon-question-sign icon-blue" rel="popover" name="client-resource-server"></i>
           {{/if}}
         </div>
       </div>
@@ -30,11 +33,13 @@
         <label for="clientDescription" class="control-label">Description</label>
         <div class="controls">
           <textarea rows="3" id="clientDescription" name="description" class="input">{{description}}</textarea>
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-description"></i>
         </div>
       </div>
 
       <div class="control-group">
         <label class="control-label">Scopes</label>
+        <i class="icon-question-sign icon-blue" rel="popover" name="client-scope"></i>
         <div class="controls" id="clientScopesHolder">
           {{#each availableScopes}}
           <label class="checkbox">
@@ -44,24 +49,28 @@
           </label>
           {{/each}}
         </div>
+        
       </div>
 
       <div class="control-group">
         <label class="control-label">Thumbnail URL</label>
         <div class="controls">
           <input type="url" name="thumbNailUrl" value="{{thumbNailUrl}}" placeholder="http://your-thumbnail-url">
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-thumbNailUrl"></i>
         </div>
       </div>
       <div class="control-group">
         <label class="control-label">Contact name</label>
         <div class="controls">
           <input type="text" name="contactName" required="required" value="{{contactName}}" placeholder="your name">
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-contactName"></i>
         </div>
       </div>
       <div class="control-group">
         <label class="control-label">Contact email address</label>
         <div class="controls">
           <input type="email" name="contactEmail" required="required" value="{{contactEmail}}" placeholder="john@doe.com">
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-contactEmail"></i>
         </div>
       </div>
 
@@ -78,6 +87,7 @@
             <input type="url" id="newRedirectUriField" name="redirectUri"
                    placeholder="http://your-apps-uri/" size="16" class="input-append">
             <button type="button" class="btn btn-success addRedirectUri"><i class="icon-plus icon-white"></i></button>
+            <i class="icon-question-sign icon-blue" rel="popover" name="client-redirectUri"></i>
           </div>
         </div>
       </div>
@@ -96,6 +106,7 @@
             <input class="span2" type="text" name="attributeName" id="newAttributeName" placeholder="key">
             <input class="span2" type="text" name="attributeValue" id="newAttributeValue" placeholder="value">
             <button type="button" class="btn btn-success addAttribute"><i class="icon-plus icon-white"></i></button>
+            <i class="icon-question-sign icon-blue" rel="popover" name="client-attributes"></i>
           </div>
         </div>
       </div>

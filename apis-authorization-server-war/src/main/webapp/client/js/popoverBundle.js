@@ -27,6 +27,17 @@ var popoverBundle = (function() {
     "resource-server-thumbNailUrl"  : ["Resource server thumbnail url","The thumbnail url is displayed on the consent screen and it can be used - as this client does - to aid in the visual representation of a resource server"],
     "resource-server-contactName"   : ["Resource server contact name","The name of the person who can be contacted in case of information and/ or trouble shooting"],
     "resource-server-contactEmail"  : ["Resource server contact email","The email address of the person who can be contacted in case of information and/ or trouble shooting"],
+    
+    "client-name"                   : ["Client app name","The unique name of the Client application"],    
+    "client-description"            : ["Client app description","The long description of the Client application"],
+    "client-resource-server"        : ["Client app - Resource server","Every client app belongs to one (and only one) resource server"],
+    "client-scope"                  : ["Client app scopes","Scopes represent the different functionality the API of the resource server offers to Client apps (e.g. read, update). Resource owners will have to grant access to the scopes of a client app which usually substitutes of a sub-set (or all) of the scopes of a resource server"],
+    "client-thumbNailUrl"           : ["Client app thumbnail url","The thumbnail url is displayed on the consent screen and it can be used - as this client does - to aid in the visual representation of client applications"],
+    "client-contactName"            : ["Client app contact name","The name of the person who can be contacted in case of information and/ or trouble shooting"],
+    "client-contactEmail"           : ["Client app contact email","The email address of the person who can be contacted in case of information and/ or trouble shooting"],
+    "client-redirectUri"            : ["Client app redirect uri's", "A client app has to provide a redirect uri at runtime when obtaining an access token. The provided redirect uri at runtime is checked against the configured redirect uri here. Although this is not a required field, we strongly advice to configure the redirect uri to prevent possible client frauds to tamper with the authorization server"],
+    "client-attributes"             : ["Client app attributes", "A client may have additional attributes (key -value pairs) to configure extra info for the client app. The additional data can be used to add extra (OAuth) validation checks on the authorization server prior to granting a client app an access token and/ or enrichen the user consent form"],
+    
   }
 
   return {
