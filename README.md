@@ -41,7 +41,7 @@ The authorization-server-war application is capable of authenticating Resource O
 We have provided two example resource servers. One (apis-example-resource-server-war) is a very simple Java web application
 that only demonstrates how a Resource Server can communicate with the Authorization Server using the `org.surfnet.oaaas.auth.AuthorizationServerFilter` (which is a simple `javax.servlet.Filter`). The `AuthorizationServerFilter` only protects a single JSP page in the apis-example-resource-server-war module. 
 
-The other example resource server (apis-example-resource-server) is build using [Dropwizard](http://dropwizard.codahale.com/). We will start this one to demonstrate the entire flow (new Terminal session):
+The other example resource server (apis-example-resource-server, **NOT the apis-example-resource-server-war!!**) is build using [Dropwizard] (http://dropwizard.codahale.com/). We will start this one to demonstrate the entire flow (new Terminal session):
 
     cd apis-example-resource-server-war
     java -jar target/apis-example-resource-server-0.1-SNAPSHOT.jar
