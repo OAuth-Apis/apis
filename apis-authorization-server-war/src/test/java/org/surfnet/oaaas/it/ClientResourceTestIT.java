@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.it;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -164,7 +165,7 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
     c.setContactEmail("contact@example.com");
     c.setContactName("contact name");
     c.setName(r);
-    c.setScopes("read");
+    c.setScopes(Arrays.asList("read"));
     c.setSecret(r);
     c.setDescription("Some description");
     final HashMap<String, String> attributes = new HashMap<String, String>();

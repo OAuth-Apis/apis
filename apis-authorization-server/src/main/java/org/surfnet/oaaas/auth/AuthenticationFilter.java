@@ -19,6 +19,8 @@ package org.surfnet.oaaas.auth;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -84,11 +86,16 @@ public class AuthenticationFilter implements Filter {
     String responseType = request.getParameter("response_type");
     String clientId = request.getParameter("client_id");
     String redirectUri = request.getParameter("redirect_uri");
-    String scope = request.getParameter("scope");
+
+    List<String> scopes = null;
+    if (StringUtils.isNotBlank(request.getParameter("scope"))) {
+      scopes = Arrays.asList(request.getParameter("scope").split(","));
+    }
+
     String state = request.getParameter("state");
     String authState = getAuthStateValue();
 
-    return new AuthorizationRequest(responseType, clientId, redirectUri, scope, state, authState);
+    return new AuthorizationRequest(responseType, clientId, redirectUri, scopes, state, authState);
   }
 
   private boolean handleInitialRequest(AuthorizationRequest authReq, HttpServletRequest request) throws

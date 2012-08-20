@@ -18,8 +18,12 @@
  */
 package org.surfnet.oaaas.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -72,8 +76,8 @@ public class AccessToken extends AbstractEntity {
   @Column
   private long expires;
 
-  @Column
-  private String scopes;
+  @ElementCollection(fetch= FetchType.EAGER)
+  private List<String> scopes;
 
   @Column
   @NotNull
@@ -83,11 +87,11 @@ public class AccessToken extends AbstractEntity {
     super();
   }
 
-  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes) {
+  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, List<String> scopes) {
     this(token, principal, client, expires, scopes, null);
   }
 
-  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, String scopes,
+  public AccessToken(String token, AuthenticatedPrincipal principal, Client client, long expires, List<String> scopes,
       String refreshToken) {
     super();
     this.token = token;
@@ -175,7 +179,7 @@ public class AccessToken extends AbstractEntity {
   /**
    * @return the scopes
    */
-  public String getScopes() {
+  public List<String> getScopes() {
     return scopes;
   }
 
@@ -183,7 +187,7 @@ public class AccessToken extends AbstractEntity {
    * @param scopes
    *          the scopes to set
    */
-  public void setScopes(String scopes) {
+  public void setScopes(List<String> scopes) {
     this.scopes = scopes;
   }
 

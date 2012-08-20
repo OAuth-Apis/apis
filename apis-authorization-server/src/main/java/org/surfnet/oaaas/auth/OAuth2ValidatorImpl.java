@@ -15,6 +15,20 @@
  */
 package org.surfnet.oaaas.auth;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.surfnet.oaaas.model.AccessTokenRequest;
+import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.repository.ClientRepository;
+
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.IMPLICIT_GRANT_NOT_PERMITTED;
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI;
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.INVALID_GRANT_AUTHORIZATION_CODE;
@@ -28,20 +42,6 @@ import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNKNOWN_
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNSUPPORTED_GRANT_TYPE;
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNSUPPORTED_RESPONSE_TYPE;
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.VALID;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.lang.StringUtils;
-import org.surfnet.oaaas.model.AccessTokenRequest;
-import org.surfnet.oaaas.model.AuthorizationRequest;
-import org.surfnet.oaaas.model.Client;
-import org.surfnet.oaaas.repository.ClientRepository;
 
 /**
  * Implementation of {@link OAuth2Validator}
@@ -78,7 +78,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       String redirectUri = determineRedirectUri(authorizationRequest, responseType, client);
       authorizationRequest.setRedirectUri(redirectUri);
 
-      String scopes = determineScopes(authorizationRequest, client);
+      List<String> scopes = determineScopes(authorizationRequest, client);
       authorizationRequest.setScopes(scopes);
 
     } catch (ValidationResponseException e) {
@@ -87,12 +87,12 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     return VALID;
   }
 
-  protected String determineScopes(AuthorizationRequest authorizationRequest, Client client) {
-    if (StringUtils.isBlank(authorizationRequest.getScopes())) {
+  protected List<String> determineScopes(AuthorizationRequest authorizationRequest, Client client) {
+    if (CollectionUtils.isEmpty(authorizationRequest.getScopes())) {
       return client.getScopes();
     } else {
-      String[] scopes = authorizationRequest.getScopes().split(",");
-      List<String> clientScopes = Arrays.asList(client.getScopes().split(","));
+      List<String> scopes = authorizationRequest.getScopes();
+      List<String> clientScopes = client.getScopes();
       for (String scope : scopes) {
         if (!clientScopes.contains(scope)) {
           throw new ValidationResponseException(SCOPE_NOT_VALID);
@@ -117,7 +117,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       throw new ValidationResponseException(REDIRCT_URI_NOT_URI);
     } else if (redirectUri.contains("#")) {
       throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
-    } else if (uris != null && !uris.contains(
+    } else if (uris != null && uris.size() > 0 && !uris.contains(
             redirectUri.contains("?") ? redirectUri.substring(0, redirectUri.indexOf("?")) : redirectUri)) {
       throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
     }

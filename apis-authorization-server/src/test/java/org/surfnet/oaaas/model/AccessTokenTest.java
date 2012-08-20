@@ -68,7 +68,7 @@ public class AccessTokenTest {
   }
 
   private AccessToken getToken(AuthenticatedPrincipal principal) {
-    return new AccessToken(UUID.randomUUID().toString(), principal, new Client(), 0, "read,update");
+    return new AccessToken(UUID.randomUUID().toString(), principal, new Client(), 0, Arrays.asList("read","update"));
   }
 
 }

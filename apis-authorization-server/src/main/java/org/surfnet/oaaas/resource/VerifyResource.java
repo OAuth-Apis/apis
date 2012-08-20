@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
@@ -88,7 +89,7 @@ public class VerifyResource {
     }
 
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
-        token.getScopes(), token.getPrincipal(), token.getExpires());
+        StringUtils.join(token.getScopes(), ','), token.getPrincipal(), token.getExpires());
 
     LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
     return Response.ok(verifyTokenResponse).build();

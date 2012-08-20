@@ -18,6 +18,9 @@
  */
 package org.surfnet.oaaas.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -73,7 +76,7 @@ public class AuthorizationRequest extends AbstractEntity {
   private String redirectUri;
 
   @Column
-  private String scopes;
+  private List<String> scopes = new ArrayList<String>();
 
   @Column
   private String state;
@@ -91,7 +94,7 @@ public class AuthorizationRequest extends AbstractEntity {
     super();
   }
 
-  public AuthorizationRequest(String responseType, String clientId, String redirectUri, String scopes, String state,
+  public AuthorizationRequest(String responseType, String clientId, String redirectUri, List<String> scopes, String state,
       String authState) {
     super();
     this.responseType = responseType;
@@ -169,15 +172,15 @@ public class AuthorizationRequest extends AbstractEntity {
   /**
    * @return the scope
    */
-  public String getScopes() {
+  public List<String> getScopes() {
     return scopes;
   }
 
   /**
-   * @param scope
-   *          the scope to set
+   * @param scopes
+   *          the scopes to set
    */
-  public void setScopes(String scopes) {
+  public void setScopes(List<String> scopes) {
     this.scopes = scopes;
   }
 

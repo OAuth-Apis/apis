@@ -25,7 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.UserConsentFilter;
 import org.surfnet.oaaas.model.Client;
@@ -52,8 +51,8 @@ public class NoopUserConsentHandler extends AbstractUserConsentHandler {
   public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri, Client client) throws IOException, ServletException {
     super.setAuthStateValue(request, authStateValue);
-    super.setScopes(request, StringUtils.isNotBlank(client.getScopes()) ? client.getScopes().split(",")
-        : new String[] {});
+    super.setScopes(request, client.getScopes().isEmpty() ? new String[]{} : client.getScopes().toArray(new
+        String[client.getScopes().size()]));
     chain.doFilter(request, response);
 
   }

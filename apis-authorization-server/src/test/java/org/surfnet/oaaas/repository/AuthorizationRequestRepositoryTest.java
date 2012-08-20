@@ -18,8 +18,6 @@
  */
 package org.surfnet.oaaas.repository;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +26,10 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * {@link Test} for {@link AuthorizationRequestRepository}
@@ -42,7 +41,8 @@ public class AuthorizationRequestRepositoryTest extends AbstractRepositoryTest {
   public void test() {
     AuthorizationRequestRepository repo = getRepository(AuthorizationRequestRepository.class);
     String authState = UUID.randomUUID().toString();
-    AuthorizationRequest authReq = new AuthorizationRequest("code", "cool_app_id", "http://whatever", "read,update",
+    AuthorizationRequest authReq = new AuthorizationRequest("code", "cool_app_id", "http://whatever",
+        Arrays.asList("read","update"),
         "state", authState);
     ClientRepository clientRepo = getRepository(ClientRepository.class);
     Client client = clientRepo.findByClientId(authReq.getClientId());

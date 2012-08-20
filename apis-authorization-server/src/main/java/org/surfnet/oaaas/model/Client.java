@@ -74,8 +74,8 @@ public class Client extends AbstractEntity {
   @Column
   private String contactEmail;
 
-  @Column
-  private String scopes;
+  @ElementCollection(fetch= FetchType.EAGER)
+  private List<String> scopes;
 
   @ManyToOne(optional = false)
   @JsonIgnore
@@ -145,7 +145,7 @@ public class Client extends AbstractEntity {
   /**
    * @return the scopes
    */
-  public String getScopes() {
+  public List<String> getScopes() {
     return scopes;
   }
 
@@ -153,7 +153,7 @@ public class Client extends AbstractEntity {
    * @param scopes
    *          the scopes to set
    */
-  public void setScopes(String scopes) {
+  public void setScopes(List<String> scopes) {
     this.scopes = scopes;
   }
 

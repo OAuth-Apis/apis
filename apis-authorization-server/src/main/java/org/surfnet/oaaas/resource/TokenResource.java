@@ -22,6 +22,7 @@ import static org.surfnet.oaaas.auth.OAuth2Validator.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -141,7 +142,7 @@ public class TokenResource {
   private void processScopes(AuthorizationRequest authReq, HttpServletRequest request) {
     String[] scopes = (String[]) request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES);
     if (ArrayUtils.isNotEmpty(scopes)) {
-      authReq.setScopes(StringUtils.join(scopes, ","));
+      authReq.setScopes(Arrays.asList(scopes));
     }
   }
 
@@ -190,7 +191,8 @@ public class TokenResource {
     AccessToken token = createAccessToken(request, false);
 
     AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, request.getClient()
-        .getExpireDuration(), token.getRefreshToken(), token.getScopes());
+        .getExpireDuration(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ','));
+
     return Response.ok().entity(response).build();
 
   }
@@ -262,7 +264,7 @@ public class TokenResource {
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
     String uri = authReq.getRedirectUri();
     uri = String.format(uri + "#access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
-        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), authReq.getScopes());
+        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), StringUtils.join(authReq.getScopes(), ','));
     return redirect(uri);
   }
 

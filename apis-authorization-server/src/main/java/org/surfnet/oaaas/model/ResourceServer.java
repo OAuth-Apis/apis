@@ -20,6 +20,7 @@ package org.surfnet.oaaas.model;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
@@ -57,8 +58,8 @@ public class ResourceServer extends AbstractEntity {
   @Column
   private String description;
 
-  @Column
-  private String scopes;
+  @ElementCollection(fetch= FetchType.EAGER)
+  private List<String> scopes;
 
   @Column
   @NotNull
@@ -90,11 +91,11 @@ public class ResourceServer extends AbstractEntity {
     this.name = name;
   }
 
-  public String getScopes() {
+  public List<String> getScopes() {
     return scopes;
   }
 
-  public void setScopes(String scopes) {
+  public void setScopes(List<String> scopes) {
     this.scopes = scopes;
   }
 
