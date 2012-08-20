@@ -16,32 +16,31 @@
 
 
 /**
- * Accept values from a serialized form, transform them to a string delimited by given delimiter, filtering out duplicates and empty elements.
- * It handles the special case of 1 item. In that case, the array isn't an array actually, but simple the item itself.
+ * Accept values from a serialized form, transform them to a array, filtering out duplicates and empty elements.
+ * It handles the special case of 1 item. Because in that case, the array isn't an array actually, but simple the item itself.
  *
  * @param arrayOfStrings
- * @param delimiter
  * @return {String}
  */
-var formArrayToString = function(arrayOfStrings, delimiter) {
+var cleanFormArray = function(arrayOfStrings) {
 
   var cleanArray = [];
 
   if ($.isArray(arrayOfStrings)) {
     arrayOfStrings = $.unique(arrayOfStrings); // mind you, we rely on a modified version of $.unique, working for non-dom-elements
     for (var i=0; i < arrayOfStrings.length; i++) {
-      var oneScope = arrayOfStrings[i];
-      if (oneScope) { // skip empty items
+      var item = arrayOfStrings[i].trim();
+      if (item) { // skip empty items
         cleanArray.push(arrayOfStrings[i]);
       }
     }
-  } else if (arrayOfStrings.length) {
+  } else if (arrayOfStrings.length) { // Only one item
     cleanArray.push(arrayOfStrings);
   } else {
     // not even one item
   }
 
-  return cleanArray.join(delimiter);
+  return cleanArray;
 };
 
 var resourceServerFormView = (function() {
@@ -129,13 +128,11 @@ var resourceServerFormController = (function() {
     onSubmit: function(form) {
       var formAsObject = $(form).serializeObject();
 
-      var scopes = formArrayToString(formAsObject['scopes'], ",");
-
       var resourceServer = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,
         name: formAsObject['name'],
         description: formAsObject['description'],
-        scopes: scopes,
+        scopes: cleanFormArray(formAsObject['scopes']),
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
         thumbNailUrl: formAsObject['thumbNailUrl']
@@ -154,7 +151,6 @@ var resourceServerFormController = (function() {
     show: function(mode, id) {
       if (mode == "edit") {
         data.getResourceServer(id, function(resourceServer){
-          resourceServer.scopes = resourceServer.scopes ? resourceServer.scopes.split(",") : [];
           view.show(mode, resourceServer);
         });
       } else {

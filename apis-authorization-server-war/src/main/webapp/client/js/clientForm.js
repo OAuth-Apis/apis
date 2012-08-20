@@ -170,11 +170,6 @@ var clientFormController = (function() {
         // retrieve current data for this client.
         data.getClient(resourceServerId, clientId, function(client){
 
-          client.scopes = client.scopes ? client.scopes.split(",") : [];
-
-          // TODO: this duplicates functionality in the resourceServerFormController. Somehow this should be abstracted away.
-          client.resourceServer.scopes = client.resourceServer.scopes ? client.resourceServer.scopes.split(",") : [];
-
           client.availableScopes = [];
           for (var i=0; i< client.resourceServer.scopes.length; i++) {
             var scope = client.resourceServer.scopes[i];
@@ -197,11 +192,6 @@ var clientFormController = (function() {
           }
           client.attributes = rewrittenAttributes;
 
-          var redirecturisAsList = (client.redirectUris) ? client.redirectUris.split("\n") : [];
-          client.redirectUris = [];
-          $.each(redirecturisAsList, function(index, value) {
-            client.redirectUris.push({"uri": value});
-          });
           view.show(mode, client);
         });
       } else {
@@ -216,11 +206,7 @@ var clientFormController = (function() {
 
     onChangeResourceServer: function(resourceServerId) {
       data.getResourceServer(resourceServerId, function(resourceServer) {
-
-        // TODO: the third place where this is duplicated!
-        var scopes = resourceServer.scopes ? resourceServer.scopes.split(",") : [];
-
-        view.updateAvailableScopes(scopes);
+        view.updateAvailableScopes(resourceServer.scopes);
       });
     },
 
@@ -229,19 +215,29 @@ var clientFormController = (function() {
 
       var attributes = formArrayAttributesToHash(formAsObject['attributeName'], formAsObject['attributeValue']);
 
-      var redirectUris = formArrayToString(formAsObject['redirectUri'], "\n");
+      // If one redirecturi is submitted, the field is a simple string instead of an array.
+      var redirectUris = $.isArray(formAsObject['redirectUris']) ? formAsObject['redirectUris'] : [formAsObject['redirectUris']];
+      // Trim whitespace, remove empty strings
+      redirectUris = $.map(redirectUris, function (item, index) {
+        item = item.trim();
+        if (item.length == 0) {
+          return null;
+        } else {
+          return item;
+        }
+      });
 
       var client = {
         id: (formAsObject['id'] > 0) ? formAsObject['id'] : null,
         name: formAsObject['name'],
         description: formAsObject['description'],
         clientId: formAsObject['clientId'],
-        scopes:$.isArray(formAsObject['scopes']) ? formAsObject['scopes'].join(",") : formAsObject['scopes'],
+        scopes: cleanFormArray(formAsObject['scopes']),
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
         thumbNailUrl: formAsObject['thumbNailUrl'],
         attributes: attributes,
-        redirectUris:redirectUris
+        redirectUris: cleanFormArray(formAsObject['redirectUris'])
       };
 
       data.saveClient(formAsObject['resourceServerId'], client, function(data) {

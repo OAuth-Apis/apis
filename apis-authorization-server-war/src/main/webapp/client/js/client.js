@@ -36,7 +36,7 @@ var Template = (function() {
      */
     get: function(templateName, callback) {
       if (!tplCache[templateName]) {
-        template = $("#" + templateName);
+        var template = $("#" + templateName);
         if (template.size() == 0) {
           $.get("templates/" + templateName + ".html", function(data) {
             tplCache[templateName] = Handlebars.compile(data);

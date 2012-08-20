@@ -84,7 +84,7 @@ var clientGridController = (function() {
       var resourceServersByIds = {};
       $(resourceServers).each(function(i, resourceServer) {
         resourceServersByIds[resourceServer.id] = resourceServer;
-      })
+      });
 
       data.getClientsForResourceServers(Object.keys(resourceServersByIds), function(data) {
         $(data).each(function(i, client) {

@@ -68,13 +68,9 @@ public class ResourceServerResource extends AbstractResource {
     String owner = getUserId(request);
     final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
 
-    if (resourceServers == null || resourceServers.isEmpty()) {
-      LOG.debug("No resource servers found for owner {}", owner);
-      responseBuilder = Response.status(Response.Status.NOT_FOUND);
-    } else {
-      LOG.debug("About to return all resource servers ({}) for owner {}", resourceServers.size(), owner);
-      responseBuilder = Response.ok(resourceServers);
-    }
+    LOG.debug("About to return all resource servers ({}) for owner {}", resourceServers.size(), owner);
+    responseBuilder = Response.ok(resourceServers);
+
     return responseBuilder.build();
   }
 

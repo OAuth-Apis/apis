@@ -79,12 +79,12 @@
         <div class="controls" id="redirectUrisHolder">
           {{#each redirectUris}}
           <div class="input multiple-fields">
-            <input type="url" name="redirectUri" size="16" class="input-append" value="{{uri}}">
+            <input type="url" name="redirectUris" size="16" class="input-append" value="{{this}}">
             <button type="button" class="btn removeRedirectUri"><i class="icon-trash"></i></button>
           </div>
           {{/each}}
           <div class="input multiple-fields" id="newRedirectUri">
-            <input type="url" id="newRedirectUriField" name="redirectUri"
+            <input type="url" id="newRedirectUriField" name="redirectUris"
                    placeholder="http://your-apps-uri/" size="16" class="input-append">
             <button type="button" class="btn btn-success addRedirectUri"><i class="icon-plus icon-white"></i></button>
             <i class="icon-question-sign icon-blue" rel="popover" name="client-redirectUri"></i>
