@@ -14,7 +14,7 @@ The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can
   * DropWizard stand-alone Resource Server with limited functionality (using in-memory JSON-based backend) to demo the OAuth Authorization Server
   * Standard Java web application to showcase the use of the communication between typical Resource Servers and the Authorization Server 
 
-- An example Client App implementation to demo the OAuth flow for a typical (possible native) Client App
+- An example Client App implementation to demo the OAuth flow for a typical (possibly native) Client App
   * This 'involves' a running (example) Resource Server and the Authorization Server
 
 - An implementation add-on for connecting to a compliant SAML IdP for authentication
@@ -60,7 +60,7 @@ Start the example-client-app (new Terminal session)
     cd apis-example-client-app
     mvn jetty:run
 
-Now start your browser and go to <a href="http://localhost:8084/test" target="_blank">http://localhost:8084/test</a>. In three steps you can see what the client app has to do to make a REST call to example Resource Server. You can also very easily test this against any Resource Server (or for that case an Authorization Server running on a different environment then localhost) by changing the values in the client.apis.properties file.
+Now start your browser and go to <a href="http://localhost:8084/test" target="_blank">http://localhost:8084/test</a>. In three steps you can see what the client app has to do to make a REST call to example Resource Server. You can also very easily test this against any Resource Server (or for that case an Authorization Server running not running on local host) by changing the values in the client.apis.properties file.
 
 ### Resource Servers and Client apps GUI registration
 
@@ -125,7 +125,7 @@ protected void processForm(final HttpServletRequest request) {
 
 Or you can implement your own 'org.surfnet.oaaas.auth.AbstractAuthenticator'. The `AbstractAuthenticator` is a plain `javax.servlet.Filter` implementation, so it possible to redirect to an entirely different application to perform the authentication. 
 
-For an example of an `AbstractAuthenticator` that uses a federation of SAML2 compliant Identity Providers to perform the actual authentication have a look at in `SAMLAuthenticator` the the submodule apis-surfconext-authn.
+For an example of an `AbstractAuthenticator` that uses a federation of SAML2 compliant Identity Providers to perform the actual authentication have a look at `SAMLAuthenticator` in the submodule apis-surfconext-authn.
 
 ### User Consent
 
@@ -146,7 +146,7 @@ protected String getUserConsentUrl() {
 
 ### Plugging in your custom implementations
 
-The Authorization Server is wired up using a Spring configuration. The class `org.surfnet.oaaas.config.SpringConfiguration` in the apis-authorization-server-war module is responsible for wiring up the dependencies. You don't need to override this configuration if you only want to change the authentication (and/ or the user consent) as we have externalized this into the apis.application.properties file. The authorization server started up with the maven jetty plugin uses the apis.application.properties file in apis-authorization-server-war/src/test/resources. 
+The Authorization Server is wired up using a Spring configuration. The class `org.surfnet.oaaas.config.SpringConfiguration` in the apis-authorization-server-war module is responsible for wiring up the dependencies. You don't need to override this configuration if you only want to change the authentication (and/ or the user consent) as we have externalized this into the apis.application.properties file. The authorization server which you have started  up with the maven jetty plugin uses the apis.application.properties file in apis-authorization-server-war/src/test/resources.
 
 In real life deployment you will need to provide the authorization server with an external apis.application.properties file. We have not put this into the war file as you would end up with an environment specific war application.The apis.application.properties file contains all environment specific variables like database settings and the authentication implementation:
 
@@ -186,12 +186,12 @@ You can use the exposed REST interface of the ResourceServerResource and ClientR
     GET     /admin/resourceServer/123/client/{clientId}
     PUT     /admin/resourceServer/123/client
     POST    /admin/resourceServer/123/client/{clientId}
-    DELETE  /admin/resourceServer/123//client/{clientId}
+    DELETE  /admin/resourceServer/123/client/{clientId}
 
 TODO add access token urls
 TODO explain where the key-secret can be configured
 
-While we were working on the JavaScript Admin client included in the Authorization Server war we disabled locally the login and consent to speed up the local feedback cycle when developing in 'jetty-modus':
+While we were working on the JavaScript Admin client included in the Authorization Server war we disabled the login and consent locally to speed up the local feedback cycle when developing in 'jetty-modus':
 
 <pre>
 # The authentication module
@@ -201,8 +201,7 @@ authenticatorClass=org.surfnet.oaaas.noop.NoopAuthenticator
 # The user consent module
 # userConsentHandlerClass=org.surfnet.oaaas.consent.FormUserConsentHandler
 userConsentHandlerClass=org.surfnet.oaaas.noop.NoopUserConsentHandler
-	
-</pre>	
+</pre>
 
 ### SURFConext Authn Authenticator
 
