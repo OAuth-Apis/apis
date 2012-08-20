@@ -72,7 +72,7 @@ public class VerifyResource {
     UserPassCredentials credentials = new UserPassCredentials(authorization);
     
     ResourceServer resourceServer = getResourceServer(credentials);
-    if (resourceServer  == null || resourceServer.getSecret().equals(credentials.getPassword() )) {
+    if (resourceServer  == null || !resourceServer.getSecret().equals(credentials.getPassword() )) {
       LOG.warn("Responding with 401 in VerifyResource#verifyToken for user {}", credentials);
       return unauthorized();
     }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
@@ -75,7 +76,7 @@ public class ResourceServer extends AbstractEntity {
   private String contactEmail;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "resourceServer")
+  @OneToMany(mappedBy = "resourceServer", fetch = FetchType.EAGER)
   private List<Client> clients;
 
   @Column
@@ -198,6 +199,8 @@ public class ResourceServer extends AbstractEntity {
    * @return if the Client is part of this ResourceServer
    */
   public boolean containsClient(Client client) {
+    //first load them
+    getClients();
     return CollectionUtils.isEmpty(clients) ? false : clients.contains(client);
   }
 }
