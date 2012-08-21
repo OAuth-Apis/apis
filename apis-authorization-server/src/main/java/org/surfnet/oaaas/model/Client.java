@@ -16,6 +16,8 @@
 
 package org.surfnet.oaaas.model;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -323,23 +325,27 @@ public class Client extends AbstractEntity {
   @Override
   public boolean validate(ConstraintValidatorContext context) {
     boolean isValid = true;
+
     if (isUseRefreshTokens() && getExpireDuration() == 0L) {
-      context.buildConstraintViolationWithTemplate(
-          "If refresh tokens are to be used then the expiry duration must be greater then 0").addConstraintViolation();
+      violation(context, "If refresh tokens are to be used then the expiry duration must be greater then 0");
       isValid = false;
     }
 
     if (!resourceServer.getScopes().containsAll(scopes)) {
       final String message = "Client should only contain scopes that its resource server defines. " +
           "Client scopes: " + scopes + ". Resource server scopes: " + resourceServer.getScopes();
-
-      context
-          .buildConstraintViolationWithTemplate(message)
-          .addConstraintViolation()
-          .disableDefaultConstraintViolation();
+      violation(context, message);
       isValid = false;
     }
 
+    for (String redirectUri : redirectUris) {
+      try {
+        URL url = new URL(redirectUri);
+      } catch (MalformedURLException e) {
+        violation(context, "redirectUri '" + redirectUri + "' is not a valid URI");
+        isValid = false;
+      }
+    }
     return isValid;
   }
 

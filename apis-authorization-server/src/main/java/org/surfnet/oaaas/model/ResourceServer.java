@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -28,11 +29,14 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.validator.constraints.Email;
 
 /**
  * Representation of the server hosting the protected resources, capable of
@@ -47,6 +51,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class ResourceServer extends AbstractEntity {
 
+  public static final String SCOPE_PATTERN = "^[^,]$"; // anything but a comma
+
   @Column
   @NotNull
   private String name;
@@ -58,8 +64,10 @@ public class ResourceServer extends AbstractEntity {
   @Column
   private String description;
 
+
   @ElementCollection(fetch= FetchType.EAGER)
-  private List<String> scopes;
+  @NotNull
+  private List<String> scopes = new ArrayList<String>();
 
   @Column
   @NotNull
@@ -74,10 +82,12 @@ public class ResourceServer extends AbstractEntity {
   private String owner;
 
   @Column
+  @Email
   private String contactEmail;
 
   @JsonIgnore
   @OneToMany(mappedBy = "resourceServer", fetch = FetchType.EAGER)
+  @Valid
   private List<Client> clients;
 
   @Column
@@ -196,5 +206,18 @@ public class ResourceServer extends AbstractEntity {
     //first load them
     getClients();
     return CollectionUtils.isEmpty(clients) ? false : clients.contains(client);
+  }
+
+  @Override
+  public boolean validate(ConstraintValidatorContext context) {
+    boolean isValid = true;
+
+    for (String scope : scopes) {
+      if (!scope.matches(ResourceServer.SCOPE_PATTERN)) {
+        violation(context, "Scope '" + scope + "' contains invalid characters");
+        isValid = false;
+      }
+    }
+    return isValid;
   }
 }

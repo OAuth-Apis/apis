@@ -16,12 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.model;
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
+package org.surfnet.oaaas.model.validation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -29,8 +24,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 /**
- * Ensures the {@link AbstractEntity} is validated.
+ * Ensures the {@link org.surfnet.oaaas.model.AbstractEntity} is validated.
  *
  */
 @Target( { TYPE })

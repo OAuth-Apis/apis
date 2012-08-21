@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.surfnet.oaaas.model.validation.AbstractEntityValid;
 
 /**
  * Abstract class that serves as root for Model object (e.g. that are stored in
@@ -100,4 +101,15 @@ public abstract class AbstractEntity implements Serializable {
     return true;
   }
 
+  /**
+   * Convenience method for adding a ConstraintViolation to the given context.
+   * @param context the ConstraintValidatorContext
+   * @param message the message to attach to the violation
+   */
+  protected void violation(ConstraintValidatorContext context, String message) {
+    context
+        .buildConstraintViolationWithTemplate(message)
+        .addConstraintViolation()
+        .disableDefaultConstraintViolation();
+  }
 }

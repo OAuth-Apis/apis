@@ -16,14 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.model;
+package org.surfnet.oaaas.model.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.surfnet.oaaas.model.AbstractEntity;
+
 /**
- * {@link ConstraintValidator} that validates {@link AbstractEntity} by calling
- * the {@link AbstractEntity#validate(javax.validation.ConstraintValidatorContext)}
+ * {@link ConstraintValidator} that validates {@link org.surfnet.oaaas.model.AbstractEntity} by calling
+ * the {@link org.surfnet.oaaas.model.AbstractEntity#validate(javax.validation.ConstraintValidatorContext)}
  *
  */
 public class AbstractEntityValidator implements ConstraintValidator<AbstractEntityValid, AbstractEntity> {
