@@ -43,7 +43,7 @@ that only demonstrates how a Resource Server can communicate with the Authorizat
 
 The other example resource server (apis-example-resource-server, **NOT the apis-example-resource-server-war!!**) is build using [Dropwizard] (http://dropwizard.codahale.com/). We will start this one to demonstrate the entire flow (new Terminal session):
 
-    cd apis-example-resource-server-war
+    cd apis-example-resource-server
     java -jar target/apis-example-resource-server-0.1-SNAPSHOT.jar
 
 ### Run Example Client App
