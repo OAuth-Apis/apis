@@ -36,6 +36,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
@@ -281,13 +282,14 @@ public class AuthorizationRequest extends AbstractEntity {
    * @see org.surfnet.oaaas.model.AbstractEntity#validate()
    */
   @Override
-  public void validate() {
+  public boolean validate(ConstraintValidatorContext context) {
     if (StringUtils.isNotBlank(redirectUri)) {
       if (redirectUri.contains("#")) {
-        throw new RuntimeException("Fragment component is not allowed in redirectUri");
+        context.buildConstraintViolationWithTemplate(
+            "Fragment component is not allowed in redirectUri").addConstraintViolation();
+        return false;
       }
     }
-    
+    return true;
   }
-
 }

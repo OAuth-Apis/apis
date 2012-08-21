@@ -187,13 +187,6 @@ public class ResourceServer extends AbstractEntity {
     this.description = description;
   }
 
-  /* (non-Javadoc)
-   * @see org.surfnet.oaaas.model.AbstractEntity#validate()
-   */
-  @Override
-  public void validate() {
-  }
-  
   /**
    * 
    * @param client the Client

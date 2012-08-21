@@ -18,6 +18,7 @@ MUST:
 - rename the apis-example-resource-server-war module so that it cannot be confused with the
   apis-example-resource-server anymore.
 - Move the code to the SURFnet git repo
+- Release Spring-security-opensaml to get rid of snapshot dependency
 
 NICE:
 - ClientResource and ResourceServerResource must debug log all activity

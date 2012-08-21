@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -320,11 +321,26 @@ public class Client extends AbstractEntity {
    * @see org.surfnet.oaaas.model.AbstractEntity#validate()
    */
   @Override
-  public void validate() {
+  public boolean validate(ConstraintValidatorContext context) {
+    boolean isValid = true;
     if (isUseRefreshTokens() && getExpireDuration() == 0L) {
-      throw new RuntimeException("If refresh tokens are to be used then the expiry duration must be greater then 0");
+      context.buildConstraintViolationWithTemplate(
+          "If refresh tokens are to be used then the expiry duration must be greater then 0").addConstraintViolation();
+      isValid = false;
     }
 
+    if (!resourceServer.getScopes().containsAll(scopes)) {
+      final String message = "Client should only contain scopes that its resource server defines. " +
+          "Client scopes: " + scopes + ". Resource server scopes: " + resourceServer.getScopes();
+
+      context
+          .buildConstraintViolationWithTemplate(message)
+          .addConstraintViolation()
+          .disableDefaultConstraintViolation();
+      isValid = false;
+    }
+
+    return isValid;
   }
 
 }

@@ -23,10 +23,10 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.ConstraintValidatorContext;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -91,9 +91,13 @@ public abstract class AbstractEntity implements Serializable {
   }
 
   /**
-   * Abstract method that validates the state of an {@link AbstractEntity}. Can
+   * Template method that validates the state of an {@link AbstractEntity}. Can
    * be used prior to saving/ updating the {@link AbstractEntity}
+   *
+   * @param context the ConstraintValidatorContext
    */
-  public abstract void validate();
+  public boolean validate(ConstraintValidatorContext context) {
+    return true;
+  }
 
 }

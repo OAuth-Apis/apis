@@ -18,6 +18,7 @@ package org.surfnet.oaaas.config;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
+import javax.validation.Validator;
 import javax.servlet.ServletException;
 
 import com.googlecode.flyway.core.Flyway;
@@ -157,4 +158,8 @@ public class SpringConfiguration {
     }
   }
 
+  @Bean
+  public Validator validator() {
+    return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
+  }
 }

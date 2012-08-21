@@ -18,6 +18,7 @@ package org.surfnet.oaaas.it;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
@@ -32,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.model.ValidationErrorResponse;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
@@ -39,6 +41,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
 
@@ -47,6 +50,8 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
 
   private WebResource webResource;
   private ResourceServer resourceServer;
+
+  private List<String> resourceServerScopes = Arrays.asList("read", "write");
 
   @Before
   public void prepareRestClientAndCreateResourceServer() {
@@ -63,6 +68,7 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
     newResourceServer.setName("the name" + System.currentTimeMillis());
     newResourceServer.setKey("the-key-" + System.currentTimeMillis());
     newResourceServer.setThumbNailUrl("http://example.com/thumbnail");
+    newResourceServer.setScopes(resourceServerScopes);
 
     resourceServer = webResource
         .type(MediaType.APPLICATION_JSON)
@@ -125,6 +131,21 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
     assertNotNull(putResult.getId());
 
     assertEquals(c.getAttributes(), putResult.getAttributes());
+  }
+
+  @Test
+  public void putInvalidScopes() {
+    Client c = buildClient();
+    c.setScopes(Arrays.asList("invalidScope", "read", "write"));
+    ClientResponse clientResponse = webResource
+        .header("Authorization", authorizationBearer(ACCESS_TOKEN))
+        .put(ClientResponse.class, c);
+    assertThat("Server should not accept a client with scopes that are not a subset of the resourceServers scope",
+        clientResponse.getStatus(), equalTo(400));
+    final ValidationErrorResponse validationErrorResponse = clientResponse.getEntity(ValidationErrorResponse.class);
+    assertThat(validationErrorResponse.getViolations().size(), equalTo(1));
+    assertThat(validationErrorResponse.getViolations().get(0), containsString("Client should only contain scopes that its resource server defines"));
+//    System.out.println(clientResponse.getEntity(String.class));
   }
 
   @Test

@@ -16,17 +16,21 @@
 
 package org.surfnet.oaaas.resource;
 
+import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
+import org.surfnet.oaaas.model.ValidationErrorResponse;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 
@@ -39,6 +43,9 @@ public class AbstractResource {
 
   @Inject
   private ExceptionTranslator exceptionTranslator;
+
+  @Inject
+  protected Validator validator;
 
   public Response buildErrorResponse(RuntimeException e) {
     final Throwable jpaException = exceptionTranslator.translate(e);
@@ -60,6 +67,16 @@ public class AbstractResource {
         .entity(reason)
         .build();
   }
+
+
+  protected Response buildViolationErrorResponse(Set<ConstraintViolation> violations) {
+    ValidationErrorResponse responseBody = new ValidationErrorResponse(violations);
+    return Response
+        .status(Response.Status.BAD_REQUEST)
+        .entity(responseBody)
+        .build();
+  }
+
 
   protected String getUserId(HttpServletRequest request) {
     return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getPrincipal().getName();

@@ -23,30 +23,17 @@ import javax.validation.ConstraintValidatorContext;
 
 /**
  * {@link ConstraintValidator} that validates {@link AbstractEntity} by calling
- * the {@link AbstractEntity#validate()}
- * 
+ * the {@link AbstractEntity#validate(javax.validation.ConstraintValidatorContext)}
+ *
  */
 public class AbstractEntityValidator implements ConstraintValidator<AbstractEntityValid, AbstractEntity> {
 
-  /* (non-Javadoc)
-   * @see javax.validation.ConstraintValidator#initialize(java.lang.annotation.Annotation)
-   */
   @Override
   public void initialize(AbstractEntityValid constraintAnnotation) {
   }
 
-  /* (non-Javadoc)
-   * @see javax.validation.ConstraintValidator#isValid(java.lang.Object, javax.validation.ConstraintValidatorContext)
-   */
   @Override
   public boolean isValid(AbstractEntity entity, ConstraintValidatorContext context) {
-    try {
-      entity.validate();
-      return true;
-    } catch (RuntimeException e) {
-      context.buildConstraintViolationWithTemplate(e.getMessage()).addConstraintViolation();
-      return false;
-    }
+    return entity.validate(context);
   }
-
 }

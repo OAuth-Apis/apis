@@ -221,15 +221,6 @@ public class AccessToken extends AbstractEntity {
     this.encodedPrincipal = encodedPrincipal;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.surfnet.oaaas.model.AbstractEntity#validate()
-   */
-  @Override
-  public void validate() {
-    // all is covered by not nulls
-  }
 
   /**
    * @return the refreshToken

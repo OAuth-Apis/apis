@@ -17,11 +17,15 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validator;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -57,7 +61,6 @@ public class ClientResource extends AbstractResource {
 
   @Inject
   private ResourceServerRepository resourceServerRepository;
-
 
   /**
    * Get a list of all clients linked to the given resourceServer.
@@ -111,8 +114,7 @@ public class ClientResource extends AbstractResource {
    */
   @PUT
   public Response put(@Context HttpServletRequest request,
-                      @PathParam("resourceServerId") Long resourceServerId,
-                      @Valid Client client) {
+                      @PathParam("resourceServerId") Long resourceServerId, Client client) {
 
     String owner = getUserId(request);
     final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
@@ -120,6 +122,14 @@ public class ClientResource extends AbstractResource {
     client.setResourceServer(resourceServer);
     client.setClientId(generateClientId(client));
     client.setSecret(generateSecret());
+
+    // Validate input
+    Set<ConstraintViolation<Client>> violations = validator.validate(client);
+    if (!violations.isEmpty()) {
+      LOG.info("Entity failed validation. Will respond with client error. Violations: {}", violations);
+      return buildViolationErrorResponse(new HashSet<ConstraintViolation>(violations));
+    }
+
     Client clientSaved;
 
     try {

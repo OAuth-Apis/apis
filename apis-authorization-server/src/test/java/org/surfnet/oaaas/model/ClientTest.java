@@ -44,9 +44,22 @@ public class ClientTest extends AbstractEntityTest {
     client.setUseRefreshTokens(true);
     client.setExpireDuration(60 * 60);
     client.setRedirectUris(uris);
-    Set<ConstraintViolation<Client>> violations = validator.validate(client);
-    assertEquals(0, violations.size());
-    assertEquals(uris, client.getRedirectUris());
+
+    ResourceServer resourceServer = new ResourceServer();
+    resourceServer.setScopes(Arrays.asList("read", "delete"));
+    client.setScopes(Arrays.asList("read", "delete"));
+    client.setResourceServer(resourceServer);
+
+    {
+      Set<ConstraintViolation<Client>> violations = validator.validate(client);
+      assertEquals(0, violations.size());
+      assertEquals(uris, client.getRedirectUris());
+    }
+    {
+      client.setScopes(Arrays.asList("arbitrary", "scopes"));
+      Set<ConstraintViolation<Client>> violations = validator.validate(client);
+      assertEquals("Client should only be able to use scopes that the resource server defines", 1, violations.size());
+    }
   }
 
 }
