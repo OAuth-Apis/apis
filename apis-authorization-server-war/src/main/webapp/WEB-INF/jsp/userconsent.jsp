@@ -51,7 +51,7 @@
 	  </fieldset>	
       <fieldset>
         <div class="form-actions">
-          <button name="user_oauth_approval" value="true" type="submit"
+          <button id="user_oauth_approval" name="user_oauth_approval" value="true" type="submit"
                   class="btn btn-success">Grant permission</button>
           &nbsp;&nbsp;&nbsp;<em>or</em>&nbsp;&nbsp;&nbsp;
           <button type="submit" name="user_oauth_approval" value="false"

@@ -16,16 +16,15 @@
 
 package org.surfnet.oaaas.selenium;
 
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+import org.openqa.selenium.WebDriver;
+import org.surfnet.oaaas.model.AccessTokenResponse;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
-
-import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.surfnet.oaaas.model.AccessTokenResponse;
 
 /**
  * Integration test (using Selenium) for the Authorization Code flow.
@@ -42,11 +41,12 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
 
     WebDriver webdriver = getWebDriver();
     String responseType = "code";
+    String scopes = "read,write";
     String url = String.format(
-        "%s/oauth2/authorize?response_type=%s&client_id=%s&redirect_uri=%s",
-        baseUrl(), responseType, clientId, accessTokenRedirectUri);
+        "%s/oauth2/authorize?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s",
+        baseUrl(), responseType, scopes, clientId, accessTokenRedirectUri);
     webdriver.get(url);
-    assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
+    assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
 
     login(webdriver,true);
     

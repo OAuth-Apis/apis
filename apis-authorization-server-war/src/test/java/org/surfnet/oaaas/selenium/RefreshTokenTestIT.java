@@ -18,15 +18,7 @@
  */
 package org.surfnet.oaaas.selenium;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-
 import java.io.InputStream;
-
-import javax.ws.rs.HeaderParam;
-
-import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +30,12 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.model.AccessTokenResponse;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
  * Test refresh token flow
@@ -60,7 +58,7 @@ public class RefreshTokenTestIT extends SeleniumSupport {
     String url = String.format("%s/oauth2/authorize?response_type=%s&client_id=%s&redirect_uri=%s", baseUrl(),
         responseType, clientId, accessTokenRedirectUri);
     webdriver.get(url);
-    assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
+    assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
     
     /*
      * Consent is not necessary for this Client

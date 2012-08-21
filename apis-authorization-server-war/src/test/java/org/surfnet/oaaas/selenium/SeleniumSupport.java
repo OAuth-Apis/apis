@@ -16,9 +16,6 @@
 
 package org.surfnet.oaaas.selenium;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.localserver.LocalTestServer;
@@ -31,6 +28,9 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.it.AbstractAuthorizationServerTest;
+
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
  *
@@ -116,8 +116,8 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
 
   private void consent(WebDriver webdriver) {
     // consent form
-    assertThat(webdriver.getPageSource(), containsString("Yes, grant access"));
-    webdriver.findElement(By.id("accept_terms_button")).click();
+    assertThat(webdriver.getPageSource(), containsString("Grant permission"));
+    webdriver.findElement(By.id("user_oauth_approval")).click();
   }
 
   /**

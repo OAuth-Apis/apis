@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -75,7 +77,7 @@ public class AuthorizationRequest extends AbstractEntity {
   @NotNull
   private String redirectUri;
 
-  @Column
+  @ElementCollection(fetch= FetchType.EAGER)
   private List<String> scopes = new ArrayList<String>();
 
   @Column

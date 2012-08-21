@@ -16,14 +16,14 @@
 
 package org.surfnet.oaaas.selenium;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-
 import java.net.URI;
 
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
  * Integration test (using Selenium) for the Implicit Grant flow.
@@ -50,7 +50,7 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
         "%s/oauth2/authorize?response_type=%s&client_id=%s&redirect_uri=%s",
         baseUrl(), responseType, clientId, redirectUri);
     webdriver.get(url);
-    assertThat(webdriver.getPageSource(), containsString("Login with your identifier and password"));
+    assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
 
     login(webdriver, needConsent);
 
