@@ -44,9 +44,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:oharsta/OA-aaS.git</connection>
-    <url>scm:git:git@github.com:oharsta/OA-aaS.git</url>
-    <developerConnection>scm:git:git@github.com:oharsta/OA-aaS.git</developerConnection>
+    <connection>scm:git:git@github.com:oharsta/apis.git</connection>
+    <url>scm:git:git@github.com:oharsta/apis.git</url>
+    <developerConnection>scm:git:git@github.com:oharsta/apis.git</developerConnection>
   </scm>
 
 
