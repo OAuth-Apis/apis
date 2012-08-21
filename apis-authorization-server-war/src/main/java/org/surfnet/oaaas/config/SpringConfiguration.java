@@ -18,6 +18,7 @@ package org.surfnet.oaaas.config;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
+import javax.servlet.ServletException;
 
 import com.googlecode.flyway.core.Flyway;
 
@@ -42,14 +43,14 @@ import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 
 /**
- * 
+ *
  * The SpringConfiguration is a {@link Configuration} that can be overridden if
  * you want to plugin your own implementations. Note that the two most likely
  * candidates to change are the {@link AbstractAuthenticator} an
  * {@link AbstractUserConsentHandler}. You can change the implementation by
  * editing the application.apis.properties file where the implementations are
  * configured.
- * 
+ *
  */
 @Configuration
 @PropertySource("classpath:apis.application.properties")
@@ -124,12 +125,18 @@ public class SpringConfiguration {
   /**
    * Returns the {@link AbstractAuthenticator} that is responsible for the
    * authentication of Resource Owners.
-   * 
+   *
    * @return an {@link AbstractAuthenticator}
    */
   @Bean
   public AbstractAuthenticator authenticator() {
-    return (AbstractAuthenticator) getConfiguredBean("authenticatorClass");
+    AbstractAuthenticator authenticatorClass = (AbstractAuthenticator) getConfiguredBean("authenticatorClass");
+    try {
+      authenticatorClass.init(null);
+    } catch (ServletException e) {
+      throw new RuntimeException(e);
+    }
+    return authenticatorClass;
   }
 
   @Bean
