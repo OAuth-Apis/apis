@@ -21,6 +21,7 @@ package org.surfnet.oaaas.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Bean representation of a Access Token response. See <a
@@ -29,6 +30,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * 
  */
 @XmlRootElement
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class AccessTokenResponse {
 
   @JsonProperty("access_token")

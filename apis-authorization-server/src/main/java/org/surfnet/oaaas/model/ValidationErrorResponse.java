@@ -24,12 +24,14 @@ import javax.validation.ConstraintViolation;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * POJO representing an error response used when dealing with resources.
  *
  */
 @XmlRootElement
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ValidationErrorResponse {
 
   @JsonProperty

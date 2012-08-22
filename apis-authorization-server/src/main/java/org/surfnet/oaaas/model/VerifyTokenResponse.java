@@ -23,6 +23,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 /**
@@ -33,6 +34,7 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 @SuppressWarnings("serial")
 @XmlRootElement
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class VerifyTokenResponse implements Serializable {
   /*
    * The application that is the intended target of the token.
