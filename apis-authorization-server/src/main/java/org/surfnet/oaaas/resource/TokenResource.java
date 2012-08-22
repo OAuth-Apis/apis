@@ -68,7 +68,6 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
  */
 @Named
 @Path("/")
-@Produces(MediaType.APPLICATION_JSON)
 public class TokenResource {
 
   public static final String BASIC_REALM = "Basic realm=\"OAuth2 Secure\"";
@@ -102,6 +101,7 @@ public class TokenResource {
    * @return Response the response
    */
   @POST
+  @Produces(MediaType.TEXT_HTML)
   @Path("/authorize")
   public Response authorizeCallback(@Context
   HttpServletRequest request) {
@@ -116,6 +116,7 @@ public class TokenResource {
    * @return Response the response
    */
   @POST
+  @Produces(MediaType.TEXT_HTML)
   @Path("/consent")
   public Response consentCallback(@Context
   HttpServletRequest request) {
@@ -163,6 +164,7 @@ public class TokenResource {
 
   @POST
   @Path("/token")
+    @Produces(MediaType.APPLICATION_JSON)
   @Consumes("application/x-www-form-urlencoded")
   public Response token(@HeaderParam("Authorization")
   String authorization, final MultivaluedMap<String, String> formParameters) {

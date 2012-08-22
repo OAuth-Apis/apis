@@ -11,7 +11,6 @@ MUST:
 - Refactor scopes and redirect-uri to seperate tables
 - Turn off session cookies
 - Remove refresh_token from serialized access token response if the refresh_token is 'null'
-- Change Content Type of Authorization grant response from application/json to text/html
 - The example-resource-server validate scopes must validate granted scopes
 - Only check the scopes that are actually asked by the clients in the consent page. Do not check any scopes if there
   are no scopes requested by the client.
