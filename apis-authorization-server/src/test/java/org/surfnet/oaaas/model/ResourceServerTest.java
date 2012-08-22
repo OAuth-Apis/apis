@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.model;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -23,7 +24,9 @@ import javax.validation.ConstraintViolation;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class ResourceServerTest extends AbstractEntityTest {
 
@@ -39,10 +42,55 @@ public class ResourceServerTest extends AbstractEntityTest {
   }
 
   @Test
-  public void minimalistic() {
+  public void validateMinimalistic() {
     Set<ConstraintViolation<ResourceServer>> violations = validator.validate(resourceServer);
     assertEquals("minimal resource server should have no violations", 0, violations.size());
   }
 
-  // TODO: add tests for scopes, clients, any other?
+  @Test
+  public void validateLessThanMinimal() {
+    resourceServer = new ResourceServer();
+    Set<ConstraintViolation<ResourceServer>> violations = validator.validate(resourceServer);
+    assertEquals("Empty resource server fails on 4 NotNull-fields", 4, violations.size());
+  }
+
+  @Test
+  public void validateScopes() {
+    {
+      resourceServer.setScopes(Arrays.asList("read", "write"));
+      Set<ConstraintViolation<ResourceServer>> violations = validator.validate(resourceServer);
+      assertEquals("valid scopes should yield no violations", 0, violations.size());
+    }
+    {
+      resourceServer.setScopes(Arrays.asList("exotic string123456!<>./?@#$%^&*()_+[];\""));
+      Set<ConstraintViolation<ResourceServer>> violations = validator.validate(resourceServer);
+      assertEquals("Even an exotic scope name is allowed", 0, violations.size());
+    }
+    {
+      resourceServer.setScopes(Arrays.asList("with,a,comma,"));
+      Set<ConstraintViolation<ResourceServer>> violations = validator.validate(resourceServer);
+      assertEquals("comma is not allowed", 1, violations.size());
+    }
+  }
+
+  @Test
+  public void validateEmail() {
+    resourceServer.setContactEmail("foo@example.com");
+    Set<ConstraintViolation<ResourceServer>> violations = validator.validate(resourceServer);
+    assertEquals("valid email should yield no violations", 0, violations.size());
+
+    resourceServer.setContactEmail("invalid email address");
+    violations = validator.validate(resourceServer);
+    assertEquals("invalid email should trigger violation", 1, violations.size());
+
+  }
+
+  @Test
+  public void hasClient() {
+    Client c = new Client();
+    c.setName("clientname");
+    resourceServer.setClients(Arrays.asList(new Client(), c, new Client()));
+    assertThat(resourceServer.containsClient(c), is(true));
+    assertThat(resourceServer.containsClient(new Client()), is(false));
+  }
 }

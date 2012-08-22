@@ -19,7 +19,6 @@ package org.surfnet.oaaas.config;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
-import javax.validation.ConstraintValidator;
 import javax.validation.Validator;
 
 import com.googlecode.flyway.core.Flyway;
@@ -41,7 +40,6 @@ import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.OAuth2ValidatorImpl;
 import org.surfnet.oaaas.auth.UserConsentFilter;
-import org.surfnet.oaaas.model.validation.PatternIterableValidator;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 
@@ -167,8 +165,4 @@ public class SpringConfiguration {
     return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
   }
 
-  @Bean
-  public ConstraintValidator patternIterableValidator() {
-    return new PatternIterableValidator();
-  }
 }

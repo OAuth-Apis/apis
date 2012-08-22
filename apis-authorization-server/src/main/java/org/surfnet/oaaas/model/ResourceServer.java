@@ -51,7 +51,7 @@ import org.hibernate.validator.constraints.Email;
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
 public class ResourceServer extends AbstractEntity {
 
-  public static final String SCOPE_PATTERN = "^[^,]$"; // anything but a comma
+  public static final String SCOPE_PATTERN = "^[^,]+$"; // anything but a comma
 
   @Column
   @NotNull
