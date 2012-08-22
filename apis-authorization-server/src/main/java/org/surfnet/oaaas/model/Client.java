@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -33,6 +34,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.NotNull;
@@ -112,6 +114,15 @@ public class Client extends AbstractEntity {
 
   @Column
   private boolean notAllowedImplicitGrant;
+
+  // Listed here so Cascade will work.
+  @OneToMany(mappedBy ="client", cascade = CascadeType.ALL)
+  private List<AccessToken> accessTokens;
+
+  // Listed here so Cascade will work.
+  @OneToMany(mappedBy ="client", cascade = CascadeType.ALL)
+  private List<AuthorizationRequest> authorizationRequests;
+
 
   public String getName() {
     return name;
@@ -331,7 +342,7 @@ public class Client extends AbstractEntity {
       isValid = false;
     }
 
-    if (!resourceServer.getScopes().containsAll(scopes)) {
+    if (scopes != null && !resourceServer.getScopes().containsAll(scopes)) {
       final String message = "Client should only contain scopes that its resource server defines. " +
           "Client scopes: " + scopes + ". Resource server scopes: " + resourceServer.getScopes();
       violation(context, message);

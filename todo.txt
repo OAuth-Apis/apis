@@ -8,7 +8,6 @@ MUST:
   - Add access token expiration to client registration form
 - Documentation overall and README.md per submodule (especially surfconext-authn)
 - Document how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
-- Refactor scopes and redirect-uri to seperate tables
 - Turn off session cookies
 - rename the apis-example-resource-server-war module so that it cannot be confused with the
   apis-example-resource-server anymore.

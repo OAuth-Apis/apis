@@ -28,7 +28,6 @@ import org.apache.tomcat.jdbc.pool.DataSource;
 import org.junit.BeforeClass;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 /**
  * Test the flyway migrations.
@@ -39,7 +38,7 @@ public class AbstractRepositoryTest {
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
   private static final Class<PersistenceProviderImpl> PERSISTENCE_PROVIDER_CLASS = PersistenceProviderImpl.class;
   private static JpaRepositoryFactory factory;
-  private static EntityManager entityManager;
+  protected static EntityManager entityManager;
 
   @BeforeClass
   public static void beforeClass() {

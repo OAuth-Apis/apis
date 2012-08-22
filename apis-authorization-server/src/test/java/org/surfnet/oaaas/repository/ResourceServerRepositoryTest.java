@@ -18,15 +18,18 @@
  */
 package org.surfnet.oaaas.repository;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link Test} for {@link ResourceServerRepository}
@@ -49,4 +52,40 @@ public class ResourceServerRepositoryTest extends AbstractRepositoryTest {
     assertEquals(1, clients.size());
   }
 
+  @Test
+  public void cascade() {
+    ResourceServerRepository repo = getRepository(ResourceServerRepository.class);
+    ClientRepository clientRepo = getRepository(ClientRepository.class);
+
+    // Create and save a resourceServer
+    ResourceServer resourceServer = new ResourceServer();
+    resourceServer.setKey("key");
+    resourceServer.setName("name");
+    resourceServer.setSecret("sec");
+    resourceServer.setContactName("contact");
+    resourceServer.setScopes(Arrays.asList("read"));
+    resourceServer = repo.save(resourceServer);
+
+    // Create and save a client, associated with the resourceServer
+    Client c = new Client();
+    c.setName("name");
+    c.setClientId("clientid");
+    c.setResourceServer(resourceServer);
+    resourceServer.setClients(Arrays.asList(c));
+    c = clientRepo.save(c);
+
+    // See that the client can be found
+    assertNotNull(clientRepo.findOne(c.getId()));
+
+    long resourceServerId = resourceServer.getId();
+    // Remove the resourceServer
+    repo.delete(resourceServer);
+
+    // Expect the resource server to be deleted
+    assertNull(repo.findOne(resourceServerId));
+
+    // Expect the client to be deleted as well.
+    final Client foundClient = clientRepo.findOne(c.getId());
+    assertNull(foundClient);
+  }
 }

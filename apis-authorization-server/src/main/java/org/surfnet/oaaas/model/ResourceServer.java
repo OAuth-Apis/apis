@@ -20,6 +20,7 @@ package org.surfnet.oaaas.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -86,7 +87,7 @@ public class ResourceServer extends AbstractEntity {
   private String contactEmail;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "resourceServer", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "resourceServer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @Valid
   private List<Client> clients;
 
