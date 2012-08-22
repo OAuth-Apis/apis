@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,6 +67,11 @@ public class AccessTokenResource extends AbstractResource {
    */
   @GET
   public Response getAll(@Context HttpServletRequest request) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     Response.ResponseBuilder responseBuilder;
     String owner = getUserId(request);
     List<AccessToken> tokens = accessTokenRepository.findByResourceOwnerId(owner);
@@ -86,6 +92,10 @@ public class AccessTokenResource extends AbstractResource {
   @GET
   @Path("/{accessTokenId}")
   public Response getById(@Context HttpServletRequest request, @PathParam("accessTokenId") Long id) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
 
     String owner = getUserId(request);
 
@@ -108,6 +118,11 @@ public class AccessTokenResource extends AbstractResource {
   @DELETE
   @Path("/{accessTokenId}")
   public Response delete(@Context HttpServletRequest request, @PathParam("accessTokenId") Long id) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     String owner = getUserId(request);
 
     if (accessTokenRepository.findByIdAndResourceOwnerId(id, owner) == null) {

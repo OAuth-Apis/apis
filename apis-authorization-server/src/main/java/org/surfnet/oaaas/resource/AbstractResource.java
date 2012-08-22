@@ -16,12 +16,14 @@
 
 package org.surfnet.oaaas.resource;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -30,6 +32,9 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
+import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.ValidationResponseException;
+import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.model.ValidationErrorResponse;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
@@ -38,6 +43,9 @@ import org.surfnet.oaaas.repository.ExceptionTranslator;
  * Abstract resource that defines common functionality.
  */
 public class AbstractResource {
+
+  public static final String SCOPE_READ = "read";
+  public static final String SCOPE_WRITE = "write";
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractResource.class);
 
@@ -84,5 +92,20 @@ public class AbstractResource {
 
   public String generateRandom() {
     return UUID.randomUUID().toString();
+  }
+
+  public Response validateScope(HttpServletRequest request, List<String> requiredScopes) {
+    VerifyTokenResponse verifyTokenResponse = (VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
+    List<String> grantedScopes = verifyTokenResponse.getScopes();
+    for (String requiredScope : requiredScopes) {
+      if (!grantedScopes.contains(requiredScope)) {
+        return Response
+            .status(HttpServletResponse.SC_BAD_REQUEST)
+            .entity(new ErrorResponse(OAuth2Validator.ValidationResponse.SCOPE_NOT_VALID.getValue(),
+                OAuth2Validator.ValidationResponse.SCOPE_NOT_VALID.getDescription()))
+                .build();
+      }
+    }
+    return null;
   }
 }

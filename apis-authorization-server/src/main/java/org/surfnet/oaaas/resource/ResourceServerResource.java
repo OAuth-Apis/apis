@@ -17,13 +17,11 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
-import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.DELETE;
@@ -40,10 +38,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.model.VerifyTokenResponse;
-import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 /**
@@ -64,6 +59,11 @@ public class ResourceServerResource extends AbstractResource {
    */
   @GET
   public Response getAll(@Context HttpServletRequest request) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     Response.ResponseBuilder responseBuilder;
     String owner = getUserId(request);
     final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
@@ -80,6 +80,10 @@ public class ResourceServerResource extends AbstractResource {
   @GET
   @Path("/{resourceServerId}")
   public Response getById(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
 
     String owner = getUserId(request);
 
@@ -100,6 +104,11 @@ public class ResourceServerResource extends AbstractResource {
    */
   @PUT
   public Response put(@Context HttpServletRequest request, @Valid ResourceServer newOne) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     String owner = getUserId(request);
 
     // Read only fields
@@ -130,6 +139,11 @@ public class ResourceServerResource extends AbstractResource {
   @DELETE
   @Path("/{resourceServerId}")
   public Response delete(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     String owner = getUserId(request);
 
     if (resourceServerRepository.findByIdAndOwner(id, owner) == null) {
@@ -148,6 +162,11 @@ public class ResourceServerResource extends AbstractResource {
   public Response post(@Valid ResourceServer resourceServer,
                        @Context HttpServletRequest request,
                        @PathParam("resourceServerId") Long id) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     String owner = getUserId(request);
 
     ResourceServer persistedResourceServer = resourceServerRepository.findByIdAndOwner(id, owner);

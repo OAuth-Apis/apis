@@ -19,7 +19,10 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -28,7 +31,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 /**
  * Responsible for handling user consent.
@@ -92,7 +98,7 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    * <li>set the authState attribute, by calling
    * {@link #setAuthStateValue(javax.servlet.ServletRequest, String)}</li>
    * <li>set the scopes (optional) the user has given consent for, by calling
-   * {@link #setScopes(ServletRequest, String[])}</li>
+   * {@link #setScopes}</li>
    * <li>call chain.doFilter(request, response) to let the flow continue..
    * </ul>
    * 
@@ -115,15 +121,14 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
       String authStateValue, String returnUri, Client client) throws IOException, ServletException;
 
   /**
-   * Set the scopes of the consent on the request. Note this optional , if this
-   * is not called then all of the scopes of the CLientApp are used.
+   * Set the granted scopes of the consent on the request. Note: this optional.
    * 
    * @param request
    *          the original ServletRequest
-   * @param String
-   *          [] the scopest.
+   * @param scopes
+   *          the {@link String[]} scopes.
    */
-  protected final void setScopes(ServletRequest request, String[] scopes) {
+  protected final void setGrantedScopes(ServletRequest request, String[] scopes) {
     request.setAttribute(GRANTED_SCOPES, scopes);
   }
 

@@ -36,8 +36,10 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AccessToken;
+import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
+import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 /**
  * Example {@link AbstractUserConsentHandler} that forwards to a form.
@@ -50,6 +52,9 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
 
   @Inject
   private AccessTokenRepository accessTokenRepository;
+
+  @Inject
+  private AuthorizationRequestRepository authorizationRequestRepository;
 
   /*
    * (non-Javadoc)
@@ -84,6 +89,8 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     if (!CollectionUtils.isEmpty(tokens)) {
       chain.doFilter(request, response);
     } else {
+      AuthorizationRequest authorizationRequest = authorizationRequestRepository.findByAuthState(authStateValue);
+      request.setAttribute("requestedScopes", authorizationRequest.getRequestedScopes());
       request.setAttribute("client", client);
       request.setAttribute(AUTH_STATE, authStateValue);
       request.setAttribute("actionUri", returnUri);
@@ -108,7 +115,7 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     if (Boolean.valueOf(request.getParameter(USER_OAUTH_APPROVAL))) {
       setAuthStateValue(request, request.getParameter(AUTH_STATE));
       String[] scopes = request.getParameterValues(GRANTED_SCOPES);
-      setScopes(request, scopes);
+      setGrantedScopes(request, scopes);
       return true;
     } else {
       request.getRequestDispatcher(getUserConsentDeniedUrl()).forward(request, response);

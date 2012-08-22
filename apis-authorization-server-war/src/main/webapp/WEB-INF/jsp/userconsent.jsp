@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,9 +45,16 @@
       <h2>This data will be shared</h2>
 
       <fieldset>
-        <c:forEach items="${client.scopes}" var="scope">
-			<input type="checkbox" id="GRANTED_SCOPES" name="GRANTED_SCOPES" checked value="${scope}"/>
-			<span class="consent-label">${scope}</span><br/>
+        <c:forEach items="${client.scopes}" var="availableScope">
+          <c:set var="checked" value="" />
+          <c:forEach var="requestedScope" items="${requestedScopes}">
+            <c:if test="${requestedScope eq availableScope}">
+              <c:set var="checked" value="CHECKED" />
+            </c:if>
+          </c:forEach>
+          <input type="checkbox" id="GRANTED_SCOPES" name="GRANTED_SCOPES" <c:out value="${checked}"/>
+                 value="${availableScope}"/>
+          <span class="consent-label">${availableScope}</span><br/>
         </c:forEach>
 	  </fieldset>	
       <fieldset>

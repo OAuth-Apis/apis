@@ -19,10 +19,7 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.core.HttpHeaders;
@@ -78,7 +75,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     Map<String, Object> attributes = new HashMap<String, Object>();
     attributes.put("demo", Arrays.asList(1, 2, 3));
     attributes.put("key", "value");
-    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", "read",
+    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", Collections.singletonList("read"),
         new AuthenticatedPrincipal("john.doe", Arrays.asList("user", "admin"), attributes), 0L);
     MockFilterChain chain = doCallFilter(recorderdResponse);
     /*

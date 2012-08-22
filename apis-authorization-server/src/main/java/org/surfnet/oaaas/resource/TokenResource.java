@@ -23,6 +23,7 @@ import static org.surfnet.oaaas.auth.OAuth2Validator.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -50,7 +51,6 @@ import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.auth.ValidationResponseException;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AccessTokenRequest;
@@ -64,7 +64,7 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
  * href="http://tools.ietf.org/html/draft-ietf-oauth-v2"> the OAuth spec</a>.
- * 
+ *
  */
 @Named
 @Path("/")
@@ -95,7 +95,7 @@ public class TokenResource {
   /**
    * Entry point for the authorize call which needs to return an authorization
    * code or (implicit grant) an access token
-   * 
+   *
    * @param request
    *          the {@link HttpServletRequest}
    * @return Response the response
@@ -110,7 +110,7 @@ public class TokenResource {
 
   /**
    * Called after the user has given consent
-   * 
+   *
    * @param request
    *          the {@link HttpServletRequest}
    * @return Response the response
@@ -141,9 +141,17 @@ public class TokenResource {
    * In the user consent filter the scopes are (possible) set on the Request
    */
   private void processScopes(AuthorizationRequest authReq, HttpServletRequest request) {
-    String[] scopes = (String[]) request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES);
-    if (ArrayUtils.isNotEmpty(scopes)) {
-      authReq.setScopes(Arrays.asList(scopes));
+    if (authReq.getClient().isSkipConsent()) {
+      // return the scopes in the authentication request since the requested scopes are stored in the
+      // authorizationRequest.
+      authReq.setGrantedScopes(authReq.getRequestedScopes());
+    } else {
+      String[] scopes = (String[]) request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES);
+      if (ArrayUtils.isNotEmpty(scopes)) {
+        authReq.setGrantedScopes(Arrays.asList(scopes));
+      } else {
+        authReq.setGrantedScopes(null);
+      }
     }
   }
 
@@ -153,7 +161,7 @@ public class TokenResource {
     long expires = (expireDuration == 0L ? 0L : (System.currentTimeMillis() + (1000 * expireDuration)));
     String refeshToken = (client.isUseRefreshTokens() && !isImplicitGrant) ? getTokenValue(true) : null;
     AccessToken token = new AccessToken(getTokenValue(false), request.getPrincipal(), client, expires,
-        request.getScopes(), refeshToken);
+        request.getGrantedScopes(), refeshToken);
     return accessTokenRepository.save(token);
   }
 
@@ -164,7 +172,7 @@ public class TokenResource {
 
   @POST
   @Path("/token")
-    @Produces(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @Consumes("application/x-www-form-urlencoded")
   public Response token(@HeaderParam("Authorization")
   String authorization, final MultivaluedMap<String, String> formParameters) {
@@ -220,7 +228,7 @@ public class TokenResource {
     AuthorizationRequest request = new AuthorizationRequest();
     request.setClient(accessToken.getClient());
     request.setPrincipal(accessToken.getPrincipal());
-    request.setScopes(accessToken.getScopes());
+    request.setGrantedScopes(accessToken.getScopes());
     accessTokenRepository.delete(accessToken);
     return request;
 
@@ -266,7 +274,7 @@ public class TokenResource {
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
     String uri = authReq.getRedirectUri();
     uri = String.format(uri + "#access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
-        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), StringUtils.join(authReq.getScopes(), ','));
+        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), StringUtils.join(authReq.getGrantedScopes(), ','));
     return redirect(uri);
   }
 

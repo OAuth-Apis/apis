@@ -79,7 +79,8 @@ public interface OAuth2Validator {
 
     REDIRECT_URI_DIFFERENT("invaid_request","The redirect_uri does not match the initial authorization request"),
     
-    SCOPE_NOT_VALID("invalid_scope", "Invalid/unknown scope provided"),
+    SCOPE_NOT_VALID("invalid_scope", "The requested scope is invalid, unknown, malformed, " +
+        "or exceeds the scope granted by the resource owner."),
 
     IMPLICIT_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permisssion for implicit grant"),
 

@@ -19,6 +19,7 @@
 package org.surfnet.oaaas.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -43,7 +44,7 @@ public class VerifyTokenResponse implements Serializable {
   /*
    * The space delimited set of scopes that the user consented to.
    */
-  private String scopes;
+  private List<String> scopes;
   /*
    * The principal
    */
@@ -68,7 +69,7 @@ public class VerifyTokenResponse implements Serializable {
     this.error = error;
   }
 
-  public VerifyTokenResponse(String audience, String scopes, AuthenticatedPrincipal principal, Long expiresIn) {
+  public VerifyTokenResponse(String audience, List<String> scopes, AuthenticatedPrincipal principal, Long expiresIn) {
     super();
     this.audience = audience;
     this.scopes = scopes;
@@ -94,7 +95,7 @@ public class VerifyTokenResponse implements Serializable {
   /**
    * @return the scopes
    */
-  public String getScopes() {
+  public List<String> getScopes() {
     return scopes;
   }
 
@@ -102,7 +103,7 @@ public class VerifyTokenResponse implements Serializable {
    * @param scopes
    *          the scopes to set
    */
-  public void setScopes(String scopes) {
+  public void setScopes(List<String> scopes) {
     this.scopes = scopes;
   }
 

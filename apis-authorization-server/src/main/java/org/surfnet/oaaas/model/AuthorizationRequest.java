@@ -79,7 +79,10 @@ public class AuthorizationRequest extends AbstractEntity {
   private String redirectUri;
 
   @ElementCollection(fetch= FetchType.EAGER)
-  private List<String> scopes = new ArrayList<String>();
+  private List<String> requestedScopes = new ArrayList<String>();
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<String> grantedScopes = new ArrayList<String>();
 
   @Column
   private String state;
@@ -97,13 +100,13 @@ public class AuthorizationRequest extends AbstractEntity {
     super();
   }
 
-  public AuthorizationRequest(String responseType, String clientId, String redirectUri, List<String> scopes, String state,
+  public AuthorizationRequest(String responseType, String clientId, String redirectUri, List<String> requestedScopes, String state,
       String authState) {
     super();
     this.responseType = responseType;
     this.clientId = clientId;
     this.redirectUri = redirectUri;
-    this.scopes = scopes;
+    this.requestedScopes = requestedScopes;
     this.state = state;
     this.authState = authState;
   }
@@ -173,18 +176,33 @@ public class AuthorizationRequest extends AbstractEntity {
   }
 
   /**
-   * @return the scope
+   * @return the requested scopes
    */
-  public List<String> getScopes() {
-    return scopes;
+  public List<String> getRequestedScopes() {
+    return requestedScopes;
   }
 
   /**
-   * @param scopes
-   *          the scopes to set
+   * @param requestedScopes
+   *          the requestedScopes to set
    */
-  public void setScopes(List<String> scopes) {
-    this.scopes = scopes;
+  public void setRequestedScopes(List<String> requestedScopes) {
+    this.requestedScopes = requestedScopes;
+  }
+
+  /**
+   * @return the granted scopes
+   */
+  public List<String> getGrantedScopes() {
+    return grantedScopes;
+  }
+
+  /**
+   * @param grantedScopes
+   *          the grantedScopes to set
+   */
+  public void setGrantedScopes(List<String> grantedScopes) {
+    this.grantedScopes = grantedScopes;
   }
 
   /**

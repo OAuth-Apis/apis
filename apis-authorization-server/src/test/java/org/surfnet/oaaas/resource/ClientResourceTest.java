@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.resource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -97,8 +98,8 @@ public class ClientResourceTest {
   public void scopesShouldBeSubsetOfResourceServerScopes() {
 
     Client client = new Client();
-    request.setAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE, new VerifyTokenResponse("", "",
-        new AuthenticatedPrincipal("user"), 0L));
+    request.setAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE, new VerifyTokenResponse("",
+        new ArrayList<String>(), new AuthenticatedPrincipal("user"), 0L));
     client.setScopes(Arrays.asList("Some", "arbitrary", "set"));
     client.setName("clientname");
     ResourceServer resourceServer = new ResourceServer();

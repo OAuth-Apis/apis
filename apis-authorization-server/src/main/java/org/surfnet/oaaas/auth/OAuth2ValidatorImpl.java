@@ -79,7 +79,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       authorizationRequest.setRedirectUri(redirectUri);
 
       List<String> scopes = determineScopes(authorizationRequest, client);
-      authorizationRequest.setScopes(scopes);
+      authorizationRequest.setRequestedScopes(scopes);
 
     } catch (ValidationResponseException e) {
       return e.v;
@@ -88,17 +88,18 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   }
 
   protected List<String> determineScopes(AuthorizationRequest authorizationRequest, Client client) {
-    if (CollectionUtils.isEmpty(authorizationRequest.getScopes())) {
-      return client.getScopes();
+    if (CollectionUtils.isEmpty(authorizationRequest.getRequestedScopes())) {
+      // TODO add default scopes.
+      return null;
     } else {
-      List<String> scopes = authorizationRequest.getScopes();
+      List<String> scopes = authorizationRequest.getRequestedScopes();
       List<String> clientScopes = client.getScopes();
       for (String scope : scopes) {
         if (!clientScopes.contains(scope)) {
           throw new ValidationResponseException(SCOPE_NOT_VALID);
         }
       }
-      return authorizationRequest.getScopes();
+      return authorizationRequest.getRequestedScopes();
     }
   }
 

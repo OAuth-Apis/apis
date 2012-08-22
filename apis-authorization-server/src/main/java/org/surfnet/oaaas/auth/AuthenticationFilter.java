@@ -87,15 +87,15 @@ public class AuthenticationFilter implements Filter {
     String clientId = request.getParameter("client_id");
     String redirectUri = request.getParameter("redirect_uri");
 
-    List<String> scopes = null;
+    List<String> requestedScopes = null;
     if (StringUtils.isNotBlank(request.getParameter("scope"))) {
-      scopes = Arrays.asList(request.getParameter("scope").split(","));
+      requestedScopes = Arrays.asList(request.getParameter("scope").split(","));
     }
 
     String state = request.getParameter("state");
     String authState = getAuthStateValue();
 
-    return new AuthorizationRequest(responseType, clientId, redirectUri, scopes, state, authState);
+    return new AuthorizationRequest(responseType, clientId, redirectUri, requestedScopes, state, authState);
   }
 
   private boolean handleInitialRequest(AuthorizationRequest authReq, HttpServletRequest request) throws

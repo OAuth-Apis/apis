@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.resource;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,6 +69,10 @@ public class ClientResource extends AbstractResource {
   @GET
   public Response getAll(@Context HttpServletRequest request,
                          @PathParam("resourceServerId") Long resourceServerId) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
 
     String owner = getUserId(request);
 
@@ -94,6 +99,11 @@ public class ClientResource extends AbstractResource {
   public Response getById(@Context HttpServletRequest request,
                           @PathParam("resourceServerId") Long resourceServerId,
                           @PathParam("clientId") Long id) {
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     Response.ResponseBuilder responseBuilder;
 
     String owner = getUserId(request);
@@ -115,6 +125,11 @@ public class ClientResource extends AbstractResource {
   @PUT
   public Response put(@Context HttpServletRequest request,
                       @PathParam("resourceServerId") Long resourceServerId, Client client) {
+
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
 
     String owner = getUserId(request);
     final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
@@ -161,6 +176,11 @@ public class ClientResource extends AbstractResource {
                          @PathParam("clientId") Long id,
                          @PathParam("resourceServerId") Long resourceServerId) {
 
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
+
     String owner = getUserId(request);
     final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
 
@@ -184,6 +204,11 @@ public class ClientResource extends AbstractResource {
                        @Context HttpServletRequest request,
                        @PathParam("resourceServerId") Long resourceServerId
   ) {
+
+    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+    if (validateScopeResponse != null) {
+      return validateScopeResponse;
+    }
 
     String owner = getUserId(request);
     final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);

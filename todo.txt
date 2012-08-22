@@ -10,9 +10,6 @@ MUST:
 - Document how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
 - Refactor scopes and redirect-uri to seperate tables
 - Turn off session cookies
-- The example-resource-server validate scopes must validate granted scopes
-- Only check the scopes that are actually asked by the clients in the consent page. Do not check any scopes if there
-  are no scopes requested by the client.
 - rename the apis-example-resource-server-war module so that it cannot be confused with the
   apis-example-resource-server anymore.
 - Move the code to the SURFnet git repo

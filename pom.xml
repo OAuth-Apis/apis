@@ -89,6 +89,7 @@
 	    <jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>
 	    <selenium.version>2.25.0</selenium.version>
 		<cglib.version>2.2.2</cglib.version>
+    <jstl.version>1.2</jstl.version>
   </properties>
 
 	<dependencyManagement>

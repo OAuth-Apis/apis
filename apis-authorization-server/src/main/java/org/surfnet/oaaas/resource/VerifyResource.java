@@ -89,7 +89,7 @@ public class VerifyResource {
     }
 
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
-        StringUtils.join(token.getScopes(), ','), token.getPrincipal(), token.getExpires());
+        token.getScopes(), token.getPrincipal(), token.getExpires());
 
     LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
     return Response.ok(verifyTokenResponse).build();

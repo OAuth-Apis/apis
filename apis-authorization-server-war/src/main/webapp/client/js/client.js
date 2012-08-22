@@ -82,7 +82,8 @@ var windowController = {
     context:window,
     redirectUri: window.location, // Current location as redirect URI: after authorization we get back control.
     authorizationEndpoint:"/oauth2/authorize", 
-    clientId:"authorization-server-admin-js-client"
+    clientId:"authorization-server-admin-js-client",
+    scope:"read,write"
   }),
 
   login: function() {

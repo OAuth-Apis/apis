@@ -55,8 +55,8 @@ public class RefreshTokenTestIT extends SeleniumSupport {
 
     WebDriver webdriver = getWebDriver();
     String responseType = "code";
-    String url = String.format("%s/oauth2/authorize?response_type=%s&client_id=%s&redirect_uri=%s", baseUrl(),
-        responseType, clientId, accessTokenRedirectUri);
+    String url = String.format("%s/oauth2/authorize?response_type=%s&client_id=%s&scope=read&redirect_uri=%s",
+        baseUrl(), responseType, clientId, accessTokenRedirectUri);
     webdriver.get(url);
     assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
     
@@ -81,7 +81,7 @@ public class RefreshTokenTestIT extends SeleniumSupport {
     final HttpPost tokenRequest = new HttpPost(tokenUrl);
     
     /*
-     * No make a request for a new AccessToken based on the refreshToken
+     * Now make a request for a new AccessToken based on the refreshToken
      */
     String postBody = String.format("grant_type=%s&refresh_token=%s&state=%s",
         OAuth2Validator.GRANT_TYPE_REFRESH_TOKEN, accessTokenResponse.getRefreshToken(), "dummy");
