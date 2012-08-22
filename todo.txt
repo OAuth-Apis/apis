@@ -20,3 +20,4 @@ NICE:
 - Document OAuth2Validator to explain or comply to spec compliance
 - The client in the authorization server should ask for scopes (read, write) and based on the granted scopes the ui
   should be modified
+- add default scopes for clients that do not request any scope
