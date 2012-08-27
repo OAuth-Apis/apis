@@ -26,10 +26,10 @@
       <td>{{scopes}}</td>
       <td>
         <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
-        <strong class="key-secret">Client ID <i rel="popover" class="icon-question-sign" name="client-key"></i>:</strong> 
-        <a class="copy-clipboard" id="{{clientId}}" title="On clicking '{{clientId}}' will be copied to you clipboard" rel="tooltip" href="#">copy to clipboard</a><br>
-        <strong class="key-secret">Secret <i rel="popover" class="icon-question-sign" name="client-secret"></i>:</strong> 
-        <a class="copy-clipboard" id="{{secret}}" title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip" href="#">copy to clipboard</a>
+        <strong class="key-secret">Client ID <i rel="popover" class="icon-question-sign" name="client-key"></i>:</strong>
+        <input class="copy-clipboard" readonly="readonly" value="{{clientId}}" /><br>
+        <strong class="key-secret">Secret <i rel="popover" class="icon-question-sign" name="client-secret"></i>:</strong>
+        <input class="copy-clipboard" readonly="readonly" value="{{secret}}" /><br>
       </td>
       <td><a class="deleteClientButton btn btn-small btn-warning pull-right" href="#">Delete</a></td>
     </tr>

@@ -56,15 +56,15 @@ var resourceServerGridView = (function() {
             resourceServerGridController.onDelete(resourceServerId);   
           }
         });
-        /*
-         * TODO does not work
-         */
-        $("a.copy-clipboard").zclip({
-          path : "flash/ZeroClipboard.swf",
-          copy : function() {
-            return $(this).prop("id");
-          },
+
+        $('#resourceServerGrid input.copy-clipboard').tooltip({
+          trigger: 'click',
+          title: 'Press Ctrl/Cmd-C to copy'
         });
+        $('#resourceServerGrid input.copy-clipboard').on('click', function() {
+          $(this).select();
+        });
+
       });
 
     },

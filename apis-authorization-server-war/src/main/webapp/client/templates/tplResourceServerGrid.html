@@ -26,9 +26,9 @@
          <td>
              <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
              <strong class="key-secret">Key <i rel="popover" class="icon-question-sign" name="resource-server-key"></i>:</strong> 
-             <a class="copy-clipboard" id="{{key}}" title="On clicking '{{key}}' will be copied to you clipboard" rel="tooltip" href="#">copy to clipboard</a><br>
-             <strong class="key-secret">Secret <i rel="popover" class="icon-question-sign" name="resource-server-secret"></i>:</strong> 
-             <a class="copy-clipboard" id="{{secret}}" title="On clicking '{{secret}}' will be copied to you clipboard" rel="tooltip" href="#">copy to clipboard</a>
+             <input class="copy-clipboard" readonly="readonly" value="{{key}}" /><br>
+             <strong class="key-secret">Secret <i rel="popover" class="icon-question-sign" name="resource-server-secret"></i>:</strong>
+           <input class="copy-clipboard" readonly="readonly" value="{{secret}}" />
          </td>
          <td><a class="deleteServerButton btn btn-small btn-warning pull-right" href="#">Delete</a></td>
        </tr>
