@@ -8,6 +8,7 @@
   <meta name="author" content="">
 
 	<title>Login</title>
+	<link rel="stylesheet" href="/client/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="/client/css/style.css" />
 	<script type="text/javascript" src="/client/js/lib/jquery.js"></script>
 	<script type="text/javascript" src="/client/js/lib/bootstrap.min.js"></script>

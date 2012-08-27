@@ -8,7 +8,8 @@
   <meta name="author" content="">
   <title>Consent</title>
   <!-- Le styles -->
-  <link href="/client/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="/client/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/client/css/style.css" />
 
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
