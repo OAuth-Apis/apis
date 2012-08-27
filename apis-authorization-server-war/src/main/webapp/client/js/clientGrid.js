@@ -63,14 +63,6 @@ var clientGridView = (function() {
           $(this).select();
         });
 
-        $('#clientGrid input.copy-clipboard').tooltip({
-          trigger: 'click',
-          title: 'Press Ctrl/Cmd-C to copy'
-        });
-        $('#clientGrid input.copy-clipboard').on('click', function() {
-          $(this).select();
-        });
-
       });
 
     },
