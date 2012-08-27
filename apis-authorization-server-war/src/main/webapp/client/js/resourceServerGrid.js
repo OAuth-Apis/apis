@@ -43,18 +43,11 @@ var resourceServerGridView = (function() {
         
         $("a.deleteServerButton").click(function(e) {
           var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
-          /**
-           * TODO
-            * This currently does not work as of Bootstrap css 
-            *          
-            *  bootbox.confirm("Are you sure you want to delete this Resource Server?", function(result) {        
-            *    if (result) {        
-            *      resourceServerGridController.onDelete(resourceServerId);    
-            *    }
-            */
-          if (confirm("Are you sure you want to delete this Resource Server?")) {
-            resourceServerGridController.onDelete(resourceServerId);   
-          }
+          bootbox.confirm("Are you sure you want to delete this Resource Server?", function (result) {
+            if (result) {
+              resourceServerGridController.onDelete(resourceServerId);
+            }
+          });
         });
 
         $('#resourceServerGrid input.copy-clipboard').tooltip({

@@ -48,9 +48,11 @@ var clientGridView = (function() {
         $("a.deleteClientButton").click(function(e) {
           var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
           var clientId = $(e.target).closest("tr").attr("data-clientId");
-          if (confirm("Are you sure you want to delete this Client?")) {
-            clientGridController.onDelete(resourceServerId, clientId);   
-          }
+          bootbox.confirm("Are you sure you want to delete this Client?", function (result) {
+            if (result) {
+              clientGridController.onDelete(resourceServerId, clientId);
+            }
+          });
         });
 
         $('#clientGrid input.copy-clipboard').tooltip({
