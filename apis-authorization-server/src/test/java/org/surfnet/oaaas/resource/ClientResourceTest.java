@@ -36,8 +36,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.model.ValidationErrorResponse;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
@@ -111,6 +111,6 @@ public class ClientResourceTest {
     when(validator.validate(client)).thenReturn(violations);
     final Response response = clientResource.put(request, 1L, client);
     assertEquals(400, response.getStatus());
-    assertEquals(1, ((ValidationErrorResponse) response.getEntity()).getViolations().size());
+    assertEquals("invalid_scope", ((ErrorResponse) response.getEntity()).getError());
   }
 }
