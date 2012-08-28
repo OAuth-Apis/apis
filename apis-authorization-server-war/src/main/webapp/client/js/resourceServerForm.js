@@ -34,7 +34,7 @@ var cleanFormArray = function(arrayOfStrings) {
         cleanArray.push(arrayOfStrings[i]);
       }
     }
-  } else if (arrayOfStrings.length) { // Only one item
+  } else if (arrayOfStrings && arrayOfStrings.length) { // Only one item
     cleanArray.push(arrayOfStrings);
   } else {
     // not even one item
