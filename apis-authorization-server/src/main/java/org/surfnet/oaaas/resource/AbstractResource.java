@@ -99,6 +99,7 @@ public class AbstractResource {
     List<String> grantedScopes = verifyTokenResponse.getScopes();
     for (String requiredScope : requiredScopes) {
       if (!grantedScopes.contains(requiredScope)) {
+        LOG.debug("Resource required scopes ({}) which the client has not been granted ({})", requiredScopes, grantedScopes);
         return Response
             .status(HttpServletResponse.SC_BAD_REQUEST)
             .entity(new ErrorResponse(OAuth2Validator.ValidationResponse.SCOPE_NOT_VALID.getValue(),

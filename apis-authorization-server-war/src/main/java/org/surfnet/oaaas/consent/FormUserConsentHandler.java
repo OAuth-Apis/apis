@@ -56,15 +56,6 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
   @Inject
   private AuthorizationRequestRepository authorizationRequestRepository;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.surfnet.oaaas.auth.AbstractUserConsentHandler#handleUserConsent(javax
-   * .servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
-   * javax.servlet.FilterChain, java.lang.String, java.lang.String,
-   * org.surfnet.oaaas.model.Client)
-   */
   @Override
   public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri, Client client) throws IOException, ServletException {
@@ -87,6 +78,9 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     AuthenticatedPrincipal principal = (AuthenticatedPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL);
     List<AccessToken> tokens = accessTokenRepository.findByResourceOwnerIdAndClient(principal.getName(), client);
     if (!CollectionUtils.isEmpty(tokens)) {
+      // If another token is already present for this resource owner and client, no new consent should be requested
+      List<String> grantedScopes = tokens.get(0).getScopes(); // take the scopes of the first access token found.
+      setGrantedScopes(request, grantedScopes.toArray(new String[grantedScopes.size()]));
       chain.doFilter(request, response);
     } else {
       AuthorizationRequest authorizationRequest = authorizationRequestRepository.findByAuthState(authStateValue);
