@@ -75,7 +75,7 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
 
   /**
    * Implement this method to perform the actual authentication. Use
-   * {@link org.surfnet.oaaas.simple.FormUserConsentHandler
+   * {@link org.surfnet.oaaas.consent.FormUserConsentHandler
    * FormUserConsentHandler} as an example.
    * 
    * In general, the contract is:

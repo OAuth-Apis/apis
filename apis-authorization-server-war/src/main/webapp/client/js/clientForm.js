@@ -35,10 +35,6 @@ var clientFormView = (function() {
           clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
         });
 
-        if (mode == "new") {
-          // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.
-          clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
-        }
         /*
          Attributes
         */
@@ -81,6 +77,11 @@ var clientFormView = (function() {
           });
         });
 
+
+        if (mode == "add") {
+          // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.
+          clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
+        }
 
         $("#editClientForm button.cancel").click(function() {
           clientFormController.onCancel();
