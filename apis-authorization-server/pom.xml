@@ -145,7 +145,7 @@
 			<plugin>
 				<groupId>org.apache.openjpa</groupId>
 				<artifactId>openjpa-maven-plugin</artifactId>
-				<version>2.2.0</version>
+				<version>${openjpa.version}</version>
 				<configuration>
 					<includes>org/surfnet/oaaas/model/*.class</includes>
 					<addDefaultConstructor>true</addDefaultConstructor>
@@ -164,9 +164,13 @@
 					<dependency>
 						<groupId>org.apache.openjpa</groupId>
 						<artifactId>openjpa</artifactId>
-						<!-- set the version to be the same as the level in your runtime -->
-						<version>2.2.0</version>
+						<version>${openjpa.version}</version>
 					</dependency>
+          <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+          </dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
