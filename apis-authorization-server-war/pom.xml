@@ -138,6 +138,11 @@
     <scope>test</scope>
   </dependency>
 
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-surfconext-authn</artifactId>
+    </dependency>
+
   </dependencies>
 
   <profiles>
