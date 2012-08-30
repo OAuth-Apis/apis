@@ -237,6 +237,7 @@ var clientFormController = (function() {
         contactName: formAsObject['contactName'],
         contactEmail: formAsObject['contactEmail'],
         thumbNailUrl: formAsObject['thumbNailUrl'],
+        expireDuration: formAsObject['expireDuration'],
         attributes: attributes,
         redirectUris: cleanFormArray(formAsObject['redirectUris'])
       };

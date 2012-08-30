@@ -3,13 +3,9 @@ MUST:
   - Add tooltips in the GUI for info about all the attributes
   - Style key/secret fields
   - Add Access Tokens readonly and delete views
-  - Add access token expiration to client registration form
 - Documentation overall and README.md per submodule (especially surfconext-authn)
 - Document how to extend the application (by overriding DefaultPackagesResourceConfig and Spring Configuration)
-- Turn off session cookies
-- rename the apis-example-resource-server-war module so that it cannot be confused with the
-  apis-example-resource-server anymore.
-- Move the code to the SURFnet git repo
+- rename the apis-example-resource-server-war module so that it cannot be confused with the apis-example-resource-server anymore.
 - Release Spring-security-opensaml to get rid of snapshot dependency
 
 NICE:

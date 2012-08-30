@@ -74,6 +74,7 @@
         </div>
       </div>
 
+
       <div class="control-group">
         <label class="control-label">Redirect URIs</label>
         <div class="controls" id="redirectUrisHolder">
@@ -89,6 +90,14 @@
             <button type="button" class="btn btn-success addRedirectUri"><i class="icon-plus icon-white"></i></button>
             <i class="icon-question-sign icon-blue" rel="popover" name="client-redirectUri"></i>
           </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Token expiration time</label>
+        <div class="controls">
+          <input type="number" name="expireDuration" value="{{expireDuration}}" placeholder="0">
+          <i class="icon-question-sign icon-blue" rel="popover" name="client-expireDuration"></i>
         </div>
       </div>
 
