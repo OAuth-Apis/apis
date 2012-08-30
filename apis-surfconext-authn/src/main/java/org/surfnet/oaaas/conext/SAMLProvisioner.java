@@ -28,6 +28,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * Implementation of Spring-security-opensaml's Provisioner interface, which provisions a UserDetails object based on a SAML Assertion.
+ */
 public class SAMLProvisioner implements Provisioner {
 
   private static final String UID = "urn:oid:1.3.6.1.4.1.1076.20.40.40.1";

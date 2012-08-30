@@ -48,22 +48,12 @@ public class DefaultPackagesResourceConfig extends PackagesResourceConfig {
     super(packages);
   }
 
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * com.sun.jersey.api.core.ScanningResourceConfig#init(com.sun.jersey.core
-   * .spi.scanning.Scanner)
-   */
   @Override
   public void init(Scanner scanner) {
-    Set<Class<?>> clazzes = getClasses();
-    clazzes.add(ClientResource.class);
-    clazzes.add(ResourceServerResource.class);
-    clazzes.add(TokenResource.class);
-    clazzes.add(VerifyResource.class);
+    Set<Class<?>> classes = getClasses();
+    classes.add(ClientResource.class);
+    classes.add(ResourceServerResource.class);
+    classes.add(TokenResource.class);
+    classes.add(VerifyResource.class);
   }
-
-
 }

@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.surfnet.spring.security.opensaml.Provisioner;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
@@ -69,12 +70,26 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     try {
       final Properties properties = PropertiesLoaderUtils.loadAllProperties("surfconext.authn.properties");
-      openSAMLContext = new OpenSAMLContext(properties, new SAMLProvisioner());
+      openSAMLContext = createOpenSAMLContext(properties);
 
       ssoUrl = properties.getProperty("ssoUrl", "no-property-named-ssoUrl");
     } catch (IOException e) {
       throw new ServletException(e);
     }
+  }
+
+  /**
+   * Default Context factory method.
+   */
+  protected OpenSAMLContext createOpenSAMLContext(Properties properties) {
+    return new OpenSAMLContext(properties, createProvisioner());
+  }
+
+  /**
+   * Default Provisioner factory method.
+   */
+  protected Provisioner createProvisioner() {
+    return new SAMLProvisioner();
   }
 
   @Override

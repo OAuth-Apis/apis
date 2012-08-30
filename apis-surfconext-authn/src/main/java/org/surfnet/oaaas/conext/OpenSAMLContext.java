@@ -50,6 +50,10 @@ import nl.surfnet.spring.security.opensaml.SignatureSecurityPolicyRule;
 import nl.surfnet.spring.security.opensaml.crypt.KeyStoreCredentialResolverDelegate;
 import nl.surfnet.spring.security.opensaml.xml.SAML2ValidatorSuite;
 
+/**
+ * Context that wires the required OpenSAML configuration.
+ * All methods can be overridden to customize behaviour.
+ */
 public class OpenSAMLContext {
 
   private static final String DEFAULT_ASSERTION_CONSUMER_URI = "/assertionConsumerService";
@@ -106,7 +110,7 @@ public class OpenSAMLContext {
 
   }
 
-  private VelocityEngine velocityEngine() {
+  protected VelocityEngine velocityEngine() {
 
     final VelocityEngineFactoryBean velocityEngineFactoryBean = new VelocityEngineFactoryBean();
     velocityEngineFactoryBean.setPreferFileSystemAccess(false);
@@ -126,25 +130,25 @@ public class OpenSAMLContext {
     return assertionConsumerURI;
   }
 
-  private ReplayCache replayCache() {
+  protected ReplayCache replayCache() {
     return new ReplayCache(new MapBasedStorageService<String,ReplayCacheEntry>(), replayCacheDuration);
   }
 
-  private MessageReplayRule messageReplayRule() {
+  protected MessageReplayRule messageReplayRule() {
     return new MessageReplayRule(replayCache());
   }
 
-  private IssueInstantRule issueInstantRule() {
+  protected IssueInstantRule issueInstantRule() {
     return new IssueInstantRule(clockSkew, newExpires);
   }
 
-  private CredentialResolver keyStoreCredentialResolver() {
+  protected CredentialResolver keyStoreCredentialResolver() {
     final KeyStoreCredentialResolverDelegate keyStoreCredentialResolverDelegate = new KeyStoreCredentialResolverDelegate();
     keyStoreCredentialResolverDelegate.setCertificateStore(certificateStore());
     return keyStoreCredentialResolverDelegate;
   }
 
-  private SignatureSecurityPolicyRule signatureBuilder() {
+  protected SignatureSecurityPolicyRule signatureBuilder() {
     final SignatureSecurityPolicyRule signatureSecurityPolicyRule = new SignatureSecurityPolicyRule(new SAMLSignatureProfileValidator());
     signatureSecurityPolicyRule.setCredentialResolver(keyStoreCredentialResolver());
     try {
@@ -155,15 +159,15 @@ public class OpenSAMLContext {
     return signatureSecurityPolicyRule;
   }
 
-  private SecurityPolicyDelegate securityPolicy() {
+  protected SecurityPolicyDelegate securityPolicy() {
     return new SecurityPolicyDelegate(Arrays.asList(signatureBuilder(), issueInstantRule(), messageReplayRule()));
   }
 
-  private SecurityPolicyResolver securityPolicyResolver() {
+  protected SecurityPolicyResolver securityPolicyResolver() {
     return new StaticSecurityPolicyResolver(securityPolicy());
   }
 
-  private SAMLMessageDecoder samlMessageDecoder() {
+  protected SAMLMessageDecoder samlMessageDecoder() {
     final BasicParserPool basicParserPool = new BasicParserPool();
     basicParserPool.setMaxPoolSize(maxParserPoolSize);
 
@@ -180,7 +184,7 @@ public class OpenSAMLContext {
     return assertionConsumer;
   }
 
-  private CertificateStore certificateStore() {
+  protected CertificateStore certificateStore() {
     final CertificateStoreImpl certificateStore = new CertificateStoreImpl();
     certificateStore.setCertificates(Collections.singletonMap(wayfUrlMetadata, wayfCertificate));
     try {
