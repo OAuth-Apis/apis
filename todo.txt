@@ -2,13 +2,12 @@ MUST:
 - GUI finished
   - Add tooltips in the GUI for info about all the attributes
   - Style key/secret fields
-  - Add Access Tokens readonly and delete views
 - rename the apis-example-resource-server-war module so that it cannot be confused with the apis-example-resource-server anymore.
-- Release Spring-security-opensaml to get rid of snapshot dependency
+- Release Spring-security-opensaml to get rid of snapshot dependency (reminder: halfway done; release:perform failed because of permissions outside of SURFnet premises)
+- Change GET access token response to limit included data (no sensitive client/resourceserver details)
 
 NICE:
 - ClientResource and ResourceServerResource must debug log all activity
 - Document OAuth2Validator to explain or comply to spec compliance
-- The client in the authorization server should ask for scopes (read, write) and based on the granted scopes the ui
-  should be modified
+- The client in the authorization server should change the ui based on the granted scopes (no 'add/delete' in case of read only scope)
 - add default scopes for clients that do not request any scope

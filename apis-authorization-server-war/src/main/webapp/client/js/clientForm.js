@@ -256,8 +256,6 @@ var clientFormController = (function() {
       windowController.onCloseEditClient();
     },
     
-    hide: function() {
-      view.hide();
-    }
+    hide: view.hide
   }
 })();

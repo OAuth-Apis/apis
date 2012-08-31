@@ -16,38 +16,23 @@
 
 package org.surfnet.oaaas.resource;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityExistsException;
-import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
+import java.util.Collections;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.model.AccessToken;
-import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
-import org.surfnet.oaaas.repository.ExceptionTranslator;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
 
 /**
  * JAX-RS Resource for maintaining owns access tokens.
@@ -76,13 +61,9 @@ public class AccessTokenResource extends AbstractResource {
     String owner = getUserId(request);
     List<AccessToken> tokens = accessTokenRepository.findByResourceOwnerId(owner);
 
-    if (tokens == null || tokens.isEmpty()) {
-      LOG.debug("No access tokens found for owner {}", owner);
-      responseBuilder = Response.status(Response.Status.NOT_FOUND);
-    } else {
-      LOG.debug("About to return all access tokens ({}) for owner {}", tokens.size(), owner);
-      responseBuilder = Response.ok(tokens);
-    }
+    LOG.debug("About to return all access tokens ({}) for owner {}", tokens.size(), owner);
+    responseBuilder = Response.ok(tokens);
+
     return responseBuilder.build();
   }
 

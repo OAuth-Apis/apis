@@ -19,15 +19,14 @@
 package org.surfnet.oaaas.config;
 
 import java.util.Set;
-
+import com.sun.jersey.api.core.PackagesResourceConfig;
+import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
+import com.sun.jersey.core.spi.scanning.Scanner;
+import org.surfnet.oaaas.resource.AccessTokenResource;
 import org.surfnet.oaaas.resource.ClientResource;
 import org.surfnet.oaaas.resource.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
 import org.surfnet.oaaas.resource.VerifyResource;
-
-import com.sun.jersey.api.core.PackagesResourceConfig;
-import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
-import com.sun.jersey.core.spi.scanning.Scanner;
 
 /**
  * PackagesResourceConfig that simply adds the relevant Resources to the
@@ -55,5 +54,6 @@ public class DefaultPackagesResourceConfig extends PackagesResourceConfig {
     classes.add(ResourceServerResource.class);
     classes.add(TokenResource.class);
     classes.add(VerifyResource.class);
+    classes.add(AccessTokenResource.class);
   }
 }

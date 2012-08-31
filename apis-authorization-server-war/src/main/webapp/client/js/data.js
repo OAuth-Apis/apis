@@ -79,6 +79,7 @@ var data = (function() {
         }
       });
     },
+
     deleteResourceServer: function(resourceServerId, success, failure) {
       var httpMethod, url;
       httpMethod = "DELETE";

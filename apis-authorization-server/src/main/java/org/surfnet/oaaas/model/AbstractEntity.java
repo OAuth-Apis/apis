@@ -18,18 +18,16 @@
  */
 package org.surfnet.oaaas.model;
 
-import java.io.Serializable;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.validation.ConstraintValidatorContext;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.surfnet.oaaas.model.validation.AbstractEntityValid;
+
+import javax.persistence.*;
+import javax.validation.ConstraintValidatorContext;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Abstract class that serves as root for Model object (e.g. that are stored in
@@ -47,6 +45,12 @@ public abstract class AbstractEntity implements Serializable {
   @GeneratedValue
   @JsonProperty
   private Long id;
+
+  @Column
+  private Date creationDate;
+
+  @Column
+  private Date modificationDate;
 
   @Override
   public int hashCode() {
@@ -111,5 +115,22 @@ public abstract class AbstractEntity implements Serializable {
         .buildConstraintViolationWithTemplate(message)
         .addConstraintViolation()
         .disableDefaultConstraintViolation();
+  }
+
+  @PrePersist
+  @PreUpdate
+  public void updateTimeStamps() {
+    modificationDate = new Date();
+    if (creationDate == null) {
+      creationDate = new Date();
+    }
+  }
+
+  public Date getCreationDate() {
+    return creationDate;
+  }
+
+  public Date getModificationDate() {
+    return modificationDate;
   }
 }

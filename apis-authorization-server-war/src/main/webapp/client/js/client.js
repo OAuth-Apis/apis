@@ -109,6 +109,11 @@ var windowController = {
     	windowController.refresh();
     });
 
+    $("#nav-access-tokens").click(function() {
+    	windowController.clearContentView();
+      accessTokenGridController.show();
+    });
+
     $("#nav-clients-apps").click(function() {
       /*
        * TODO scroll/animate to the start of the client section, but to be done after ajax calls
@@ -118,9 +123,18 @@ var windowController = {
     
   },
 
-  refresh: function() {
+  clearContentView: function() {
     resourceServerFormController.hide();
+    resourceServerGridController.hide();
+
     clientFormController.hide();
+    clientGridController.hide();
+
+    accessTokenGridController.hide();
+  },
+
+  refresh: function() {
+    this.clearContentView();
     data.getResourceServers(function(resourceServers) {
       resourceServerGridController.show(resourceServers);
       clientGridController.show(resourceServers);
@@ -145,9 +159,14 @@ var windowController = {
     clientGridController.hide();
     resourceServerFormController.show("add");
   },
-  
+
   onDeleteResourceServer: function() {
     this.refresh();
+  },
+
+  onDeleteAccessToken: function() {
+    this.clearContentView();
+    accessTokenGridController.show();
   },
 
   /**

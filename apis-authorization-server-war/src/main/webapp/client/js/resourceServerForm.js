@@ -162,8 +162,6 @@ var resourceServerFormController = (function() {
       windowController.onCloseEditResourceServer();
     },
     
-    hide: function() {
-      view.hide();
-    }
+    hide: view.hide
   }
 })();

@@ -56,6 +56,7 @@ requirejs.config({
         'resourceServerGrid',
         'clientForm',
         'clientGrid',
+        'accessTokenGrid',
         'popoverBundle',
         'lib/jquery.zclip',
         'lib/bootbox.min'
