@@ -19,6 +19,7 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +44,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.Assert;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 /**
@@ -136,15 +139,31 @@ public class AuthorizationServerFilter implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    // TODO move to properties file, this will produce an environment specific
-    // war
-    // Only use filter config if parameters are present. Otherwise trust on
-    // setters.
-    if (filterConfig.getInitParameter("resource-server-key") != null) {
+    /*
+     * First check on the presence of a apis.application.properties file, then
+     * try to use the filter config if parameters are present. If this also
+     * fails trust on the setters (e.g. probably in test modus), but apply
+     * fail-fast strategy
+     */
+    ClassPathResource res = new ClassPathResource("apis.application.properties");
+    if (res.exists()) {
+      Properties prop = new Properties();
+      try {
+        prop.load(res.getInputStream());
+      } catch (IOException e) {
+        throw new RuntimeException("Error in reading the apis.application.properties file", e);
+      }
+      resourceServerKey = prop.getProperty("adminService.resourceServerKey");
+      resourceServerSecret = prop.getProperty("adminService.resourceServerSecret");
+      authorizationServerUrl = prop.getProperty("adminService.tokenVerificationUrl");
+    } else if (filterConfig.getInitParameter("resource-server-key") != null) {
       resourceServerKey = filterConfig.getInitParameter("resource-server-key");
       resourceServerSecret = filterConfig.getInitParameter("resource-server-secret");
       authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
     }
+    Assert.hasText(resourceServerKey, "Must provide a resource server key");
+    Assert.hasText(resourceServerSecret, "Must provide a resource server secret");
+    Assert.hasText(authorizationServerUrl, "Must provide a authorization server url");
 
     this.authorizationValue = new String(Base64.encodeBase64(resourceServerKey.concat(":").concat(resourceServerSecret)
         .getBytes()));
@@ -193,7 +212,8 @@ public class AuthorizationServerFilter implements Filter {
     } else {
       VerifyTokenResponse tokenResponse = null;
       /*
-       * Get the 'Validate Access Token' response from the Authorization Server either live or from the cache
+       * Get the 'Validate Access Token' response from the Authorization Server
+       * either live or from the cache
        */
       try {
         tokenResponse = cacheAccessTokens() ? cache.get(accessToken, getCallable(accessToken, response))
@@ -204,7 +224,8 @@ public class AuthorizationServerFilter implements Filter {
         return;
       }
       /*
-       * The presence of the principal is the check to ensure that the access token is ok. 
+       * The presence of the principal is the check to ensure that the access
+       * token is ok.
        */
       if (tokenResponse != null && tokenResponse.getPrincipal() != null) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
@@ -249,7 +270,7 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   protected boolean cacheAccessTokens() {
-    return true;
+    return false;
   }
 
   private String getAccessToken(HttpServletRequest request) {

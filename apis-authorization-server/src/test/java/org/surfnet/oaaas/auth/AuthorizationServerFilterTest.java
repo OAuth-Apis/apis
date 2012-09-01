@@ -58,7 +58,15 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     filterConfig.addInitParameter("resource-server-key", "mock-server-name");
     filterConfig.addInitParameter("resource-server-secret", UUID.randomUUID().toString());
     filterConfig.addInitParameter("authorization-server-url", "http://localhost:8088/mock/endpoint");
-    filter = new AuthorizationServerFilter();
+    //enable caching as we want to test this
+    filter = new AuthorizationServerFilter(){
+      @Override
+      protected boolean cacheAccessTokens() {
+        return true;
+      }
+      
+    };
+    
     filter.init(filterConfig);
   }
 
