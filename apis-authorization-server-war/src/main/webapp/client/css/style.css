@@ -97,6 +97,7 @@ h1 {
   margin-left: 200px;
   padding: 25px 50px;
   border-left: 1px solid #efefef;
+  min-height: 240px;
 }
 
 /* full div, for no side-nav */
