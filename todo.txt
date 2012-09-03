@@ -3,7 +3,6 @@ MUST:
   - Add tooltips in the GUI for info about all the attributes
   - Style key/secret fields
 - rename the apis-example-resource-server-war module so that it cannot be confused with the apis-example-resource-server anymore.
-- Release Spring-security-opensaml to get rid of snapshot dependency (reminder: halfway done; release:perform failed because of permissions outside of SURFnet premises)
 - Change GET access token response to limit included data (no sensitive client/resourceserver details)
 
 NICE:

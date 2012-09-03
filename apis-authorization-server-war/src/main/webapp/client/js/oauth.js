@@ -26,7 +26,7 @@
  * });
  *
  * if (auth.isTokenPresent()) {
- *   accessToken = auth.extractAccessToken();
+ *   accessToken = auth.extractTokenInfo();
  * } else {
  *   auth.authorize();
  * }
