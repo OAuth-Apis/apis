@@ -18,18 +18,22 @@
  */
 package org.surfnet.oaaas.repository;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.Test;
-import org.surfnet.oaaas.model.Client;
-import org.surfnet.oaaas.model.ResourceServer;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
 
 /**
  * {@link Test} for {@link ResourceServerRepository}
@@ -48,10 +52,10 @@ public class ResourceServerRepositoryTest extends AbstractRepositoryTest {
 
     client = clientRepo.findByClientId("authorization-server-admin-js-client");
     assertTrue(rs.containsClient(client));
-    List<Client> clients = rs.getClients();
+    Set<Client> clients = rs.getClients();
     assertEquals(1, clients.size());
   }
-  
+
   @Test
   public void findAll() {
     ResourceServerRepository repo = getRepository(ResourceServerRepository.class);
@@ -59,16 +63,24 @@ public class ResourceServerRepositoryTest extends AbstractRepositoryTest {
     int i = 0;
     for (ResourceServer resourceServer : all) {
       i++;
-      List<Client> clients = resourceServer.getClients();
+      Set<Client> clients = resourceServer.getClients();
       assertTrue(!clients.isEmpty());
     }
-    assertEquals(3,i );
+    assertEquals(3, i);
   }
 
+  /*
+   * Due to
+   * http://stackoverflow.com/questions/9123964/how-do-you-use-spring-data-jpa-
+   * outside-of-a-spring-container we need to do the transaction handling
+   *  ourselves.
+   */
   @Test
   public void cascade() {
     ResourceServerRepository repo = getRepository(ResourceServerRepository.class);
     ClientRepository clientRepo = getRepository(ClientRepository.class);
+
+    getEntityManager().getTransaction().begin();
 
     // Create and save a resourceServer
     ResourceServer resourceServer = new ResourceServer();
@@ -83,16 +95,20 @@ public class ResourceServerRepositoryTest extends AbstractRepositoryTest {
     Client c = new Client();
     c.setName("name");
     c.setClientId("clientid");
+    c.setSecret(UUID.randomUUID().toString());
     c.setResourceServer(resourceServer);
-    resourceServer.setClients(Arrays.asList(c));
+    resourceServer.setClients(new HashSet(Arrays.asList(c)));
     c = clientRepo.save(c);
+    getEntityManager().getTransaction().commit();
 
     // See that the client can be found
     assertNotNull(clientRepo.findOne(c.getId()));
 
     long resourceServerId = resourceServer.getId();
     // Remove the resourceServer
+    getEntityManager().getTransaction().begin();
     repo.delete(resourceServer);
+    getEntityManager().getTransaction().commit();
 
     // Expect the resource server to be deleted
     assertNull(repo.findOne(resourceServerId));
@@ -101,4 +117,5 @@ public class ResourceServerRepositoryTest extends AbstractRepositoryTest {
     final Client foundClient = clientRepo.findOne(c.getId());
     assertNull(foundClient);
   }
+
 }

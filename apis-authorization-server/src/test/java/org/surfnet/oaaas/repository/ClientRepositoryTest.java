@@ -18,7 +18,11 @@
  */
 package org.surfnet.oaaas.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.junit.Test;
@@ -27,9 +31,6 @@ import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * {@link Test} for {@link ClientRepository}
@@ -72,7 +73,7 @@ public class ClientRepositoryTest extends AbstractRepositoryTest {
     client.setClientId("clientid");
 
     // Let them meet each other
-    r.setClients(Arrays.asList(client));
+    r.setClients(new HashSet( Arrays.asList(client)));
     client.setResourceServer(r);
 
     client = repo.save(client);

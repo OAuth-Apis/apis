@@ -89,7 +89,8 @@
 	    <jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>
 	    <selenium.version>2.25.0</selenium.version>
 		<cglib.version>2.2.2</cglib.version>
-    <jstl.version>1.2</jstl.version>
+        <jstl.version>1.2</jstl.version>
+        <mysql.version>5.1.20</mysql.version>
   </properties>
 
 	<dependencyManagement>
@@ -215,6 +216,12 @@
 				<artifactId>hsqldb</artifactId>
 				<version>${hsqldb.version}</version>
 			</dependency>
+	      <dependency>
+	        <groupId>mysql</groupId>
+	        <artifactId>mysql-connector-java</artifactId>
+	        <version>${mysql.version}</version>
+	      </dependency>
+			
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>

@@ -16,14 +16,16 @@
 
 package org.surfnet.oaaas.resource;
 
+import static junit.framework.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.surfnet.oaaas.model.Client;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
 
 public class ResourceServerResourceTest {
   private ResourceServerResource resourceServerResource;
@@ -40,7 +42,7 @@ public class ResourceServerResourceTest {
     Client client2 = new Client();
     client2.setScopes(Arrays.asList("scope1", "scope2"));
 
-    List<Client> clients = Arrays.asList(client1, client2);
+    Set<Client> clients = new HashSet(Arrays.asList(client1, client2));
 
     List<String> oldScopes = Arrays.asList("scope1");
     List<String> newScopes = Arrays.asList("scope2");

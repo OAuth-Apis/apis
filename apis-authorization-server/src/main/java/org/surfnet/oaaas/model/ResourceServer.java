@@ -19,6 +19,7 @@ package org.surfnet.oaaas.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -87,9 +89,10 @@ public class ResourceServer extends AbstractEntity {
   private String contactEmail;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "resourceServer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
+  @JoinColumn(name = "resourceserver_id", nullable = false)
   @Valid
-  private List<Client> clients;
+  private Set<Client> clients;
 
   @Column
   private String thumbNailUrl;
@@ -173,14 +176,14 @@ public class ResourceServer extends AbstractEntity {
   /**
    * @return the clients
    */
-  public List<Client> getClients() {
+  public Set<Client> getClients() {
     return clients;
   }
 
   /**
    * @param clients the clients to set
    */
-  public void setClients(List<Client> clients) {
+  public void setClients(Set<Client> clients) {
     this.clients = clients;
   }
 

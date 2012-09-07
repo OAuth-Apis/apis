@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.model;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -89,7 +90,7 @@ public class ResourceServerTest extends AbstractEntityTest {
   public void hasClient() {
     Client c = new Client();
     c.setName("clientname");
-    resourceServer.setClients(Arrays.asList(new Client(), c, new Client()));
+    resourceServer.setClients(new HashSet<Client>( Arrays.asList(new Client(), c, new Client())));
     assertThat(resourceServer.containsClient(c), is(true));
     assertThat(resourceServer.containsClient(new Client()), is(false));
   }

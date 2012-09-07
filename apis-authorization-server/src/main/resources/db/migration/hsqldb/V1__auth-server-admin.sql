@@ -34,7 +34,7 @@ INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, secret, o
 VALUES
 	(99998, 'localadmin@example.com','local admin','Authorization Server Apis',
 	'authorization-server-admin', 'cafebabe-cafe-babe-cafe-babecafebabe', null, 'http://www.aldokkan.com/religion/apis.jpg');
-INSERT INTO Resourceserver_scopes values (99998, 'read');
+INSERT INTO Resourceserver_scopes values (99998, 'read'),(99998, 'write') ;
 
 INSERT INTO client (id, contactEmail, contactName, description, name, thumbNailUrl, resourceserver_id,
 clientId, secret)

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -132,7 +133,7 @@ public class ResourceServerResource extends AbstractResource {
     List<ResourceServerStat> resourceServerStats = new ArrayList<StatisticsResponse.ResourceServerStat>();
     for (ResourceServer resourceServer : resourceServers) {
       List<ClientStat> clientStats = new ArrayList<StatisticsResponse.ClientStat>();
-      List<Client> clients = resourceServer.getClients();
+      Set<Client> clients = resourceServer.getClients();
       for (Client client : clients) {
         clientStats.add(new StatisticsResponse.ClientStat(client.getName(), client.getDescription(),
             accessTokenRepository.countByUniqueResourceOwnerIdAndClientId(client.getId())));
@@ -244,10 +245,11 @@ public class ResourceServerResource extends AbstractResource {
    * @param clients
    *          the clients of the resource server
    */
-  protected void pruneClientScopes(final List<String> newScopes, List<String> oldScopes, List<Client> clients) {
+  @SuppressWarnings("unchecked")
+  protected void pruneClientScopes(final List<String> newScopes, List<String> oldScopes, Set<Client> clients) {
     if (!newScopes.containsAll(oldScopes)) {
       subtract(oldScopes, newScopes);
-      Collection outdatedScopes = subtract(oldScopes, newScopes);
+      Collection<String> outdatedScopes = subtract(oldScopes, newScopes);
       LOG.info("Resource server has updated scopes. Will remove all outdated scopes from clients: {}", outdatedScopes);
 
       for (Client c : clients) {
