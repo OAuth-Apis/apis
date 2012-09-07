@@ -31,5 +31,5 @@ public interface ClientRepository extends CrudRepository<Client, Long> {
   Client findByIdAndResourceServer(Long id, ResourceServer resourceServer);
 
   Client findByClientId(String clientId);
-
+  
 }

@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
@@ -39,6 +40,8 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 @Named("formAuthenticator")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
 
+  private static final String SESSION_IDENTIFIER = "AUTHENTICATED_PRINCIPAL";
+
   @Override
   public boolean canCommence(HttpServletRequest request) {
     return request.getMethod().equals("POST") && request.getParameter(AUTH_STATE) != null
@@ -48,8 +51,16 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
   @Override
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
+    HttpSession session = request.getSession(false);
+    AuthenticatedPrincipal principal = (AuthenticatedPrincipal) (session != null ? session
+        .getAttribute(SESSION_IDENTIFIER) : null);
     if (request.getMethod().equals("POST")) {
       processForm(request);
+      chain.doFilter(request, response);
+    } else if (principal != null) {
+      // we stil have the session
+      setAuthStateValue(request, authStateValue);
+      setPrincipal(request, principal);
       chain.doFilter(request, response);
     } else {
       processInitial(request, response, returnUri, authStateValue);
@@ -73,7 +84,9 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
    */
   protected void processForm(final HttpServletRequest request) {
     setAuthStateValue(request, request.getParameter(AUTH_STATE));
-    setPrincipal(request, new AuthenticatedPrincipal(request.getParameter("username")));
+    AuthenticatedPrincipal principal = new AuthenticatedPrincipal(request.getParameter("username"));
+    request.getSession().setAttribute(SESSION_IDENTIFIER, principal);
+    setPrincipal(request, principal);
   }
 
 }

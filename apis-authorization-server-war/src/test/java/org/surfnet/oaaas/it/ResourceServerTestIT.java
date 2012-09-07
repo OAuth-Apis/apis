@@ -114,6 +114,16 @@ public class ResourceServerTestIT extends AbstractAuthorizationServerTest {
         .get(new GenericType<List<ResourceServer>>(){});
     assertTrue(returnFromGetAll.size() > 0);
   }
+  
+  @Test
+  public void stats() {
+    final String returnedFromGet = webResource
+        .path("stats")
+        .header("Authorization", authorizationBearer(ACCESS_TOKEN))
+        .get(String.class);
+    System.out.println(returnedFromGet);
+
+  }
 
   @Test
   public void post() {

@@ -18,7 +18,9 @@ package org.surfnet.oaaas.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.Client;
@@ -35,4 +37,7 @@ public interface AccessTokenRepository extends CrudRepository<AccessToken, Long>
   List<AccessToken> findByResourceOwnerId(String resourceOwnerId);
 
   AccessToken findByIdAndResourceOwnerId(Long id, String owner);
+  
+  @Query(value = "SELECT COUNT(DISTINCT RESOURCEOWNERID) FROM ACCESSTOKEN WHERE CLIENT_ID = ?1", nativeQuery = true)
+  long countByUniqueResourceOwnerIdAndClientId(long clientId);
 }

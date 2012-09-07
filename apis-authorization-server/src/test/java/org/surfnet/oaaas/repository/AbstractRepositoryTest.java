@@ -68,7 +68,6 @@ public class AbstractRepositoryTest {
     emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
     emfBean.afterPropertiesSet();
     Map map = new HashMap<String, String>();
-//    map.put("openjpa.Log", "commons");
     map.put("openjpa.ConnectionFactoryProperties", "PrintParameters=true");
     return emfBean.getObject().createEntityManager(map);
   }

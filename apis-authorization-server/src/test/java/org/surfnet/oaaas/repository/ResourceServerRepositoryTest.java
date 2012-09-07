@@ -51,6 +51,19 @@ public class ResourceServerRepositoryTest extends AbstractRepositoryTest {
     List<Client> clients = rs.getClients();
     assertEquals(1, clients.size());
   }
+  
+  @Test
+  public void findAll() {
+    ResourceServerRepository repo = getRepository(ResourceServerRepository.class);
+    Iterable<ResourceServer> all = repo.findAll();
+    int i = 0;
+    for (ResourceServer resourceServer : all) {
+      i++;
+      List<Client> clients = resourceServer.getClients();
+      assertTrue(!clients.isEmpty());
+    }
+    assertEquals(3,i );
+  }
 
   @Test
   public void cascade() {

@@ -18,6 +18,7 @@ package org.surfnet.oaaas.resource;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.model.StatisticsResponse;
+import org.surfnet.oaaas.model.StatisticsResponse.ClientStat;
+import org.surfnet.oaaas.model.StatisticsResponse.ResourceServerStat;
+import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
@@ -64,13 +69,17 @@ public class ResourceServerResource extends AbstractResource {
   private ResourceServerRepository resourceServerRepository;
 
   @Inject
+  private AccessTokenRepository accessTokenRepository;
+
+  @Inject
   private ClientRepository clientRepository;
 
   /**
    * Get all existing resource servers for the provided credentials (== owner).
    */
   @GET
-  public Response getAll(@Context HttpServletRequest request) {
+  public Response getAll(@Context
+  HttpServletRequest request) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -91,7 +100,9 @@ public class ResourceServerResource extends AbstractResource {
    */
   @GET
   @Path("/{resourceServerId}")
-  public Response getById(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
+  public Response getById(@Context
+  HttpServletRequest request, @PathParam("resourceServerId")
+  Long id) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -112,10 +123,33 @@ public class ResourceServerResource extends AbstractResource {
   }
 
   /**
+   * Get statistics
+   */
+  @GET
+  @Path("stats")
+  public Response stats() {
+    Iterable<ResourceServer> resourceServers = this.resourceServerRepository.findAll();
+    List<ResourceServerStat> resourceServerStats = new ArrayList<StatisticsResponse.ResourceServerStat>();
+    for (ResourceServer resourceServer : resourceServers) {
+      List<ClientStat> clientStats = new ArrayList<StatisticsResponse.ClientStat>();
+      List<Client> clients = resourceServer.getClients();
+      for (Client client : clients) {
+        clientStats.add(new StatisticsResponse.ClientStat(client.getName(), client.getDescription(),
+            accessTokenRepository.countByUniqueResourceOwnerIdAndClientId(client.getId())));
+      }
+      resourceServerStats.add(new StatisticsResponse.ResourceServerStat(resourceServer.getName(), resourceServer
+          .getDescription(), clientStats));
+    }
+    return Response.ok(new StatisticsResponse(resourceServerStats)).build();
+  }
+
+  /**
    * Save a new resource server.
    */
   @PUT
-  public Response put(@Context HttpServletRequest request, @Valid ResourceServer newOne) {
+  public Response put(@Context
+  HttpServletRequest request, @Valid
+  ResourceServer newOne) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -135,14 +169,11 @@ public class ResourceServerResource extends AbstractResource {
       return buildErrorResponse(e);
     }
 
-    LOG.debug("New resourceServer has been saved: {}. Nr of entities in store now: {}",
-        resourceServerSaved, resourceServerRepository.count());
+    LOG.debug("New resourceServer has been saved: {}. Nr of entities in store now: {}", resourceServerSaved,
+        resourceServerRepository.count());
 
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
-    return Response
-        .created(uri)
-        .entity(resourceServerSaved)
-        .build();
+    return Response.created(uri).entity(resourceServerSaved).build();
   }
 
   /**
@@ -150,7 +181,9 @@ public class ResourceServerResource extends AbstractResource {
    */
   @DELETE
   @Path("/{resourceServerId}")
-  public Response delete(@Context HttpServletRequest request, @PathParam("resourceServerId") Long id) {
+  public Response delete(@Context
+  HttpServletRequest request, @PathParam("resourceServerId")
+  Long id) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -171,9 +204,10 @@ public class ResourceServerResource extends AbstractResource {
    */
   @POST
   @Path("/{resourceServerId}")
-  public Response post(@Valid final ResourceServer resourceServer,
-                       @Context HttpServletRequest request,
-                       @PathParam("resourceServerId") Long id) {
+  public Response post(@Valid
+  final ResourceServer resourceServer, @Context
+  HttpServletRequest request, @PathParam("resourceServerId")
+  Long id) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -191,17 +225,24 @@ public class ResourceServerResource extends AbstractResource {
     resourceServer.setKey(persistedResourceServer.getKey());
     resourceServer.setOwner(owner);
 
-    pruneClientScopes(resourceServer.getScopes(), persistedResourceServer.getScopes(), persistedResourceServer.getClients());
-    LOG.debug("About to update existing resourceServer {} with new properties: {}", persistedResourceServer, resourceServer);
+    pruneClientScopes(resourceServer.getScopes(), persistedResourceServer.getScopes(),
+        persistedResourceServer.getClients());
+    LOG.debug("About to update existing resourceServer {} with new properties: {}", persistedResourceServer,
+        resourceServer);
     ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
     return Response.ok(savedInstance).build();
   }
 
   /**
-   * Delete all scopes from clients that are not valid anymore with the new resource server
-   * @param newScopes the newly saved scopes
-   * @param oldScopes the scopes from the existing resource server
-   * @param clients the clients of the resource server
+   * Delete all scopes from clients that are not valid anymore with the new
+   * resource server
+   * 
+   * @param newScopes
+   *          the newly saved scopes
+   * @param oldScopes
+   *          the scopes from the existing resource server
+   * @param clients
+   *          the clients of the resource server
    */
   protected void pruneClientScopes(final List<String> newScopes, List<String> oldScopes, List<Client> clients) {
     if (!newScopes.containsAll(oldScopes)) {
@@ -214,7 +255,7 @@ public class ResourceServerResource extends AbstractResource {
         if (CollectionUtils.containsAny(clientScopes, outdatedScopes)) {
           ArrayList<String> prunedScopes = new ArrayList<String>(subtract(clientScopes, outdatedScopes));
           LOG.info("Client scopes of client {} were: {}. After pruning (because resourceServer has new scopes): {}",
-            new Object[] {c.getClientId(),c.getScopes(), prunedScopes});
+              new Object[] { c.getClientId(), c.getScopes(), prunedScopes });
           c.setScopes(prunedScopes);
         }
       }

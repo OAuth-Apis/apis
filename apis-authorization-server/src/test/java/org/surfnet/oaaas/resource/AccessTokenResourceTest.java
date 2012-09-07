@@ -44,6 +44,7 @@ public class AccessTokenResourceTest {
 
   @Mock
   private AccessTokenRepository accessTokenRepository;
+  
   @Before
   public void before() {
     MockitoAnnotations.initMocks(this);

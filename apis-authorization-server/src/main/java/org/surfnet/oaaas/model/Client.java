@@ -91,7 +91,7 @@ public class Client extends AbstractEntity {
   @MapKeyColumn(name = "attribute_name")
   @Column(name = "attribute_value")
   @CollectionTable(name = "client_attributes", joinColumns = @JoinColumn(name = "client_id"))
-  Map<String, String> attributes = new HashMap<String, String>();
+  private Map<String, String> attributes = new HashMap<String, String>();
 
   @Column
   private String thumbNailUrl;
