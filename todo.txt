@@ -1,6 +1,5 @@
 MUST:
 - GUI finished
-  - Add tooltips in the GUI for info about all the attributes
   - Style key/secret fields
 - Change GET access token response to limit included data (no sensitive client/resourceserver details)
 - Implicit grant requires an redirect uri in the database (OAuth2ValidatorImpl#determineRedirectUri)

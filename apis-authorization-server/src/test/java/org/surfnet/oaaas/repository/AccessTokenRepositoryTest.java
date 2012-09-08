@@ -40,8 +40,8 @@ public class AccessTokenRepositoryTest extends AbstractRepositoryTest {
   @Test
   public void testCountByResourceOwnerid() {
     AccessTokenRepository repo = getRepository(AccessTokenRepository.class);
-    long countByResourceOwnerId = repo.countByUniqueResourceOwnerIdAndClientId(99999);
-    assertEquals(1,countByResourceOwnerId);
+    Number countByResourceOwnerId = repo.countByUniqueResourceOwnerIdAndClientId(99999);
+    assertEquals(1L,countByResourceOwnerId.longValue());
     
   }
 }

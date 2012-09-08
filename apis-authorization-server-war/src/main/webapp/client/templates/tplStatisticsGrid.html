@@ -1,0 +1,51 @@
+
+<!--
+  ~ Copyright 2012 SURFnet bv, The Netherlands
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div id="statisticsGrid">
+  <h1>Statistics</h1>
+  {{#if resourceServers}}
+    <div class="page-header">
+      <p>All Resource Servers</p>
+    </div>   
+    {{#each resourceServers}}
+      <p>Name: {{name}}</p>
+      {{#if description}}
+      <p>Description: {{description}}</p>
+      {{/if}}      
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>Client App name</th>
+          <th>Description</th>
+          <th>#Unique clients</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each clients}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{description}}</td>
+            <td>{{tokenCount}}</td>
+          </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    {{/each}} 
+  {{else}}
+    <p>No resource servers configured.</p>
+  {{/if}}
+</div>

@@ -57,6 +57,7 @@ requirejs.config({
         'clientForm',
         'clientGrid',
         'accessTokenGrid',
+        'statisticsGrid',
         'popoverBundle',
         'lib/jquery.zclip',
         'lib/bootbox.min'

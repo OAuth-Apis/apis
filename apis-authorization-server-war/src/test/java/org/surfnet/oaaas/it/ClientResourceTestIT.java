@@ -45,9 +45,6 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 
 public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
 
-  private static final String ACCESS_TOKEN = "dad30fb8-ad90-4f24-af99-798bb71d27c8";
-
-
   private WebResource webResource;
   private ResourceServer resourceServer;
 

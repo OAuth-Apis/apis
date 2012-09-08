@@ -109,18 +109,22 @@ var windowController = {
     	windowController.refresh();
     });
 
-    $("#nav-access-tokens").click(function() {
-    	windowController.clearContentView();
-      accessTokenGridController.show();
-    });
-
     $("#nav-clients-apps").click(function() {
       /*
        * TODO scroll/animate to the start of the client section, but to be done after ajax calls
        */
       windowController.refresh();
     });
+
+    $("#nav-access-tokens").click(function() {
+      windowController.clearContentView();
+      accessTokenGridController.show();
+    });
     
+    $("#nav-statistics").click(function() {
+      windowController.clearContentView();
+      statisticsGridController.show();
+    });
   },
 
   clearContentView: function() {
@@ -131,6 +135,7 @@ var windowController = {
     clientGridController.hide();
 
     accessTokenGridController.hide();
+    statisticsGridController.hide();
   },
 
   refresh: function() {

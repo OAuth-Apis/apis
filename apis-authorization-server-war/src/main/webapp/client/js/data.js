@@ -79,6 +79,15 @@ var data = (function() {
         }
       });
     },
+    getStatistics:function (resultHandler) {
+        oauthAjax({
+          url:"/admin/resourceServer/stats",
+          success: resultHandler,
+          error: function() { // On failure, call result handler anyway, with empty result.
+            resultHandler([]);
+          }
+        });
+      },
 
     deleteResourceServer: function(resourceServerId, success, failure) {
       var httpMethod, url;

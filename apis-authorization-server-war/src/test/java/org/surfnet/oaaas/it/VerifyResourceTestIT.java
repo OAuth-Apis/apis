@@ -28,47 +28,35 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
   @Test
   public void withNoParams() {
-    final ClientResponse response = getClient()
-        .resource(baseUrlWith("/v1/tokeninfo"))
-        .get(ClientResponse.class);
+    final ClientResponse response = client.resource(baseUrlWith("/v1/tokeninfo")).get(ClientResponse.class);
     assertEquals(401, response.getStatus());
   }
- 
+
   @Test
   public void withNoAuthorizationHeader() {
-    final ClientResponse response = getClient()
-        .resource(baseUrlWith("/v1/tokeninfo"))
-        .queryParam("access_token", "boobaa")
+    final ClientResponse response = client.resource(baseUrlWith("/v1/tokeninfo")).queryParam("access_token", "boobaa")
         .get(ClientResponse.class);
     assertEquals(401, response.getStatus());
   }
 
   @Test
   public void withInvalidAuthorizationHeader() {
-    final ClientResponse response = getClient()
-        .resource(baseUrlWith("/v1/tokeninfo"))
-        .queryParam("access_token", "boobaa")
-        .header("Authorization", "NotBasicButGarbage abb ccc dd")
-        .get(ClientResponse.class);
+    final ClientResponse response = client.resource(baseUrlWith("/v1/tokeninfo")).queryParam("access_token", "boobaa")
+        .header("Authorization", "NotBasicButGarbage abb ccc dd").get(ClientResponse.class);
     assertEquals(401, response.getStatus());
   }
 
   @Test
   public void withValidAuthorizationHeaderButNoAccessToken() {
-    final ClientResponse response = getClient()
-        .resource(baseUrlWith("/v1/tokeninfo"))
-        .header("Authorization", authorizationBasic("user", "pass"))
-        .get(ClientResponse.class);
+    final ClientResponse response = client.resource(baseUrlWith("/v1/tokeninfo"))
+        .header("Authorization", authorizationBasic("user", "pass")).get(ClientResponse.class);
     assertEquals(401, response.getStatus());
   }
 
   @Test
   public void happy() {
-    final ClientResponse response = getClient()
-        .resource(baseUrlWith("/v1/tokeninfo"))
-        .queryParam("access_token", "00-11-22-33")
-        .header("Authorization", authorizationBasic("it-test-resource-server", "somesecret"))
-        .get(ClientResponse.class);
+    final ClientResponse response = client.resource(baseUrlWith("/v1/tokeninfo")).queryParam("access_token", "00-11-22-33")
+        .header("Authorization", authorizationBasic("it-test-resource-server", "somesecret")).get(ClientResponse.class);
     assertEquals(200, response.getStatus());
     final VerifyTokenResponse verifyTokenResponse = response.getEntity(VerifyTokenResponse.class);
     assertEquals("it-test-enduser", verifyTokenResponse.getPrincipal().getName());

@@ -39,5 +39,5 @@ public interface AccessTokenRepository extends CrudRepository<AccessToken, Long>
   AccessToken findByIdAndResourceOwnerId(Long id, String owner);
   
   @Query(value = "SELECT COUNT(DISTINCT RESOURCEOWNERID) FROM ACCESSTOKEN WHERE CLIENT_ID = ?1", nativeQuery = true)
-  long countByUniqueResourceOwnerIdAndClientId(long clientId);
+  Number countByUniqueResourceOwnerIdAndClientId(long clientId);
 }
