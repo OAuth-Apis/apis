@@ -13,4 +13,4 @@ Components of the web application are:
 With separating the components of the war and the core jar, it should be possible to pick only a subset of functionalities and build your own web application.
 To extend/modify the default web application, extend `SpringConfiguration` to inject your own framework beans and/or extend `DefaultPackagesResourceConfig` to define other JAX-RS Resources.
 
-See the documentation in the README.md in the root project for overall documentation.
+See the documentation in the [README.md](https://github.com/OpenConextApps/apis/blob/master/README.md) in the root project for overall documentation.

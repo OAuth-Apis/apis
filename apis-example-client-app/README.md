@@ -5,5 +5,5 @@ The Example Client App is a very simple Spring web application that is developed
 - The Authorization Server up and running
 - The Example Resource Server up and running
 
-See the documentation in the README.md in the root project for detailed instructions. 
+See the documentation in the [README.md](https://github.com/OpenConextApps/apis/blob/master/README.md) in the root project for detailed instructions. 
 

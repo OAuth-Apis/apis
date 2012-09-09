@@ -18,5 +18,5 @@ The main building blocks of the Authorization Server are:
     * See `/apis-authorization-server/src/main/resources/META-INF/persistence.xml`
     * See `/apis-authorization-server/src/main/resources/db/migration/mysql/V1__auth-server-admin.sql`
 
-See the documentation in the README.md in the root project for overall documentation.
+See the documentation in the [README.md](https://github.com/OpenConextApps/apis/blob/master/README.md) in the root project for overall documentation.
 
