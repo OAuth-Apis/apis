@@ -166,12 +166,11 @@ public class ResourceServerResource extends AbstractResource {
     ResourceServer resourceServerSaved;
     try {
       resourceServerSaved = resourceServerRepository.save(newOne);
-    } catch (RuntimeException e) {
+    } catch (Exception e) {
       return buildErrorResponse(e);
     }
 
-    LOG.debug("New resourceServer has been saved: {}. Nr of entities in store now: {}", resourceServerSaved,
-        resourceServerRepository.count());
+    LOG.debug("New resourceServer has been saved: {}. ", resourceServerSaved);
 
     final URI uri = UriBuilder.fromPath("{resourceServerId}.json").build(resourceServerSaved.getId());
     return Response.created(uri).entity(resourceServerSaved).build();

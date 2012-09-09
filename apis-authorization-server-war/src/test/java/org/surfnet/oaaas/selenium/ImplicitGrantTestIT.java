@@ -40,8 +40,10 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
   }
 
   private void performImplicitGrant(boolean needConsent) {
+    
     WebDriver webdriver = getWebDriver();
-
+    webdriver.manage().deleteAllCookies();
+    
     String responseType = "token";
     String clientId = "it-test-client-grant";
     String redirectUri = "http://localhost:8080/fourOhFour";

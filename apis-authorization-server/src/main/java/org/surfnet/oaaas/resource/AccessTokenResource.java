@@ -56,15 +56,11 @@ public class AccessTokenResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    Response.ResponseBuilder responseBuilder;
     String owner = getUserId(request);
     List<AccessToken> tokens = accessTokenRepository.findByResourceOwnerId(owner);
 
     LOG.debug("About to return all access tokens ({}) for owner {}", tokens.size(), owner);
-    responseBuilder = Response.ok(tokens);
-
-    return responseBuilder.build();
+    return Response.ok(tokens).build();
   }
 
   /**

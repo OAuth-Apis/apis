@@ -31,7 +31,7 @@ public class OpenJPAExceptionTranslator implements ExceptionTranslator {
     if (e.getCause() != null && isRelevantCause(e.getCause())) {
       return translate(e.getCause());
     }
-    Class c = e.getClass();
+    Class<? extends Throwable> c = e.getClass();
     if (c.equals(org.apache.openjpa.persistence.EntityExistsException.class)) {
       return new javax.persistence.EntityExistsException(e.getMessage(), e);
     } else if (c.equals(javax.validation.ConstraintViolationException.class)) {

@@ -54,6 +54,8 @@ public class RefreshTokenTestIT extends SeleniumSupport {
     String accessTokenRedirectUri = startAuthorizationCallbackServer(clientId, secret);
 
     WebDriver webdriver = getWebDriver();
+    webdriver.manage().deleteAllCookies();
+
     String responseType = "code";
     String url = String.format("%s/oauth2/authorize?response_type=%s&client_id=%s&scope=read&redirect_uri=%s",
         baseUrl(), responseType, clientId, accessTokenRedirectUri);

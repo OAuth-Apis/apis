@@ -55,7 +55,7 @@ public class AbstractResource {
   @Inject
   protected Validator validator;
 
-  public Response buildErrorResponse(RuntimeException e) {
+  public Response buildErrorResponse(Exception e) {
     final Throwable jpaException = exceptionTranslator.translate(e);
     Response.Status s;
     String reason;
