@@ -7,11 +7,16 @@ To see the in action first start the Authorization Server. Go the authorization-
     cd apis-authorization-server-war
     mvn jetty:run
 
-Then perform a curl:
+Go the apis-example-resource-server-war and start the application (new Terminal session)
+
+    cd apis-authorization-server-war
+    mvn jetty:run
+	
+Then perform a curl (new Terminal session):
 
     curl -i -v -H "Authorization: bearer 00-11-22-33"  http://localhost:8082
 
-You will see the response if index.jsp which should look this:
+You will see the response of the `/apis-example-resource-server-war/src/main/webapp/index.jsp` which should look this:
 
 	AuthenticatedPrincipalImpl [name=it-test-enduser, roles=[user, admin], attributes={}
 
