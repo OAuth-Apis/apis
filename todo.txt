@@ -1,12 +1,9 @@
 MUST:
-- GUI finished
-  - Style key/secret fields
 - Change GET access token response to limit included data (no sensitive client/resourceserver details)
 - Implicit grant requires an redirect uri in the database (OAuth2ValidatorImpl#determineRedirectUri)
 
 NICE:
 - ClientResource and ResourceServerResource must debug log all activity
-- Document OAuth2Validator to explain or comply to spec compliance
 - The client in the authorization server should change the ui based on the granted scopes (no 'add/delete' in case of read only scope)
 - add default scopes for clients that do not request any scope
 
