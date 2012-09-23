@@ -52,7 +52,7 @@ import nl.surfnet.spring.security.opensaml.xml.SAML2ValidatorSuite;
 
 /**
  * Context that wires the required OpenSAML configuration.
- * All methods can be overridden to customize behaviour.
+ * All methods can be overridden to customize behavior.
  */
 public class OpenSAMLContext {
 
