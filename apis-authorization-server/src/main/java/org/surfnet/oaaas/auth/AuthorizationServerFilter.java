@@ -48,44 +48,51 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+
 /**
  * {@link Filter} which can be used to protect all relevant resources by
  * validating the oauth access token with the Authorization server. This is an
  * example configuration:
- * 
+ *
  * <pre>
  * {@code
- * <filter> 
+ * <filter>
  *   <filter-name>authorization-server</filter-name>
  *   <filter-class>org.surfnet.oaaas.auth.AuthorizationServerFilter</filter-class>
- *   <init-param> 
+ *   <init-param>
  *     <param-name>resource-server-key</param-name>
- *     <param-value>university-foo</param-value> 
- *   </init-param> 
- *   <init-param> 
+ *     <param-value>university-foo</param-value>
+ *   </init-param>
+ *   <init-param>
  *     <param-name>resource-server-secret</param-name>
- *     <param-value>58b749f7-acb3-44b7-a38c-53d5ad740cf6</param-value> 
- *   </init-param> 
- *   <init-param> 
+ *     <param-value>58b749f7-acb3-44b7-a38c-53d5ad740cf6</param-value>
+ *   </init-param>
+ *   <init-param>
  *     <param-name>authorization-server-url</param-name>
- *     <param-value>http://<host-name>/v1/tokeninfo</param-value> 
- *   </init-param> 
- * </filter> 
- * <filter-mapping> 
+ *     <param-value>http://<host-name>/v1/tokeninfo</param-value>
+ *   </init-param>
+ * </filter>
+ * <filter-mapping>
  *   <filter-name>authorization-server</filter-name>
- *  <url-pattern>/*</url-pattern> 
- * </filter-mapping> 
+ *  <url-pattern>/*</url-pattern>
+ * </filter-mapping>
  * }
  * </pre>
- * 
+ *
  * The response of the Authorization Server is put on the
  * {@link HttpServletRequest} with the name
  * {@link AuthorizationServerFilter#VERIFY_TOKEN_RESPONSE}.
- * 
+ *
  * Of course it might be better to use a properties file depending on the
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
  * simple to override the {@link AuthorizationServerFilter#init(FilterConfig)}
- * 
+ *
  * Also note that by default the responses from the Authorization Server are
  * cached. This can easily be changed if you override
  * {@link AuthorizationServerFilter#cacheAccessTokens()} and to configure the
@@ -216,8 +223,8 @@ public class AuthorizationServerFilter implements Filter {
        * either live or from the cache
        */
       try {
-        tokenResponse = cacheAccessTokens() ? cache.get(accessToken, getCallable(accessToken, response))
-            : getVerifyTokenResponse(accessToken, response);
+        Callable<VerifyTokenResponse> verifyCall = getCallable(accessToken, response);
+        tokenResponse = cacheAccessTokens() ? cache.get(accessToken, verifyCall) : verifyCall.call();
       } catch (Exception e) {
         LOG.error("While validating access token", e);
         sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot verify access token");

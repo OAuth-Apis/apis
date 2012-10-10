@@ -40,7 +40,7 @@
            title="${client.name}" src="${client.thumbNailUrl}">
     </div>
 
-    <form id="accept" method="post" action="${actionUri}">
+    <form id="accept" method="post" action="${pageContext.request.contextPath}${actionUri}">
       <input type="hidden" name="AUTH_STATE" value="${AUTH_STATE}"/>
 
       <h2>This data will be shared</h2>
