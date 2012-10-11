@@ -20,21 +20,7 @@ package org.surfnet.oaaas.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
@@ -47,7 +33,7 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
  * Representation of an <a
  * href="http://tools.ietf.org/html/draft-ietf-oauth-v2-30#section-1.4"
  * >AccessToken</a>
- * 
+ *
  */
 @SuppressWarnings("serial")
 @Entity
@@ -65,7 +51,7 @@ public class AccessToken extends AbstractEntity {
   @Transient
   private AuthenticatedPrincipal principal;
 
-  @Column(length = 512)
+  @Column(length = 1024)
   @NotNull
   private String encodedPrincipal;
 
