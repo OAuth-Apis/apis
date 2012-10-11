@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
 
-	<title>Login</title>
-	<link rel="stylesheet" href="/client/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="/client/css/style.css" />
-	<script type="text/javascript" src="/client/js/lib/jquery.js"></script>
-	<script type="text/javascript" src="/client/js/lib/bootstrap.min.js"></script>
+  <title>Login</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/style.css" />
+  <script type="text/javascript" src="${pageContext.request.contextPath}/client/js/lib/jquery.js"></script>
+  <script type="text/javascript" src="${pageContext.request.contextPath}/client/js/lib/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -50,20 +50,19 @@
             <p class="help-block">Hint: can be anything</p>
           </div>
         </div>
-        <input type="hidden" name="AUTH_STATE"
-          value="${AUTH_STATE}" />
+        <input type="hidden" name="AUTH_STATE" value="${AUTH_STATE}" />
       </fieldset>
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Login</button>
       </div>
     </form>
-		</div>
-	</div>
+  </div>
+</div>
 
 <div class="foot">
-    <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
-  </div>
+  <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/OpenConextApps/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
+</div>
 
 </body>
 </html>

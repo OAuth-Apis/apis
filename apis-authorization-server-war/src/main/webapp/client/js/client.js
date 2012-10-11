@@ -81,7 +81,7 @@ var windowController = {
   oauth: new OAuth({
     context:window,
     redirectUri: window.location, // Current location as redirect URI: after authorization we get back control.
-    authorizationEndpoint:"/oauth2/authorize", 
+    authorizationEndpoint:"../oauth2/authorize",
     clientId:"authorization-server-admin-js-client",
     scope:"read,write"
   }),
@@ -104,9 +104,9 @@ var windowController = {
       $("div.side-nav a").removeClass("cur");
       $(this).addClass("cur");
     });
-    
+
     $("#nav-resource-servers").click(function() {
-    	windowController.refresh();
+      windowController.refresh();
     });
 
     $("#nav-clients-apps").click(function() {
@@ -120,7 +120,7 @@ var windowController = {
       windowController.clearContentView();
       accessTokenGridController.show();
     });
-    
+
     $("#nav-statistics").click(function() {
       windowController.clearContentView();
       statisticsGridController.show();
@@ -152,13 +152,13 @@ var windowController = {
   onCloseEditResourceServer: function() {
     this.refresh();
   },
-  
+
   onEditResourceServer: function(id) {
     resourceServerGridController.hide();
     clientGridController.hide();
     resourceServerFormController.show("edit", id);
   },
-  
+
   onAddResourceServer: function() {
     resourceServerGridController.hide();
     clientGridController.hide();
@@ -182,17 +182,17 @@ var windowController = {
     clientGridController.hide();
     clientFormController.show("edit", resourceServerId, clientId);
   },
-  
+
   onAddClient: function() {
     resourceServerGridController.hide();
     clientGridController.hide();
     clientFormController.show("add");
   },
-  
+
   onCloseEditClient: function() {
      this.refresh();
   },
-  
+
   onDeleteClient: function() {
     this.refresh();
   },
@@ -221,15 +221,15 @@ $(function() {
   $('body').tooltip({
     selector: '[rel=tooltip]'
   });
-  
+
   $('body').popover({
     selector: '[rel=popover]',
     //See popoverBundle.js
     title: function() {
-    	return popoverBundle.getTitle(this.attributes['name'].nodeValue);
+      return popoverBundle.getTitle(this.attributes['name'].nodeValue);
     },
     content: function() {
-    	return popoverBundle.getContent(this.attributes['name'].nodeValue);
+      return popoverBundle.getContent(this.attributes['name'].nodeValue);
     }
   });
 

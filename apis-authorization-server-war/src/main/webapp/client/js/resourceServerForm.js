@@ -115,7 +115,7 @@ var resourceServerFormView = (function() {
             text: text
           }));
         });
-      }  
+      }
     }
   }
 })();
@@ -161,7 +161,7 @@ var resourceServerFormController = (function() {
       view.hide();
       windowController.onCloseEditResourceServer();
     },
-    
+
     hide: view.hide
   }
 })();

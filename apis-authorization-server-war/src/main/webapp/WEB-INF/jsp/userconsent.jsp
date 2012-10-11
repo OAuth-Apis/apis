@@ -8,8 +8,8 @@
   <meta name="author" content="">
   <title>Consent</title>
   <!-- Le styles -->
-  <link rel="stylesheet" href="/client/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/client/css/style.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/style.css" />
 
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
@@ -20,7 +20,7 @@
 
 
 <div class="head">
-  <img src="/client/img/surf-oauth.png"/>
+  <img src="${pageContext.request.contextPath}/client/img/surf-oauth.png"/>
 </div>
 <div class="main">
   <div class="full">
@@ -35,9 +35,8 @@
       <img alt="${client.resourceServer.name}"
            title="${client.resourceServer.name}"
            src="${client.resourceServer.thumbNailUrl}">
-      <img src="/client/img/arrow.png">
-      <img alt="${client.name}"
-           title="${client.name}" src="${client.thumbNailUrl}">
+      <img src="${pageContext.request.contextPath}/client/img/arrow.png">
+      <img alt="${client.name}" title="${client.name}" src="${client.thumbNailUrl}">
     </div>
 
     <form id="accept" method="post" action="${pageContext.request.contextPath}${actionUri}">
@@ -57,7 +56,7 @@
                  value="${availableScope}"/>
           <span class="consent-label">${availableScope}</span><br/>
         </c:forEach>
-	  </fieldset>	
+      </fieldset>
       <fieldset>
         <div class="form-actions">
           <button id="user_oauth_approval" name="user_oauth_approval" value="true" type="submit"
@@ -72,7 +71,7 @@
 </div>
 
 <div class="foot">
-  <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/oharsta/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
+  <p>Powered by <a href="http://www.surfnet.nl/">SURFnet</a>. Fork me on <a href="https://github.com/OpenConextApps/oa-aas/">Github</a>. Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
 </div>
 </body>
 </html>

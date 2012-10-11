@@ -35,12 +35,12 @@ var resourceServerGridView = (function() {
         $("#addServerButton,#noServersAddOne").click(function() {
           windowController.onAddResourceServer();
         });
-        
+
         $("a.editResourceServer").click(function(e) {
           var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
           windowController.onEditResourceServer(resourceServerId);
         });
-        
+
         $("a.deleteServerButton").click(function(e) {
           var resourceServerId = $(e.target).closest("tr").attr("data-resourceServerId");
           bootbox.confirm("Are you sure you want to delete this Resource Server?", function (result) {
@@ -84,7 +84,7 @@ var resourceServerGridController = (function() {
       view.hide();
       view.show(resourceServers);
     },
-    
+
     onDelete: function(resourceServerId) {
       data.deleteResourceServer(resourceServerId, function(data) {
         console.log("resource server has been deleted.");
@@ -100,4 +100,3 @@ var resourceServerGridController = (function() {
     isVisible: view.isVisible
   }
 })();
-

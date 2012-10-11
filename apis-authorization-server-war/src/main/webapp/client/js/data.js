@@ -43,10 +43,10 @@ var data = (function() {
       var httpMethod, url;
       if (resourceServer.id) {
         httpMethod = "POST";
-        url = "/admin/resourceServer/" + resourceServer.id;
+        url = "../admin/resourceServer/" + resourceServer.id;
       } else {
         httpMethod = "PUT";
-        url = "/admin/resourceServer";
+        url = "../admin/resourceServer";
 
       }
 
@@ -63,7 +63,7 @@ var data = (function() {
 
     getResourceServer: function(id, resultHandler) {
       oauthAjax({
-        url:"/admin/resourceServer/" + id,
+        url:"../admin/resourceServer/" + id,
         success: resultHandler,
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler({});
@@ -72,7 +72,7 @@ var data = (function() {
     },
     getResourceServers:function (resultHandler) {
       oauthAjax({
-        url:"/admin/resourceServer",
+        url:"../admin/resourceServer",
         success: resultHandler,
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler([]);
@@ -81,7 +81,7 @@ var data = (function() {
     },
     getStatistics:function (resultHandler) {
         oauthAjax({
-          url:"/admin/resourceServer/stats",
+          url:"../admin/resourceServer/stats",
           success: resultHandler,
           error: function() { // On failure, call result handler anyway, with empty result.
             resultHandler([]);
@@ -92,7 +92,7 @@ var data = (function() {
     deleteResourceServer: function(resourceServerId, success, failure) {
       var httpMethod, url;
       httpMethod = "DELETE";
-      url = "/admin/resourceServer/" + resourceServerId ;
+      url = "../admin/resourceServer/" + resourceServerId ;
       oauthAjax({
         url: url,
         type: httpMethod,
@@ -114,7 +114,7 @@ var data = (function() {
       for (var i = 0; i< resourceServerIds.length; i++) {
         var resourceServerId = resourceServerIds[i];
         oauthAjax({
-          url:"/admin/resourceServer/" + resourceServerId + "/client",
+          url:"../admin/resourceServer/" + resourceServerId + "/client",
           async: false,
           success: function(data) {
             // set the resourceServerId on the client
@@ -137,7 +137,7 @@ var data = (function() {
     },
     getClients:function (resourceServerId, resultHandler) {
       oauthAjax({
-        url:"/admin/resourceServer/" + resourceServerId + "/client",
+        url:"../admin/resourceServer/" + resourceServerId + "/client",
         success: function(data) {
           for (var i = 0; i < data.length; i++) {
             // Put the resourceServerId in the client, we do not get it back from the request.
@@ -153,7 +153,7 @@ var data = (function() {
     getClient: function(resourceServerId, clientId, resultHandler) {
       this.getResourceServer(resourceServerId, function(resourceServer) {
         oauthAjax({
-          url:"/admin/resourceServer/" + resourceServerId + "/client/" + clientId,
+          url:"../admin/resourceServer/" + resourceServerId + "/client/" + clientId,
           success: function(client) {
             // Put the resourceServer in the client, we do not get it back from the request.
             client.resourceServer = resourceServer;
@@ -171,10 +171,10 @@ var data = (function() {
       var httpMethod, url;
       if (client.id) {
         httpMethod = "POST";
-        url = "/admin/resourceServer/" + resourceServerId + "/client/" + client.id;
+        url = "../admin/resourceServer/" + resourceServerId + "/client/" + client.id;
       } else {
         httpMethod = "PUT";
-        url = "/admin/resourceServer/" + resourceServerId + "/client";
+        url = "../admin/resourceServer/" + resourceServerId + "/client";
       }
       oauthAjax({
         url: url,
@@ -190,7 +190,7 @@ var data = (function() {
 
       var httpMethod, url;
       httpMethod = "DELETE";
-      url = "/admin/resourceServer/" + resourceServerId + "/client/" + clientId;
+      url = "../admin/resourceServer/" + resourceServerId + "/client/" + clientId;
       oauthAjax({
         url: url,
         type: httpMethod,
@@ -200,13 +200,13 @@ var data = (function() {
         }
       });
     },
-    
+
     /**
      * Access token REST
      */
     getAccessToken: function(id, resultHandler) {
       oauthAjax({
-        url:"/admin/accessToken/" + id,
+        url:"../admin/accessToken/" + id,
         success: resultHandler,
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler({});
@@ -215,7 +215,7 @@ var data = (function() {
     },
     getAccessTokens:function (resultHandler) {
       oauthAjax({
-        url:"/admin/accessToken",
+        url:"../admin/accessToken",
         success: resultHandler,
         error: function() { // On failure, call result handler anyway, with empty result.
           resultHandler([]);
@@ -226,7 +226,7 @@ var data = (function() {
 
       var httpMethod, url;
       httpMethod = "DELETE";
-      url = "/admin/accessToken/" + accessTokenId;
+      url = "../admin/accessToken/" + accessTokenId;
       oauthAjax({
         url: url,
         type: httpMethod,
