@@ -17,9 +17,7 @@
 package org.surfnet.oaaas.conext;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Properties;
+import java.util.*;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -27,7 +25,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
 import nl.surfnet.spring.security.opensaml.Provisioner;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
+import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationException;
+import nl.surfnet.spring.security.opensaml.util.IDService;
+import nl.surfnet.spring.security.opensaml.util.TimeService;
+import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
+
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
@@ -45,14 +50,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-
-import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
-import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
-import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationException;
-import nl.surfnet.spring.security.opensaml.util.IDService;
-import nl.surfnet.spring.security.opensaml.util.TimeService;
-import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
 
 @Component
 public class SAMLAuthenticator extends AbstractAuthenticator {
@@ -101,7 +98,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
     LOG.debug("Hitting SAML Authenticator filter");
-    
+
     if (isSAMLResponse(request)) {
       final Response samlResponse = extractSamlResponse(request);
 
@@ -122,7 +119,6 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     }
     sendAuthnRequest(response, authStateValue, getReturnUri(request));
   }
-  
 
   private AuthenticatedPrincipal convertToPrincipal(UserDetails ud) {
     Collection<? extends GrantedAuthority> authorities = ud.getAuthorities();
@@ -132,9 +128,15 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         roles.add(authority.getAuthority());
       }
     }
-    return new AuthenticatedPrincipal(ud.getUsername(), roles);
+    Map<String, Object> attributes = getPrincipalAttributes(ud);
+
+    return new AuthenticatedPrincipal(ud.getUsername(), roles, attributes);
   }
-  
+
+  protected Map<String, Object> getPrincipalAttributes(UserDetails ud) {
+    return Collections.emptyMap();
+  }
+
   protected String getSAMLRelayState(HttpServletRequest request) {
     return request.getParameter("RelayState");
   }
