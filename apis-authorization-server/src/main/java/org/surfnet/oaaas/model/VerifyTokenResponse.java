@@ -27,10 +27,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
+import com.google.common.base.Objects;
+
 /**
  * Representation of the answer to the a Resource Server when asked to verify
  * the token.
- * 
+ *
  */
 
 @SuppressWarnings("serial")
@@ -122,8 +124,6 @@ public class VerifyTokenResponse implements Serializable {
     this.error = error;
   }
 
-  
-
   /**
    * @return the expiresIn
    */
@@ -152,5 +152,9 @@ public class VerifyTokenResponse implements Serializable {
     this.principal = principal;
   }
 
+  @Override
+  public String toString() {
+    return Objects.toStringHelper(this).add("principal", principal).add("error", error).toString();
+  }
 
 }

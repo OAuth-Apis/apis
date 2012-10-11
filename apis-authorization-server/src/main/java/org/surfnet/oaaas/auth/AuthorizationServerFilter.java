@@ -23,22 +23,10 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -260,8 +248,11 @@ public class AuthorizationServerFilter implements Filter {
      * Can't use directly jersey, as we need the mr bean module
      */
     try {
-      return objectMapper.readValue(res.getEntity(String.class), VerifyTokenResponse.class);
+      String responseString = res.getEntity(String.class);
+      LOG.debug("Got verify token response (status: {}): '{}'", res.getClientResponseStatus().getStatusCode(), responseString);
+      return objectMapper.readValue(responseString, VerifyTokenResponse.class);
     } catch (Exception e) {
+      LOG.warn("Could not parse the Verify Token Response", e);
       sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot parse result");
       return new VerifyTokenResponse(e.getMessage());
     }
