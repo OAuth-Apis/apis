@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
   <title>Consent</title>
   <!-- Le styles -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/bootstrap.min.css" />
@@ -34,9 +34,9 @@
     <div class="consent">
       <img alt="${client.resourceServer.name}"
            title="${client.resourceServer.name}"
-           src="${client.resourceServer.thumbNailUrl}">
-      <img src="${pageContext.request.contextPath}/client/img/arrow.png">
-      <img alt="${client.name}" title="${client.name}" src="${client.thumbNailUrl}">
+           src="${client.resourceServer.thumbNailUrl}" />
+      <img src="${pageContext.request.contextPath}/client/img/arrow.png" />
+      <img alt="${client.name}" title="${client.name}" src="${client.thumbNailUrl}" />
     </div>
 
     <form id="accept" method="post" action="${pageContext.request.contextPath}${actionUri}">

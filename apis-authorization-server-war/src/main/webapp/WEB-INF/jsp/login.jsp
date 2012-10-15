@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
 
   <title>Login</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/bootstrap.min.css" />
@@ -35,7 +35,7 @@
             <input type="text" class="input-xlarge" id="username"
               name="username" rel="popover"
               data-content="Enter your identifier."
-              data-original-title="Identifier">
+              data-original-title="Identifier" />
             <p class="help-block">Hint: can be anything</p>
           </div>
         </div>
@@ -46,7 +46,7 @@
             <input type="password" class="input-xlarge" id="password"
               name="password" rel="popover"
               data-content="What's your password?"
-              data-original-title="Password">
+              data-original-title="Password" />
             <p class="help-block">Hint: can be anything</p>
           </div>
         </div>
