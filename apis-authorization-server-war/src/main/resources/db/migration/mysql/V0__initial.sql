@@ -92,7 +92,7 @@ CREATE TABLE `client` (
   `contactName` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `expireDuration` bigint(20) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `clientName` varchar(255) DEFAULT NULL,
   `notAllowedImplicitGrant` bit(1) DEFAULT NULL,
   `secret` varchar(255) NOT NULL,
   `skipConsent` bit(1) DEFAULT NULL,
