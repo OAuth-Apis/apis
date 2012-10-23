@@ -1,15 +1,15 @@
-INSERT INTO resourceserver (id, contactEmail,  contactName, name, key,secret )
+INSERT INTO resourceserver (id, contactEmail,  contactName, resourceServerName, resourceServerKey,secret )
 VALUES
 	(99999, 'foo@university.org','foo.bar','university-foo','university-foo',
 	'58b749f7-acb3-44b7-a38c-53d5ad740cf6');
 INSERT INTO Resourceserver_scopes values (99999, 'read');
 
 INSERT INTO client (id, clientId, contactEmail, contactName, description, expireDuration, 
-					name, secret, skipConsent, thumbNailUrl,
+					clientName, secret, skipConsent, thumbNailUrl,
 					useRefreshTokens, resourceserver_id)
 VALUES
     (99999, 'cool_app_id', 'client@coolapp.com', 'john.doe', 'Cool app for doing awesome things', 0,
-    'cool-app', 'secret', 0, 'https://static.surfconext.nl/media/logo-surfnet-small.png',
+    'cool-app', 'secret', 0, 'http://www.surfnet.nl/SURFnet%20imagebank/Logos/SURFconext_klein.gif',
     0, 99999);
 INSERT INTO Client_scopes values (99999, 'read');
 INSERT INTO Client_redirectUris values (99999, 'http://localhost:8084/redirect');
@@ -30,25 +30,25 @@ INSERT INTO client_attributes(client_id , attribute_name, attribute_value) value
 /*
 Local administration application
  */
-INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, secret, owner, thumbNailUrl)
+INSERT INTO resourceserver (id, contactEmail,  contactName, resourceServerName, resourceServerKey, secret, owner, thumbNailUrl)
 VALUES
 	(99998, 'localadmin@example.com','local admin','Authorization Server Apis',
-	'authorization-server-admin', 'cafebabe-cafe-babe-cafe-babecafebabe', null, 'https://static.surfconext.nl/media/logo-surfnet-small.png');
-INSERT INTO Resourceserver_scopes values (99998, 'read'),(99998, 'write') ;
+	'authorization-server-admin', 'cafebabe-cafe-babe-cafe-babecafebabe', null, 'http://www.aldokkan.com/religion/apis.jpg');
+INSERT INTO ResourceServer_scopes values (99998, 'read'),(99998, 'write') ;
 
-INSERT INTO client (id, contactEmail, contactName, description, name, thumbNailUrl, resourceserver_id,
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
 clientId, secret)
 VALUES
     (99998, 'client@coolapp.com', 'john.doe', 'Javascript application for authorization server administration',
     'Authorization Server Admin Client',
-    'https://static.surfconext.nl/media/logo-surfnet-small.png', 99998,
+    'http://www.artyfactory.com/egyptian_art/egyptian_gods/images/apis.jpg', 99998,
     'authorization-server-admin-js-client', '');
 INSERT INTO Client_scopes values (99998, 'read'), (99998, 'write');
 
 /*
 For integration tests
 */
-INSERT INTO resourceserver (id, contactEmail,  contactName, name, key, secret, owner)
+INSERT INTO resourceserver (id, contactEmail,  contactName, resourceServerName, resourceServerKey, secret, owner)
 VALUES
 	(99997, 'it-test@example.com','it test','it-test-resource-server',
 	'it-test-resource-server', 'somesecret', 'it-test-enduser');
@@ -57,7 +57,7 @@ INSERT INTO Resourceserver_scopes values (99997, 'read');
 /*
 Client not getting refresh tokens
 */
-INSERT INTO client (id, contactEmail, contactName, description, name, thumbNailUrl, resourceserver_id,
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
 clientId, secret)
 VALUES
     (99997, 'it-test@example.com', 'john.doe', 'it test client',
@@ -69,7 +69,7 @@ INSERT INTO Client_scopes values (99997, 'read'), (99997, 'write');
 /*
 Client getting refresh tokens (and skips consent)
 */
-INSERT INTO client (id, contactEmail, contactName, description, name, thumbNailUrl, resourceserver_id,
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
 clientId, secret, skipConsent, expireDuration, useRefreshTokens, notAllowedImplicitGrant)
 VALUES
     (99996, 'it-test@example.com', 'john.doe', 'it test client no consent use refresh',
@@ -81,7 +81,7 @@ INSERT INTO Client_scopes values (99996, 'read'), (99996, 'write');
 /*
 Client for implicit grant
 */
-INSERT INTO client (id, contactEmail, contactName, description, name, thumbNailUrl, resourceserver_id,
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
 clientId, secret)
 VALUES
     (99995, 'it-test-grant@example.com', 'john.grant', 'it test client grant',

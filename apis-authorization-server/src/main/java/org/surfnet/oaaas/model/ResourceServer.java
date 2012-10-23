@@ -48,7 +48,7 @@ import org.hibernate.validator.constraints.Email;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="resourceserver", uniqueConstraints =
-    @UniqueConstraint(columnNames = {"owner", "name"})
+    @UniqueConstraint(columnNames = {"owner", "resourceServerName"})
 )
 @XmlRootElement
 @Inheritance(strategy =  InheritanceType.TABLE_PER_CLASS)
@@ -56,11 +56,11 @@ public class ResourceServer extends AbstractEntity {
 
   public static final String SCOPE_PATTERN = "^[^,]+$"; // anything but a comma
 
-  @Column
+  @Column(name = "resourceServerName")
   @NotNull
   private String name;
 
-  @Column(unique = true)
+  @Column(unique = true, name = "resourceServerKey")
   @NotNull
   private String key;
 

@@ -60,7 +60,7 @@ import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Client extends AbstractEntity {
 
-  @Column
+  @Column(name = "clientName")
   @NotNull
   private String name;
 
