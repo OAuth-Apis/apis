@@ -20,25 +20,9 @@ package org.surfnet.oaaas.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
@@ -57,6 +41,7 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 @Table(name = "accesstoken")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class AccessToken extends AbstractEntity {
 
   @Column(unique = true)
@@ -206,28 +191,11 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @param principal
-   *          the principal to set
-   */
-  private void setPrincipal(AuthenticatedPrincipal principal) {
-    this.principal = principal;
-  }
-
-  /**
    * @return the encodedPrincipal
    */
   public String getEncodedPrincipal() {
     return encodedPrincipal;
   }
-
-  /**
-   * @param encodedPrincipal
-   *          the encodedPrincipal to set
-   */
-  private void setEncodedPrincipal(String encodedPrincipal) {
-    this.encodedPrincipal = encodedPrincipal;
-  }
-
 
   /**
    * @return the refreshToken
@@ -251,12 +219,9 @@ public class AccessToken extends AbstractEntity {
     return resourceOwnerId;
   }
 
-  /**
-   * @param resourceOwnerId
-   *          the resourceOwnerId to set
-   */
-  private void setResourceOwnerId(String resourceOwnerId) {
-    this.resourceOwnerId = resourceOwnerId;
+  @XmlElement
+  public String getClientId() {
+    return client.getClientId();
   }
 
 }

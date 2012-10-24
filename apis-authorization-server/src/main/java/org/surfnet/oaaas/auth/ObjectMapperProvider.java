@@ -20,8 +20,8 @@ package org.surfnet.oaaas.auth;
 
 import javax.ws.rs.ext.ContextResolver;
 
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -32,10 +32,10 @@ import com.sun.jersey.api.client.Client;
 /**
  * We need to be able to set the {@link ObjectMapper} on the {@link Client} to
  * make sure the {@link MrBeanModule} is used.
- * 
+ *
  */
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
-  
+
   private ObjectMapper mapper;
 
   public ObjectMapperProvider(){

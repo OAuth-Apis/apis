@@ -18,21 +18,29 @@
  */
 package org.surfnet.oaaas.model;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
-import static org.junit.Assert.assertEquals;
+import com.sun.jersey.api.json.JSONJAXBContext;
+import com.sun.jersey.api.json.JSONMarshaller;
 
 /**
  * Test to generate {@link Base64} encoded and decoded {@link String} for
  * creating valid test data in the in-memory database.
- * 
+ *
  */
 public class AccessTokenTest {
 
@@ -58,6 +66,36 @@ public class AccessTokenTest {
     assertEquals(
         "rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA9pdC10ZXN0LWVuZHVzZXJzcgAaamF2YS51dGlsLkFycmF5cyRBcnJheUxpc3TZpDy+zYgG0gIAAVsAAWF0ABNbTGphdmEvbGFuZy9PYmplY3Q7eHB1cgATW0xqYXZhLmxhbmcuU3RyaW5nO63SVufpHXtHAgAAeHAAAAACdAAEdXNlcnQABWFkbWlu",
         itTestEnduser);
+  }
+
+  @Test
+  public void marshallToJsonShouldHideSomeMembers() throws JAXBException {
+    AccessToken token = getToken(new AuthenticatedPrincipal("Truus"));
+    token.setClient(createClient("my-client-id", "my-client-secret"));
+
+    String json = marshallToJson(token);
+
+    assertTrue(json.contains("my-client-id"));
+    assertFalse(json.contains("my-client-secret"));
+    assertFalse(json.contains("principal"));
+    assertFalse(json.contains("encodedPrincipal"));
+  }
+
+  private String marshallToJson(AccessToken token) throws JAXBException {
+    JSONJAXBContext context = new JSONJAXBContext(AccessToken.class);
+    JSONMarshaller marshaller = context.createJSONMarshaller();
+
+    StringWriter writer = new StringWriter();
+    marshaller.marshallToJSON(token, writer);
+
+    return writer.toString();
+  }
+
+  private Client createClient(String id, String secret) {
+    Client client = new Client();
+    client.setClientId(id);
+    client.setSecret(secret);
+    return client;
   }
 
   private String generateEncodedPrincipal(String name, Collection<String> roles) {

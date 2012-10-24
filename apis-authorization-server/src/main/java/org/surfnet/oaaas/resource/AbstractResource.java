@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
-import org.surfnet.oaaas.auth.ValidationResponseException;
 import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.model.ValidationErrorResponse;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
