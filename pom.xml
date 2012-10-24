@@ -11,7 +11,7 @@
 
   <groupId>nl.surfnet.apis</groupId>
   <artifactId>apis-parent</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>API Secure</name>
 
@@ -52,12 +52,12 @@
     <repository>
       <id>openconext-releases</id>
       <name>OpenConext public releases repository</name>
-      <url>https://build.surfconext.nl/repository/public/releases</url>
+      <url>dav:https://build.surfconext.nl/repository/public/releases</url>
     </repository>
     <snapshotRepository>
       <id>openconext-snapshots</id>
       <name>OpenConext public snapshot repository</name>
-      <url>https://build.surfconext.nl/repository/public/snapshots</url>
+      <url>dav:https://build.surfconext.nl/repository/public/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
