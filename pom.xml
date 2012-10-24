@@ -52,12 +52,12 @@
     <repository>
       <id>openconext-releases</id>
       <name>OpenConext public releases repository</name>
-      <url>https://build.surfconext.nl/repository/public/releases</url>
+      <url>dav:https://build.surfconext.nl/repository/public/releases</url>
     </repository>
     <snapshotRepository>
       <id>openconext-snapshots</id>
       <name>OpenConext public snapshot repository</name>
-      <url>https://build.surfconext.nl/repository/public/snapshots</url>
+      <url>dav:https://build.surfconext.nl/repository/public/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -349,6 +349,14 @@
 			</configuration>
         </plugin>
 	</plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
+
   </build>
   <repositories>
     <repository>
