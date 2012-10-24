@@ -40,8 +40,6 @@ public class ClientTest extends AbstractEntityTest {
 
   @Before
   public void setup() {
-
-
     client = new Client();
     client.setName("not-null");
     client.setClientId("not-null");

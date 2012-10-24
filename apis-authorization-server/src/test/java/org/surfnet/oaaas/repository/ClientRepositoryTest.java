@@ -73,7 +73,7 @@ public class ClientRepositoryTest extends AbstractRepositoryTest {
     client.setClientId("clientid");
 
     // Let them meet each other
-    r.setClients(new HashSet( Arrays.asList(client)));
+    r.setClients(new HashSet(Arrays.asList(client)));
     client.setResourceServer(r);
 
     client = repo.save(client);

@@ -36,12 +36,10 @@ public class AccessTokenRepositoryTest extends AbstractRepositoryTest {
     assertEquals("it-test-enduser",token.getPrincipal().getName());
   }
 
-  
   @Test
   public void testCountByResourceOwnerid() {
     AccessTokenRepository repo = getRepository(AccessTokenRepository.class);
     Number countByResourceOwnerId = repo.countByUniqueResourceOwnerIdAndClientId(99999);
     assertEquals(1L,countByResourceOwnerId.longValue());
-    
   }
 }
