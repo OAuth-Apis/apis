@@ -23,17 +23,12 @@ import static org.surfnet.oaaas.resource.TokenResource.WWW_AUTHENTICATE;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
@@ -50,7 +45,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
  * the Google <a href=
  * "https://developers.google.com/accounts/docs/OAuth2Login#validatingtoken"
  * >specification</a> as basis.
- * 
+ *
  */
 @Named
 @Path("/tokeninfo")

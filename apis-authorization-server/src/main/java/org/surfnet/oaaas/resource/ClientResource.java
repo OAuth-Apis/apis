@@ -26,14 +26,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -142,7 +135,7 @@ public class ClientResource extends AbstractResource {
     Set<ConstraintViolation<Client>> violations = validator.validate(client);
     if (!violations.isEmpty()) {
       LOG.info("Entity failed validation. Will respond with client error. Violations: {}", violations);
-      return buildViolationErrorResponse(new HashSet<ConstraintViolation>(violations));
+      return buildViolationErrorResponse(new HashSet<ConstraintViolation<?>>(violations));
     }
 
     Client clientSaved;

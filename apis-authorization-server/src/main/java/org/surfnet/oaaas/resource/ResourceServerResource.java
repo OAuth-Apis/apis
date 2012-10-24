@@ -16,25 +16,16 @@
 
 package org.surfnet.oaaas.resource;
 
+import static org.apache.commons.collections.CollectionUtils.subtract;
+
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,16 +35,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.surfnet.oaaas.model.Client;
-import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.model.StatisticsResponse;
+import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.model.StatisticsResponse.ClientStat;
 import org.surfnet.oaaas.model.StatisticsResponse.ResourceServerStat;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
-
-import static org.apache.commons.collections.CollectionUtils.subtract;
 
 /**
  * JAX-RS Resource for resource servers.
@@ -236,7 +223,7 @@ public class ResourceServerResource extends AbstractResource {
   /**
    * Delete all scopes from clients that are not valid anymore with the new
    * resource server
-   * 
+   *
    * @param newScopes
    *          the newly saved scopes
    * @param oldScopes

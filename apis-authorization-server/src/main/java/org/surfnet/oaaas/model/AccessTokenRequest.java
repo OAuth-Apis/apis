@@ -24,13 +24,12 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Representation of the AccessToken request defined in the <a
  * href="http://tools.ietf.org/html/draft-ietf-oauth-v2#page-27">spec</a>
- * 
+ *
  */
 @XmlRootElement
 public class AccessTokenRequest {

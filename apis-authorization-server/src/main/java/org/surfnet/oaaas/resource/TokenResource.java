@@ -18,48 +18,36 @@
  */
 package org.surfnet.oaaas.resource;
 
-import static org.surfnet.oaaas.auth.OAuth2Validator.*;
+import static org.surfnet.oaaas.auth.OAuth2Validator.BEARER;
+import static org.surfnet.oaaas.auth.OAuth2Validator.GRANT_TYPE_AUTHORIZATION_CODE;
+import static org.surfnet.oaaas.auth.OAuth2Validator.GRANT_TYPE_REFRESH_TOKEN;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
-import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
-import org.surfnet.oaaas.auth.ValidationResponseException;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
-import org.surfnet.oaaas.model.AccessToken;
-import org.surfnet.oaaas.model.AccessTokenRequest;
-import org.surfnet.oaaas.model.AccessTokenResponse;
-import org.surfnet.oaaas.model.AuthorizationRequest;
-import org.surfnet.oaaas.model.Client;
-import org.surfnet.oaaas.model.ErrorResponse;
+import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
@@ -236,7 +224,7 @@ public class TokenResource {
 
   /*
    * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-2.3.1
-   * 
+   *
    * We support both options. Clients can use the Basic Authentication or
    * include the secret and id in the request body
    */

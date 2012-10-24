@@ -19,26 +19,16 @@
 package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
-import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 /**
  * Responsible for handling user consent.
- * 
+ *
  */
 public abstract class AbstractUserConsentHandler extends AbstractFilter {
 
@@ -55,9 +45,9 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
   public static final String CLIENT = "CLIENT";
 
   /**
-   * 
+   *
    * Get the Client from the request context to use in handling user consent
-   * 
+   *
    * @param request
    *          the {@link ServletRequest}
    * @return the Client which is asking for consent
@@ -77,7 +67,7 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    * Implement this method to perform the actual authentication. Use
    * {@link org.surfnet.oaaas.consent.FormUserConsentHandler
    * FormUserConsentHandler} as an example.
-   * 
+   *
    * In general, the contract is:
    * <p>
    * assert that the user has granted consent. You can use the request and
@@ -101,7 +91,7 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    * {@link #setScopes}</li>
    * <li>call chain.doFilter(request, response) to let the flow continue..
    * </ul>
-   * 
+   *
    * @param request
    *          the ServletRequest
    * @param response
@@ -122,7 +112,7 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
 
   /**
    * Set the granted scopes of the consent on the request. Note: this optional.
-   * 
+   *
    * @param request
    *          the original ServletRequest
    * @param scopes

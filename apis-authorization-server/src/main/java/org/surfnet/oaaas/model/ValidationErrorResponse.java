@@ -40,8 +40,8 @@ public class ValidationErrorResponse {
   public ValidationErrorResponse() {
   }
 
-  public ValidationErrorResponse(Set<ConstraintViolation> violations) {
-    for (ConstraintViolation v : violations) {
+  public ValidationErrorResponse(Set<ConstraintViolation<?>> violations) {
+    for (ConstraintViolation<?> v : violations) {
       this.violations.add(v.getMessage());
     }
   }

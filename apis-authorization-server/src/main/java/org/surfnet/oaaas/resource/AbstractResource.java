@@ -76,7 +76,7 @@ public class AbstractResource {
   }
 
 
-  protected Response buildViolationErrorResponse(Set<ConstraintViolation> violations) {
+  protected Response buildViolationErrorResponse(Set<ConstraintViolation<?>> violations) {
     ValidationErrorResponse responseBody = new ValidationErrorResponse(violations);
     return Response
         .status(Response.Status.BAD_REQUEST)

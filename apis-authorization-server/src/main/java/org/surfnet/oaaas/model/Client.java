@@ -23,19 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -45,7 +33,7 @@ import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:
- * 
+ *
  * <pre>
  *         An application making protected resource requests on behalf of the resource owner and with its
  *         authorization.  The term client does not imply any particular implementation characteristics (e.g. whether
@@ -330,7 +318,7 @@ public class Client extends AbstractEntity {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.surfnet.oaaas.model.AbstractEntity#validate()
    */
   @Override
@@ -351,7 +339,7 @@ public class Client extends AbstractEntity {
 
     for (String redirectUri : redirectUris) {
       try {
-        URL url = new URL(redirectUri);
+        new URL(redirectUri);
       } catch (MalformedURLException e) {
         violation(context, "redirectUri '" + redirectUri + "' is not a valid URI");
         isValid = false;

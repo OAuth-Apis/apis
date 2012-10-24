@@ -274,14 +274,6 @@ public class AuthorizationRequest extends AbstractEntity {
     return encodedPrincipal;
   }
 
-  /**
-   * @param encodedPrincipal
-   *          the encodedPrincipal to set
-   */
-  private void setEncodedPrincipal(String encodedPrincipal) {
-    this.encodedPrincipal = encodedPrincipal;
-  }
-
   /* (non-Javadoc)
    * @see org.surfnet.oaaas.model.AbstractEntity#validate()
    */

@@ -20,32 +20,23 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 /**
- * 
+ *
  * {@link Filter} that ensures the Resource Owner grants consent for the use of
  * the Resource Server data to the Client app.
- * 
+ *
  */
 @Named
 public class UserConsentFilter implements Filter {
-
-  private static final Logger LOG = LoggerFactory.getLogger(UserConsentFilter.class);
 
   private static final String RETURN_URI = "/oauth2/consent";
 
