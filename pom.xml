@@ -42,9 +42,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:oharsta/apis.git</connection>
-    <url>scm:git:git@github.com:oharsta/apis.git</url>
-    <developerConnection>scm:git:git@github.com:oharsta/apis.git</developerConnection>
+    <connection>scm:git:git@github.com:OpenConextApps/apis.git</connection>
+    <url>scm:git:git@github.com:OpenConextApps/apis.git</url>
+    <developerConnection>scm:git:git@github.com:OpenConextApps/apis.git</developerConnection>
   </scm>
 
 
