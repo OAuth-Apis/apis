@@ -201,6 +201,7 @@
               <scanIntervalSeconds>0</scanIntervalSeconds>
               <stopKey>foo</stopKey>
               <stopPort>9966</stopPort>
+              <contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
             </configuration>
             <executions>
               <execution>

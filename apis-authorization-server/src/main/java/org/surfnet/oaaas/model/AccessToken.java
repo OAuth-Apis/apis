@@ -20,8 +20,25 @@ package org.surfnet.oaaas.model;
 
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
@@ -39,6 +56,7 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 @Entity
 @Table(name = "accesstoken")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AccessToken extends AbstractEntity {
 
   @Column(unique = true)
@@ -49,14 +67,17 @@ public class AccessToken extends AbstractEntity {
   private String refreshToken;
 
   @Transient
+  @XmlTransient
   private AuthenticatedPrincipal principal;
 
   @Column(length = 1024)
   @NotNull
+  @XmlTransient
   private String encodedPrincipal;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "client_id", nullable = false, updatable = false)
+  @XmlTransient
   private Client client;
 
   @Column

@@ -16,6 +16,9 @@
 
 package org.surfnet.oaaas.resource;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.AccessToken;
@@ -64,7 +66,7 @@ public class AccessTokenResource extends AbstractResource {
   }
 
   /**
-   * Get one resource server.
+   * Get one token.
    */
   @GET
   @Path("/{accessTokenId}")

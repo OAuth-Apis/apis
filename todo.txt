@@ -1,5 +1,4 @@
 MUST:
-- Change GET access token response to limit included data (no sensitive client/resourceserver details)
 - Implicit grant requires an redirect uri in the database (OAuth2ValidatorImpl#determineRedirectUri)
 
 NICE:
