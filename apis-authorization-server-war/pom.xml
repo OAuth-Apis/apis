@@ -11,6 +11,7 @@
 
   <properties>
     <servlet.port>8080</servlet.port>
+    <mujina-idp.version>2.11.0-SNAPSHOT</mujina-idp.version>
   </properties>
 
   <dependencies>
@@ -248,7 +249,26 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-maven-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.surfnet.coin</groupId>
+            <artifactId>mujina-idp</artifactId>
+            <type>war</type>
+            <version>${mujina-idp.version}</version>
+          </dependency>
+        </dependencies>
+
         <configuration>
+
+          <contextHandlers>
+            <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+              <contextPath>/mujina-idp</contextPath>
+              <war>${settings.localRepository}/org/surfnet/coin/mujina-idp/${mujina-idp.version}/mujina-idp-${mujina-idp.version}.war</war>
+              <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+
+            </contextHandler>
+          </contextHandlers>
+
           <webAppConfig>
             <contextPath>/</contextPath>
             <extraClasspath>${basedir}/src/test/resources/</extraClasspath>

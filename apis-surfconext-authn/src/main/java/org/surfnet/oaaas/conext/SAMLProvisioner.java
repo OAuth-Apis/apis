@@ -33,11 +33,11 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class SAMLProvisioner implements Provisioner {
 
-  private static final String UID = "urn:oid:1.3.6.1.4.1.1076.20.40.40.1";
+  private String uuidAttribute = "urn:oid:1.3.6.1.4.1.1076.20.40.40.1";
 
   @Override
   public UserDetails provisionUser(Assertion assertion) {
-    String userId = getValueFromAttributeStatements(assertion, UID);
+    String userId = getValueFromAttributeStatements(assertion, uuidAttribute);
     return new User(userId, "", Collections.singletonList(new SimpleAuthority("USER")));
   }
 
@@ -69,5 +69,9 @@ public class SAMLProvisioner implements Provisioner {
       }
     }
     return "";
+  }
+
+  public void setUuidAttribute(String uuidAttribute) {
+    this.uuidAttribute = uuidAttribute;
   }
 }

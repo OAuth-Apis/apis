@@ -40,6 +40,11 @@ import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
+import org.opensaml.xml.security.*;
+import org.opensaml.xml.security.credential.Credential;
+import org.opensaml.xml.security.credential.UsageType;
+import org.opensaml.xml.security.criteria.EntityIDCriteria;
+import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,20 +64,22 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   private TimeService timeService = new TimeService();
   private IDService idService = new IDService();
   private OpenSAMLContext openSAMLContext;
-  private String ssoUrl;
+
+  private final Properties properties;
+  {
+    try {
+      properties = PropertiesLoaderUtils.loadAllProperties("surfconext.authn.properties");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
     super.init(filterConfig);
 
-    try {
-      final Properties properties = PropertiesLoaderUtils.loadAllProperties("surfconext.authn.properties");
-      openSAMLContext = createOpenSAMLContext(properties);
-
-      ssoUrl = properties.getProperty("ssoUrl", "no-property-named-ssoUrl");
-    } catch (IOException e) {
-      throw new ServletException(e);
-    }
+    openSAMLContext = createOpenSAMLContext(properties);
   }
 
   /**
@@ -86,7 +93,9 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
    * Default Provisioner factory method.
    */
   protected Provisioner createProvisioner() {
-    return new SAMLProvisioner();
+    SAMLProvisioner samlProvisioner = new SAMLProvisioner();
+    samlProvisioner.setUuidAttribute((String) properties.get("samlUuidAttribute"));
+    return samlProvisioner;
   }
 
   @Override
@@ -190,21 +199,27 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         idService);
     EndpointGenerator endpointGenerator = new EndpointGenerator();
 
-    final String target = ssoUrl;
+    final String target = openSAMLContext.getIdpUrl();
 
     Endpoint endpoint = endpointGenerator.generateEndpoint(
         SingleSignOnService.DEFAULT_ELEMENT_NAME, target, openSAMLContext.assertionConsumerUri());
 
     AuthnRequest authnRequest = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
 
-    LOG.debug("Sending authnRequest to {}", target);
-
-    String relayState = authState;
+    CriteriaSet criteriaSet = new CriteriaSet();
+    criteriaSet.add(new EntityIDCriteria(openSAMLContext.entityId()));
+    criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
     try {
-      openSAMLContext.samlMessageHandler().sendSAMLMessage(authnRequest, endpoint, response, relayState);
+
+      Credential signingCredential = openSAMLContext.keyStoreCredentialResolver().resolveSingle(criteriaSet);
+      String relayState = authState;
+      LOG.debug("Sending authnRequest to {}", target);
+      openSAMLContext.samlMessageHandler().sendSAMLMessage(authnRequest, endpoint, response, relayState, signingCredential);
     } catch (MessageEncodingException mee) {
       LOG.error("Could not send authnRequest to Identity Provider.", mee);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    } catch (org.opensaml.xml.security.SecurityException e) {
+      throw new RuntimeException(e);
     }
   }
 
