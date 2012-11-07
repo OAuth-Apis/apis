@@ -83,11 +83,6 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
- <servlet-mapping>
-    <servlet-name>default</servlet-name>
-    <url-pattern>/assets/*</url-pattern>
-  </servlet-mapping>
-
   <servlet-mapping>
     <servlet-name>jersey</servlet-name>
     <url-pattern>/oauth2/*</url-pattern>
