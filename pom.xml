@@ -389,4 +389,18 @@
       <url>https://build.surfconext.nl/repository/public/snapshots</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <id>openconext-releases</id>
+      <name>OpenConext public releases repository</name>
+      <url>https://build.surfconext.nl/repository/public/releases</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
