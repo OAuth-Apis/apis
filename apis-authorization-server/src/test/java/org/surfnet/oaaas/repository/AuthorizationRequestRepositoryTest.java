@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
  * {@link Test} for {@link AuthorizationRequestRepository}
  * 
  */
-public class AuthorizationRequestRepositoryTest extends AbstractRepositoryTest {
+public class AuthorizationRequestRepositoryTest extends AbstractTestRepository {
 
   @Test
   public void test() {

@@ -27,7 +27,7 @@ import org.surfnet.oaaas.model.AccessToken;
  * {@link Test} for {@link AccessTokenRepository}
  *
  */
-public class AccessTokenRepositoryTest extends AbstractRepositoryTest {
+public class AccessTokenRepositoryTest extends AbstractTestRepository {
 
   @Test
   public void testPrincipal() {

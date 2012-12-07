@@ -36,7 +36,7 @@ import org.surfnet.oaaas.model.ResourceServer;
  * {@link Test} for {@link ClientRepository}
  * 
  */
-public class ClientRepositoryTest extends AbstractRepositoryTest {
+public class ClientRepositoryTest extends AbstractTestRepository {
 
   @Test
   public void test() {

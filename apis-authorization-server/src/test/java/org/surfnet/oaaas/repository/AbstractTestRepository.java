@@ -33,7 +33,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
  * Test the flyway migrations.
  * 
  */
-public class AbstractRepositoryTest {
+public class AbstractTestRepository {
 
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
   private static final Class<PersistenceProviderImpl> PERSISTENCE_PROVIDER_CLASS = PersistenceProviderImpl.class;
