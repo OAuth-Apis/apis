@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<weblogic-application xmlns="http://xmlns.oracle.com/weblogic/weblogic-application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-application http://xmlns.oracle.com/weblogic/weblogic-application/1.0/weblogic-application.xsd">
+
+    <xml>
+        <parser-factory>
+            <saxparser-factory>org.apache.xerces.jaxp.SAXParserFactoryImpl</saxparser-factory>
+            <document-builder-factory>org.apache.xerces.jaxp.DocumentBuilderFactoryImpl</document-builder-factory>
+            <transformer-factory>org.apache.xalan.processor.TransformerFactoryImpl</transformer-factory>
+        </parser-factory>
+    </xml>
+
+    <application-param>
+        <param-name>webapp.encoding.default</param-name>
+        <param-value>UTF-8</param-value>
+    </application-param>
+
+    <prefer-application-packages>
+        <package-name>antlr.*</package-name>
+        <package-name>org.opensaml.*</package-name>
+        <package-name>org.apache.velocity.*</package-name>
+        <package-name>org.apache.commons.*</package-name>
+        <package-name>org.apache.xmlbeans.*</package-name>
+        <package-name>org.apache.log4j.*</package-name>
+        <package-name>org.springframework.*</package-name>
+        <package-name>org.apache.openjpa.*</package-name>
+        <package-name>javax.persistence.*</package-name>
+        <package-name>org.apache.xerces.*</package-name>
+        <package-name>org.apache.xalan.*</package-name>
+        <package-name>javax.validation.*</package-name>
+        <package-name>org.hibernate.validator.*</package-name>
+    </prefer-application-packages>
+
+</weblogic-application>

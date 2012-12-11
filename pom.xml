@@ -66,6 +66,7 @@
     <module>apis-example-resource-server</module>
     <module>apis-authorization-server</module>
     <module>apis-authorization-server-war</module>
+    <module>apis-authorization-server-ear</module>
     <module>apis-surfconext-authn</module>
     <module>apis-example-resource-server-war</module>
     <module>apis-example-client-app</module>
@@ -102,6 +103,7 @@
     <selenium.version>2.25.0</selenium.version>
     <cglib.version>2.2.2</cglib.version>
     <jstl.version>1.2</jstl.version>
+    <jsp.version>2.1</jsp.version>
     <mysql.version>5.1.20</mysql.version>
   </properties>
 
@@ -293,6 +295,12 @@
         <groupId>nl.surfnet.apis</groupId>
         <artifactId>apis-authorization-server</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.surfnet.apis</groupId>
+        <artifactId>apis-authorization-server-war</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
       </dependency>
       <dependency>
         <groupId>nl.surfnet.apis</groupId>
