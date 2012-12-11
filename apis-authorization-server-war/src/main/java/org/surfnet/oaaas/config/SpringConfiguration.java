@@ -76,7 +76,7 @@ public class SpringConfiguration {
     public PersistenceProviderResolver persistenceProviderResolver() {
         OpenJPAPersistenceProviderResolver persistenceProviderResolver = new OpenJPAPersistenceProviderResolver();
         persistenceProviderResolver.register();
-        return persistenceProviderResolver();
+        return persistenceProviderResolver;
     }
 
     @Bean
