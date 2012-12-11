@@ -298,6 +298,12 @@
       </dependency>
       <dependency>
         <groupId>nl.surfnet.apis</groupId>
+        <artifactId>apis-authorization-server-war</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>nl.surfnet.apis</groupId>
         <artifactId>apis-surfconext-authn</artifactId>
         <version>${project.version}</version>
       </dependency>
