@@ -1,1 +1,1 @@
-<img src="/client/img/dead-end-sign.jpg"/>
+<img src="${pageContext.request.contextPath}/client/img/dead-end-sign.jpg"/>
