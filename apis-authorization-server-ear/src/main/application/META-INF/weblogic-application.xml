@@ -19,6 +19,7 @@
         <!--<package-name>antlr.*</package-name>
         <package-name>org.apache.commons.*</package-name>
         <package-name>org.apache.xmlbeans.*</package-name>-->
+        <package-name>org.apache.log4j.*</package-name>
         <package-name>org.springframework.*</package-name>
         <package-name>org.apache.openjpa.*</package-name>
         <package-name>javax.persistence.*</package-name>
