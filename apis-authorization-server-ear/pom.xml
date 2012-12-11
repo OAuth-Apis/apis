@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+	  <artifactId>apis-parent</artifactId>
+	  <groupId>nl.surfnet.apis</groupId>
+	  <version>1.1.1-SNAPSHOT</version>
+	</parent>
+
+    <artifactId>apis-authorization-server-ear</artifactId>
+    <packaging>ear</packaging>
+
+    <name>API Secure - authorization server EAR Module</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>nl.surfnet.apis</groupId>
+			<artifactId>apis-authorization-server-war</artifactId>
+			<type>war</type>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+		<finalName>apis-authorization-server-${project.version}</finalName>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<version>5</version>
+					<displayName>API Secure - authorization server</displayName>
+					<modules>
+						<webModule>
+							<groupId>nl.surfnet.apis</groupId>
+							<artifactId>apis-authorization-server-war</artifactId>
+							<bundleFileName>apis-authorization-server.war</bundleFileName>
+							<contextRoot>apis-authorization-server</contextRoot>
+						</webModule>	
+					</modules>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

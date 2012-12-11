@@ -68,6 +68,7 @@
     <module>apis-authorization-server-war</module>
     <module>apis-surfconext-authn</module>
     <module>apis-example-resource-server-war</module>
+    <module>apis-example-resource-server-ear</module>
     <module>apis-example-client-app</module>
   </modules>
 
