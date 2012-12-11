@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.config;
 
 import javax.inject.Inject;
+import javax.persistence.spi.PersistenceProviderResolver;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.validation.Validator;
@@ -26,6 +27,7 @@ import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -71,6 +73,13 @@ public class SpringConfiguration {
     Environment env;
 
     @Bean
+    public PersistenceProviderResolver persistenceProviderResolver() {
+        OpenJPAPersistenceProviderResolver persistenceProviderResolver = new OpenJPAPersistenceProviderResolver();
+        persistenceProviderResolver.register();
+        return persistenceProviderResolver();
+    }
+
+    @Bean
     public javax.sql.DataSource dataSource() {
         DataSource dataSource = new DataSource();
         dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
@@ -96,6 +105,7 @@ public class SpringConfiguration {
     }
 
     @Bean
+    @DependsOn("persistenceProviderResolver")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
         emfBean.setPersistenceXmlLocation("classpath:META-INF/openjpa.xml");
