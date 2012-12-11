@@ -17,6 +17,7 @@
 
     <prefer-application-packages>
         <package-name>antlr.*</package-name>
+        <package-name>org.apache.velocity.*</package-name>
         <package-name>org.apache.commons.*</package-name>
         <package-name>org.apache.xmlbeans.*</package-name>
         <package-name>org.apache.log4j.*</package-name>
