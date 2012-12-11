@@ -98,7 +98,7 @@ public class SpringConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
-        emfBean.setPersistenceXmlLocation("classpath:META-INF/spring-persistence.xml");
+        emfBean.setPersistenceXmlLocation("classpath:META-INF/openjpa.xml");
         emfBean.setDataSource(dataSource());
         emfBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
         emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
