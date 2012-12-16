@@ -17,7 +17,7 @@
 <body>
 
 <div class="head">
-  <img src="/client/img/surf-oauth.png"/>
+  <img src="${pageContext.request.contextPath}/client/img/surf-oauth.png"/>
 </div>
 
 <div class="main">
