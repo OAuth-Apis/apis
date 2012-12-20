@@ -34,6 +34,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>${jsp.version}</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
