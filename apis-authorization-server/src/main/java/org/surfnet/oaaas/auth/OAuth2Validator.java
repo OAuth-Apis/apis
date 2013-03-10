@@ -70,10 +70,10 @@ public interface OAuth2Validator {
     IMPLICIT_GRANT_REDIRECT_URI("invalid_request", "For Implicit Grant the redirect_uri parameter is required"),
 
     REDIRECT_URI_REQUIRED("invalid_request",
-        "Client has no registrated redirect_uri, must provide run-time redirect_uri"),
+        "Client has no registered redirect_uri, must provide run-time redirect_uri"),
 
     REDIRCT_URI_NOT_VALID("invalid_request",
-        "The redirect_uri does not equals any of the registrated redirect_uri values"),
+        "The redirect_uri does not equal any of the registered redirect_uri values"),
 
     REDIRCT_URI_NOT_URI("invalid_request", "The redirect_uri is not a valid URL"),
 
