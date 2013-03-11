@@ -64,7 +64,7 @@ public class OAuth2ValidatorImplTest {
    */
   @Test
   public void testValidateValidRedirectUri() {
-    request.setRedirectUri("http://not-registrated.nl");
+    request.setRedirectUri("http://not-registered.nl");
     validate(ValidationResponse.REDIRCT_URI_NOT_VALID);
   }
 
