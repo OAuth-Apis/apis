@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.auth;
+package org.surfnet.oaaas.auth.api;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;

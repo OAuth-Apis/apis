@@ -16,6 +16,8 @@
 
 package org.surfnet.oaaas.auth;
 
+import org.surfnet.oaaas.auth.api.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -25,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
@@ -58,7 +60,12 @@ public class UserConsentFilter implements Filter {
     if (initialRequest(request)) {
       storePrincipal(request, response, authorizationRequest);
       request.setAttribute(AbstractAuthenticator.RETURN_URI, RETURN_URI);
-      request.setAttribute(AbstractUserConsentHandler.CLIENT, authorizationRequest.getClient());
+
+	  // TAF: Note, this contract is actually for ClientInfo, which Client
+	  // implements
+      request.setAttribute(AbstractUserConsentHandler.CLIENT,
+		  authorizationRequest.getClient());
+
       if (!authorizationRequest.getClient().isSkipConsent()) {
         userConsentHandler.doFilter(request, response, chain);
       } else {

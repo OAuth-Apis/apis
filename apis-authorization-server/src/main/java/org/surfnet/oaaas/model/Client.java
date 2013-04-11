@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.surfnet.oaaas.auth.api.ClientInfo;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 
 /**
@@ -46,7 +47,7 @@ import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 @XmlRootElement
 @Table(name = "client")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Client extends AbstractEntity {
+public class Client extends AbstractEntity implements ClientInfo {
 
   @Column(name = "clientName")
   @NotNull

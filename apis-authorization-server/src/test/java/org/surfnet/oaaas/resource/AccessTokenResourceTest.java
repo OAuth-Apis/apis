@@ -22,7 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 

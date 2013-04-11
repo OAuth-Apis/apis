@@ -64,6 +64,7 @@
 
   <modules>
     <module>apis-authorization-server</module>
+    <module>apis-authorization-server-api</module>
     <module>apis-authorization-server-war</module>
     <module>apis-authorization-server-client-api</module>
     <module>apis-resource-server-support</module>
@@ -301,6 +302,11 @@
         <groupId>nl.surfnet.apis</groupId>
         <artifactId>apis-surfconext-authn</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.surfnet.apis</groupId>
+        <artifactId>apis-authorization-server-api</artifactId>
+	    <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>

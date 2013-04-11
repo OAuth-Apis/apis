@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.auth;
+package org.surfnet.oaaas.auth.api;
 
+import org.surfnet.oaaas.auth.api.AbstractFilter;
 import java.io.IOException;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.surfnet.oaaas.model.Client;
 
 /**
  * Responsible for handling user consent.
@@ -46,21 +45,28 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
 
   /**
    *
-   * Get the Client from the request context to use in handling user consent
+   * Get the ClientInfo from the request context to use in handling user consent
    *
    * @param request
    *          the {@link ServletRequest}
-   * @return the Client which is asking for consent
+   * @return the ClientInfo which is asking for consent
    */
-  public final Client getClient(ServletRequest request) {
-    return (Client) request.getAttribute(CLIENT);
+  public final ClientInfo getClientInfo(ServletRequest request) {
+    return (ClientInfo) request.getAttribute(CLIENT);
   }
 
+  /**
+   *
+   *
+   */
   @Override
-  public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-      ServletException {
-    handleUserConsent((HttpServletRequest) request, (HttpServletResponse) response, chain, getAuthStateValue(request),
-        getReturnUri(request), getClient(request));
+  public final void doFilter(ServletRequest request, ServletResponse response,
+		FilterChain chain)
+		throws IOException, ServletException {
+
+	handleUserConsent((HttpServletRequest) request,
+		(HttpServletResponse) response, chain, getAuthStateValue(request),
+		getReturnUri(request), getClientInfo(request));
   }
 
   /**
@@ -78,8 +84,8 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    * pass-around for user agent communication</li>
    * <li>use {@link #getReturnUri(javax.servlet.ServletRequest)} if you need to
    * step out and return to the current location</li>
-   * <li>use {@link #getClient(javax.servlet.ServletRequest)} for accessing the
-   * {@link Client} data</li>
+   * <li>use {@link #getClientInfo(javax.servlet.ServletRequest)} for accessing
+   * the {@link ClientInfo} data</li>
    * </ul>
    * <p>
    * When consent granted:
@@ -105,10 +111,12 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    *          the startpoint of the chain if you want to return from a form or
    *          other (external) component
    * @param client
-   *          the Client wished to obtain an access token
+   *          the ClientInfo wished to obtain an access token
    */
-  public abstract void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-      String authStateValue, String returnUri, Client client) throws IOException, ServletException;
+  public abstract void handleUserConsent(HttpServletRequest request,
+		HttpServletResponse response, FilterChain chain,
+		String authStateValue, String returnUri, ClientInfo client)
+		throws IOException, ServletException;
 
   /**
    * Set the granted scopes of the consent on the request. Note: this optional.

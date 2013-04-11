@@ -21,7 +21,7 @@ package org.surfnet.oaaas.example.api;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.codec.binary.Base64;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import com.google.common.base.Optional;

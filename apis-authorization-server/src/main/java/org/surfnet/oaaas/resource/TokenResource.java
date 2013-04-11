@@ -18,6 +18,9 @@
  */
 package org.surfnet.oaaas.resource;
 
+import org.surfnet.oaaas.auth.api.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
 import static org.surfnet.oaaas.auth.OAuth2Validator.BEARER;
 import static org.surfnet.oaaas.auth.OAuth2Validator.GRANT_TYPE_AUTHORIZATION_CODE;
 import static org.surfnet.oaaas.auth.OAuth2Validator.GRANT_TYPE_REFRESH_TOKEN;

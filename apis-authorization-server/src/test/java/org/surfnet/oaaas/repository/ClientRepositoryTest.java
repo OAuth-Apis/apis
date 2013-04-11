@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.junit.Test;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;

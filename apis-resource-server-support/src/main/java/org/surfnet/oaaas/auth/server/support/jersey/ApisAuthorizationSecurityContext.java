@@ -3,7 +3,7 @@ package org.surfnet.oaaas.auth.server.support.jersey;
 import com.sun.jersey.spi.container.ContainerRequest;
 import java.security.Principal;
 import javax.ws.rs.core.SecurityContext;
-import org.surfnet.oaaas.auth.server.support.model.ApisAuthorization;
+import org.surfnet.oaaas.auth.api.ApisAuthorization;
 
 /**
  *

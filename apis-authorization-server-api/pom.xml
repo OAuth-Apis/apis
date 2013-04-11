@@ -16,15 +16,11 @@
     <version>1.1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>apis-resource-server-support</artifactId>
+  <artifactId>apis-authorization-server-api</artifactId>
   <packaging>jar</packaging>
-  <name>API Secure - resource server support</name>
+  <name>API Secure - authorization server api</name>
 
   <dependencies>
-    <dependency>
-      <groupId>nl.surfnet.apis</groupId>
-      <artifactId>apis-authorization-server-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -72,11 +68,6 @@
       <artifactId>guava</artifactId>
     </dependency>
 	-->
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-server</artifactId>
-      <version>1.17</version>
-    </dependency>
   </dependencies>
 
   <build>

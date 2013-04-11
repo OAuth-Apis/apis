@@ -8,10 +8,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import org.surfnet.oaaas.auth.server.support.annotation.AnonymousAccessAllowed;
 import org.surfnet.oaaas.auth.server.support.filter.ApisAuthorizationFilter;
-import org.surfnet.oaaas.auth.server.support.model.ApisAuthorization;
-import org.surfnet.oaaas.auth.server.support.model.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.ApisAuthorization;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 /**
  * A Jersey filter factory that provides a {@link SecurityContext} containing

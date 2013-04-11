@@ -53,8 +53,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 @Component
 public class SAMLAuthenticator extends AbstractAuthenticator {

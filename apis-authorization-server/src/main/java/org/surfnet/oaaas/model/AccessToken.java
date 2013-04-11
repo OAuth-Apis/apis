@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.Assert;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 /**
  * Representation of an <a

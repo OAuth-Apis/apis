@@ -18,7 +18,7 @@ package org.surfnet.oaaas.auth.server.support.filter;
  * specific language governing permissions and limitations
  * under the License.
  */
-import org.surfnet.oaaas.auth.server.support.model.ApisAuthorization;
+import org.surfnet.oaaas.auth.api.ApisAuthorization;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -41,16 +41,21 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.util.Base64;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.ws.rs.ext.ContextResolver;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.mrbean.MrBeanModule;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 /**
  * {@link Filter} which can be used to protect all relevant resources by
@@ -318,11 +323,39 @@ public class ApisAuthorizationFilter implements Filter {
 			return objectMapper.readValue(responseString,
 				ApisAuthorization.class);
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			LOG.warn("Could not parse the Verify Token Response",e);
 			sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"Cannot parse result");
-			return new ApisAuthorization(e.getMessage());
+
+			final String error=e.getMessage();
+			return new ApisAuthorization() {
+
+				@Override
+				public String getAudience() {
+					return null;
+				}
+
+				@Override
+				public List<String> getScopes() {
+					return Collections.emptyList();
+				}
+
+				@Override
+				public String getError() {
+					return error;
+				}
+
+				@Override
+				public Long getExpiresIn() {
+					return 0L;
+				}
+
+				@Override
+				public AuthenticatedPrincipal getPrincipal() {
+					return null;
+				}
+			};
 		}
 	}
 
@@ -392,5 +425,35 @@ public class ApisAuthorizationFilter implements Filter {
 
 	public void setResourceServerKey(String resourceServerKey) {
 		this.resourceServerKey=resourceServerKey;
+	}
+
+
+	/**
+	 * We need to be able to set the {@link ObjectMapper} on the {@link Client} 
+	 * to make sure the {@link MrBeanModule} is used.
+	 * <p/>
+	 */
+	public static final class ObjectMapperProvider
+		implements ContextResolver<ObjectMapper> {
+
+		private ObjectMapper mapper;
+
+
+		public ObjectMapperProvider() {
+			mapper=new ObjectMapper().enable(
+				DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+				.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL).
+				setVisibility(JsonMethod.FIELD,JsonAutoDetect.Visibility.ANY);
+			mapper.registerModule(new MrBeanModule());
+
+		}
+
+		/* (non-Javadoc)
+		 * @see javax.ws.rs.ext.ContextResolver#getContext(java.lang.Class)
+		 */
+		@Override
+		public ObjectMapper getContext(Class<?> type) {
+			return mapper;
+		}
 	}
 }

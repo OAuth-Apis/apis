@@ -25,9 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 import com.google.common.base.Objects;
+import org.surfnet.oaaas.auth.api.ApisAuthorization;
 
 /**
  * Representation of the answer to the a Resource Server when asked to verify
@@ -38,7 +39,7 @@ import com.google.common.base.Objects;
 @SuppressWarnings("serial")
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class VerifyTokenResponse implements Serializable {
+public class VerifyTokenResponse implements ApisAuthorization, Serializable {
   /*
    * The application that is the intended target of the token.
    */

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import org.surfnet.oaaas.auth.server.support.filter.ApisAuthorizationFilter;
-import org.surfnet.oaaas.auth.server.support.model.ApisAuthorization;
+import org.surfnet.oaaas.auth.api.ApisAuthorization;
 
 /**
  * Injects the current ApisAuthorization into the requesting method or type

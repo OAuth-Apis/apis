@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.surfnet.oaaas.auth.server.support.model;
+package org.surfnet.oaaas.auth.api.principal;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-//import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
 
 /**
  * {@link Principal} that can contain roles and additional attributes. This is

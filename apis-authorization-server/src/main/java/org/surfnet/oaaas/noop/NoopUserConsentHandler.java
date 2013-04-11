@@ -19,42 +19,45 @@
 package org.surfnet.oaaas.noop;
 
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.api.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.UserConsentFilter;
-import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.auth.api.ClientInfo;
 
 /**
- * A noop implementation of {@link AbstractUserConsentHandler} that
- * contains no consent handling but only fulfills the contract of the
+ * A noop implementation of {@link AbstractUserConsentHandler} that contains no
+ * consent handling but only fulfills the contract of the
  * {@link UserConsentFilter}. Useful for testing and demonstration purposes
  * only, of course not safe for production.
- * 
+ * <p/>
  */
 public class NoopUserConsentHandler extends AbstractUserConsentHandler {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.surfnet.oaaas.auth.AbstractUserConsentHandler#handleUserConsent(javax
-   * .servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
-   * javax.servlet.FilterChain, java.lang.String, java.lang.String,
-   * org.surfnet.oaaas.model.Client)
-   */
-  @Override
-  public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-      String authStateValue, String returnUri, Client client) throws IOException, ServletException {
-    super.setAuthStateValue(request, authStateValue);
-    super.setGrantedScopes(request, client.getScopes().isEmpty() ? new String[]{ } : client.getScopes().toArray(new
-        String[client.getScopes().size()]));
-    chain.doFilter(request, response);
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.surfnet.oaaas.auth.AbstractUserConsentHandler#handleUserConsent(javax
+	 * .servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * javax.servlet.FilterChain, java.lang.String, java.lang.String,
+	 * org.surfnet.oaaas.model.Client)
+	 */
+	@Override
+	public void handleUserConsent(HttpServletRequest request,
+			HttpServletResponse response, FilterChain chain,
+			String authStateValue, String returnUri, ClientInfo client)
+			throws IOException,ServletException {
 
-  }
+		super.setAuthStateValue(request,authStateValue);
+		super.setGrantedScopes(request,
+			client.getScopes().isEmpty()
+				? new String[] {}
+				: client.getScopes().toArray(
+					new String[client.getScopes().size()]));
 
+		chain.doFilter(request,response);
+	}
 }

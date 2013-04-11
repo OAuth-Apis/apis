@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.model.ResourceServer;

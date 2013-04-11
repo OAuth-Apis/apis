@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.auth;
 
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;

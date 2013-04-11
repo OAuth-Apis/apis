@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 import com.sun.jersey.api.json.JSONJAXBContext;
 import com.sun.jersey.api.json.JSONMarshaller;
@@ -53,18 +53,21 @@ public class AccessTokenTest {
     List<String> asList = Arrays.asList("user", "admin");
 
     String emmaBlunt = generateEncodedPrincipal("emma.blunt", asList);
+//System.err.println("\n\n################ emma.blunt: ["+emmaBlunt+"]\n\n");
     assertEquals(
-        "rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AAplbW1hLmJsdW50c3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==",
+        "rO0ABXNyADtvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLmFwaS5wcmluY2lwYWwuQXV0aGVudGljYXRlZFByaW5jaXBhbAAAAAAAAAABAgADTAAKYXR0cmlidXRlc3QAD0xqYXZhL3V0aWwvTWFwO0wABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztMAAVyb2xlc3QAFkxqYXZhL3V0aWwvQ29sbGVjdGlvbjt4cHNyAB5qYXZhLnV0aWwuQ29sbGVjdGlvbnMkRW1wdHlNYXBZNhSFWtzn0AIAAHhwdAAKZW1tYS5ibHVudHNyABpqYXZhLnV0aWwuQXJyYXlzJEFycmF5TGlzdNmkPL7NiAbSAgABWwABYXQAE1tMamF2YS9sYW5nL09iamVjdDt4cHVyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAAJ0AAR1c2VydAAFYWRtaW4=",
         emmaBlunt);
 
     String adminEnduser = generateEncodedPrincipal("admin-enduser", asList);
+//System.err.println("\n\n################ admin-enduser: ["+adminEnduser+"]\n\n");
     assertEquals(
-        "rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA1hZG1pbi1lbmR1c2Vyc3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==",
+        "rO0ABXNyADtvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLmFwaS5wcmluY2lwYWwuQXV0aGVudGljYXRlZFByaW5jaXBhbAAAAAAAAAABAgADTAAKYXR0cmlidXRlc3QAD0xqYXZhL3V0aWwvTWFwO0wABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztMAAVyb2xlc3QAFkxqYXZhL3V0aWwvQ29sbGVjdGlvbjt4cHNyAB5qYXZhLnV0aWwuQ29sbGVjdGlvbnMkRW1wdHlNYXBZNhSFWtzn0AIAAHhwdAANYWRtaW4tZW5kdXNlcnNyABpqYXZhLnV0aWwuQXJyYXlzJEFycmF5TGlzdNmkPL7NiAbSAgABWwABYXQAE1tMamF2YS9sYW5nL09iamVjdDt4cHVyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAAJ0AAR1c2VydAAFYWRtaW4=",
         adminEnduser);
 
     String itTestEnduser = generateEncodedPrincipal("it-test-enduser", asList);
+//System.err.println("\n\n################ it-test-enduser: ["+itTestEnduser+"]\n\n");
     assertEquals(
-        "rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA9pdC10ZXN0LWVuZHVzZXJzcgAaamF2YS51dGlsLkFycmF5cyRBcnJheUxpc3TZpDy+zYgG0gIAAVsAAWF0ABNbTGphdmEvbGFuZy9PYmplY3Q7eHB1cgATW0xqYXZhLmxhbmcuU3RyaW5nO63SVufpHXtHAgAAeHAAAAACdAAEdXNlcnQABWFkbWlu",
+        "rO0ABXNyADtvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLmFwaS5wcmluY2lwYWwuQXV0aGVudGljYXRlZFByaW5jaXBhbAAAAAAAAAABAgADTAAKYXR0cmlidXRlc3QAD0xqYXZhL3V0aWwvTWFwO0wABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztMAAVyb2xlc3QAFkxqYXZhL3V0aWwvQ29sbGVjdGlvbjt4cHNyAB5qYXZhLnV0aWwuQ29sbGVjdGlvbnMkRW1wdHlNYXBZNhSFWtzn0AIAAHhwdAAPaXQtdGVzdC1lbmR1c2Vyc3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==",
         itTestEnduser);
   }
 

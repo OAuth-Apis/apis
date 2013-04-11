@@ -18,7 +18,7 @@
  */
 package org.surfnet.oaaas.example.api;
 
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.example.api.resource.UniversityResource;
 
 import com.yammer.dropwizard.Service;
