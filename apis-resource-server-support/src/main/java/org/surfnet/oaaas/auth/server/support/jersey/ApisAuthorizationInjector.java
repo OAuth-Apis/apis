@@ -56,4 +56,4 @@ public class ApisAuthorizationInjector
 	private final ResourceContext resourceContext;
 	private final HttpContext httpContext;
 	private HttpServletRequest request;
-	}
+}

@@ -14,7 +14,21 @@ import org.surfnet.oaaas.auth.server.support.model.ApisAuthorization;
 import org.surfnet.oaaas.auth.server.support.model.AuthenticatedPrincipal;
 
 /**
- *
+ * A Jersey filter factory that provides a {@link SecurityContext} containing
+ * apis authorization information into the request.
+ * <p/>
+ * To use, you must add the following to your Jersey servlet or filter 
+ * configuration in web.xml (note that multiple resource filters should be
+ * comma-separated):
+ * <p/>
+ * <pre>
+ * {@code
+ * 	<init-param>
+ *		<param-name>com.sun.jersey.spi.container.ResourceFilters</param-name>
+ *		<param-value>org.surfnet.oaaas.auth.server.support.jersey.ApisAuthorizationResourceFilterFactory</param-value>
+ *	</init-param>
+ * }
+ * </pre>
  * 
  * @author Todd Fast
  */

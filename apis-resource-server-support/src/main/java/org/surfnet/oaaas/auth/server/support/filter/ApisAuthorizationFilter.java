@@ -84,7 +84,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * <p/>
  * The response of the Authorization Server is put on the
  * {@link HttpServletRequest} with the name
- * {@link AuthorizationServerFilter#VERIFY_TOKEN_RESPONSE}.
+ * {@link ApisAuthorizationFilter#apisAuthorization}.
  * <p/>
  * Of course it might be better to use a properties file depending on the
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
@@ -92,8 +92,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * <p/>
  * Also note that by default the responses from the Authorization Server are
  * cached. This can easily be changed if you override
- * {@link AuthorizationServerFilter#cacheAccessTokens()} and to configure the
- * cache differently override {@link AuthorizationServerFilter#buildCache()}
+ * {@link ApisAuthorizationFilter#cacheAccessTokens()} and to configure the
+ * cache differently override {@link ApisAuthorizationFilter#buildCache()}
  */
 public class ApisAuthorizationFilter implements Filter {
 
@@ -273,9 +273,10 @@ public class ApisAuthorizationFilter implements Filter {
 					"Cannot verify access token");
 				return;
 			}
+
 			/*
-			 * The presence of the principal is the check to ensure that the access
-			 * token is ok.
+			 * The presence of the principal is the check to ensure that the 
+			 * access token is ok.
 			 */
 			if (tokenResponse!=null && tokenResponse.getPrincipal()!=null) {
 				request.setAttribute(ATTR_AUTHORIZATION,tokenResponse);
@@ -283,6 +284,7 @@ public class ApisAuthorizationFilter implements Filter {
 				return;
 			}
 		}
+
 		sendError(response,HttpServletResponse.SC_FORBIDDEN,"OAuth2 endpoint");
 	}
 
@@ -302,9 +304,10 @@ public class ApisAuthorizationFilter implements Filter {
 		final HttpServletResponse response) {
 		ClientResponse res=client.resource(String.format("%s?access_token=%s",
 			authorizationServerUrl,accessToken))
-			.header(HttpHeaders.AUTHORIZATION,"Basic "+authorizationValue).
-			accept("application/json")
+			.header(HttpHeaders.AUTHORIZATION,"Basic "+authorizationValue)
+			.accept("application/json")
 			.get(ClientResponse.class);
+
 		/*
 		 * Can't use directly jersey, as we need the mr bean module
 		 */
