@@ -18,7 +18,10 @@
  */
 package org.surfnet.oaaas.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,6 +30,10 @@ import javax.xml.bind.annotation.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.codehaus.jettison.json.JSONStringer;
 import org.springframework.util.Assert;
 import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
@@ -108,8 +115,69 @@ public class AccessToken extends AbstractEntity {
   @PrePersist
   public void encodePrincipal() {
     if (principal != null) {
-      byte[] binaryData = SerializationUtils.serialize(principal);
-      this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+//      byte[] binaryData = SerializationUtils.serialize(principal);
+//      this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+
+		try {
+			JSONStringer json=new JSONStringer();
+			json.object();
+			json.key("name").value(principal.getName());
+
+			json.key("roles");
+			json.array();
+			if (principal.getRoles()!=null) {
+				for (String role: principal.getRoles()) {
+					json.value(role);
+				}
+			}
+			json.endArray();
+
+			json.key("attributes");
+			json.array();
+			if (principal.getAttributes()!=null) {
+				json.object();
+				for (Map.Entry<String,Object> entry:
+						principal.getAttributes().entrySet()) {
+
+					json.key("key").value(entry.getKey());
+
+					Object value=entry.getValue();
+					if (value!=null) {
+						if (value instanceof String ||
+							value instanceof Integer ||
+							value instanceof Short ||
+							value instanceof Byte ||
+							value instanceof Long ||
+							value instanceof Double ||
+							value instanceof Float ||
+							value instanceof Boolean) {
+
+							json.key("value").value(entry.getValue());
+						}
+						else {
+							// Be conservative and fail fast
+							throw new PersistenceException("Could not "+
+								"serialize attribute \""+entry.getKey()+"\" "+
+								"of type "+value.getClass().getName()+" for "+
+								"principal \""+principal.getName()+"\" "+
+								"(attribute value = \""+entry.getValue()+"\")");
+						}
+					}
+					else {
+						json.key("value").value(null);
+					}
+				}
+				json.endObject();
+			}
+			json.endArray();
+
+			json.endObject();
+
+			this.encodedPrincipal = json.toString();
+		}
+		catch (JSONException e) {
+			throw new PersistenceException("Could not serialize principal",e);
+		}
     }
   }
 
@@ -118,8 +186,65 @@ public class AccessToken extends AbstractEntity {
   @PostUpdate
   public void decodePrincipal() {
     if (StringUtils.isNotBlank(encodedPrincipal)) {
-      byte[] objectData = Base64.decodeBase64(encodedPrincipal);
-      this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+
+		Exception deserialziationException=null;
+
+		// Try to decode as JSON
+		try {
+			AuthenticatedPrincipal tempPrincipal=new AuthenticatedPrincipal();
+
+			// Name
+			JSONObject json=new JSONObject(encodedPrincipal);
+			tempPrincipal.setName(json.getString("name"));
+
+			// Roles
+			List<String> roles=new ArrayList<String>();
+			JSONArray rolesArray=json.getJSONArray("roles");
+			for (int i=0; i<rolesArray.length(); i++) {
+				String role=rolesArray.getString(i);
+				roles.add(role);
+			}
+
+			tempPrincipal.setRoles(roles);
+
+			// Attributes
+			Map<String,Object> attributes=new HashMap<String,Object>();
+			JSONArray attributesArray=json.getJSONArray("attributes");
+			for (int i=0; i<attributesArray.length(); i++) {
+				JSONObject attribute=attributesArray.getJSONObject(i);
+				String key=attribute.getString("key");
+				Object value=attribute.get("value");
+
+				attributes.put(key,value);
+			}
+
+			tempPrincipal.setAttributes(attributes);
+
+			this.principal = tempPrincipal;
+	
+			return;
+		}
+		catch (JSONException e) {
+			// Cache the exception and try to deserialize
+			deserialziationException=e;
+		}
+
+		// Try to deserialize backward-compatible
+		try {
+			byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+			org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal oldPrincipal = 
+				(org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+
+			AuthenticatedPrincipal newPrincipal=new AuthenticatedPrincipal();
+			newPrincipal.setName(oldPrincipal.getName());
+			newPrincipal.setRoles(oldPrincipal.getRoles());
+			newPrincipal.setAttributes(oldPrincipal.getAttributes());
+
+			this.principal = newPrincipal;
+		}
+		catch (Exception e) {
+			throw new PersistenceException("Could not deserialize principal",e);
+		}
     }
   }
 

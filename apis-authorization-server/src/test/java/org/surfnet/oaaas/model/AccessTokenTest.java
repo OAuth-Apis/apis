@@ -55,19 +55,19 @@ public class AccessTokenTest {
     String emmaBlunt = generateEncodedPrincipal("emma.blunt", asList);
 //System.err.println("\n\n################ emma.blunt: ["+emmaBlunt+"]\n\n");
     assertEquals(
-        "rO0ABXNyADtvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLmFwaS5wcmluY2lwYWwuQXV0aGVudGljYXRlZFByaW5jaXBhbAAAAAAAAAABAgADTAAKYXR0cmlidXRlc3QAD0xqYXZhL3V0aWwvTWFwO0wABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztMAAVyb2xlc3QAFkxqYXZhL3V0aWwvQ29sbGVjdGlvbjt4cHNyAB5qYXZhLnV0aWwuQ29sbGVjdGlvbnMkRW1wdHlNYXBZNhSFWtzn0AIAAHhwdAAKZW1tYS5ibHVudHNyABpqYXZhLnV0aWwuQXJyYXlzJEFycmF5TGlzdNmkPL7NiAbSAgABWwABYXQAE1tMamF2YS9sYW5nL09iamVjdDt4cHVyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAAJ0AAR1c2VydAAFYWRtaW4=",
+        "{\"name\":\"emma.blunt\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}",
         emmaBlunt);
 
     String adminEnduser = generateEncodedPrincipal("admin-enduser", asList);
 //System.err.println("\n\n################ admin-enduser: ["+adminEnduser+"]\n\n");
     assertEquals(
-        "rO0ABXNyADtvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLmFwaS5wcmluY2lwYWwuQXV0aGVudGljYXRlZFByaW5jaXBhbAAAAAAAAAABAgADTAAKYXR0cmlidXRlc3QAD0xqYXZhL3V0aWwvTWFwO0wABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztMAAVyb2xlc3QAFkxqYXZhL3V0aWwvQ29sbGVjdGlvbjt4cHNyAB5qYXZhLnV0aWwuQ29sbGVjdGlvbnMkRW1wdHlNYXBZNhSFWtzn0AIAAHhwdAANYWRtaW4tZW5kdXNlcnNyABpqYXZhLnV0aWwuQXJyYXlzJEFycmF5TGlzdNmkPL7NiAbSAgABWwABYXQAE1tMamF2YS9sYW5nL09iamVjdDt4cHVyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAAJ0AAR1c2VydAAFYWRtaW4=",
+        "{\"name\":\"admin-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}",
         adminEnduser);
 
     String itTestEnduser = generateEncodedPrincipal("it-test-enduser", asList);
 //System.err.println("\n\n################ it-test-enduser: ["+itTestEnduser+"]\n\n");
     assertEquals(
-        "rO0ABXNyADtvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLmFwaS5wcmluY2lwYWwuQXV0aGVudGljYXRlZFByaW5jaXBhbAAAAAAAAAABAgADTAAKYXR0cmlidXRlc3QAD0xqYXZhL3V0aWwvTWFwO0wABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztMAAVyb2xlc3QAFkxqYXZhL3V0aWwvQ29sbGVjdGlvbjt4cHNyAB5qYXZhLnV0aWwuQ29sbGVjdGlvbnMkRW1wdHlNYXBZNhSFWtzn0AIAAHhwdAAPaXQtdGVzdC1lbmR1c2Vyc3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==",
+        "{\"name\":\"it-test-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}",
         itTestEnduser);
   }
 
