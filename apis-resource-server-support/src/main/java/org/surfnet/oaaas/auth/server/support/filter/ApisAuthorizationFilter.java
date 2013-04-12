@@ -314,12 +314,31 @@ public class ApisAuthorizationFilter implements Filter {
 			.get(ClientResponse.class);
 
 		try {
-			String responseString=res.getEntity(String.class);
-			LOG.debug("Got verify token response (status: {}): '{}'",res.
-				getClientResponseStatus().getStatusCode(),responseString);
+			if (res.getStatus()>=200 && res.getStatus() < 300) {
+				String responseString=res.getEntity(String.class);
 
-			ApisAuthorization result=deserializeAuthorization(responseString);
-			return result;
+				LOG.debug("Got verify token response (status: {}): '{}'",res.
+					getClientResponseStatus().getStatusCode(),responseString);
+
+				ApisAuthorization result=
+					deserializeAuthorization(responseString);
+				return result;
+			}
+			else
+			if (res.getStatus()==401) {
+				// Our resource server authorization was wrong
+				final String error="Could not access authorization server";
+				sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
+				return getErrorAuthorization(error);
+			}
+			else {
+				// Something else bad happened
+				final String error="Unknown error verifying token with "+
+					"authorization server";
+				sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					error);
+				return getErrorAuthorization(error);
+			}
 		}
 		catch (Exception e) {
 			LOG.warn("Could not parse the Verify Token Response",e);
@@ -327,33 +346,8 @@ public class ApisAuthorizationFilter implements Filter {
 				"Cannot parse result");
 
 			final String error=e.getMessage();
-			return new ApisAuthorization() {
-
-				@Override
-				public String getAudience() {
-					return null;
-				}
-
-				@Override
-				public List<String> getScopes() {
-					return Collections.emptyList();
-				}
-
-				@Override
-				public String getError() {
-					return error;
-				}
-
-				@Override
-				public Long getExpiresIn() {
-					return 0L;
-				}
-
-				@Override
-				public AuthenticatedPrincipal getPrincipal() {
-					return null;
-				}
-			};
+			return getErrorAuthorization("Could not parse the "+
+				"verify token response: "+error);
 		}
 	}
 
@@ -362,8 +356,48 @@ public class ApisAuthorizationFilter implements Filter {
 	 *
 	 *
 	 */
-	protected void sendError(HttpServletResponse response,int statusCode,
-		String reason) {
+	private ApisAuthorization getErrorAuthorization(final String message) {
+		return new ApisAuthorization() {
+
+			@Override
+			public String toString() {
+				return message;
+			}
+
+			@Override
+			public String getAudience() {
+				return null;
+			}
+
+			@Override
+			public List<String> getScopes() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public String getError() {
+				return message;
+			}
+
+			@Override
+			public Long getExpiresIn() {
+				return 0L;
+			}
+
+			@Override
+			public AuthenticatedPrincipal getPrincipal() {
+				return null;
+			}
+		};
+	}
+
+
+	/**
+	 *
+	 *
+	 */
+	protected void sendError(HttpServletResponse response, int statusCode,
+			String reason) {
 		try {
 			response.sendError(statusCode,reason);
 			response.flushBuffer();
@@ -469,6 +503,13 @@ public class ApisAuthorizationFilter implements Filter {
 			private List<String> scopes;
 			private long expiresIn;
 			private AuthenticatedPrincipal principal;
+
+			@Override
+			public String toString() {
+				return "deserializeAuthorization()::ApisAuthorization("+
+					"audience=\""+audience+"\", scopes="+scopes+
+					",expiresIn="+expiresIn+", principal="+principal+")";
+			}
 
 			@Override
 			public String getAudience() {
