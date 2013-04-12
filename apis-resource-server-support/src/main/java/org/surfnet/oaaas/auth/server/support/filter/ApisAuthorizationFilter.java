@@ -22,39 +22,32 @@ import org.surfnet.oaaas.auth.api.ApisAuthorization;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.Callable;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-
-//import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.springframework.core.io.ClassPathResource;
-
-//import com.google.common.cache.Cache;
-//import com.google.common.cache.CacheBuilder;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.util.Base64;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.ws.rs.ext.ContextResolver;
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.mrbean.MrBeanModule;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 /**
@@ -105,48 +98,52 @@ public class ApisAuthorizationFilter implements Filter {
 	private static final Logger LOG=
 		LoggerFactory.getLogger(ApisAuthorizationFilter.class);
 
-	/*
+	/**
 	 * Endpoint of the authorization server (e.g. something like
 	 * http://<host-name>/v1/tokeninfo)
 	 */
 	private String authorizationServerUrl;
 
-	/*
+	/**
 	 * Base64-encoded concatenation of the name of the resource server and the
 	 * secret separated with a colon
 	 */
 	private String authorizationValue;
 
-	/*
+	/**
 	 * Client to make GET calls to the authorization server
 	 */
 	private Client client;
 
-	/*
+	/**
 	 * Constant for the access token (oauth2 spec)
 	 */
 	private static final String BEARER="bearer";
 
-	/*
+	/**
 	 * Constant name of the request attribute where the response is stored
 	 */
 	public static final String ATTR_AUTHORIZATION="apisAuthorization";
 
-	/*
+	/**
 	 * If not overridden by a subclass we cache the answers from the authorization
 	 * server
 	 */
+// TAF: Removed Guava dependency
 //	private Cache<String,VerifyTokenResponse> cache;
 
-	/*
+	/**
 	 * Key and secret obtained out-of-band to authenticate against the
 	 * authorization server
 	 */
 	private String resourceServerKey;
 	private String resourceServerSecret;
-	private ObjectMapper objectMapper;
 
 
+	/**
+	 *
+	 *
+	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		/*
@@ -210,22 +207,15 @@ public class ApisAuthorizationFilter implements Filter {
 //		}
 
 		client=createClient();
-
-		objectMapper=createObjectMapper();
-	}
-
-
-	protected ObjectMapper createObjectMapper() {
-		return new ObjectMapperProvider().getContext(ObjectMapper.class);
 	}
 
 
 	/**
-	 * @return Client
+	 *
+	 * 
 	 */
 	protected Client createClient() {
 		ClientConfig cc=new DefaultClientConfig();
-		cc.getClasses().add(ObjectMapperProvider.class);
 		return Client.create(cc);
 	}
 
@@ -240,16 +230,20 @@ public class ApisAuthorizationFilter implements Filter {
 //	}
 
 
+	/**
+	 *
+	 *
+	 */
 	@Override
 	public void doFilter(ServletRequest servletRequest,
-		ServletResponse servletResponse,FilterChain chain)
-		throws IOException,ServletException {
+			ServletResponse servletResponse, FilterChain chain)
+			throws IOException, ServletException {
+
 		HttpServletRequest request=(HttpServletRequest)servletRequest;
 		HttpServletResponse response=(HttpServletResponse)servletResponse;
-		/*
-		 * The Access Token from the Client app as documented in
-		 * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-7
-		 */
+
+		// The Access Token from the Client app as documented in
+		// http://tools.ietf.org/html/draft-ietf-oauth-v2#section-7
 		final String accessToken=getAccessToken(request);
 		if (accessToken==null) {
 			LOG.warn(
@@ -260,10 +254,9 @@ public class ApisAuthorizationFilter implements Filter {
 		}
 		else {
 			ApisAuthorization tokenResponse=null;
-			/*
-			 * Get the 'Validate Access Token' response from the Authorization Server
-			 * either live or from the cache
-			 */
+
+			// Get the 'Validate Access Token' response from the Authorization
+			// Server either live or from the cache
 			try {
 				Callable<ApisAuthorization> verifyCall=getCallable(accessToken,
 					response);
@@ -279,10 +272,8 @@ public class ApisAuthorizationFilter implements Filter {
 				return;
 			}
 
-			/*
-			 * The presence of the principal is the check to ensure that the 
-			 * access token is ok.
-			 */
+			// The presence of the principal is the check to ensure that the
+			// access token is ok.
 			if (tokenResponse!=null && tokenResponse.getPrincipal()!=null) {
 				request.setAttribute(ATTR_AUTHORIZATION,tokenResponse);
 				chain.doFilter(request,response);
@@ -294,6 +285,10 @@ public class ApisAuthorizationFilter implements Filter {
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	private Callable<ApisAuthorization> getCallable(final String accessToken,
 		final HttpServletResponse response) {
 		return new Callable<ApisAuthorization>() {
@@ -305,25 +300,28 @@ public class ApisAuthorizationFilter implements Filter {
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	protected ApisAuthorization getVerifyTokenResponse(String accessToken,
-		final HttpServletResponse response) {
+			final HttpServletResponse response) {
+
 		ClientResponse res=client.resource(String.format("%s?access_token=%s",
 			authorizationServerUrl,accessToken))
 			.header(HttpHeaders.AUTHORIZATION,"Basic "+authorizationValue)
 			.accept("application/json")
 			.get(ClientResponse.class);
 
-		/*
-		 * Can't use directly jersey, as we need the mr bean module
-		 */
 		try {
 			String responseString=res.getEntity(String.class);
 			LOG.debug("Got verify token response (status: {}): '{}'",res.
 				getClientResponseStatus().getStatusCode(),responseString);
-			return objectMapper.readValue(responseString,
-				ApisAuthorization.class);
+
+			ApisAuthorization result=deserializeAuthorization(responseString);
+			return result;
 		}
-		catch (final Exception e) {
+		catch (Exception e) {
 			LOG.warn("Could not parse the Verify Token Response",e);
 			sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"Cannot parse result");
@@ -360,6 +358,10 @@ public class ApisAuthorizationFilter implements Filter {
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	protected void sendError(HttpServletResponse response,int statusCode,
 		String reason) {
 		try {
@@ -372,11 +374,19 @@ public class ApisAuthorizationFilter implements Filter {
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	protected boolean cacheAccessTokens() {
 		return false;
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	private String getAccessToken(HttpServletRequest request) {
 		String accessToken=null;
 		String header=request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -399,6 +409,10 @@ public class ApisAuthorizationFilter implements Filter {
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	@Override
 	public void destroy() {
 	}
@@ -413,47 +427,120 @@ public class ApisAuthorizationFilter implements Filter {
 //	}
 
 
+	/**
+	 *
+	 *
+	 */
 	public void setAuthorizationServerUrl(String authorizationServerUrl) {
 		this.authorizationServerUrl=authorizationServerUrl;
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	public void setResourceServerSecret(String resourceServerSecret) {
 		this.resourceServerSecret=resourceServerSecret;
 	}
 
 
+	/**
+	 *
+	 *
+	 */
 	public void setResourceServerKey(String resourceServerKey) {
 		this.resourceServerKey=resourceServerKey;
 	}
 
 
 	/**
-	 * We need to be able to set the {@link ObjectMapper} on the {@link Client} 
-	 * to make sure the {@link MrBeanModule} is used.
-	 * <p/>
+	 * Manually deserializes the authorization response, e.g.
+	 * {"audience":"some-app","scopes":["read"],"principal":{"name":"john@example.com","roles":[],"attributes":{}},"expires_in":0}
+	 *
 	 */
-	public static final class ObjectMapperProvider
-		implements ContextResolver<ObjectMapper> {
+	private static ApisAuthorization deserializeAuthorization(
+			final String response)
+			throws JSONException {
 
-		private ObjectMapper mapper;
+		ApisAuthorization result=new ApisAuthorization() {
+
+			private String audience;
+			private List<String> scopes;
+			private long expiresIn;
+			private AuthenticatedPrincipal principal;
+
+			@Override
+			public String getAudience() {
+				return audience;
+			}
+
+			@Override
+			public List<String> getScopes() {
+				return scopes;
+			}
+
+			@Override
+			public String getError() {
+				return null;
+			}
+
+			@Override
+			public Long getExpiresIn() {
+				return expiresIn;
+			}
+
+			@Override
+			public AuthenticatedPrincipal getPrincipal() {
+				return principal;
+			}
+
+			// Initializer
+			{
+				JSONObject json=new JSONObject(response);
+
+				audience=json.getString("audience");
+				expiresIn=json.getLong("expires_in");
+
+				scopes=new ArrayList<String>();
+				JSONArray scopesArray=json.getJSONArray("scopes");
+				for (int i=0; i<scopesArray.length(); i++) {
+					String scope=scopesArray.getString(i);
+					scopes.add(scope);
+				}
 
 
-		public ObjectMapperProvider() {
-			mapper=new ObjectMapper().enable(
-				DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-				.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL).
-				setVisibility(JsonMethod.FIELD,JsonAutoDetect.Visibility.ANY);
-			mapper.registerModule(new MrBeanModule());
+				principal=new AuthenticatedPrincipal();
+				JSONObject principalJSON=json.getJSONObject("principal");
 
-		}
+				// Name
+				principal.setName(principalJSON.getString("name"));
 
-		/* (non-Javadoc)
-		 * @see javax.ws.rs.ext.ContextResolver#getContext(java.lang.Class)
-		 */
-		@Override
-		public ObjectMapper getContext(Class<?> type) {
-			return mapper;
-		}
+				// Roles
+				List<String> roles=new ArrayList<String>();
+				JSONArray rolesArray=principalJSON.getJSONArray("roles");
+				for (int i=0; i<rolesArray.length(); i++) {
+					String role=rolesArray.getString(i);
+					roles.add(role);
+				}
+
+				principal.setRoles(roles);
+
+				// Attributes
+				Map<String,Object> attributes=new HashMap<String,Object>();
+
+				JSONObject attributesObject=
+					principalJSON.getJSONObject("attributes");
+				for (Iterator<String> i=attributesObject.keys();
+						i.hasNext(); ) {
+					String key=i.next();
+					attributes.put(key,attributesObject.get(key));
+				}
+
+				principal.setAttributes(attributes);
+			}
+		};
+
+		return result;
 	}
 }

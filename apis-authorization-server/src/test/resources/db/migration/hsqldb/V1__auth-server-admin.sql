@@ -20,7 +20,7 @@ emma.blunt
  */
 INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
 VALUES
-    (99999, 0, '{\"name\":\"emma.blunt\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}',
+    (99999, 0, '{\"name\":\"emma.blunt\",\"roles\":[\"user\",\"admin\"],\"attributes\":{}}',
 	'74eccf5f-0995-4e1c-b08c-d05dd5a0f89b',99999, 'emma.blunt');
 INSERT INTO Accesstoken_scopes values (99999, 'read');
 
@@ -94,7 +94,7 @@ INSERT INTO Client_scopes values (99995, 'read'), (99995, 'write');
 admin-enduser
  */
 INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
-VALUES (99998, 0, '{\"name\":\"admin-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}',
+VALUES (99998, 0, '{\"name\":\"admin-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":{}}',
 'dad30fb8-ad90-4f24-af99-798bb71d27c8',99998, 'admin-enduser');
 INSERT INTO Accesstoken_scopes values (99998, 'read'), (99998, 'write');
 /*
@@ -102,6 +102,6 @@ it-test-enduser
  */
 INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
 VALUES
-    (99997, 0, '{"name":"it-test-enduser","roles":["user","admin"],"attributes":[{}]}',
+    (99997, 0, '{"name":"it-test-enduser","roles":["user","admin"],"attributes":{}}',
     '00-11-22-33',99997, 'it-test-enduser ');
 INSERT INTO Accesstoken_scopes values (99997, 'read'), (99997, 'write');

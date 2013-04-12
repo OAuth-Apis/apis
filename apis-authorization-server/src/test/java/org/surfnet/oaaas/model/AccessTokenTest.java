@@ -55,19 +55,19 @@ public class AccessTokenTest {
     String emmaBlunt = generateEncodedPrincipal("emma.blunt", asList);
 //System.err.println("\n\n################ emma.blunt: ["+emmaBlunt+"]\n\n");
     assertEquals(
-        "{\"name\":\"emma.blunt\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}",
+        "{\"name\":\"emma.blunt\",\"roles\":[\"user\",\"admin\"],\"attributes\":{}}",
         emmaBlunt);
 
     String adminEnduser = generateEncodedPrincipal("admin-enduser", asList);
 //System.err.println("\n\n################ admin-enduser: ["+adminEnduser+"]\n\n");
     assertEquals(
-        "{\"name\":\"admin-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}",
+        "{\"name\":\"admin-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":{}}",
         adminEnduser);
 
     String itTestEnduser = generateEncodedPrincipal("it-test-enduser", asList);
 //System.err.println("\n\n################ it-test-enduser: ["+itTestEnduser+"]\n\n");
     assertEquals(
-        "{\"name\":\"it-test-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":[{}]}",
+        "{\"name\":\"it-test-enduser\",\"roles\":[\"user\",\"admin\"],\"attributes\":{}}",
         itTestEnduser);
   }
 

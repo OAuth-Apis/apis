@@ -20,6 +20,7 @@ package org.surfnet.oaaas.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -133,13 +134,12 @@ public class AccessToken extends AbstractEntity {
 			json.endArray();
 
 			json.key("attributes");
-			json.array();
+			json.object();
 			if (principal.getAttributes()!=null) {
-				json.object();
 				for (Map.Entry<String,Object> entry:
 						principal.getAttributes().entrySet()) {
 
-					json.key("key").value(entry.getKey());
+					json.key(entry.getKey());
 
 					Object value=entry.getValue();
 					if (value!=null) {
@@ -152,7 +152,7 @@ public class AccessToken extends AbstractEntity {
 							value instanceof Float ||
 							value instanceof Boolean) {
 
-							json.key("value").value(entry.getValue());
+							json.value(entry.getValue());
 						}
 						else {
 							// Be conservative and fail fast
@@ -164,12 +164,11 @@ public class AccessToken extends AbstractEntity {
 						}
 					}
 					else {
-						json.key("value").value(null);
+						json.value(null);
 					}
 				}
-				json.endObject();
 			}
-			json.endArray();
+			json.endObject();
 
 			json.endObject();
 
@@ -209,13 +208,11 @@ public class AccessToken extends AbstractEntity {
 
 			// Attributes
 			Map<String,Object> attributes=new HashMap<String,Object>();
-			JSONArray attributesArray=json.getJSONArray("attributes");
-			for (int i=0; i<attributesArray.length(); i++) {
-				JSONObject attribute=attributesArray.getJSONObject(i);
-				String key=attribute.getString("key");
-				Object value=attribute.get("value");
-
-				attributes.put(key,value);
+			JSONObject attributesObject=json.getJSONObject("attributes");
+			for (Iterator<String> i=attributesObject.keys();
+					i.hasNext(); ) {
+				String key=i.next();
+				attributes.put(key,attributesObject.get(key));
 			}
 
 			tempPrincipal.setAttributes(attributes);
