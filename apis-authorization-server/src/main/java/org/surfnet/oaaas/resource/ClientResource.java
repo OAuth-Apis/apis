@@ -252,6 +252,6 @@ public class ClientResource extends AbstractResource {
   }
 
   protected String sanitizeClientName(String name) {
-    return name.replaceAll(FILTERED_CLIENT_ID_CHARS, "");
+    return name.toLowerCase().replaceAll(FILTERED_CLIENT_ID_CHARS, "");
   }
 }
