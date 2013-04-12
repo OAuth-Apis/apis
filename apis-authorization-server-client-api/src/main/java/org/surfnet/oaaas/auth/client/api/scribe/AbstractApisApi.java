@@ -38,11 +38,11 @@ public class AbstractApisApi extends DefaultApi20 {
 		// are relative?
 
 		this.baseURL=baseURL.endsWith("/") ? baseURL : baseURL+"/";
-		authorizeURL=baseURL+
+		authorizeURL=this.baseURL+
 			"oauth2/authorize?client_id=%s&response_type=code&redirect_uri=%s";
 		scopedAuthorizeURL=authorizeURL+"&scope=%s";
 //		accessTokenEndpoint=baseURI+"oauth2/token?grant_type=authorization_code";
-		accessTokenEndpoint=baseURL+"oauth2/token";
+		accessTokenEndpoint=this.baseURL+"oauth2/token";
 	}
 
 	@Override
