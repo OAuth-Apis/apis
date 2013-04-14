@@ -42,9 +42,14 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
   @Override
   public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
       ServletException {
-    authenticate((HttpServletRequest) request, (HttpServletResponse) response, chain, getAuthStateValue(request),
-        getReturnUri(request));
-  }
+
+		String authState=getAuthStateValue(request);
+		if (authState==null) {
+			authState=request.getParameter(AUTH_STATE);
+		}
+
+		authenticate((HttpServletRequest) request, (HttpServletResponse) response,
+			chain, authState, getReturnUri(request));  }
 
   /**
    * Implement this method to state whether the given request is a continuation that can be handled.
