@@ -202,7 +202,7 @@ public class TokenResource {
     }
     String uri = accessTokenRequest.getRedirectUri();
     if (!authReq.getRedirectUri().equalsIgnoreCase(uri)) {
-      throw new ValidationResponseException(ValidationResponse.REDIRECT_URI_DIFFERENT);
+      throw new ValidationResponseException(ValidationResponse.INVALID_GRANT_AUTHORIZATION_CODE);
     }
     authorizationRequestRepository.delete(authReq);
     return authReq;
