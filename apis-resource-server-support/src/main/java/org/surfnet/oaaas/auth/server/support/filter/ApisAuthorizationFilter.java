@@ -18,6 +18,8 @@ package org.surfnet.oaaas.auth.server.support.filter;
  * specific language governing permissions and limitations
  * under the License.
  */
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.surfnet.oaaas.auth.api.ApisAuthorization;
 import java.io.IOException;
 import java.util.Properties;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -129,8 +132,7 @@ public class ApisAuthorizationFilter implements Filter {
 	 * If not overridden by a subclass we cache the answers from the authorization
 	 * server
 	 */
-// TAF: Removed Guava dependency
-//	private Cache<String,VerifyTokenResponse> cache;
+	private Cache<String,ApisAuthorization> cache;
 
 	/**
 	 * Key and secret obtained out-of-band to authenticate against the
@@ -201,10 +203,9 @@ public class ApisAuthorizationFilter implements Filter {
 		this.authorizationValue=new String(
 			Base64.encode(resourceServerKey+":"+resourceServerSecret));
 
-// TAF: Removed Guava dependency
-//		if (cacheAccessTokens()) {
-//			this.cache=buildCache(false);
-//		}
+		if (cacheAccessTokens()) {
+			this.cache=buildCache(false);
+		}
 
 		client=createClient();
 	}
@@ -220,14 +221,13 @@ public class ApisAuthorizationFilter implements Filter {
 	}
 
 
-// TAF: Removed Guava dependency
-//	@SuppressWarnings({"rawtypes","unchecked"})
-//	protected Cache<String,VerifyTokenResponse> buildCache(boolean recordStats) {
-//		CacheBuilder cacheBuilder=CacheBuilder.newBuilder().maximumSize(100000).
-//			expireAfterAccess(10,TimeUnit.MINUTES);
-//		return recordStats ? cacheBuilder.recordStats().build() : cacheBuilder.
-//			build();
-//	}
+	@SuppressWarnings({"rawtypes","unchecked"})
+	protected Cache<String,ApisAuthorization> buildCache(boolean recordStats) {
+		CacheBuilder cacheBuilder=CacheBuilder.newBuilder().maximumSize(100000).
+			expireAfterAccess(10,TimeUnit.MINUTES);
+		return recordStats ? cacheBuilder.recordStats().build() : cacheBuilder.
+			build();
+	}
 
 
 	/**
@@ -260,9 +260,8 @@ public class ApisAuthorizationFilter implements Filter {
 			try {
 				Callable<ApisAuthorization> verifyCall=getCallable(accessToken,
 					response);
-// TAF: Removed Guava dependency
-//				tokenResponse=cacheAccessTokens() ? cache.get(accessToken,
-//					verifyCall) : verifyCall.call();
+				tokenResponse=cacheAccessTokens() ? cache.get(accessToken,
+					verifyCall) : verifyCall.call();
 				tokenResponse=verifyCall.call();
 			}
 			catch (Exception e) {
@@ -447,7 +446,7 @@ public class ApisAuthorizationFilter implements Filter {
 			}
 		}
 		else {
-			// TAF: Fall back to looking for the access token as a query
+			// Fall back to looking for the access token as a query
 			// parameter
 			accessToken=request.getParameter("access_token");
 		}
@@ -468,10 +467,9 @@ public class ApisAuthorizationFilter implements Filter {
 	/**
 	 * @return the cache
 	 */
-// TAF: Removed Guava dependency
-//	public Cache<String,VerifyTokenResponse> getCache() {
-//		return cache;
-//	}
+	public Cache<String,ApisAuthorization> getCache() {
+		return cache;
+	}
 
 
 	/**
