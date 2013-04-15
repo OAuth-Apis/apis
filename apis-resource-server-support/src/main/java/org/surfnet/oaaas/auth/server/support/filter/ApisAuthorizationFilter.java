@@ -274,14 +274,20 @@ public class ApisAuthorizationFilter implements Filter {
 
 			// The presence of the principal is the check to ensure that the
 			// access token is ok.
+			if (tokenResponse.getError()!=null) {
+				// Error has already been sent to the client
+			}
+			else
 			if (tokenResponse!=null && tokenResponse.getPrincipal()!=null) {
 				request.setAttribute(ATTR_AUTHORIZATION,tokenResponse);
 				chain.doFilter(request,response);
 				return;
 			}
+			else {
+				sendError(response,HttpServletResponse.SC_FORBIDDEN,
+					"OAuth2 endpoint");
+			}
 		}
-
-		sendError(response,HttpServletResponse.SC_FORBIDDEN,"OAuth2 endpoint");
 	}
 
 
@@ -328,6 +334,13 @@ public class ApisAuthorizationFilter implements Filter {
 			if (res.getStatus()==401) {
 				// Our resource server authorization was wrong
 				final String error="Could not access authorization server";
+				sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
+				return getErrorAuthorization(error);
+			}
+			else
+			if (res.getStatus()==410) {
+				// Our resource server authorization was wrong
+				final String error="Token expired";
 				sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
 				return getErrorAuthorization(error);
 			}
