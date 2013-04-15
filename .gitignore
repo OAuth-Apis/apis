@@ -7,3 +7,4 @@ rebel.xml
 *.iml
 target
 bin
+nb-configuration.xml

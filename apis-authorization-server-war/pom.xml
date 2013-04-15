@@ -17,6 +17,10 @@
   <dependencies>
     <dependency>
       <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-authorization-server-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
       <artifactId>apis-authorization-server</artifactId>
     </dependency>
     <dependency>

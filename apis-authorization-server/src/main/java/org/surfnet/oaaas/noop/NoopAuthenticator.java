@@ -13,36 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.surfnet.oaaas.noop;
 
 import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal;
 
 /**
- * A mimimalistic implementation of AbstractAuthenticator that contains no authentication but only fulfills the
- * contract of Authenticators.
- * Useful for testing and demonstration purposes only, of course not safe for production.
+ * A mimimalistic implementation of AbstractAuthenticator that contains no
+ * authentication but only fulfills the contract of Authenticators. Useful for
+ * testing and demonstration purposes only, of course not safe for production.
  */
 public class NoopAuthenticator extends AbstractAuthenticator {
 
-  @Override
-  public boolean canCommence(HttpServletRequest request) {
-    return getAuthStateValue(request) != null;
-  }
+	@Override
+	public boolean canCommence(HttpServletRequest request) {
+		return getAuthStateValue(request)!=null;
+	}
 
-  @Override
-  public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-      String authStateValue, String returnUri) throws IOException, ServletException {
-    super.setAuthStateValue(request, authStateValue);
-    super.setPrincipal(request, new AuthenticatedPrincipal("noop"));
-    chain.doFilter(request, response);
-  }
+
+	@Override
+	public void authenticate(HttpServletRequest request,
+			HttpServletResponse response,FilterChain chain,
+			String authStateValue,String returnUri)
+			throws IOException,ServletException {
+
+		super.setAuthStateValue(request,authStateValue);
+		super.setPrincipal(request,new AuthenticatedPrincipal("noop"));
+		chain.doFilter(request,response);
+	}
 }

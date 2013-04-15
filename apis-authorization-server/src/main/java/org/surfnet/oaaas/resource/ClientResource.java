@@ -48,7 +48,7 @@ import org.surfnet.oaaas.repository.ResourceServerRepository;
 public class ClientResource extends AbstractResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ClientResource.class);
-  private static final String FILTERED_CLIENT_ID_CHARS = "[^a-z0-9_]";
+  private static final String FILTERED_CLIENT_ID_CHARS = "[^a-z0-9_\\x2D]";
 
   @Inject
   private ClientRepository clientRepository;
@@ -252,6 +252,8 @@ public class ClientResource extends AbstractResource {
   }
 
   protected String sanitizeClientName(String name) {
-    return name.replaceAll(FILTERED_CLIENT_ID_CHARS, "");
+    return name.toLowerCase()
+		.replaceAll(" ", "-") // Replace all spaces with hyphens
+		.replaceAll(FILTERED_CLIENT_ID_CHARS, "");
   }
 }

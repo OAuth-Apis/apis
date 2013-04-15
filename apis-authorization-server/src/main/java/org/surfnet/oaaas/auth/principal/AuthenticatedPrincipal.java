@@ -24,15 +24,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.api.AbstractAuthenticator;
 
 /**
- * {@link Principal} that can contain roles and additional attributes. This is
- * the return Object for {@link AbstractAuthenticator} implementations. Note
- * that the key and values of the {@link AuthenticatedPrincipal#attributes} must
- * be {@link Serializable}.
+ * Please see {@link org.surfnet.oaaas.auth.api.principal.AuthenticatedPrincipal}
+ * instead. This class remains here to allow deserialization of existing access
+ * tokens (as of v1.1.1) and cannot be instantiated or used.
  * 
  */
+@Deprecated
 public class AuthenticatedPrincipal implements Serializable, Principal {
 
   private static final long serialVersionUID = 1L;
@@ -46,19 +46,19 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
    */
   private Map<String, Object> attributes;
 
-  public AuthenticatedPrincipal() {
+  private AuthenticatedPrincipal() {
     super();
   }
 
-  public AuthenticatedPrincipal(String username) {
+  private AuthenticatedPrincipal(String username) {
     this(username, Collections.<String> emptyList());
   }
 
-  public AuthenticatedPrincipal(String username, Collection<String> roles) {
+  private AuthenticatedPrincipal(String username, Collection<String> roles) {
     this(username, roles, Collections.<String, Object> emptyMap());
   }
 
-  public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, Object> attributes) {
+  private AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, Object> attributes) {
     this.name = username;
     this.roles = roles;
     this.attributes = attributes;
