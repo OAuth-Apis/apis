@@ -53,7 +53,8 @@ public class AuthorizationRequest extends AbstractEntity {
   @Transient
   private AuthenticatedPrincipal principal;
 
-  @Column(length = 1024)
+  @Lob
+  @Column(length = 16384)
   private String encodedPrincipal;
 
   @ManyToOne(optional = false)
@@ -111,7 +112,7 @@ public class AuthorizationRequest extends AbstractEntity {
   @PostUpdate
   public void decodePrincipal() {
     if (StringUtils.isNotBlank(encodedPrincipal)) {
-      byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+      byte[] objectData = Base64.decodeBase64(encodedPrincipal.getBytes());
       this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
     }
   }

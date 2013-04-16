@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
 import static org.apache.commons.collections.CollectionUtils.subtract;
 
@@ -41,6 +41,7 @@ import org.surfnet.oaaas.model.StatisticsResponse.ResourceServerStat;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
+import org.surfnet.oaaas.resource.AbstractResource;
 
 /**
  * JAX-RS Resource for resource servers.
@@ -73,14 +74,12 @@ public class ResourceServerResource extends AbstractResource {
       return validateScopeResponse;
     }
 
-    Response.ResponseBuilder responseBuilder;
     String owner = getUserId(request);
     final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
 
     LOG.debug("About to return all resource servers ({}) for owner {}", resourceServers.size(), owner);
-    responseBuilder = Response.ok(resourceServers);
 
-    return responseBuilder.build();
+    return Response.ok(resourceServers).build();
   }
 
   /**

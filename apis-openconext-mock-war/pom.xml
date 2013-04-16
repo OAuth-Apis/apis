@@ -1,0 +1,71 @@
+<!-- Copyright 2012 SURFnet bv, The Netherlands Licensed under the Apache 
+	License, Version 2.0 (the "License"); you may not use this file except in 
+	compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <relativePath>../pom.xml</relativePath>
+    <groupId>nl.surfnet.apis</groupId>
+    <artifactId>apis-parent</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>apis-openconext-mock-war</artifactId>
+  <packaging>war</packaging>
+  <name>API Secure - mock openconext group api</name>
+
+  <properties>
+    <servlet.port>8080</servlet.port>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>coin-api-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
+  </dependencies>
+  <build>
+    <plugins>
+
+      <!--
+      Specific jetty-maven-plugin configuration for running Jetty during development.
+      None of its goals are run in a normal build lifecycle.
+      -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-maven-plugin.version}</version>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${servlet.port}</port>
+              <host>0.0.0.0</host>
+            </connector>
+          </connectors>
+          <reload>manual</reload>
+          <useTestClasspath>true</useTestClasspath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

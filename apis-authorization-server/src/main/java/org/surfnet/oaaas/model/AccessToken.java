@@ -55,7 +55,8 @@ public class AccessToken extends AbstractEntity {
   @XmlTransient
   private AuthenticatedPrincipal principal;
 
-  @Column(length = 1024)
+  @Lob
+  @Column(length = 16384)
   @NotNull
   @XmlTransient
   private String encodedPrincipal;
@@ -118,7 +119,7 @@ public class AccessToken extends AbstractEntity {
   @PostUpdate
   public void decodePrincipal() {
     if (StringUtils.isNotBlank(encodedPrincipal)) {
-      byte[] objectData = Base64.decodeBase64(encodedPrincipal);
+      byte[] objectData = Base64.decodeBase64(encodedPrincipal.getBytes());
       this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
     }
   }

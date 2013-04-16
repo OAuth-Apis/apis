@@ -29,6 +29,17 @@ var data = (function() {
     };
     options.contentType = "application/json"; // we send json
     options.dataType = "json"; // we expect json back.
+    if (options.error) {
+       var originalError = options.error;
+    }
+    options.error = function(xhr, textStatus, errorThrown){
+      //token expired or invalid
+      if (xhr.status == 403) {
+        windowController.login();
+      } else if (originalError != undefined) {
+        originalError(xhr, textStatus, errorThrown);
+      }
+    };
 
     return $.ajax(options);
   };
@@ -65,7 +76,7 @@ var data = (function() {
       oauthAjax({
         url:"../admin/resourceServer/" + id,
         success: resultHandler,
-        error: function() { // On failure, call result handler anyway, with empty result.
+        error: function(xhr, textStatus, errorThrown) { // On failure, call result handler anyway, with empty result.
           resultHandler({});
         }
       });
@@ -74,8 +85,8 @@ var data = (function() {
       oauthAjax({
         url:"../admin/resourceServer",
         success: resultHandler,
-        error: function() { // On failure, call result handler anyway, with empty result.
-          resultHandler([]);
+        error: function(xhr, textStatus, errorThrown) { // On failure, call result handler anyway, with empty result.
+          resultHandler({});
         }
       });
     },

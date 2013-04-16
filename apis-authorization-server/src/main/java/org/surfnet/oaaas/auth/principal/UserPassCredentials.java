@@ -41,7 +41,7 @@ public class UserPassCredentials {
     }
 
     String authPart = authorizationHeader.substring(BASIC_AUTH_PREFIX_LENGTH);
-    String userpass = new String(Base64.decodeBase64(authPart));
+    String userpass = new String(Base64.decodeBase64(authPart.getBytes()));
     if (userpass.indexOf(SEMI_COLON) < 1) {
       noValidAuthHeader();
       return;

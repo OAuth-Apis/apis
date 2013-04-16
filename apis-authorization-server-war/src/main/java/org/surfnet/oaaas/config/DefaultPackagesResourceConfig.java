@@ -22,9 +22,9 @@ import java.util.Set;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.core.spi.scanning.Scanner;
-import org.surfnet.oaaas.resource.AccessTokenResource;
-import org.surfnet.oaaas.resource.ClientResource;
-import org.surfnet.oaaas.resource.ResourceServerResource;
+import org.surfnet.oaaas.resource.resourceserver.AccessTokenResource;
+import org.surfnet.oaaas.resource.resourceserver.ClientResource;
+import org.surfnet.oaaas.resource.resourceserver.ResourceServerResource;
 import org.surfnet.oaaas.resource.TokenResource;
 import org.surfnet.oaaas.resource.VerifyResource;
 

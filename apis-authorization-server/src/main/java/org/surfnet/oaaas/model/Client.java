@@ -90,6 +90,8 @@ public class Client extends AbstractEntity {
   @Column
   private boolean skipConsent;
 
+  @Column
+  private boolean includePrincipal;
   /*
    * Seconds for expire of the access token that is granted for users of this
    * client
@@ -314,6 +316,14 @@ public class Client extends AbstractEntity {
    */
   public void setNotAllowedImplicitGrant(boolean notAllowedImplicitGrant) {
     this.notAllowedImplicitGrant = notAllowedImplicitGrant;
+  }
+
+  public boolean isIncludePrincipal() {
+    return includePrincipal;
+  }
+
+  public void setIncludePrincipal(boolean includePrincipal) {
+    this.includePrincipal = includePrincipal;
   }
 
   /*

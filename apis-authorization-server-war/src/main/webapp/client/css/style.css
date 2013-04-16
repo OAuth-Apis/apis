@@ -46,6 +46,12 @@ h1 {
   background: #f8f8f8;
 }
 
+.user-info {
+  font-size: 20px;
+  font-weight: 200;
+  margin-right: 30px;
+}
+
 /* side navigation */
 
 .side-nav {

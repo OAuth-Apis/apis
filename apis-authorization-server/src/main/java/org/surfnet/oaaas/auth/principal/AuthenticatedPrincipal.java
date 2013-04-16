@@ -20,10 +20,10 @@ package org.surfnet.oaaas.auth.principal;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 
 /**
@@ -41,27 +41,35 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
 
   private Collection<String> roles;
 
+  private Collection<String> groups;
+
   /*
-   * Extra attributes, depending on the authentication implementation
+   * Extra attributes, depending on the authentication implementation. Note that we only support String - String attributes as we
+   * need to be able to persist the Principal generically
    */
-  private Map<String, Object> attributes;
+  private Map<String, String> attributes;
 
   public AuthenticatedPrincipal() {
     super();
   }
 
   public AuthenticatedPrincipal(String username) {
-    this(username, Collections.<String> emptyList());
+    this(username, new ArrayList<String>());
   }
 
   public AuthenticatedPrincipal(String username, Collection<String> roles) {
-    this(username, roles, Collections.<String, Object> emptyMap());
+    this(username, roles, new HashMap<String, String>());
   }
 
-  public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, Object> attributes) {
+  public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes) {
+    this(username, roles, attributes, new ArrayList<String>());
+  }
+
+  public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups) {
     this.name = username;
     this.roles = roles;
     this.attributes = attributes;
+    this.groups = groups;
   }
 
   /**
@@ -74,8 +82,22 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
   /**
    * @return the attributes
    */
-  public Map<String, Object> getAttributes() {
+  public Map<String, String> getAttributes() {
     return attributes;
+  }
+
+  public void addAttribute(String key, String value) {
+    if (attributes == null ) {
+      attributes = new HashMap<String, String>();
+    }
+    attributes.put(key,value);
+  }
+
+  public void addGroup(String name) {
+    if (groups == null ) {
+      groups = new ArrayList<String>();
+    }
+    groups.add(name);
   }
 
   /*
@@ -85,6 +107,11 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
    */
   @Override
   public String getName() {
+    return name;
+  }
+
+  @JsonIgnore
+  public String getDisplayName() {
     return name;
   }
 
@@ -118,8 +145,21 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
    * @param attributes
    *          the attributes to set
    */
-  public void setAttributes(Map<String, Object> attributes) {
+  public void setAttributes(Map<String, String> attributes) {
     this.attributes = attributes;
+  }
+
+  public Collection<String> getGroups() {
+    return groups;
+  }
+
+  public void setGroups(Collection<String> groups) {
+    this.groups = groups;
+  }
+
+  @JsonIgnore
+  public boolean isGroupAware() {
+    return !CollectionUtils.isEmpty(groups);
   }
 
 }

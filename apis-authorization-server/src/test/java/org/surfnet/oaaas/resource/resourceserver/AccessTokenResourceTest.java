@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +25,7 @@ import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
+import org.surfnet.oaaas.resource.resourceserver.AccessTokenResource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -63,4 +64,5 @@ public class AccessTokenResourceTest {
     List tokens = (List) response.getEntity();
     assertEquals(0, tokens.size());
   }
+
 }

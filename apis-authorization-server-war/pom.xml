@@ -262,16 +262,24 @@
             <type>war</type>
             <version>${mujina-idp.version}</version>
           </dependency>
+          <dependency>
+            <groupId>nl.surfnet.apis</groupId>
+            <artifactId>apis-openconext-mock-war</artifactId>
+            <type>war</type>
+            <version>${project.version}</version>
+          </dependency>
         </dependencies>
-
         <configuration>
-
           <contextHandlers>
             <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
               <contextPath>/mujina-idp</contextPath>
               <war>${settings.localRepository}/org/surfnet/coin/mujina-idp/${mujina-idp.version}/mujina-idp-${mujina-idp.version}.war</war>
               <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
-
+            </contextHandler>
+          <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+              <contextPath>/openconext-mock</contextPath>
+              <war>${settings.localRepository}/nl/surfnet/apis/apis-openconext-mock-war/${project.version}/apis-openconext-mock-war-${project.version}.war</war>
+              <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
             </contextHandler>
           </contextHandlers>
 

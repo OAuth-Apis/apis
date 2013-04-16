@@ -46,7 +46,6 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
         "%s/oauth2/authorize?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s",
         baseUrl(), responseType, scopes, clientId, accessTokenRedirectUri);
     webdriver.get(url);
-    assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
 
     login(webdriver,true);
     

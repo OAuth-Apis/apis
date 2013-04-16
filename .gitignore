@@ -5,5 +5,7 @@ rebel.xml
 .settings
 .idea
 *.iml
+*.ipr
+*.iws
 target
 bin

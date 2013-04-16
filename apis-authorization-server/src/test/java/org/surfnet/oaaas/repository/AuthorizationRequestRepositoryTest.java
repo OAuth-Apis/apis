@@ -71,7 +71,7 @@ public class AuthorizationRequestRepositoryTest extends AbstractTestRepository {
 
   private AuthenticatedPrincipal getPrincipal() {
     List<String> roles = Arrays.asList(new String[] { "user", "admin" });
-    Map<String, Object> attributes = new HashMap<String, Object>();
+    Map<String, String> attributes = new HashMap<String, String>();
     attributes.put("organization", "foo-university");
     return new AuthenticatedPrincipal("john.doe", roles, attributes);
   }

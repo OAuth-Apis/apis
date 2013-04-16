@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -26,6 +26,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.resource.resourceserver.ResourceServerResource;
 
 public class ResourceServerResourceTest {
   private ResourceServerResource resourceServerResource;

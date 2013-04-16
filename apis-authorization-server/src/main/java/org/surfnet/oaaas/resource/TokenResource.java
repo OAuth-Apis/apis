@@ -31,10 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -135,7 +132,7 @@ public class TokenResource {
       authReq.setGrantedScopes(authReq.getRequestedScopes());
     } else {
       String[] scopes = (String[]) request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES);
-      if (ArrayUtils.isNotEmpty(scopes)) {
+      if (!ArrayUtils.isEmpty(scopes)) {
         authReq.setGrantedScopes(Arrays.asList(scopes));
       } else {
         authReq.setGrantedScopes(null);
@@ -240,7 +237,7 @@ public class TokenResource {
     authReq.setAuthorizationCode(authorizationCode);
     authorizationRequestRepository.save(authReq);
     uri = uri + appendQueryMark(uri) + "code=" + authorizationCode + appendStateParameter(authReq);
-    return redirect(uri);
+    return Response.seeOther(UriBuilder.fromUri(uri).build()).build();
   }
 
   protected String getTokenValue(boolean isRefreshToken) {
@@ -261,9 +258,14 @@ public class TokenResource {
 
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
     String uri = authReq.getRedirectUri();
-    uri = String.format(uri + "#access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
+    String fragment = String.format("access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
         + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), StringUtils.join(authReq.getGrantedScopes(), ','));
-    return redirect(uri);
+    if (authReq.getClient().isIncludePrincipal()) {
+      fragment += String.format("&principal=%s", authReq.getPrincipal().getDisplayName()) ;
+    }
+    return Response.seeOther(UriBuilder.fromUri(uri).fragment(fragment).build()).build();
+
+
   }
 
   private String appendQueryMark(String uri) {
@@ -278,14 +280,6 @@ public class TokenResource {
   private Response serverError(String msg) {
     LOG.warn(msg);
     return Response.serverError().build();
-  }
-
-  private Response redirect(String uri) {
-    try {
-      return Response.seeOther(new URI(uri)).build();
-    } catch (URISyntaxException e) {
-      throw new RuntimeException(String.format("Redirect URI '%s' is not valid", uri));
-    }
   }
 
   /**

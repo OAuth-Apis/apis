@@ -45,7 +45,7 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
   @Override
   public boolean canCommence(HttpServletRequest request) {
     return request.getMethod().equals("POST") && request.getParameter(AUTH_STATE) != null
-        && request.getParameter("username") != null;
+        && request.getParameter("j_username") != null;
   }
 
   @Override
@@ -84,7 +84,7 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
    */
   protected void processForm(final HttpServletRequest request) {
     setAuthStateValue(request, request.getParameter(AUTH_STATE));
-    AuthenticatedPrincipal principal = new AuthenticatedPrincipal(request.getParameter("username"));
+    AuthenticatedPrincipal principal = new AuthenticatedPrincipal(request.getParameter("j_username"));
     request.getSession().setAttribute(SESSION_IDENTIFIER, principal);
     setPrincipal(request, principal);
   }

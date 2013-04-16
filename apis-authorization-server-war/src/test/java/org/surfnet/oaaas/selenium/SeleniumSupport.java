@@ -16,8 +16,6 @@
 
 package org.surfnet.oaaas.selenium;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.http.localserver.LocalTestServer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.BeforeClass;
@@ -28,6 +26,8 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.it.AbstractAuthorizationServerTest;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -43,18 +43,22 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
   private AuthorizationCodeRequestHandler authorizationCodeRequestHandler;
 
   private LocalTestServer oauthClientServer;
-  
+
   private ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
 
   @BeforeClass
   public static void initializeOnce() {
-    if (driver == null) {
-      if ("firefox".equals(System.getProperty("selenium.webdriver", "firefox"))) {
-        initFirefoxDriver();
-      } else {
-        initHtmlUnitDriver();
-      }
+    if (driver != null) {
+      driver.close();
+      driver.quit();
+      driver = null;
     }
+    if ("firefox".equals(System.getProperty("selenium.webdriver", "firefox"))) {
+      initFirefoxDriver();
+    } else {
+      initHtmlUnitDriver();
+    }
+
   }
 
   protected String startAuthorizationCallbackServer(String clientId, String secret) throws Exception {
@@ -62,12 +66,12 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
     oauthClientServer.start();
     // report how to access the server
     String oauthClientBaseUri = String.format("http://%s:%d", oauthClientServer.getServiceAddress().getHostName(),
-        oauthClientServer.getServiceAddress().getPort());
+            oauthClientServer.getServiceAddress().getPort());
 
     String accessTokenRedirectUri = oauthClientBaseUri + "/codeCatcher";
 
     authorizationCodeRequestHandler = new AuthorizationCodeRequestHandler(accessTokenRedirectUri, baseUrl(), clientId,
-        secret, OAuth2Validator.GRANT_TYPE_AUTHORIZATION_CODE);
+            secret, OAuth2Validator.GRANT_TYPE_AUTHORIZATION_CODE);
     oauthClientServer.register("/codeCatcher", authorizationCodeRequestHandler);
     return accessTokenRedirectUri;
   }
@@ -104,10 +108,15 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
     return driver;
   }
 
+  public void restartBrowserSession() {
+    initializeOnce();
+  }
+
+
   protected void login(WebDriver webdriver, boolean consent) {
     // Login end user.
-    webdriver.findElement(By.id("username")).sendKeys("enduser");
-    webdriver.findElement(By.id("password")).sendKeys("enduserpass");
+    webdriver.findElement(By.name("j_username")).sendKeys("enduser");
+    webdriver.findElement(By.name("j_password")).sendKeys("enduserpass");
     webdriver.findElement(By.xpath("//form")).submit();
     if (consent) {
       consent(webdriver);

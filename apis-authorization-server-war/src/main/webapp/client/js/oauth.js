@@ -75,10 +75,15 @@ var OAuth = function(opt) {
       oauthTokenInfo = {
         accessToken: obj["access_token"],
         expires: obj["expires_in"],
-        scope: obj["scope"]
+        scope: obj["scope"],
+        principal: obj["principal"]
       };
       context.location.hash = "";
       return oauthTokenInfo.accessToken;
+    },
+
+    principalName: function() {
+      return oauthTokenInfo.principal;
     }
   }
 };

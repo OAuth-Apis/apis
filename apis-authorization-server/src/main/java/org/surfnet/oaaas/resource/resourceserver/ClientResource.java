@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
 import java.net.URI;
 import java.util.Collections;
@@ -38,6 +38,7 @@ import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
+import org.surfnet.oaaas.resource.AbstractResource;
 
 /**
  * JAX-RS Resource for CRUD operations on Clients. (clients in OAuth 2 context).

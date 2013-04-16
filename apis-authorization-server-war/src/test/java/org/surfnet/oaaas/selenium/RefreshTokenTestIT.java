@@ -18,8 +18,6 @@
  */
 package org.surfnet.oaaas.selenium;
 
-import java.io.InputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -31,15 +29,12 @@ import org.openqa.selenium.WebDriver;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.model.AccessTokenResponse;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import java.io.InputStream;
+
+import static org.junit.Assert.*;
 
 /**
  * Test refresh token flow
- * 
  */
 public class RefreshTokenTestIT extends SeleniumSupport {
 
@@ -58,10 +53,9 @@ public class RefreshTokenTestIT extends SeleniumSupport {
 
     String responseType = "code";
     String url = String.format("%s/oauth2/authorize?response_type=%s&client_id=%s&scope=read&redirect_uri=%s",
-        baseUrl(), responseType, clientId, accessTokenRedirectUri);
+            baseUrl(), responseType, clientId, accessTokenRedirectUri);
     webdriver.get(url);
-    assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
-    
+
     /*
      * Consent is not necessary for this Client
      */
@@ -86,7 +80,7 @@ public class RefreshTokenTestIT extends SeleniumSupport {
      * Now make a request for a new AccessToken based on the refreshToken
      */
     String postBody = String.format("grant_type=%s&refresh_token=%s&state=%s",
-        OAuth2Validator.GRANT_TYPE_REFRESH_TOKEN, accessTokenResponse.getRefreshToken(), "dummy");
+            OAuth2Validator.GRANT_TYPE_REFRESH_TOKEN, accessTokenResponse.getRefreshToken(), "dummy");
 
     tokenRequest.setEntity(new ByteArrayEntity(postBody.getBytes()));
     tokenRequest.addHeader("Authorization", AuthorizationCodeTestIT.authorizationBasic(clientId, secret));

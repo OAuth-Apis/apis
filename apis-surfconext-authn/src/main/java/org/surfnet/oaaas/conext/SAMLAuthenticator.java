@@ -16,15 +16,8 @@
 
 package org.surfnet.oaaas.conext;
 
-import java.io.IOException;
-import java.util.*;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import nl.surfnet.coin.api.client.OpenConextOAuthClient;
+import nl.surfnet.coin.api.client.domain.Group20;
 import nl.surfnet.spring.security.opensaml.AuthnRequestGenerator;
 import nl.surfnet.spring.security.opensaml.Provisioner;
 import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
@@ -32,7 +25,8 @@ import nl.surfnet.spring.security.opensaml.ServiceProviderAuthenticationExceptio
 import nl.surfnet.spring.security.opensaml.util.IDService;
 import nl.surfnet.spring.security.opensaml.util.TimeService;
 import nl.surfnet.spring.security.opensaml.xml.EndpointGenerator;
-
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
@@ -40,7 +34,7 @@ import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.*;
+import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.UsageType;
 import org.opensaml.xml.security.criteria.EntityIDCriteria;
@@ -49,23 +43,39 @@ import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Component
 public class SAMLAuthenticator extends AbstractAuthenticator {
 
   private static final Logger LOG = LoggerFactory.getLogger(SAMLAuthenticator.class);
+  private static final String RELAY_STATE_FROM_SAML = "RELAY_STATE_FROM_SAML";
+  private static final String PRINCIPAL_FROM_SAML = "PRINCIPAL_FROM_SAML";
 
   private TimeService timeService = new TimeService();
   private IDService idService = new IDService();
   private OpenSAMLContext openSAMLContext;
+  private OpenConextOAuthClient apiClient;
+  private String callbackFlagParameter = "apiOauthCallback";
+  private boolean enrichPricipal;
+
 
   private final Properties properties;
+
   {
     try {
       properties = PropertiesLoaderUtils.loadAllProperties("surfconext.authn.properties");
@@ -77,9 +87,24 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    super.init(filterConfig);
+    try {
+      super.init(filterConfig);
+      openSAMLContext = createOpenSAMLContext(properties);
+      apiClient = createOpenConextOAuthClient(properties);
+      enrichPricipal = Boolean.valueOf(properties.getProperty("api-enrich-principal"));
+    } catch (Exception e) {
+      throw new ServletException(e);
+    }
+  }
 
-    openSAMLContext = createOpenSAMLContext(properties);
+
+  protected OpenConextOAuthClient createOpenConextOAuthClient(Properties properties) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    OpenConextOAuthClient apiClient = (OpenConextOAuthClient) getClass().getClassLoader().loadClass(properties.getProperty("openConextApiClient")).newInstance();
+    BeanUtils.setProperty(apiClient, "callbackUrl", properties.getProperty("api-callbackuri"));
+    BeanUtils.setProperty(apiClient, "consumerSecret", properties.getProperty("api-consumersecret"));
+    BeanUtils.setProperty(apiClient, "consumerKey", properties.getProperty("api-consumerkey"));
+    BeanUtils.setProperty(apiClient, "endpointBaseUrl", properties.getProperty("api-baseurl"));
+    return apiClient;
   }
 
   /**
@@ -100,34 +125,55 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
   @Override
   public boolean canCommence(HttpServletRequest request) {
-    return isSAMLResponse(request);
+    return isSAMLResponse(request) || isOAuthCallback(request);
   }
 
   @Override
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-      String authStateValue, String returnUri) throws IOException, ServletException {
+                           String authStateValue, String returnUri) throws IOException, ServletException {
     LOG.debug("Hitting SAML Authenticator filter");
-
     if (isSAMLResponse(request)) {
-      final Response samlResponse = extractSamlResponse(request);
-
-      if (samlResponse == null) {
-        LOG.info("Invalid response gotten from SAML IdP");
-        return;
+      Response samlResponse = extractSamlResponse(request);
+      UserDetails ud = openSAMLContext.assertionConsumer().consume(samlResponse);
+      AuthenticatedPrincipal principal = convertToPrincipal(ud);
+      if (enrichPricipal) {
+        //need to save the Principal and the AuthState somewhere
+        request.getSession().setAttribute(PRINCIPAL_FROM_SAML, principal);
+        request.getSession().setAttribute(RELAY_STATE_FROM_SAML, getSAMLRelayState(request));
+        response.sendRedirect(apiClient.getAuthorizationUrl());
       } else {
-        final UserDetails ud = authenticate(samlResponse);
-        if (ud == null) {
-          LOG.info("Cannot get UserDetails from SAML response");
-        } else {
-          super.setPrincipal(request, convertToPrincipal(ud));
-          super.setAuthStateValue(request, getSAMLRelayState(request));
-          chain.doFilter(request, response);
-          return;
+        proceedWithChain(request, response, chain, principal, getSAMLRelayState(request));
+      }
+    } else if (isOAuthCallback(request)) {
+      AuthenticatedPrincipal principal = (AuthenticatedPrincipal) request.getSession().getAttribute(PRINCIPAL_FROM_SAML);
+      String authState = (String) request.getSession().getAttribute(RELAY_STATE_FROM_SAML);
+      if (principal == null) { //huh
+        throw new ServiceProviderAuthenticationException("No principal anymore in the session");
+      }
+      String userId = principal.getName();
+      apiClient.oauthCallback(request, userId);
+      List<Group20> groups = apiClient.getGroups20(userId, userId);
+      if (!CollectionUtils.isEmpty(groups)) {
+        for (Group20 group : groups) {
+          principal.addGroup(group.getId());
         }
       }
+      proceedWithChain(request, response, chain, principal, authState);
+    } else {
+      sendAuthnRequest(response, authStateValue, getReturnUri(request));
     }
-    sendAuthnRequest(response, authStateValue, getReturnUri(request));
   }
+
+  private void proceedWithChain(HttpServletRequest request, HttpServletResponse response, FilterChain chain, AuthenticatedPrincipal principal, String authStateValue) throws IOException, ServletException {
+    super.setPrincipal(request, principal);
+    super.setAuthStateValue(request, authStateValue);
+    chain.doFilter(request, response);
+  }
+
+  private boolean isOAuthCallback(HttpServletRequest request) {
+    return request.getParameter(callbackFlagParameter) != null;
+  }
+
 
   private AuthenticatedPrincipal convertToPrincipal(UserDetails ud) {
     Collection<? extends GrantedAuthority> authorities = ud.getAuthorities();
@@ -137,31 +183,15 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         roles.add(authority.getAuthority());
       }
     }
-    Map<String, Object> attributes = getPrincipalAttributes(ud);
-
-    return new AuthenticatedPrincipal(ud.getUsername(), roles, attributes);
-  }
-
-  protected Map<String, Object> getPrincipalAttributes(UserDetails ud) {
-    return Collections.emptyMap();
+    return new SAMLAuthenticatedPrincipal(ud.getUsername(), roles);
   }
 
   protected String getSAMLRelayState(HttpServletRequest request) {
     return request.getParameter("RelayState");
   }
+
   protected boolean isSAMLResponse(HttpServletRequest request) {
     return request.getParameter("SAMLResponse") != null;
-  }
-
-  private UserDetails authenticate(Response samlResponse) {
-
-    // throws AuthenticationException when not authenticated successfully.
-    try {
-      return openSAMLContext.assertionConsumer().consume(samlResponse);
-    } catch (AuthenticationException e) {
-      LOG.info("When authenticating SAML response", e);
-      return null;
-    }
   }
 
   private Response extractSamlResponse(HttpServletRequest request) {
@@ -196,13 +226,13 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
   private void sendAuthnRequest(HttpServletResponse response, String authState, String returnUri) throws IOException {
     AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(openSAMLContext.entityId(), timeService,
-        idService);
+            idService);
     EndpointGenerator endpointGenerator = new EndpointGenerator();
 
     final String target = openSAMLContext.getIdpUrl();
 
     Endpoint endpoint = endpointGenerator.generateEndpoint(
-        SingleSignOnService.DEFAULT_ELEMENT_NAME, target, openSAMLContext.assertionConsumerUri());
+            SingleSignOnService.DEFAULT_ELEMENT_NAME, target, openSAMLContext.assertionConsumerUri());
 
     AuthnRequest authnRequest = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
 

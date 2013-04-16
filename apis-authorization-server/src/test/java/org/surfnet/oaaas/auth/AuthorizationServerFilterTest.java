@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * {@link Test} that uses a dummy http server to mock return values from the
+ * {@link Test} that uses a dummy http server to org.surfnet.oaaas.conext.mock return values from the
  * authorization server.
  * 
  */
@@ -55,9 +55,9 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
   @Before
   public void before() throws ServletException {
     MockFilterConfig filterConfig = new MockFilterConfig();
-    filterConfig.addInitParameter("resource-server-key", "mock-server-name");
+    filterConfig.addInitParameter("resource-server-key", "org.surfnet.oaaas.conext.mock-server-name");
     filterConfig.addInitParameter("resource-server-secret", UUID.randomUUID().toString());
-    filterConfig.addInitParameter("authorization-server-url", "http://localhost:8088/mock/endpoint");
+    filterConfig.addInitParameter("authorization-server-url", "http://localhost:8088/org.surfnet.oaaas.conext.mock/endpoint");
     //enable caching as we want to test this
     filter = new AuthorizationServerFilter(){
       @Override
@@ -80,10 +80,9 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
    */
   @Test
   public void testDoFilterHappyFlow() throws IOException, ServletException {
-    Map<String, Object> attributes = new HashMap<String, Object>();
-    attributes.put("demo", Arrays.asList(1, 2, 3));
+    Map<String, String> attributes = new HashMap<String, String>();
     attributes.put("key", "value");
-    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("mock-client", Collections.singletonList("read"),
+    VerifyTokenResponse recorderdResponse = new VerifyTokenResponse("org.surfnet.oaaas.conext.mock-client", Collections.singletonList("read"),
         new AuthenticatedPrincipal("john.doe", Arrays.asList("user", "admin"), attributes), 0L);
     MockFilterChain chain = doCallFilter(recorderdResponse);
     /*

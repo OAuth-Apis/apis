@@ -37,12 +37,12 @@ VALUES
 INSERT INTO ResourceServer_scopes values (99998, 'read'),(99998, 'write') ;
 
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
-clientId, secret)
+clientId, secret, includePrincipal, expireDuration)
 VALUES
     (99998, 'client@coolapp.com', 'john.doe', 'Javascript application for authorization server administration',
     'Authorization Server Admin Client',
     'https://raw.github.com/OpenConextApps/apis/master/apis-images/surf-oauth-client.png', 99998,
-    'authorization-server-admin-js-client', '');
+    'authorization-server-admin-js-client', '', 1, 300);
 INSERT INTO Client_scopes values (99998, 'read'), (99998, 'write');
 
 /*

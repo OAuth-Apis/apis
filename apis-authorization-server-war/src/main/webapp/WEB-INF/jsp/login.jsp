@@ -33,7 +33,7 @@
           <label class="control-label">Identifier</label>
           <div class="controls">
             <input type="text" class="input-xlarge" id="username"
-              name="username" rel="popover"
+              name="j_username" rel="popover"
               data-content="Enter your identifier."
               data-original-title="Identifier" />
             <p class="help-block">Hint: can be anything</p>
@@ -44,7 +44,7 @@
           <label class="control-label">Password</label>
           <div class="controls">
             <input type="password" class="input-xlarge" id="password"
-              name="password" rel="popover"
+              name="j_password" rel="popover"
               data-content="What's your password?"
               data-original-title="Password" />
             <p class="help-block">Hint: can be anything</p>

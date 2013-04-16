@@ -98,6 +98,7 @@ var windowController = {
     // Refresh the data grid.
     this.refresh();
 
+    $('.user-info').html(this.oauth.principalName());
 
     // On click of nav link, remove 'current' from all, add to actual current.
     $("div.side-nav a").click(function() {

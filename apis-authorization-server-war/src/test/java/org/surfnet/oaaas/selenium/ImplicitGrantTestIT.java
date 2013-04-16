@@ -36,14 +36,14 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
     /*
      * The second time no consent is required (as we have already an access token for the client/ principal name
      */
+    restartBrowserSession();
     performImplicitGrant(false);
   }
 
   private void performImplicitGrant(boolean needConsent) {
-    
+
     WebDriver webdriver = getWebDriver();
-    webdriver.manage().deleteAllCookies();
-    
+
     String responseType = "token";
     String clientId = "it-test-client-grant";
     String redirectUri = "http://localhost:8080/fourOhFour";
@@ -52,7 +52,6 @@ public class ImplicitGrantTestIT extends SeleniumSupport {
         "%s/oauth2/authorize?response_type=%s&client_id=%s&redirect_uri=%s",
         baseUrl(), responseType, clientId, redirectUri);
     webdriver.get(url);
-    assertThat(webdriver.getPageSource(), containsString("Hint: can be anything"));
 
     login(webdriver, needConsent);
 

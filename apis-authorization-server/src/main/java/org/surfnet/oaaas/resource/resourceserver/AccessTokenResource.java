@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
+import org.surfnet.oaaas.resource.AbstractResource;
 
 /**
  * JAX-RS Resource for maintaining owns access tokens.
@@ -78,14 +79,9 @@ public class AccessTokenResource extends AbstractResource {
 
     String owner = getUserId(request);
 
-    Response.ResponseBuilder responseBuilder;
     final AccessToken token = accessTokenRepository.findByIdAndResourceOwnerId(id, owner);
 
-    if (token == null) {
-      responseBuilder = Response.status(Response.Status.NOT_FOUND);
-    } else {
-      responseBuilder = Response.ok(token);
-    }
+    Response.ResponseBuilder responseBuilder = (token == null ? Response.status(Response.Status.NOT_FOUND) : Response.ok(token));
     LOG.debug("About to return one accessToken with id {}: {}", id, token);
     return responseBuilder.build();
   }
