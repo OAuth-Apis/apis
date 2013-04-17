@@ -134,8 +134,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     LOG.debug("Hitting SAML Authenticator filter");
     if (isSAMLResponse(request)) {
       Response samlResponse = extractSamlResponse(request);
-      UserDetails ud = openSAMLContext.assertionConsumer().consume(samlResponse);
-      AuthenticatedPrincipal principal = convertToPrincipal(ud);
+      AuthenticatedPrincipal principal = (AuthenticatedPrincipal) openSAMLContext.assertionConsumer().consume(samlResponse);
       if (enrichPricipal) {
         //need to save the Principal and the AuthState somewhere
         request.getSession().setAttribute(PRINCIPAL_FROM_SAML, principal);
@@ -172,18 +171,6 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
   private boolean isOAuthCallback(HttpServletRequest request) {
     return request.getParameter(callbackFlagParameter) != null;
-  }
-
-
-  private AuthenticatedPrincipal convertToPrincipal(UserDetails ud) {
-    Collection<? extends GrantedAuthority> authorities = ud.getAuthorities();
-    Collection<String> roles = new HashSet<String>();
-    if (authorities != null) {
-      for (GrantedAuthority authority : authorities) {
-        roles.add(authority.getAuthority());
-      }
-    }
-    return new SAMLAuthenticatedPrincipal(ud.getUsername(), roles);
   }
 
   protected String getSAMLRelayState(HttpServletRequest request) {
