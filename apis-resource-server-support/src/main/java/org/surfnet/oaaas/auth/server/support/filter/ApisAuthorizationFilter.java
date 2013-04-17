@@ -258,33 +258,34 @@ public class ApisAuthorizationFilter implements Filter {
 			// Get the 'Validate Access Token' response from the Authorization
 			// Server either live or from the cache
 			try {
-				Callable<ApisAuthorization> verifyCall=getCallable(accessToken,
-					response);
-				tokenResponse=cacheAccessTokens() ? cache.get(accessToken,
-					verifyCall) : verifyCall.call();
+				Callable<ApisAuthorization> verifyCall=
+					getCallable(accessToken,response);
+				tokenResponse=cacheAccessTokens() 
+					? cache.get(accessToken,verifyCall)
+					: verifyCall.call();
 				tokenResponse=verifyCall.call();
+
+				// The presence of the principal is the check to ensure that the
+				// access token is ok.
+				if (tokenResponse.getError()!=null) {
+					// Error has already been sent to the client
+sendError(response,HttpServletResponse.SC_FORBIDDEN,tokenResponse.getError());
+				}
+				else
+				if (tokenResponse!=null && tokenResponse.getPrincipal()!=null) {
+					request.setAttribute(ATTR_AUTHORIZATION,tokenResponse);
+					chain.doFilter(request,response);
+				}
+				else {
+					sendError(response,HttpServletResponse.SC_FORBIDDEN,
+						"OAuth2 endpoint");
+				}
 			}
 			catch (Exception e) {
 				LOG.error("While validating access token",e);
 				sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Cannot verify access token");
 				return;
-			}
-
-			// The presence of the principal is the check to ensure that the
-			// access token is ok.
-			if (tokenResponse.getError()!=null) {
-				// Error has already been sent to the client
-			}
-			else
-			if (tokenResponse!=null && tokenResponse.getPrincipal()!=null) {
-				request.setAttribute(ATTR_AUTHORIZATION,tokenResponse);
-				chain.doFilter(request,response);
-				return;
-			}
-			else {
-				sendError(response,HttpServletResponse.SC_FORBIDDEN,
-					"OAuth2 endpoint");
 			}
 		}
 	}
@@ -318,48 +319,50 @@ public class ApisAuthorizationFilter implements Filter {
 			.accept("application/json")
 			.get(ClientResponse.class);
 
-		try {
-			if (res.getStatus()>=200 && res.getStatus() < 300) {
-				String responseString=res.getEntity(String.class);
+		String responseString=res.getEntity(String.class);
+		if (res.getStatus()>=200 && res.getStatus() < 300) {
 
-				LOG.debug("Got verify token response (status: {}): '{}'",res.
-					getClientResponseStatus().getStatusCode(),responseString);
+			LOG.debug("Got verify token response (status: {}): '{}'",res.
+				getClientResponseStatus().getStatusCode(),responseString);
 
-				ApisAuthorization result=
-					deserializeAuthorization(responseString);
-				return result;
+			try {
+				return deserializeAuthorization(responseString);
 			}
-			else
-			if (res.getStatus()==401) {
-				// Our resource server authorization was wrong
-				final String error="Could not access authorization server";
-				sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
-				return getErrorAuthorization(error);
-			}
-			else
-			if (res.getStatus()==410) {
-				// Our resource server authorization was wrong
-				final String error="Token expired";
-				sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
-				return getErrorAuthorization(error);
-			}
-			else {
-				// Something else bad happened
-				final String error="Unknown error verifying token with "+
-					"authorization server";
+			catch (Exception e) {
+				LOG.warn("Could not parse the Verify Token Response",e);
 				sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					error);
-				return getErrorAuthorization(error);
+					"Cannot parse result");
+
+				final String error=e.getMessage();
+				return getErrorAuthorization("Could not parse the "+
+					"verify token response: "+error);
 			}
 		}
-		catch (Exception e) {
-			LOG.warn("Could not parse the Verify Token Response",e);
-			sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"Cannot parse result");
+		else
+		if (res.getStatus()==401) {
+			// Our resource server authorization was wrong
+			final String error="Could not access authorization server";
+//			sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
+			return getErrorAuthorization(error);
+		}
+		else
+		if (res.getStatus()==410) {
+			// Our resource server authorization was wrong
+			final String error="Token expired";
+//			sendError(response,HttpServletResponse.SC_FORBIDDEN,error);
+			return getErrorAuthorization(error);
+		}
+		else {
+			// Something else bad happened
+			final String error="Unknown error verifying token with "+
+				"authorization server (authentication server status: "+
+				res.getStatus()+"): "+responseString;
 
-			final String error=e.getMessage();
-			return getErrorAuthorization("Could not parse the "+
-				"verify token response: "+error);
+			LOG.debug(error);
+
+//			sendError(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+//				error);
+			return getErrorAuthorization(error);
 		}
 	}
 
