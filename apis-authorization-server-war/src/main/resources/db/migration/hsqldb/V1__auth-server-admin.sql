@@ -20,7 +20,7 @@ emma.blunt
  */
 INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
 VALUES
-    (99999, 0, 'rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AAplbW1hLmJsdW50c3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==',
+    (99999, 0, '["org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal",{"name":"emma.blunt","roles":["java.util.ArrayList",[]],"groups":["java.util.ArrayList",[]],"attributes":["java.util.HashMap",{}]}]',
 	'74eccf5f-0995-4e1c-b08c-d05dd5a0f89b',99999, 'emma.blunt');
 INSERT INTO Accesstoken_scopes values (99999, 'read');
 
@@ -94,7 +94,7 @@ INSERT INTO Client_scopes values (99995, 'read'), (99995, 'write');
 admin-enduser
  */
 INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
-VALUES (99998, 0, 'rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA1hZG1pbi1lbmR1c2Vyc3IAGmphdmEudXRpbC5BcnJheXMkQXJyYXlMaXN02aQ8vs2IBtICAAFbAAFhdAATW0xqYXZhL2xhbmcvT2JqZWN0O3hwdXIAE1tMamF2YS5sYW5nLlN0cmluZzut0lbn6R17RwIAAHhwAAAAAnQABHVzZXJ0AAVhZG1pbg==',
+VALUES (99998, 0, '["org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal",{"name":"admin-enduser","roles":["java.util.ArrayList",[]],"groups":["java.util.ArrayList",[]],"attributes":["java.util.HashMap",{}]}]',
 'dad30fb8-ad90-4f24-af99-798bb71d27c8',99998, 'admin-enduser');
 INSERT INTO Accesstoken_scopes values (99998, 'read'), (99998, 'write');
 /*
@@ -102,6 +102,6 @@ it-test-enduser
  */
 INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
 VALUES
-    (99997, 0, 'rO0ABXNyADdvcmcuc3VyZm5ldC5vYWFhcy5hdXRoLnByaW5jaXBhbC5BdXRoZW50aWNhdGVkUHJpbmNpcGFsAAAAAAAAAAECAANMAAphdHRyaWJ1dGVzdAAPTGphdmEvdXRpbC9NYXA7TAAEbmFtZXQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABXJvbGVzdAAWTGphdmEvdXRpbC9Db2xsZWN0aW9uO3hwc3IAHmphdmEudXRpbC5Db2xsZWN0aW9ucyRFbXB0eU1hcFk2FIVa3OfQAgAAeHB0AA9pdC10ZXN0LWVuZHVzZXJzcgAaamF2YS51dGlsLkFycmF5cyRBcnJheUxpc3TZpDy+zYgG0gIAAVsAAWF0ABNbTGphdmEvbGFuZy9PYmplY3Q7eHB1cgATW0xqYXZhLmxhbmcuU3RyaW5nO63SVufpHXtHAgAAeHAAAAACdAAEdXNlcnQABWFkbWlu',
+    (99997, 0, '["org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal",{"name":"it-test-enduser","roles":["java.util.ArrayList",[]],"groups":["java.util.ArrayList",[]],"attributes":["java.util.HashMap",{}]}]',
     '00-11-22-33',99997, 'it-test-enduser ');
 INSERT INTO Accesstoken_scopes values (99997, 'read'), (99997, 'write');

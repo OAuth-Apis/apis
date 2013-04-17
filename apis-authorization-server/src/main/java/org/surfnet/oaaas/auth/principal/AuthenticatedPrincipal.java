@@ -18,24 +18,37 @@
  */
 package org.surfnet.oaaas.auth.principal;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.*;
-
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link Principal} that can contain roles and additional attributes. This is
  * the return Object for {@link AbstractAuthenticator} implementations. Note
  * that the key and values of the {@link AuthenticatedPrincipal#attributes} must
  * be {@link Serializable}.
- * 
  */
 public class AuthenticatedPrincipal implements Serializable, Principal {
 
   private static final long serialVersionUID = 1L;
+
+  @JsonIgnore
+  private final static ObjectMapper mapper = new ObjectMapper().enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+          .setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL).setVisibility(JsonMethod.FIELD, JsonAutoDetect.Visibility.ANY);
+
 
   private String name;
 
@@ -87,14 +100,14 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
   }
 
   public void addAttribute(String key, String value) {
-    if (attributes == null ) {
+    if (attributes == null) {
       attributes = new HashMap<String, String>();
     }
-    attributes.put(key,value);
+    attributes.put(key, value);
   }
 
   public void addGroup(String name) {
-    if (groups == null ) {
+    if (groups == null) {
       groups = new ArrayList<String>();
     }
     groups.add(name);
@@ -126,24 +139,21 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
   }
 
   /**
-   * @param name
-   *          the name to set
+   * @param name the name to set
    */
   public void setName(String name) {
     this.name = name;
   }
 
   /**
-   * @param roles
-   *          the roles to set
+   * @param roles the roles to set
    */
   public void setRoles(Collection<String> roles) {
     this.roles = roles;
   }
 
   /**
-   * @param attributes
-   *          the attributes to set
+   * @param attributes the attributes to set
    */
   public void setAttributes(Map<String, String> attributes) {
     this.attributes = attributes;
@@ -160,6 +170,24 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
   @JsonIgnore
   public boolean isGroupAware() {
     return !CollectionUtils.isEmpty(groups);
+  }
+
+  @JsonIgnore
+  public String serialize() {
+    try {
+      return mapper.writeValueAsString(this);
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to serialize Principal:" + toString(), e);
+    }
+  }
+
+  @JsonIgnore
+  public static AuthenticatedPrincipal deserialize(String json) {
+    try {
+      return mapper.readValue(json, AuthenticatedPrincipal.class);
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to serialize Principal:" + json, e);
+    }
   }
 
 }

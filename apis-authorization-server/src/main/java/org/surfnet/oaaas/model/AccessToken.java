@@ -109,8 +109,7 @@ public class AccessToken extends AbstractEntity {
   @PrePersist
   public void encodePrincipal() {
     if (principal != null) {
-      byte[] binaryData = SerializationUtils.serialize(principal);
-      this.encodedPrincipal = new String(Base64.encodeBase64(binaryData));
+      this.encodedPrincipal = principal.serialize();
     }
   }
 
@@ -119,8 +118,7 @@ public class AccessToken extends AbstractEntity {
   @PostUpdate
   public void decodePrincipal() {
     if (StringUtils.isNotBlank(encodedPrincipal)) {
-      byte[] objectData = Base64.decodeBase64(encodedPrincipal.getBytes());
-      this.principal = (AuthenticatedPrincipal) SerializationUtils.deserialize(objectData);
+      this.principal = AuthenticatedPrincipal.deserialize(encodedPrincipal);
     }
   }
 

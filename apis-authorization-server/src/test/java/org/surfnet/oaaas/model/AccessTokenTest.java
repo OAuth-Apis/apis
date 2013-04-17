@@ -28,7 +28,9 @@ import java.util.*;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 import com.sun.jersey.api.json.JSONJAXBContext;
