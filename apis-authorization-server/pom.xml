@@ -22,6 +22,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-resource-server-library</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>

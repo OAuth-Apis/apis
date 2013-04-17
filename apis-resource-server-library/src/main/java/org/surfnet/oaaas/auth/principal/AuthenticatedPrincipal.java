@@ -25,7 +25,6 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.util.CollectionUtils;
-import org.surfnet.oaaas.auth.AbstractAuthenticator;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -37,9 +36,7 @@ import java.util.Map;
 
 /**
  * {@link Principal} that can contain roles and additional attributes. This is
- * the return Object for {@link AbstractAuthenticator} implementations. Note
- * that the key and values of the {@link AuthenticatedPrincipal#attributes} must
- * be {@link Serializable}.
+ * the return Object for AbstractAuthenticator implementations.
  */
 public class AuthenticatedPrincipal implements Serializable, Principal {
 

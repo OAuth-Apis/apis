@@ -64,6 +64,7 @@
 
 
   <modules>
+    <module>apis-resource-server-library</module>
     <module>apis-example-resource-server</module>
     <module>apis-authorization-server</module>
     <module>apis-authorization-server-war</module>
@@ -298,6 +299,11 @@
       <dependency>
         <groupId>nl.surfnet.apis</groupId>
         <artifactId>apis-authorization-server</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.surfnet.apis</groupId>
+        <artifactId>apis-resource-server-library</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
