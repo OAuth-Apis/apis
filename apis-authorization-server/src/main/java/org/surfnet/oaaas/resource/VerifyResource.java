@@ -29,14 +29,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
+
+import java.io.IOException;
 
 /**
  * Resource for handling the call from resource servers to validate an access
@@ -54,6 +59,8 @@ public class VerifyResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(VerifyResource.class);
 
+  private static final ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+
   @Inject
   private AccessTokenRepository accessTokenRepository;
 
@@ -63,7 +70,7 @@ public class VerifyResource {
   @GET
   public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
   String authorization, @QueryParam("access_token")
-  String accessToken) {
+  String accessToken) throws IOException {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
 
@@ -87,7 +94,7 @@ public class VerifyResource {
         token.getScopes(), token.getPrincipal(), token.getExpires());
 
     LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
-    return Response.ok(verifyTokenResponse).build();
+    return Response.ok(mapper.writeValueAsString(verifyTokenResponse)).build();
   }
 
   private boolean tokenExpired(AccessToken token) {

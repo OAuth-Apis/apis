@@ -86,7 +86,8 @@ public class AbstractResource {
 
 
   protected String getUserId(HttpServletRequest request) {
-    return ((VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE)).getPrincipal().getName();
+    VerifyTokenResponse verifyTokenResponse = (VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
+    return verifyTokenResponse.getPrincipal().getName();
   }
 
   public String generateRandom() {

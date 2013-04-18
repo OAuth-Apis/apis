@@ -18,8 +18,11 @@
  */
 package org.surfnet.oaaas.auth;
 
+import javax.ws.rs.Produces;
 import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.DeserializationConfig;
@@ -36,14 +39,16 @@ import com.sun.jersey.api.client.Client;
  */
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
+  //http://stackoverflow.com/questions/4428109/jersey-jackson-json-date-serialization-format-problem-how-to-change-the-form
+
   private ObjectMapper mapper;
 
   public ObjectMapperProvider(){
-    mapper = new ObjectMapper().enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    mapper = new ObjectMapper().enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
         .setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL).setVisibility(JsonMethod.FIELD, Visibility.ANY);
     mapper.registerModule(new MrBeanModule());
-
   }
+
   /* (non-Javadoc)
    * @see javax.ws.rs.ext.ContextResolver#getContext(java.lang.Class)
    */

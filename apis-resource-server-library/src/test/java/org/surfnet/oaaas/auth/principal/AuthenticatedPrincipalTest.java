@@ -28,7 +28,7 @@ public class AuthenticatedPrincipalTest {
   @Test
   public void testSerialization() {
     AuthenticatedPrincipal principal = new AuthenticatedPrincipal("emma.blunt");
-    System.out.println(principal.serialize());
+    assertEquals("emma.blunt",AuthenticatedPrincipal.deserialize(principal.serialize()).getDisplayName());
   }
 
 }

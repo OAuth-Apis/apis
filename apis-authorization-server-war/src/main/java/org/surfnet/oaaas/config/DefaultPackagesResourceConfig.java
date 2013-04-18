@@ -22,6 +22,7 @@ import java.util.Set;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.core.spi.scanning.Scanner;
+import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.resource.resourceserver.AccessTokenResource;
 import org.surfnet.oaaas.resource.resourceserver.ClientResource;
 import org.surfnet.oaaas.resource.resourceserver.ResourceServerResource;
@@ -50,10 +51,20 @@ public class DefaultPackagesResourceConfig extends PackagesResourceConfig {
   @Override
   public void init(Scanner scanner) {
     Set<Class<?>> classes = getClasses();
+    /*
+     * The actual implementation of the OAuth spec
+     */
+    classes.add(TokenResource.class);
+    /*
+     * Responsible for the (only) communication between Resource Servers and the Authorization Server for validation of Tokens
+     */
+    classes.add(VerifyResource.class);
+    /*
+     * The Resource Server part of the Authorization Server used by the JavaScript admin client
+     */
     classes.add(ClientResource.class);
     classes.add(ResourceServerResource.class);
-    classes.add(TokenResource.class);
-    classes.add(VerifyResource.class);
     classes.add(AccessTokenResource.class);
+
   }
 }
