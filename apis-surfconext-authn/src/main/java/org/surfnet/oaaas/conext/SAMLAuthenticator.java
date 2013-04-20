@@ -29,7 +29,11 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
+import org.opensaml.saml2.core.RequesterID;
 import org.opensaml.saml2.core.Response;
+import org.opensaml.saml2.core.Scoping;
+import org.opensaml.saml2.core.impl.RequesterIDBuilder;
+import org.opensaml.saml2.core.impl.ScopingBuilder;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
@@ -49,7 +53,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -65,14 +73,21 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   private static final Logger LOG = LoggerFactory.getLogger(SAMLAuthenticator.class);
   private static final String RELAY_STATE_FROM_SAML = "RELAY_STATE_FROM_SAML";
   private static final String PRINCIPAL_FROM_SAML = "PRINCIPAL_FROM_SAML";
+  private static final String CLIENT_SAML_ENTITY_NAME = "CLIENT_SAML_ENTITY_NAME";
 
   private TimeService timeService = new TimeService();
   private IDService idService = new IDService();
+  private ScopingBuilder scopingBuilder = new ScopingBuilder();
+  private RequesterIDBuilder requesterIDBuilder = new RequesterIDBuilder();
+
   private OpenSAMLContext openSAMLContext;
   private OpenConextOAuthClient apiClient;
   private String callbackFlagParameter = "apiOauthCallback";
   private boolean enrichPricipal;
 
+
+  @Inject
+  private AuthorizationRequestRepository authorizationRequestRepository;
 
   private final Properties properties;
 
@@ -223,6 +238,14 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     AuthnRequest authnRequest = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
 
+    String spEntityIdBy = getSPEntityIdByRequest(authState);
+
+    if (StringUtils.isNotEmpty(spEntityIdBy)) {
+      Scoping scoping = scopingBuilder.buildObject();
+      scoping.getRequesterIDs().add(createRequesterID(spEntityIdBy));
+      authnRequest.setScoping(scoping);
+    }
+
     CriteriaSet criteriaSet = new CriteriaSet();
     criteriaSet.add(new EntityIDCriteria(openSAMLContext.entityId()));
     criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
@@ -238,6 +261,22 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     } catch (org.opensaml.xml.security.SecurityException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private RequesterID createRequesterID(String id) {
+    RequesterID requesterID = requesterIDBuilder.buildObject();
+    requesterID.setRequesterID(id);
+    return requesterID;
+  }
+
+  /**
+   * Get the SP Entity ID from the OAuth client
+   */
+  public String getSPEntityIdByRequest(String authState) {
+    AuthorizationRequest authorizationRequest = authorizationRequestRepository.findByAuthState(authState);
+    Client client = authorizationRequest.getClient();
+    String clientSamlEntityName = client.getAttributes().get(CLIENT_SAML_ENTITY_NAME);
+    return clientSamlEntityName;
   }
 
 
