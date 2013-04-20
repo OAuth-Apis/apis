@@ -296,6 +296,7 @@
           <stopKey>stopauthserver</stopKey>
           <stopPort>9280</stopPort>
           <useTestClasspath>true</useTestClasspath>
+          <contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
         </configuration>
       </plugin>
     </plugins>
