@@ -215,14 +215,15 @@ public class AuthorizationServerFilter implements Filter {
         tokenResponse = cacheAccessTokens() ? cache.get(accessToken, verifyCall) : verifyCall.call();
       } catch (Exception e) {
         LOG.error("While validating access token", e);
-        sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot verify access token");
+        sendError(response, HttpServletResponse.SC_FORBIDDEN, "Cannot verify access token");
         return;
       }
       /*
        * The presence of the principal is the check to ensure that the access
        * token is ok.
        */
-      if (tokenResponse != null && tokenResponse.getPrincipal() != null) {
+      if (tokenResponse != null && tokenResponse.getPrincipal() != null
+              && tokenResponse.getError() == null) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
         return;
@@ -253,8 +254,7 @@ public class AuthorizationServerFilter implements Filter {
       return objectMapper.readValue(responseString, VerifyTokenResponse.class);
     } catch (Exception e) {
       LOG.warn("Could not parse the Verify Token Response", e);
-      sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot parse result");
-      return new VerifyTokenResponse(e.getMessage());
+      return new VerifyTokenResponse("Could not parse the Verify Token Response");
     }
   }
 
