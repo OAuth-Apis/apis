@@ -18,36 +18,32 @@
  */
 package org.surfnet.oaaas.auth;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
-
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
+import org.surfnet.oaaas.model.TokenResponseCache;
+import org.surfnet.oaaas.model.TokenResponseCacheImpl;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * {@link Filter} which can be used to protect all relevant resources by
  * validating the oauth access token with the Authorization server. This is an
  * example configuration:
- *
+ * <p/>
  * <pre>
  * {@code
  * <filter>
@@ -72,16 +68,16 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
  * </filter-mapping>
  * }
  * </pre>
- *
+ * <p/>
  * The response of the Authorization Server is put on the
  * {@link HttpServletRequest} with the name
  * {@link AuthorizationServerFilter#VERIFY_TOKEN_RESPONSE}.
- *
+ * <p/>
  * Of course it might be better to use a properties file depending on the
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
  * simple to override the {@link AuthorizationServerFilter#init(FilterConfig)}
- *
- * Also note that by default the responses from the Authorization Server are
+ * <p/>
+ * Also note that by default the responses from the Authorization Server are not
  * cached. This can easily be changed if you override
  * {@link AuthorizationServerFilter#cacheAccessTokens()} and to configure the
  * cache differently override {@link AuthorizationServerFilter#buildCache()}
@@ -121,7 +117,7 @@ public class AuthorizationServerFilter implements Filter {
    * If not overridden by a subclass we cache the answers from the authorization
    * server
    */
-  private Cache<String, VerifyTokenResponse> cache;
+  private TokenResponseCache cache;
 
   /*
    * Key and secret obtained out-of-band to authenticate against the
@@ -161,9 +157,10 @@ public class AuthorizationServerFilter implements Filter {
     Assert.hasText(authorizationServerUrl, "Must provide a authorization server url");
 
     this.authorizationValue = new String(Base64.encodeBase64(resourceServerKey.concat(":").concat(resourceServerSecret)
-        .getBytes()));
+            .getBytes()));
     if (cacheAccessTokens()) {
-      this.cache = buildCache(false);
+      this.cache = buildCache();
+      Assert.notNull(this.cache);
     }
 
     this.client = createClient();
@@ -184,15 +181,14 @@ public class AuthorizationServerFilter implements Filter {
     return Client.create(cc);
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  protected Cache<String, VerifyTokenResponse> buildCache(boolean recordStats) {
-    CacheBuilder cacheBuilder = CacheBuilder.newBuilder().maximumSize(100000).expireAfterAccess(10, TimeUnit.MINUTES);
-    return recordStats ? cacheBuilder.recordStats().build() : cacheBuilder.build();
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  protected TokenResponseCache buildCache() {
+    return new TokenResponseCacheImpl(1000, 60 * 5);
   }
 
   @Override
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
-      throws IOException, ServletException {
+          throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
     /*
@@ -200,30 +196,9 @@ public class AuthorizationServerFilter implements Filter {
      * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-7
      */
     final String accessToken = getAccessToken(request);
-    if (accessToken == null) {
-      LOG.warn("No accesstoken on request. Will respond with error response");
-      sendError(response, HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint requires valid access token");
-      return;
-    } else {
-      VerifyTokenResponse tokenResponse = null;
-      /*
-       * Get the 'Validate Access Token' response from the Authorization Server
-       * either live or from the cache
-       */
-      try {
-        Callable<VerifyTokenResponse> verifyCall = getCallable(accessToken, response);
-        tokenResponse = cacheAccessTokens() ? cache.get(accessToken, verifyCall) : verifyCall.call();
-      } catch (Exception e) {
-        LOG.error("While validating access token", e);
-        sendError(response, HttpServletResponse.SC_FORBIDDEN, "Cannot verify access token");
-        return;
-      }
-      /*
-       * The presence of the principal is the check to ensure that the access
-       * token is ok.
-       */
-      if (tokenResponse != null && tokenResponse.getPrincipal() != null
-              && tokenResponse.getError() == null) {
+    if (accessToken != null) {
+      VerifyTokenResponse tokenResponse = getVerifyTokenResponse(accessToken);
+      if (isValidResponse(tokenResponse)) {
         request.setAttribute(VERIFY_TOKEN_RESPONSE, tokenResponse);
         chain.doFilter(request, response);
         return;
@@ -232,33 +207,40 @@ public class AuthorizationServerFilter implements Filter {
     sendError(response, HttpServletResponse.SC_FORBIDDEN, "OAuth2 endpoint");
   }
 
-  private Callable<VerifyTokenResponse> getCallable(final String accessToken, final HttpServletResponse response) {
-    return new Callable<VerifyTokenResponse>() {
-      @Override
-      public VerifyTokenResponse call() throws Exception {
-        return getVerifyTokenResponse(accessToken, response);
+  protected VerifyTokenResponse getVerifyTokenResponse(String accessToken) {
+    VerifyTokenResponse verifyTokenResponse = null;
+    if (cacheAccessTokens()) {
+      verifyTokenResponse = cache.getVerifyToken(accessToken);
+      if (verifyTokenResponse != null) {
+        return verifyTokenResponse;
       }
-    };
-  }
-
-  protected VerifyTokenResponse getVerifyTokenResponse(String accessToken, final HttpServletResponse response) {
-    ClientResponse res = client.resource(String.format("%s?access_token=%s", authorizationServerUrl, accessToken))
-        .header(HttpHeaders.AUTHORIZATION, "Basic " + authorizationValue).accept("application/json")
-        .get(ClientResponse.class);
-    /*
-     * Can't use directly jersey, as we need the mr bean module
-     */
-    try {
-      String responseString = res.getEntity(String.class);
-      LOG.debug("Got verify token response (status: {}): '{}'", res.getClientResponseStatus().getStatusCode(), responseString);
-      return objectMapper.readValue(responseString, VerifyTokenResponse.class);
-    } catch (Exception e) {
-      LOG.warn("Could not parse the Verify Token Response", e);
-      return new VerifyTokenResponse("Could not parse the Verify Token Response");
     }
+
+    if (verifyTokenResponse == null) {
+      ClientResponse res = client.resource(String.format("%s?access_token=%s", authorizationServerUrl, accessToken))
+              .header(HttpHeaders.AUTHORIZATION, "Basic " + authorizationValue).accept("application/json")
+              .get(ClientResponse.class);
+      try {
+        String responseString = res.getEntity(String.class);
+        int statusCode = res.getClientResponseStatus().getStatusCode();
+        LOG.debug("Got verify token response (status: {}): '{}'", statusCode, responseString);
+        if (statusCode == HttpServletResponse.SC_OK) {
+          verifyTokenResponse = objectMapper.readValue(responseString, VerifyTokenResponse.class);
+        }
+      } catch (Exception e) {
+        LOG.error("Exception in reading result from AuthorizationServer", e);
+        // anti-pattern, but null case is explicitly handled
+      }
+    }
+
+    if (isValidResponse(verifyTokenResponse) && cacheAccessTokens()) {
+      cache.storeVerifyToken(accessToken, verifyTokenResponse);
+    }
+    return verifyTokenResponse;
   }
 
   protected void sendError(HttpServletResponse response, int statusCode, String reason) {
+    LOG.warn("No valid access-token on request. Will respond with error response");
     try {
       response.sendError(statusCode, reason);
       response.flushBuffer();
@@ -269,6 +251,11 @@ public class AuthorizationServerFilter implements Filter {
 
   protected boolean cacheAccessTokens() {
     return false;
+  }
+
+  private boolean isValidResponse(VerifyTokenResponse tokenResponse) {
+    return tokenResponse != null && tokenResponse.getPrincipal() != null
+            && tokenResponse.getError() == null;
   }
 
   private String getAccessToken(HttpServletRequest request) {
@@ -288,13 +275,6 @@ public class AuthorizationServerFilter implements Filter {
 
   @Override
   public void destroy() {
-  }
-
-  /**
-   * @return the cache
-   */
-  public Cache<String, VerifyTokenResponse> getCache() {
-    return cache;
   }
 
   public void setAuthorizationServerUrl(String authorizationServerUrl) {

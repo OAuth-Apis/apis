@@ -27,11 +27,9 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
-import com.google.common.base.Objects;
-
 /**
- * Representation of the answer to the a Resource Server when asked to verify
- * the token.
+ * Representation of the answer to a Resource Server when asked to verify
+ * a token.
  *
  */
 
@@ -150,11 +148,6 @@ public class VerifyTokenResponse implements Serializable {
    */
   public void setPrincipal(AuthenticatedPrincipal principal) {
     this.principal = principal;
-  }
-
-  @Override
-  public String toString() {
-    return Objects.toStringHelper(this).add("principal", principal).add("error", error).toString();
   }
 
 }
