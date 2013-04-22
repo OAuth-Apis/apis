@@ -56,7 +56,7 @@ h1 {
 /* side navigation */
 
 .side-nav {
-    width: 200px;
+    width: 215px;
     position: absolute;
 }
 
@@ -123,7 +123,7 @@ h1 {
 
 /* content div (always next to side-nav) */
 .content {
-    margin-left: 200px;
+    margin-left: 215px;
     padding: 25px 50px;
     border-left: 1px solid #efefef;
     min-height: 240px;

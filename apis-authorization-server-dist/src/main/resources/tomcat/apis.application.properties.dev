@@ -21,7 +21,7 @@ jdbc.username=apisrw
 jdbc.password=???
 
 # Either db/migration/mysql or db/migration/hsqldb or your custom implementation (e.g. postgres)
-flyway.migrations.location=db/migration/mysql
+flyway.migrations.location=db/migration/mysql, db/migration/mysql_content
 
 # The authentication module
 authenticatorClass=org.surfnet.oaaas.conext.SAMLAuthenticator
