@@ -76,14 +76,6 @@ public class OAuth2ValidatorImplTest {
 
   @Test
   public void testClientNotPermittedImplicitGrant() {
-    /*
-     * Need to change default behavior of the Client repo
-     */
-    reset(clientRepository);
-    Client client = createClient("client-app");
-    client.setNotAllowedImplicitGrant(true);
-    when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
-
     request.setResponseType(OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE);
     validate(ValidationResponse.IMPLICIT_GRANT_NOT_PERMITTED);
   }
@@ -107,6 +99,11 @@ public class OAuth2ValidatorImplTest {
 
   @Test
   public void testValidateImplicitGrant() {
+    reset(clientRepository);
+    Client client = createClient("client-app");
+    client.setAllowedImplicitGrant(true);
+    when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
+
     request.setResponseType(OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE);
     request.setRedirectUri(" ");
     validate(ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI);

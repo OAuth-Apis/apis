@@ -80,7 +80,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- all the versions in the oa-aas project -->
     <dropwizard.version>0.4.2</dropwizard.version>
-    <flyway.version>1.5</flyway.version>
+    <flyway.version>2.1.1</flyway.version>
     <hsqldb.version>2.2.8</hsqldb.version>
     <junit.version>4.10</junit.version>
     <tomcat-jdbc.version>7.0.29</tomcat-jdbc.version>

@@ -70,7 +70,7 @@ INSERT INTO Client_scopes values (99997, 'read'), (99997, 'write');
 Client getting refresh tokens (and skips consent)
 */
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
-clientId, secret, skipConsent, expireDuration, useRefreshTokens, notAllowedImplicitGrant)
+clientId, secret, skipConsent, expireDuration, useRefreshTokens, allowedImplicitGrant)
 VALUES
     (99996, 'it-test@example.com', 'john.doe', 'it test client no consent use refresh',
     'it test client 2',

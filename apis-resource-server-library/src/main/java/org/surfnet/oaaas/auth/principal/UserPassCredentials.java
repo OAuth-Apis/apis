@@ -59,7 +59,6 @@ public class UserPassCredentials {
   private void noValidAuthHeader() {
     username = null;
     password = null;
-    return;
   }
 
   public boolean isValid() {

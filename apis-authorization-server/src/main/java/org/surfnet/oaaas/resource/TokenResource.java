@@ -144,9 +144,9 @@ public class TokenResource {
     Client client = request.getClient();
     long expireDuration = client.getExpireDuration();
     long expires = (expireDuration == 0L ? 0L : (System.currentTimeMillis() + (1000 * expireDuration)));
-    String refeshToken = (client.isUseRefreshTokens() && !isImplicitGrant) ? getTokenValue(true) : null;
+    String refreshToken = (client.isUseRefreshTokens() && !isImplicitGrant) ? getTokenValue(true) : null;
     AccessToken token = new AccessToken(getTokenValue(false), request.getPrincipal(), client, expires,
-        request.getGrantedScopes(), refeshToken);
+        request.getGrantedScopes(), refreshToken);
     return accessTokenRepository.save(token);
   }
 

@@ -47,19 +47,18 @@ public class TokenResponseCacheImpl implements TokenResponseCache {
 
   @Override
   public VerifyTokenResponse getVerifyToken(String accessToken) {
-    if (accessToken == null) {
-      return null;
-    }
-    CacheEntry cacheEntry = cache.get(accessToken);
-    if (cacheEntry != null) {
-      if (isExpired(cacheEntry)) {
-        cache.remove(accessToken);
-        return null;
-      } else {
-        return cacheEntry.value;
+    VerifyTokenResponse response = null;
+    if (accessToken != null) {
+      CacheEntry cacheEntry = cache.get(accessToken);
+      if (cacheEntry != null) {
+        if (isExpired(cacheEntry)) {
+          cache.remove(accessToken);
+        } else {
+          response = cacheEntry.value;
+        }
       }
     }
-    return null;
+    return response;
   }
 
   private boolean isExpired(CacheEntry cacheEntry) {
@@ -68,13 +67,12 @@ public class TokenResponseCacheImpl implements TokenResponseCache {
 
   @Override
   public void storeVerifyToken(String accessToken, VerifyTokenResponse tokenResponse) {
-    if (accessToken == null || tokenResponse == null) {
-      return;
+    if (accessToken != null && tokenResponse != null) {
+      if (cache.size() == maxSize) {
+        cleanUpCache();
+      }
+      cache.put(accessToken, new CacheEntry(tokenResponse, System.currentTimeMillis() + expireTime));
     }
-    if (cache.size() == maxSize) {
-      cleanUpCache();
-    }
-    cache.put(accessToken, new CacheEntry(tokenResponse, System.currentTimeMillis() + expireTime));
   }
 
   private void cleanUpCache() {

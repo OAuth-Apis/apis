@@ -14,7 +14,6 @@ VALUES
 INSERT INTO Client_scopes values (99999, 'read');
 INSERT INTO Client_redirectUris values (99999, 'http://localhost:8084/redirect');
 
-
 /*
 emma.blunt
  */
@@ -37,12 +36,12 @@ VALUES
 INSERT INTO ResourceServer_scopes values (99998, 'read'),(99998, 'write') ;
 
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
-clientId, secret, includePrincipal, expireDuration)
+clientId, includePrincipal, expireDuration,allowedImplicitGrant)
 VALUES
     (99998, 'client@coolapp.com', 'john.doe', 'Javascript application for authorization server administration',
     'Authorization Server Admin Client',
     'https://raw.github.com/OpenConextApps/apis/master/apis-images/surf-oauth-client.png', 99998,
-    'authorization-server-admin-js-client', '', 1, 300);
+    'authorization-server-admin-js-client', 1, 1800,1);
 INSERT INTO Client_scopes values (99998, 'read'), (99998, 'write');
 INSERT INTO client_attributes(client_id , attribute_name, attribute_value) values
 	(99998, 'CLIENT_SAML_ENTITY_NAME','Authorization_Server_Admin_Client');
@@ -72,7 +71,7 @@ INSERT INTO Client_scopes values (99997, 'read'), (99997, 'write');
 Client getting refresh tokens (and skips consent)
 */
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
-clientId, secret, skipConsent, expireDuration, useRefreshTokens, notAllowedImplicitGrant)
+clientId, secret, skipConsent, expireDuration, useRefreshTokens, allowedImplicitGrant)
 VALUES
     (99996, 'it-test@example.com', 'john.doe', 'it test client no consent use refresh',
     'it test client 2',
@@ -107,3 +106,18 @@ VALUES
     (99997, 0, '["org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal",{"name":"it-test-enduser","roles":["java.util.ArrayList",[]],"groups":["java.util.ArrayList",[]],"attributes":["java.util.HashMap",{}]}]',
     '00-11-22-33',99997, 'it-test-enduser ');
 INSERT INTO Accesstoken_scopes values (99997, 'read'), (99997, 'write');
+
+INSERT INTO resourceserver (id, contactEmail,  contactName, resourceServerName, resourceServerKey, secret, owner, thumbNailUrl)
+VALUES
+	(99991, 'surfconext-beheer@surfnet.nl','surfconext-beheer','CDK',
+	'cdk-resource-server', '17656a4e-1221-4983-960a-ad1ef31429df', 'showroom_shopmanager', 'https://raw.github.com/OpenConextApps/apis/master/apis-images/surf-conext-logo.png');
+INSERT INTO ResourceServer_scopes values (99991, 'read') ;
+
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
+clientId, includePrincipal, allowedImplicitGrant)
+VALUES
+    (99992, 'surfconext-beheer@surfnet.nl', 'surfconext-beheer', 'Javascript CDK Gadget application for demo purposes ',
+    'cdk-gadget-client',
+    'https://raw.github.com/OpenConextApps/apis/master/apis-images/surf-oauth-client.png', 99991,
+    'cdk-gadget-client', 1, 1);
+INSERT INTO Client_scopes values (123456, 'read');

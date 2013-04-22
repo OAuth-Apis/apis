@@ -55,7 +55,7 @@ public class Client extends AbstractEntity {
   @Column(unique = true)
   private String clientId;
 
-  @Column(unique = true, nullable = false)
+  @Column
   private String secret;
 
   @Column
@@ -103,7 +103,7 @@ public class Client extends AbstractEntity {
   private boolean useRefreshTokens;
 
   @Column
-  private boolean notAllowedImplicitGrant;
+  private boolean allowedImplicitGrant;
 
   // Listed here so Cascade will work.
   @OneToMany(mappedBy ="client", cascade = CascadeType.ALL)
@@ -304,18 +304,18 @@ public class Client extends AbstractEntity {
   }
 
   /**
-   * @return the notAllowedImplicitGrant
+   * @return the AllowedImplicitGrant
    */
-  public boolean isNotAllowedImplicitGrant() {
-    return notAllowedImplicitGrant;
+  public boolean isAllowedImplicitGrant() {
+    return allowedImplicitGrant;
   }
 
   /**
-   * @param notAllowedImplicitGrant
-   *          the notAllowedImplicitGrant to set
+   * @param AllowedImplicitGrant
+   *          the AllowedImplicitGrant to set
    */
-  public void setNotAllowedImplicitGrant(boolean notAllowedImplicitGrant) {
-    this.notAllowedImplicitGrant = notAllowedImplicitGrant;
+  public void setAllowedImplicitGrant(boolean allowedImplicitGrant) {
+    this.allowedImplicitGrant = allowedImplicitGrant;
   }
 
   public boolean isIncludePrincipal() {

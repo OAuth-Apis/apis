@@ -48,6 +48,8 @@ public class AbstractResource {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractResource.class);
 
+  private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+
   @Inject
   private ExceptionTranslator exceptionTranslator;
 
@@ -62,8 +64,14 @@ public class AbstractResource {
       s = Response.Status.BAD_REQUEST;
       reason = "Violating unique constraints";
     } else if (jpaException instanceof ConstraintViolationException) {
+      ConstraintViolationException constraintViolationException = (ConstraintViolationException) jpaException;
       s = Response.Status.BAD_REQUEST;
-      reason = "Constraint violation " + jpaException.getMessage();
+      Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
+      reason = "Constraint violation(s): " ;
+      for (ConstraintViolation<?> violation : violations) {
+        reason += LINE_SEPARATOR;
+        reason += violation.getMessage();
+      }
     } else {
       s = Response.Status.INTERNAL_SERVER_ERROR;
       reason = "Internal server error";

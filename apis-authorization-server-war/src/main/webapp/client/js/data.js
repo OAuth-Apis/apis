@@ -15,28 +15,35 @@
  */
 
 
-var data = (function() {
+var data = (function () {
   var accessToken = null;
 
 
-  var oauthAjax = function(options) {
+  var oauthAjax = function (options) {
     if (options.beforeSend) {
       var originalBeforeSend = options.beforeSend;
     }
-    options.beforeSend = function(xhr, settings) {
+    options.beforeSend = function (xhr, settings) {
       originalBeforeSend && originalBeforeSend(xhr, settings);
       xhr.setRequestHeader('Authorization', "bearer " + accessToken);
     };
     options.contentType = "application/json"; // we send json
     options.dataType = "json"; // we expect json back.
     if (options.error) {
-       var originalError = options.error;
+      var originalError = options.error;
     }
-    options.error = function(xhr, textStatus, errorThrown){
+    options.error = function (xhr, textStatus, errorThrown) {
       //token expired or invalid
       if (xhr.status == 403) {
         windowController.login();
-      } else if (originalError != undefined) {
+      } else if (xhr.status == 0) {
+        bootbox.alert("Currently there is no communication possible with the Authorization Server",
+          "Close",
+          function (result) {
+            bootbox.hideAll();
+          });
+      }
+      if (originalError != undefined) {
         originalError(xhr, textStatus, errorThrown);
       }
     };
@@ -45,11 +52,11 @@ var data = (function() {
   };
 
   return {
-    setAccessToken: function(newAccessToken) {
+    setAccessToken: function (newAccessToken) {
       accessToken = newAccessToken;
     },
 
-    saveResourceServer: function(resourceServer, success, failure) {
+    saveResourceServer: function (resourceServer, success, failure) {
 
       var httpMethod, url;
       if (resourceServer.id) {
@@ -66,49 +73,49 @@ var data = (function() {
         data: JSON.stringify(resourceServer),
         type: httpMethod,
         success: success,
-        error: function(xhr, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
           failure(xhr.responseText);
         }
       });
     },
 
-    getResourceServer: function(id, resultHandler) {
+    getResourceServer: function (id, resultHandler) {
       oauthAjax({
-        url:"../admin/resourceServer/" + id,
+        url: "../admin/resourceServer/" + id,
         success: resultHandler,
-        error: function(xhr, textStatus, errorThrown) { // On failure, call result handler anyway, with empty result.
+        error: function (xhr, textStatus, errorThrown) { // On failure, call result handler anyway, with empty result.
           resultHandler({});
         }
       });
     },
-    getResourceServers:function (resultHandler) {
+    getResourceServers: function (resultHandler) {
       oauthAjax({
-        url:"../admin/resourceServer",
+        url: "../admin/resourceServer",
         success: resultHandler,
-        error: function(xhr, textStatus, errorThrown) { // On failure, call result handler anyway, with empty result.
+        error: function (xhr, textStatus, errorThrown) { // On failure, call result handler anyway, with empty result.
           resultHandler({});
         }
       });
     },
-    getStatistics:function (resultHandler) {
-        oauthAjax({
-          url:"../admin/resourceServer/stats",
-          success: resultHandler,
-          error: function() { // On failure, call result handler anyway, with empty result.
-            resultHandler([]);
-          }
-        });
-      },
+    getStatistics: function (resultHandler) {
+      oauthAjax({
+        url: "../admin/resourceServer/stats",
+        success: resultHandler,
+        error: function () { // On failure, call result handler anyway, with empty result.
+          resultHandler([]);
+        }
+      });
+    },
 
-    deleteResourceServer: function(resourceServerId, success, failure) {
+    deleteResourceServer: function (resourceServerId, success, failure) {
       var httpMethod, url;
       httpMethod = "DELETE";
-      url = "../admin/resourceServer/" + resourceServerId ;
+      url = "../admin/resourceServer/" + resourceServerId;
       oauthAjax({
         url: url,
         type: httpMethod,
         success: success,
-        error: function(xhr, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
           failure(xhr.responseText);
         }
       });
@@ -119,25 +126,25 @@ var data = (function() {
      * Due to the way the REST service is setup, we cannot query for all clients overall but only for a specific resource server.
      * Here we query each resource servers' clients synchronously and concatenate the results.
      */
-    getClientsForResourceServers:function (resourceServerIds, resultHandler) {
+    getClientsForResourceServers: function (resourceServerIds, resultHandler) {
       var resultData = [];
       var receivedResponses = 0;
-      for (var i = 0; i< resourceServerIds.length; i++) {
+      for (var i = 0; i < resourceServerIds.length; i++) {
         var resourceServerId = resourceServerIds[i];
         oauthAjax({
-          url:"../admin/resourceServer/" + resourceServerId + "/client",
+          url: "../admin/resourceServer/" + resourceServerId + "/client",
           async: false,
-          success: function(data) {
+          success: function (data) {
             // set the resourceServerId on the client
             for (var i = 0; i < data.length; i++) {
               data[i].resourceServerId = resourceServerId;
             }
             resultData = resultData.concat(data);
           },
-          error: function(jqXHR, textStatus, errorThrown) {
+          error: function (jqXHR, textStatus, errorThrown) {
             console.log("error: " + textStatus);
           },
-          complete: function() {
+          complete: function () {
             receivedResponses++;
             if (receivedResponses == resourceServerIds.length) {
               resultHandler(resultData);
@@ -146,38 +153,38 @@ var data = (function() {
         });
       }
     },
-    getClients:function (resourceServerId, resultHandler) {
+    getClients: function (resourceServerId, resultHandler) {
       oauthAjax({
-        url:"../admin/resourceServer/" + resourceServerId + "/client",
-        success: function(data) {
+        url: "../admin/resourceServer/" + resourceServerId + "/client",
+        success: function (data) {
           for (var i = 0; i < data.length; i++) {
             // Put the resourceServerId in the client, we do not get it back from the request.
             data[i].resourceServerId = resourceServerId;
           }
           resultHandler(data);
         },
-        error: function() { // On failure, call result handler anyway, with empty result.
+        error: function () { // On failure, call result handler anyway, with empty result.
           resultHandler([]);
         }
       });
     },
-    getClient: function(resourceServerId, clientId, resultHandler) {
-      this.getResourceServer(resourceServerId, function(resourceServer) {
+    getClient: function (resourceServerId, clientId, resultHandler) {
+      this.getResourceServer(resourceServerId, function (resourceServer) {
         oauthAjax({
-          url:"../admin/resourceServer/" + resourceServerId + "/client/" + clientId,
-          success: function(client) {
+          url: "../admin/resourceServer/" + resourceServerId + "/client/" + clientId,
+          success: function (client) {
             // Put the resourceServer in the client, we do not get it back from the request.
             client.resourceServer = resourceServer;
             resultHandler(client);
           },
-          error: function() { // On failure, call result handler anyway, with empty result.
+          error: function () { // On failure, call result handler anyway, with empty result.
             resultHandler({});
           }
         });
       });
     },
 
-    saveClient: function(resourceServerId, client, success, failure) {
+    saveClient: function (resourceServerId, client, success, failure) {
 
       var httpMethod, url;
       if (client.id) {
@@ -192,12 +199,12 @@ var data = (function() {
         data: JSON.stringify(client),
         type: httpMethod,
         success: success,
-        error: function(xhr, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
           failure(xhr.responseText);
         }
       });
     },
-    deleteClient: function(resourceServerId, clientId, success, failure) {
+    deleteClient: function (resourceServerId, clientId, success, failure) {
 
       var httpMethod, url;
       httpMethod = "DELETE";
@@ -206,7 +213,7 @@ var data = (function() {
         url: url,
         type: httpMethod,
         success: success,
-        error: function(xhr, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
           failure(xhr.responseText);
         }
       });
@@ -215,25 +222,25 @@ var data = (function() {
     /**
      * Access token REST
      */
-    getAccessToken: function(id, resultHandler) {
+    getAccessToken: function (id, resultHandler) {
       oauthAjax({
-        url:"../admin/accessToken/" + id,
+        url: "../admin/accessToken/" + id,
         success: resultHandler,
-        error: function() { // On failure, call result handler anyway, with empty result.
+        error: function () { // On failure, call result handler anyway, with empty result.
           resultHandler({});
         }
       });
     },
-    getAccessTokens:function (resultHandler) {
+    getAccessTokens: function (resultHandler) {
       oauthAjax({
-        url:"../admin/accessToken",
+        url: "../admin/accessToken",
         success: resultHandler,
-        error: function() { // On failure, call result handler anyway, with empty result.
+        error: function () { // On failure, call result handler anyway, with empty result.
           resultHandler([]);
         }
       });
     },
-    deleteAccessToken: function(accessTokenId, success, failure) {
+    deleteAccessToken: function (accessTokenId, success, failure) {
 
       var httpMethod, url;
       httpMethod = "DELETE";
@@ -242,11 +249,11 @@ var data = (function() {
         url: url,
         type: httpMethod,
         success: success,
-        error: function(xhr, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
           failure(xhr.responseText);
         }
       });
     }
-    
+
   }
 })();

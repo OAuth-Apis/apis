@@ -54,9 +54,9 @@ public class AbstractTestRepository {
 
   private static void initFlyway(DataSource dataSource) {
     final Flyway flyway = new Flyway();
-    flyway.setDisableInitCheck(true);
+    flyway.setInitOnMigrate(true);
     flyway.setDataSource(dataSource);
-    flyway.setBaseDir("db/migration/hsqldb");
+    flyway.setLocations("db/migration/hsqldb");
     flyway.migrate();
   }
 

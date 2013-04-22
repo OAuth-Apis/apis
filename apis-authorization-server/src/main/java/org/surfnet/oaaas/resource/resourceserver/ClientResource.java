@@ -130,7 +130,7 @@ public class ClientResource extends AbstractResource {
 
     client.setResourceServer(resourceServer);
     client.setClientId(generateClientId(client));
-    client.setSecret(generateSecret());
+    client.setSecret(client.isAllowedImplicitGrant() ? null : generateSecret());
 
     // Validate input
     Set<ConstraintViolation<Client>> violations = validator.validate(client);
@@ -215,7 +215,7 @@ public class ClientResource extends AbstractResource {
     // Copy over read-only fields
     newOne.setResourceServer(resourceServer);
     newOne.setClientId(clientFromStore.getClientId());
-    newOne.setSecret(clientFromStore.getSecret());
+    newOne.setSecret(newOne.isAllowedImplicitGrant() ? null : clientFromStore.getSecret());
 
     Client savedInstance;
     try {

@@ -16,164 +16,192 @@
 
 /* fixes box model*/
 div {
-  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-  	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-  	box-sizing: border-box;         /* Opera/IE 8+ */
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box; /* Opera/IE 8+ */
 }
 
 /* body stuff */
 
-body { 
-  font-family: Helvetica;  margin: 0;
-  padding: 0;
-  }
-  
+body {
+    font-family: Helvetica;
+    margin: 0;
+    padding: 0;
+}
+
 /* h1 tweaks*/
 h1 {
-  font-size: 30px;
-  font-weight: 100;
-  line-height: 40px;
-  margin: 0 0 10px 0;
+    font-size: 30px;
+    font-weight: 100;
+    line-height: 40px;
+    margin: 0 0 10px 0;
 }
 
 /* header of page */
 
 .head {
-  height: 75px;
-  padding: 20px;
-  border-bottom: 1px solid #ddd;
-  box-shadow: inset 0px -2px 6px 0px rgba(0,0,0,.1);
-  background: #f8f8f8;
+    height: 75px;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    box-shadow: inset 0px -2px 6px 0px rgba(0, 0, 0, .1);
+    background: #f8f8f8;
 }
 
 .user-info {
-  font-size: 20px;
-  font-weight: 200;
-  margin-right: 30px;
+    font-size: 20px;
+    font-weight: 200;
+    margin-right: 30px;
 }
 
 /* side navigation */
 
 .side-nav {
-  width: 200px;
-  position: absolute;
+    width: 200px;
+    position: absolute;
 }
 
 .side-nav ul {
-  list-style: none;
-  font-size: 16px;
-  font-weight: lighter;
-  padding: 0;
-  line-height: 50px;
-  margin: 0;
+    list-style: none;
+    font-size: 16px;
+    font-weight: lighter;
+    padding: 0;
+    line-height: 50px;
+    margin: 0;
 }
 
 .side-nav a {
-  display: block;
-  color: #666;
-  background-position:20px center;
-  background-repeat: no-repeat;
-  text-decoration: none;
-  padding-left: 60px;
+    display: block;
+    color: #666;
+    background-position: 20px center;
+    background-repeat: no-repeat;
+    text-decoration: none;
+    padding-left: 60px;
     line-height: 50px;
-  border-bottom: 1px solid #efefef;
+    border-bottom: 1px solid #efefef;
 }
 
 .side-nav a.cur,
-.side-nav a:hover {color: #0072bc;
+.side-nav a:hover {
+    color: #0072bc;
 }
 
-.side-nav-servers a {background-image: url(../img/icon-servers-grey.png)}
-.side-nav-apps a {background-image: url(../img/icon-apps-grey.png)}
-.side-nav-keys a {background-image: url(../img/icon-keys-grey.png)}
-.side-nav-stats a {background-image: url(../img/icon-stats-grey.png)}
+.side-nav-servers a {
+    background-image: url(../img/icon-servers-grey.png)
+}
+
+.side-nav-apps a {
+    background-image: url(../img/icon-apps-grey.png)
+}
+
+.side-nav-keys a {
+    background-image: url(../img/icon-keys-grey.png)
+}
+
+.side-nav-stats a {
+    background-image: url(../img/icon-stats-grey.png)
+}
 
 .side-nav-servers a:hover,
-.side-nav-servers a.cur {background-image: url(../img/icon-servers-blue.png)}
-.side-nav-apps a:hover,
-.side-nav-apps a.cur {background-image: url(../img/icon-apps-blue.png)}
-.side-nav-keys a:hover,
-.side-nav-keys a.cur {background-image: url(../img/icon-keys-blue.png)}
-.side-nav-stats a:hover,
-.side-nav-stats a.cur {background-image: url(../img/icon-stats-blue.png)}
+.side-nav-servers a.cur {
+    background-image: url(../img/icon-servers-blue.png)
+}
 
+.side-nav-apps a:hover,
+.side-nav-apps a.cur {
+    background-image: url(../img/icon-apps-blue.png)
+}
+
+.side-nav-keys a:hover,
+.side-nav-keys a.cur {
+    background-image: url(../img/icon-keys-blue.png)
+}
+
+.side-nav-stats a:hover,
+.side-nav-stats a.cur {
+    background-image: url(../img/icon-stats-blue.png)
+}
 
 /* content div (always next to side-nav) */
 .content {
-  margin-left: 200px;
-  padding: 25px 50px;
-  border-left: 1px solid #efefef;
-  min-height: 240px;
+    margin-left: 200px;
+    padding: 25px 50px;
+    border-left: 1px solid #efefef;
+    min-height: 240px;
 }
 
 /* full div, for no side-nav */
 
 .full {
-  padding: 25px 50px;
+    padding: 25px 50px;
 }
 
 /* table, makes text fit and col-widths */
 
 .table {
-  font-size: 12px;
-  margin-bottom: 40px;
-  }
+    font-size: 12px;
+    margin-bottom: 40px;
+}
 
 .key-secret {
-  width: 80px;
-  display: inline-block;
+    width: 80px;
+    display: inline-block;
 }
 
 .col-icon {
-  width: 70px;
+    width: 70px;
 }
+
 .col-about {
-  width: 300px;
+    width: 300px;
 }
 
 img.tablelogo {
-	max-width: 80px;
+    max-width: 80px;
 }
-
 
 /* consent fixes */
 
 .consent {
-  margin: 0 0 18px 0;
-  padding: 0 0 18px 0;
-  border-bottom: 1px solid #EEE;
+    margin: 0 0 18px 0;
+    padding: 0 0 18px 0;
+    border-bottom: 1px solid #EEE;
 }
 
 .consent img {
-  margin-right: 20px;
+    margin-right: 20px;
 }
 
 /* footer */
 
 .foot {
-  clear: both;
-  height: 75px;
-  padding: 20px;
-  border-top: 1px solid #ddd;
-  box-shadow: inset 0px 2px 6px 0px rgba(0,0,0,.1);
-  background: #f8f8f8;
-  }
-
+    clear: both;
+    height: 75px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    box-shadow: inset 0px 2px 6px 0px rgba(0, 0, 0, .1);
+    background: #f8f8f8;
+}
 
 /* removes background and padding on form-actions  */
 .form-horizontal .form-actions {
-  background: none;
-  padding-left: 0;
+    background: none;
+    padding-left: 0;
 }
 
 /* left align form label */
 .form-horizontal .control-label {
-  text-align: left;
+    text-align: left;
 }
 
 /* vertical spacing when using stacked fields */
 .multiple-fields {
-  margin-bottom: 9px  ;
+    margin-bottom: 9px;
+}
+
+.center {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 

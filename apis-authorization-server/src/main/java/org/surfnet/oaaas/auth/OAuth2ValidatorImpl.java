@@ -131,7 +131,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     if (client == null) {
       throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
     }
-    if (client.isNotAllowedImplicitGrant()
+    if (!client.isAllowedImplicitGrant()
         && authorizationRequest.getResponseType().equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
       throw new ValidationResponseException(IMPLICIT_GRANT_NOT_PERMITTED);
     }

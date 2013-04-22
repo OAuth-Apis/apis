@@ -16,42 +16,32 @@
 
 package org.surfnet.oaaas.config;
 
-import javax.inject.Inject;
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
-import javax.validation.Validator;
-
 import com.googlecode.flyway.core.Flyway;
-
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.apache.tomcat.jdbc.pool.DataSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.surfnet.oaaas.auth.AbstractAuthenticator;
-import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
-import org.surfnet.oaaas.auth.AuthenticationFilter;
-import org.surfnet.oaaas.auth.OAuth2Validator;
-import org.surfnet.oaaas.auth.OAuth2ValidatorImpl;
-import org.surfnet.oaaas.auth.UserConsentFilter;
+import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 
+import javax.inject.Inject;
+import javax.servlet.Filter;
+import javax.servlet.ServletException;
+import javax.validation.Validator;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * The SpringConfiguration is a {@link Configuration} that can be overridden if
  * you want to plugin your own implementations. Note that the two most likely
  * candidates to change are the {@link AbstractAuthenticator} an
  * {@link AbstractUserConsentHandler}. You can change the implementation by
  * editing the application.apis.properties file where the implementations are
  * configured.
- *
  */
 @Configuration
 @PropertySource("classpath:apis.application.properties")
@@ -59,7 +49,7 @@ import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
  * The component scan can be used to add packages and exclusions to the default
  * package
  */
-@ComponentScan(basePackages = { "org.surfnet.oaaas.resource" })
+@ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
 @ImportResource("classpath:spring-repositories.xml")
 @EnableTransactionManagement
 public class SpringConfiguration {
@@ -83,9 +73,11 @@ public class SpringConfiguration {
   @Bean
   public Flyway flyway() {
     final Flyway flyway = new Flyway();
-    flyway.setDisableInitCheck(true);
+    flyway.setInitOnMigrate(true);
     flyway.setDataSource(dataSource());
-    flyway.setBaseDir(env.getProperty("flyway.migrations.location"));
+    String locationsValue = env.getProperty("flyway.migrations.location");
+    String[] locations = locationsValue.split("\\s*,\\s*");
+    flyway.setLocations(locations);
     flyway.migrate();
     return flyway;
   }

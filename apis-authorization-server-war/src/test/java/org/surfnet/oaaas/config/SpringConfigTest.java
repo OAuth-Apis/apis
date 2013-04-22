@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
+import com.googlecode.flyway.core.Flyway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,9 +33,14 @@ public class SpringConfigTest {
 
   @Inject
   private DataSource dataSource;
+
+  @Inject
+  private Flyway flyway;
+
   
   @Test
   public void wire() {
     assertNotNull(dataSource);
+    assertNotNull(flyway);
   }
 }
