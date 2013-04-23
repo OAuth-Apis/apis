@@ -3,26 +3,26 @@
  <a class="btn btn-small btn-primary pull-right" id="addServerButton" href="#">Add another server</a>
  <h1>Resource servers</h1>
  {{#if resourceServers}}
-   <table class="table table-bordered">
+   <table class="table table-bordered grid-overview">
        <thead>
        <tr>
            <th class="col-icon">Icon</th>
            <th class="col-about">Resource server</th>
-           <th>Scopes</th>
-           <th>Client apps</th>
+           <th class="resource-id">Client apps</th>
+           <th class="scopes">Scopes</th>
            <th class="col-meta">About</th>
-           <th>Actions</th>
+           <th class="actions">Actions</th>
        </tr>
        </thead>
        <tbody>
        {{#each resourceServers}}
        <tr data-resourceServerId="{{id}}">
-         <td><a href="#" class="editResourceServer"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
+         <td><a href="#" class="editResourceServer"><img src="{{thumbNailUrl}}"></a></td>
          <td><a class="editResourceServer" href="#">{{name}}</a><br>
                {{description}}
          </td>
-         <td>{{scopes}}</td>
          <td></td>
+         <td>{{scopes}}</td>
          <td>
              <strong class="key-secret">Contact:</strong> <a href="mailto:{{contactEmail}}">{{contactName}}</a><br>
              <strong class="key-secret">Key <i rel="popover" class="icon-question-sign" name="resource-server-key"></i>:</strong> 

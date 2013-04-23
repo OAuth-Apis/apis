@@ -1,21 +1,30 @@
 .subcontent {
-	margin:auto;
-	padding-left: 20px;
+    margin: auto;
+    padding-left: 20px;
 }
+
 .form-horizontal .help-block {
-	font-size:0.9em;
+    font-size: 0.9em;
 }
+
 .input-xxlarge {
-  width: 290px;
+    width: 290px;
 }
+
 .alert-http {
-	margin-bottom: 5px;	
+    margin-bottom: 5px;
 }
+
 .pre-json {
-	font-size: 10px;
-	line-height: 14px;
+    font-size: 10px;
+    line-height: 14px;
 }
+
 .break-word {
-	word-wrap: break-word;
-	width: 350px;
+    word-wrap: break-word;
+    width: 350px;
+}
+
+form.horizontal input[readonly="readonly"] {
+    font-size: 0.85em;
 }

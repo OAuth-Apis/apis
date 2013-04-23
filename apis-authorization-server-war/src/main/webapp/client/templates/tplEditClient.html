@@ -93,7 +93,12 @@
         </div>
       </div>
 
-      <div class="control-group">
+        <div class="alert hide" id="implicit_grant_warning">
+            <button class="close" data-dismiss="alert">×</button>
+            <span>An implicit grant client is not issued a secret. Therefore this client can not use the authorization code flow.</span>
+        </div>
+
+        <div class="control-group">
           <label class="control-label">Allow implicit grant</label>
           <div class="controls">
               <input type="checkbox" name="allowedImplicitGrant" value="true" {{#if allowedImplicitGrant}}checked="checked"{{/if}}>

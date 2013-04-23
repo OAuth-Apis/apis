@@ -21,6 +21,8 @@ package org.surfnet.oaaas.example.api;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.codec.binary.Base64;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
@@ -28,6 +30,8 @@ import com.google.common.base.Optional;
 import com.sun.jersey.api.client.Client;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
+
+import java.io.IOException;
 
 /**
  * {@link Authenticator} that ask the Authorization Server to check
@@ -39,6 +43,7 @@ public class OAuthAuthenticator implements Authenticator<String, AuthenticatedPr
   private String authorizationValue;
 
   private Client client = Client.create();
+  private ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
 
   /**
    * @param configuration
@@ -57,11 +62,16 @@ public class OAuthAuthenticator implements Authenticator<String, AuthenticatedPr
    */
   @Override
   public Optional<AuthenticatedPrincipal> authenticate(String accessToken) throws AuthenticationException {
-    final VerifyTokenResponse response = client
+    String json = client
         .resource(String.format(authorizationServerUrl.concat("?access_token=%s"), accessToken))
         .header(HttpHeaders.AUTHORIZATION, authorizationValue).accept("application/json")
-        .get(VerifyTokenResponse.class);
-
+        .get(String.class);
+    final VerifyTokenResponse response;
+    try {
+      response = mapper.readValue(json, VerifyTokenResponse.class);
+    } catch (IOException e) {
+      throw new AuthenticationException("Could not parse JSON: "+ json, e);
+    }
     return Optional.fromNullable(response.getPrincipal());
   }
 }

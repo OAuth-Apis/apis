@@ -77,6 +77,9 @@ var clientFormView = (function() {
           });
         });
 
+        $("input[name='allowedImplicitGrant']").change(function(){
+          $("#implicit_grant_warning").fadeToggle($(this).is(':checked'));
+        });
 
         if (mode == "add") {
           // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.

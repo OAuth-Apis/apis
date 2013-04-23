@@ -85,6 +85,7 @@
     <junit.version>4.10</junit.version>
     <tomcat-jdbc.version>7.0.29</tomcat-jdbc.version>
     <spring.version>3.2.1.RELEASE</spring.version>
+    <spring-security.version>3.2.1.RELEASE</spring-security.version>
     <openjpa.version>2.2.0</openjpa.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.0.1</commons-io.version>

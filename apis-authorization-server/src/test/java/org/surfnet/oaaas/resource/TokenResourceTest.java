@@ -17,6 +17,8 @@
 package org.surfnet.oaaas.resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -27,6 +29,7 @@ import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.AccessToken;
+import org.surfnet.oaaas.model.AccessTokenResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
@@ -34,8 +37,10 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -29,22 +29,6 @@ public class SAMLAuthenticatedPrincipal extends AuthenticatedPrincipal implement
   public SAMLAuthenticatedPrincipal() {
   }
 
-  public SAMLAuthenticatedPrincipal(String username) {
-    super(username);
-  }
-
-  public SAMLAuthenticatedPrincipal(String username, Collection<String> roles) {
-    super(username, roles);
-  }
-
-  public SAMLAuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes) {
-    super(username, roles, attributes);
-  }
-
-  public SAMLAuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups) {
-    super(username, roles, attributes, groups);
-  }
-
   public SAMLAuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups, String identityProvider, String displayName) {
     super(username, roles, attributes, groups);
     addAttribute(IDENTITY_PROVIDER, identityProvider);
@@ -76,7 +60,7 @@ public class SAMLAuthenticatedPrincipal extends AuthenticatedPrincipal implement
   @JsonIgnore
   @Override
   public String getUsername() {
-    return getDisplayName();
+    return getName();
   }
 
   @Override

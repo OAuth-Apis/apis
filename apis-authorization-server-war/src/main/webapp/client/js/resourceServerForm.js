@@ -90,7 +90,6 @@ var resourceServerFormView = (function() {
           return true;
         });
 
-
         $("#editResourceServerForm button.cancel").click(function() {
           resourceServerFormController.onCancel();
         });

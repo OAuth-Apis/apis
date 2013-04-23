@@ -6,97 +6,97 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<relativePath>../pom.xml</relativePath>
-		<groupId>nl.surfnet.apis</groupId>
-		<artifactId>apis-parent</artifactId>
-		<version>1.1.1-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <relativePath>../pom.xml</relativePath>
+    <groupId>nl.surfnet.apis</groupId>
+    <artifactId>apis-parent</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>apis-example-client-app</artifactId>
-	<packaging>war</packaging>
-	<name>API Secure - example client app war</name>
+  <artifactId>apis-example-client-app</artifactId>
+  <packaging>war</packaging>
+  <name>API Secure - example client app war</name>
 
-	<properties>
-		<servlet.port>8084</servlet.port>
-	</properties>
+  <properties>
+    <servlet.port>8084</servlet.port>
+  </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>nl.surfnet.apis</groupId>
-			<artifactId>apis-authorization-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
-        <dependency>
-	       <groupId>javax.servlet</groupId>
-	       <artifactId>jstl</artifactId>
-	       <version>${jstl.version}</version>
-	       <scope>provided</scope>
-	    </dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>${cglib.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
+  <dependencies>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-resource-server-library</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>${jstl.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>${cglib.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
 
-			<!-- Specific jetty-maven-plugin configuration for running Jetty during 
-				development. None of its goals are run in a normal build lifecycle. -->
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty-maven-plugin.version}</version>
-				<configuration>
-					<webAppConfig>
-						<contextPath>/</contextPath>
-						<extraClasspath>${basedir}/src/test/resources/</extraClasspath>
-					</webAppConfig>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<port>${servlet.port}</port>
-							<host>0.0.0.0</host>
-						</connector>
-					</connectors>
-					<reload>manual</reload>
-					<useTestClasspath>true</useTestClasspath>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+      <!-- Specific jetty-maven-plugin configuration for running Jetty during
+        development. None of its goals are run in a normal build lifecycle. -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-maven-plugin.version}</version>
+        <configuration>
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${servlet.port}</port>
+              <host>0.0.0.0</host>
+            </connector>
+          </connectors>
+          <reload>manual</reload>
+          <useTestClasspath>true</useTestClasspath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

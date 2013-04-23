@@ -2,22 +2,21 @@
   <a class="btn btn-small btn-primary pull-right" id="addClientButton" href="#">Add another client app</a>
   <h1>Client applications</h1>
   {{#if clients}}
-  <table class="table table-bordered">
+  <table class="table table-bordered grid-overview">
     <thead>
     <tr>
       <th class="col-icon">Icon</th>
       <th class="col-about">Name</th>
-      <th>Client ID</th>
-      <th>Scopes</th>
+      <th class="resource-id">Client ID</th>
+      <th class="scopes">Scopes</th>
       <th class="col-meta">Credentials</th>
-      <th>Actions</th>
-      
+      <th class="actions">Actions</th>
     </tr>
     </thead>
     <tbody>
     {{#each clients}}
     <tr data-clientId="{{id}}" data-resourceServerId="{{resourceServer.id}}">
-      <td><a href="#" class="editClient"><img class="thumbnail" src="{{thumbNailUrl}}"></a></td>
+      <td><a href="#" class="editClient"><img src="{{thumbNailUrl}}"></a></td>
       <td><a class="editClient" href="#">{{name}}</a><br>
         {{description}}<br>
         <strong>Connected to</strong> <a href="#">{{resourceServer.name}}</a>

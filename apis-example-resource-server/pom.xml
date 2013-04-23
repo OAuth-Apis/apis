@@ -24,8 +24,25 @@
     <dependency>
       <groupId>nl.surfnet.apis</groupId>
       <artifactId>apis-authorization-server</artifactId>
-      <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-surfconext-authn</artifactId>
+      <exclusions>
+        <!--<exclusion>-->
+          <!--<groupId>org.surfnet.coin</groupId>-->
+          <!--<artifactId>spring-security-opensaml</artifactId>-->
+        <!--</exclusion>-->
+        <exclusion>
+          <groupId>org.surfnet.coin</groupId>
+          <artifactId>coin-api-client</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.springframework.security</groupId>-->
+      <!--<artifactId>spring-security-core</artifactId>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>com.yammer.dropwizard</groupId>
       <artifactId>dropwizard-core</artifactId>

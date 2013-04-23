@@ -18,14 +18,14 @@
  */
 package org.surfnet.oaaas.web;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.PartialRequestBuilder;
+import com.sun.jersey.api.client.WebResource.Builder;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.core.header.OutBoundHeaders;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonParseException;
@@ -39,21 +39,17 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.surfnet.oaaas.auth.ObjectMapperProvider;
-import org.surfnet.oaaas.model.AccessTokenResponse;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.PartialRequestBuilder;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.core.header.OutBoundHeaders;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 
 /**
  * Entry point for testing the resource server. Listens to http://localhost:8084/test
- * 
  */
 @Controller
 public class ClientController {
@@ -61,13 +57,13 @@ public class ClientController {
   private static final String AUTHORIZATION = "Authorization";
   private static final String SETTINGS = "settings";
   private static final String BR = System.getProperty("line.separator");
-  
-  private static final ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+
+  private static final ObjectMapper mapper = new ObjectMapper();
 
   private Client client;
-  
+
   private Environment env;
-  
+
   /**
    * @param env
    */
@@ -79,13 +75,13 @@ public class ClientController {
     this.env = env;
   }
 
-  @RequestMapping(value = { "test" }, method = RequestMethod.GET)
+  @RequestMapping(value = {"test"}, method = RequestMethod.GET)
   public String start(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+          throws IOException {
     modelMap.addAttribute(SETTINGS, createDefaultSettings(false));
     return "oauth-client";
   }
-  
+
   @RequestMapping(value = "/test", method = RequestMethod.POST, params = "reset")
   public String reset(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response) throws IOException {
     return start(modelMap, request, response);
@@ -108,7 +104,7 @@ public class ClientController {
 
   @RequestMapping(value = "redirect", method = RequestMethod.GET)
   public String redirect(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
-      throws JsonParseException, JsonMappingException, IOException {
+          throws JsonParseException, JsonMappingException, IOException {
     String code = request.getParameter("code");
     ClientSettings settings = createDefaultSettings(false);
 
@@ -118,20 +114,20 @@ public class ClientController {
     formData.add("redirect_uri", env.getProperty("redirect_uri"));
 
     String auth = "Basic ".concat(new String(Base64.encodeBase64(settings.getOauthKey().concat(":")
-        .concat(settings.getOauthSecret()).getBytes())));
+            .concat(settings.getOauthSecret()).getBytes())));
     Builder builder = client.resource(settings.getAccessTokenEndPoint()).header(AUTHORIZATION, auth)
-        .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+            .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
     OutBoundHeaders headers = getHeadersCopy(builder);
     ClientResponse clientResponse = builder.post(ClientResponse.class, formData);
     String json = IOUtils.toString(clientResponse.getEntityInputStream());
-    AccessTokenResponse tokenResponse = mapper.readValue(json, AccessTokenResponse.class);
+    HashMap map = mapper.readValue(json, HashMap.class);
     settings.setStep("step3");
-    settings.setAccessToken(tokenResponse.getAccessToken());
+    settings.setAccessToken((String) map.get("access_token"));
     modelMap.put(SETTINGS, settings);
     modelMap.put(
-        "requestInfo",
-        "Method: POST".concat(BR).concat("URL: ").concat(settings.getAccessTokenEndPoint()).concat(BR)
-            .concat("Headers: ").concat(headers.toString()).concat(BR).concat("Body: ").concat(formData.toString()));
+            "requestInfo",
+            "Method: POST".concat(BR).concat("URL: ").concat(settings.getAccessTokenEndPoint()).concat(BR)
+                    .concat("Headers: ").concat(headers.toString()).concat(BR).concat("Body: ").concat(formData.toString()));
     addResponseInfo(modelMap, clientResponse);
     modelMap.put("rawResponseInfo", json);
     return "oauth-client";
@@ -141,26 +137,26 @@ public class ClientController {
   public String step3(ModelMap modelMap, @ModelAttribute("settings")
   ClientSettings settings, HttpServletRequest request, HttpServletResponse response) throws IOException {
     Builder builder = client.resource(settings.getRequestURL())
-        .header(AUTHORIZATION, "bearer ".concat(settings.getAccessToken()))
-        .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+            .header(AUTHORIZATION, "bearer ".concat(settings.getAccessToken()))
+            .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
     OutBoundHeaders headers = getHeadersCopy(builder);
     ClientResponse clientResponse = builder.get(ClientResponse.class);
     String json = IOUtils.toString(clientResponse.getEntityInputStream());
     settings.setStep("step3");
     modelMap.put(SETTINGS, settings);
     modelMap.put("requestInfo", "Method: GET".concat(BR).concat("URL: ").concat(settings.getRequestURL()).concat(BR)
-        .concat("Headers: ").concat(headers.toString()));
+            .concat("Headers: ").concat(headers.toString()));
     addResponseInfo(modelMap, clientResponse);
     modelMap.put("rawResponseInfo", json);
     return "oauth-client";
   }
 
-  
+
   private void addResponseInfo(ModelMap modelMap, ClientResponse clientResponse) {
     modelMap.put(
-        "responseInfo",
-        "Status: ".concat(String.valueOf(clientResponse.getStatus()).concat(BR).concat("Headers:")
-            .concat(clientResponse.getHeaders().toString())));
+            "responseInfo",
+            "Status: ".concat(String.valueOf(clientResponse.getStatus()).concat(BR).concat("Headers:")
+                    .concat(clientResponse.getHeaders().toString())));
   }
 
   /*
@@ -177,9 +173,8 @@ public class ClientController {
     }
   }
 
-  /** 
+  /**
    * See /apis-authorization-server/src/main/resources/db/migration/hsqldb/V1__auth-server-admin.sql
-   * 
    */
   protected ClientSettings createDefaultSettings(boolean implicitGrant) {
     String responseType = implicitGrant ? "token" : "code";
@@ -191,8 +186,8 @@ public class ClientController {
     String resourceServerApiUrl = env.getProperty("resource_server_api_url");
     ClientSettings settings = new ClientSettings(tokenUri, clientId, clientSecret, authorizeUrl, "step1", resourceServerApiUrl);
     settings.setAuthorizationURLComplete(String.format(
-        settings.getAuthorizationURL()
-            .concat("?response_type=%s&client_id=%s&redirect_uri=%s&scope=read&state=example"), responseType, settings
+            settings.getAuthorizationURL()
+                    .concat("?response_type=%s&client_id=%s&redirect_uri=%s&scope=read&state=example"), responseType, settings
             .getOauthKey(), redirectUri));
     return settings;
 

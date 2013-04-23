@@ -204,4 +204,32 @@ img.tablelogo {
     margin-right: auto;
 }
 
+/* the tables for resources and client */
+.grid-overview th.col-icon {
+    width: 10%;
+    text-align: center;
+}
 
+.grid-overview th.col-about {
+    width: 25%;
+}
+
+.grid-overview th.resource-id {
+    width: 10%;
+}
+
+.grid-overview th.scopes {
+    width: 10%;
+}
+
+.grid-overview th.col-meta {
+    width: 40%;
+}
+
+.grid-overview th.actions {
+    width: 5%;
+}
+
+.copy-clipboard {
+    width: 300px;
+}

@@ -23,6 +23,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,13 +132,21 @@ public class AuthorizationServerFilter implements Filter {
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
     /*
-     * First check on the presence of a apis.application.properties file, then
+     * First check on the presence of a init-param where to look for the properties to support
+     * multiple resource servers in the same war. Then look for second best apis.application.properties file, then
      * try to use the filter config if parameters are present. If this also
      * fails trust on the setters (e.g. probably in test modus), but apply
      * fail-fast strategy
      */
-    ClassPathResource res = new ClassPathResource("apis.application.properties");
-    if (res.exists()) {
+    ClassPathResource res = null;
+    String propertiesFile = filterConfig.getInitParameter("apis.application.properties.file");
+    if (StringUtils.isNotEmpty(propertiesFile)) {
+      res = new ClassPathResource(propertiesFile);
+    }
+    if (res == null || !res.exists()) {
+      res = new ClassPathResource("apis.application.properties");
+    }
+    if (res != null && res.exists()) {
       Properties prop = new Properties();
       try {
         prop.load(res.getInputStream());
