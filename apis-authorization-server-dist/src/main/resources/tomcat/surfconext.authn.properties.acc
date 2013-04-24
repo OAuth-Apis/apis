@@ -35,8 +35,11 @@ admin.client.apis.teamname=urn\:collab\:group\:dev.surfteams.nl\:nl\:surfnet\:di
 
 openConextApiClient=nl.surfnet.coin.api.client.OpenConextOAuthClientImpl
 
+# Set this to true for groep enrichment and to false for not making the call to the group api
+api-enrich-principal=true
+
+# Optional properties only to be used when api-enrich-pricipal is set to true
 api-baseurl=https\://api.acc.showroom.surfconext.nl/v1/
 api-consumerkey=https://showroom.test.showroom.surfconext.nl
 api-consumersecret=???
 api-callbackuri=https\://apis.test.showroom.surfconext.nl/oauth2/authorize?apiOauthCallback=true
-api-enrich-principal=true

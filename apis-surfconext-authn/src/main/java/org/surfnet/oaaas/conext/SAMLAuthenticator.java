@@ -105,8 +105,10 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     try {
       super.init(filterConfig);
       openSAMLContext = createOpenSAMLContext(properties);
-      apiClient = createOpenConextOAuthClient(properties);
       enrichPricipal = Boolean.valueOf(properties.getProperty("api-enrich-principal"));
+      if (enrichPricipal) {
+        apiClient = createOpenConextOAuthClient(properties);
+      }
     } catch (Exception e) {
       throw new ServletException(e);
     }
