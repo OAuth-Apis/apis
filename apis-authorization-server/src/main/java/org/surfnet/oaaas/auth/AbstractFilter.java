@@ -18,6 +18,8 @@
  */
 package org.surfnet.oaaas.auth;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 
@@ -41,15 +43,24 @@ public abstract class AbstractFilter implements Filter {
   public static final String AUTH_STATE = "AUTH_STATE";
 
   /**
-   * Get the attribute value that serves as session statte.
+   * Get the attribute value that serves as session state.
    * @param request the HttpServletRequest
    */
   public final String getAuthStateValue(ServletRequest request) {
-    return (String) request.getAttribute(AUTH_STATE);
+    String authStateValue = (String) request.getAttribute(AUTH_STATE);
+    if (StringUtils.isEmpty(authStateValue)) {
+      authStateValue = request.getParameter(AUTH_STATE);
+    }
+    return authStateValue;
   }
 
   public final String getReturnUri(ServletRequest request) {
-    return (String) request.getAttribute(RETURN_URI);
+    String returnUri = (String) request.getAttribute(RETURN_URI);
+    if (StringUtils.isEmpty(returnUri)) {
+      returnUri = request.getParameter(RETURN_URI);
+    }
+
+    return returnUri;
   }
 
   protected final void setAuthStateValue(ServletRequest request, String authState) {
