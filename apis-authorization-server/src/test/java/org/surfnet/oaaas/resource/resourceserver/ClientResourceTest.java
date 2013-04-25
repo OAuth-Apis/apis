@@ -72,8 +72,14 @@ public class ClientResourceTest {
 
   @Test
   public void sanitize() {
-    final String sanitized = clientResource.sanitizeClientName("ab()();'$&*  ---  %(&^*c123");
-    assertEquals("abc123", sanitized);
+    String sanitized = clientResource.sanitizeClientName("ab()();'$&*  ---  %(&^*c123");
+    assertEquals("ab-------c123", sanitized);
+
+    sanitized = clientResource.sanitizeClientName("some nice client name");
+    assertEquals("some-nice-client-name", sanitized);
+
+    sanitized = clientResource.sanitizeClientName("Some Nice Client-Name *%^$#''§`~");
+    assertEquals("some-nice-client-name-", sanitized);
   }
 
   @Test
