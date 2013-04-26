@@ -74,7 +74,7 @@ For an overview of the different roles and the subsequent documentation please r
 
 With the client you can create your own Resource Servers and Client applications. The admin client is actually an implicit-grant JavaScript OAuth client that uses the Authorization Server to obtain an access-token and subsequently used the Resource Server endpoints - included in the Authorization server - to manage the data.
 
-![screenshot](https://raw.github.com/oharsta/apis/master/apis-images/apis-client.png)
+![screenshot](https://raw.github.com/OpenConextApps/apis/master/apis-images/apis-client.png)
 
 To login on the client the default authentication module - this is pluggable - is used: a Form based login which will accept anything (see FormLoginAuthenticator#processForm):
 
