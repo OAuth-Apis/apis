@@ -16,33 +16,13 @@
 
 <configuration scan="true">
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-    <logger name="org.springframework">
-        <level value="warn"/>
-        <appender-ref ref="console"/>
-    </logger>
-
-    <logger name="org.apache.http">
-        <level value="info"/>
-        <appender-ref ref="console"/>
-    </logger>
-
-    <logger name="org.hibernate.validator">
-        <level value="warn"/>
-        <appender-ref ref="console"/>
-    </logger>
-
-    <logger name="org.opensaml.xml">
-        <level value="warn"/>
-        <appender-ref ref="console"/>
-    </logger>
-
-    <root level="debug">
-        <appender-ref ref="console"/>
-    </root>
+  <root level="info">
+    <appender-ref ref="info"/>
+  </root>
 </configuration>

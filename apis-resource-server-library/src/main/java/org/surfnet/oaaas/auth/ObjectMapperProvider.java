@@ -39,8 +39,6 @@ import com.sun.jersey.api.client.Client;
  */
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
-  //http://stackoverflow.com/questions/4428109/jersey-jackson-json-date-serialization-format-problem-how-to-change-the-form
-
   private ObjectMapper mapper;
 
   public ObjectMapperProvider(){

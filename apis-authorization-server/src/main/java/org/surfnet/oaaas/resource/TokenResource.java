@@ -18,10 +18,6 @@
  */
 package org.surfnet.oaaas.resource;
 
-import static org.surfnet.oaaas.auth.OAuth2Validator.BEARER;
-import static org.surfnet.oaaas.auth.OAuth2Validator.GRANT_TYPE_AUTHORIZATION_CODE;
-import static org.surfnet.oaaas.auth.OAuth2Validator.GRANT_TYPE_REFRESH_TOKEN;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -39,12 +35,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
+
+import static org.surfnet.oaaas.auth.OAuth2Validator.*;
 
 /**
  * Resource for handling all calls related to tokens. It adheres to <a
@@ -145,7 +144,8 @@ public class TokenResource {
     long expireDuration = client.getExpireDuration();
     long expires = (expireDuration == 0L ? 0L : (System.currentTimeMillis() + (1000 * expireDuration)));
     String refreshToken = (client.isUseRefreshTokens() && !isImplicitGrant) ? getTokenValue(true) : null;
-    AccessToken token = new AccessToken(getTokenValue(false), request.getPrincipal(), client, expires,
+    AuthenticatedPrincipal principal = request.getPrincipal();
+    AccessToken token = new AccessToken(getTokenValue(false), principal, client, expires,
         request.getGrantedScopes(), refreshToken);
     return accessTokenRepository.save(token);
   }
@@ -162,24 +162,33 @@ public class TokenResource {
   public Response token(@HeaderParam("Authorization")
   String authorization, final MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
+    UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
+    String grantType = accessTokenRequest.getGrantType();
+    if (GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
+      accessTokenRequest.setClientId(credentials.getUsername());
+    }
     ValidationResponse vr = oAuth2Validator.validate(accessTokenRequest);
     if (!vr.valid()) {
       return sendErrorResponse(vr);
     }
-    String grantType = accessTokenRequest.getGrantType();
     AuthorizationRequest request;
     try {
       if (GRANT_TYPE_AUTHORIZATION_CODE.equals(grantType)) {
         request = authorizationCodeToken(accessTokenRequest);
       } else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
         request = refreshTokenToken(accessTokenRequest);
-      } else {
+      } else if (GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
+        request =  new AuthorizationRequest();
+        request.setClient(accessTokenRequest.getClient());
+        // We have to construct a AuthenticatedPrincipal on-the-fly as there is only key-secret authentication
+        request.setPrincipal(new AuthenticatedPrincipal(request.getClient().getClientId()));
+      }
+      else {
         return sendErrorResponse(ValidationResponse.UNSUPPORTED_GRANT_TYPE);
       }
     } catch (ValidationResponseException e) {
       return sendErrorResponse(e.v);
     }
-    UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
     if (!request.getClient().isExactMatch(credentials)) {
       return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
     }

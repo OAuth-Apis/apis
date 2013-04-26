@@ -15,3 +15,5 @@ VALUES
     'https://raw.github.com/OpenConextApps/apis/master/apis-images/surf-oauth-client.png', 99998,
     'authorization-server-admin-js-client', 1, 1);
 INSERT INTO Client_scopes values (99998, 'read'), (99998, 'write');
+INSERT INTO client_attributes(client_id , attribute_name, attribute_value) values
+	(99998, 'CLIENT_SAML_ENTITY_NAME','https://apis.showroom.surfconext.nl/client/client.html');

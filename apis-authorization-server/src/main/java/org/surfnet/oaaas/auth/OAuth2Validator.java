@@ -24,13 +24,17 @@ import org.surfnet.oaaas.model.AuthorizationRequest;
  */
 public interface OAuth2Validator {
 
+  String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
+
+  String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+
+  String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
+
   String IMPLICIT_GRANT_RESPONSE_TYPE = "token";
 
   String AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE = "code";
 
-  String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
-
-  String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
+  String CLIENT_CREDENTIALS_GRANT_RESPONSE_TYPE = GRANT_TYPE_CLIENT_CREDENTIALS;
 
   String BEARER = "bearer";
 
@@ -83,6 +87,8 @@ public interface OAuth2Validator {
         "or exceeds the scope granted by the resource owner."),
 
     IMPLICIT_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permisssion for implicit grant"),
+
+    CLIENT_CREDENTIALS_NOT_PERMITTED("unauthorized_client", "The client has no permisssion for client credentials"),
 
     REDIRECT_URI_FRAGMENT_COMPONENT("invalid_request",
         "The redirect_uri endpoint must not include a fragment component"),

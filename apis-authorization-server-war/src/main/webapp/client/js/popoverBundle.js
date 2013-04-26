@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 var popoverBundle = (function() {
   var bundle = {
     "resource-server-name"			    :	["Resource server name","The unique name of the Resource Server"],	  
@@ -37,6 +36,7 @@ var popoverBundle = (function() {
     "client-contactEmail"           : ["Client app contact email","The email address of the person who can be contacted in case of information and/ or trouble shooting"],
     "client-expireDuration"         : ["Token expiration time","The time (in seconds) an access token will be valid after being issued by the authorization server. Leave 0 for infinite validity"],
     "client-allowedImplicitGrant"   : ["Client allowed implicit grant", "If a Client is allowed implicit grant - e.g. is a JavaScript client - then it can leverage the implicit grant flow where no secret is used."],
+    "client-allowedClientCredentials"   : ["Client allowed client credentials", "If a Client is allowed the credit credentials grant - e.g. is a highly trusted client - it will authenticate only with the key/secret and not with user authentication."],
     "client-useRefreshTokens"       : ["Client uses refresh tokens", "The client is issued (typically short-lived) a refresh token which is included when issuing an access token. Note that unlike access tokens, refresh tokens are intended for use only with authorization servers and are never sent to resource servers"],
     "client-redirectUri"            : ["Client app redirect uri's", "A client app has to provide a redirect uri at runtime when obtaining an access token. The provided redirect uri at runtime is checked against the configured redirect uri here. Although this is not a required field, we strongly advice to configure the redirect uri to prevent possible client frauds to tamper with the authorization server"],
     "client-attributes"             : ["Client app attributes", "A client may have additional attributes (key -value pairs) to configure extra info for the client app. The additional data can be used to add extra (OAuth) validation checks on the authorization server prior to granting a client app an access token and/ or enrichen the user consent form"],
@@ -53,3 +53,6 @@ var popoverBundle = (function() {
 
   }
 })();
+
+
+

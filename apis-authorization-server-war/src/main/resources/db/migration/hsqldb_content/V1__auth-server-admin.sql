@@ -44,7 +44,7 @@ VALUES
     'authorization-server-admin-js-client', 1, 1800,1);
 INSERT INTO Client_scopes values (99998, 'read'), (99998, 'write');
 INSERT INTO client_attributes(client_id , attribute_name, attribute_value) values
-	(99998, 'CLIENT_SAML_ENTITY_NAME','Authorization_Server_Admin_Client');
+	(99998, 'CLIENT_SAML_ENTITY_NAME','https://apis.showroom.surfconext.nl/client/client.html');
 
 /*
 For integration tests
@@ -83,13 +83,26 @@ INSERT INTO Client_scopes values (99996, 'read'), (99996, 'write');
 Client for implicit grant
 */
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
-clientId, secret)
+clientId, secret, allowedImplicitGrant)
 VALUES
     (99995, 'it-test-grant@example.com', 'john.grant', 'it test client grant',
     'it test client grant',
     'thumbnailurl', 99997,
-    'it-test-client-grant', 'somesecret-grant');
+    'it-test-client-grant', 'somesecret-grant', 1);
 INSERT INTO Client_scopes values (99995, 'read'), (99995, 'write');
+
+/*
+Client for client credentials
+*/
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
+clientId, secret, allowedClientCredentials)
+VALUES
+    (99993, 'it-test-client-credential@example.com', 'john.client.credential.grant', 'it test client credential grant',
+    'it test client credential grant',
+    'thumbnailurl', 99997,
+    'it-test-client-credential-grant', 'some-secret-client-credential-grant', 1);
+INSERT INTO Client_scopes values (99993, 'read');
+
 
 /*
 admin-enduser

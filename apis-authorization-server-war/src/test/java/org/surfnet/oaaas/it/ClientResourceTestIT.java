@@ -142,7 +142,6 @@ public class ClientResourceTestIT extends AbstractAuthorizationServerTest {
     final ValidationErrorResponse validationErrorResponse = clientResponse.getEntity(ValidationErrorResponse.class);
     assertThat(validationErrorResponse.getViolations().size(), equalTo(1));
     assertThat(validationErrorResponse.getViolations().get(0), containsString("Client should only contain scopes that its resource server defines"));
-//    System.out.println(clientResponse.getEntity(String.class));
   }
 
   @Test

@@ -240,12 +240,15 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
     AuthnRequest authnRequest = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
 
-    String spEntityIdBy = getSPEntityIdByRequest(authState);
+    Client client = getClientByRequest(authState);
+    String spEntityIdBy = client.getAttributes().get(CLIENT_SAML_ENTITY_NAME);
 
     if (StringUtils.isNotEmpty(spEntityIdBy)) {
       Scoping scoping = scopingBuilder.buildObject();
       scoping.getRequesterIDs().add(createRequesterID(spEntityIdBy));
       authnRequest.setScoping(scoping);
+    } else {
+      LOG.warn("For Client {} there is no key CLIENT_SAML_ENTITY_NAME configured to identify the SP entity name. NO SCOPING IS APPLIED", client.getClientId());
     }
 
     CriteriaSet criteriaSet = new CriteriaSet();
@@ -272,13 +275,12 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   }
 
   /**
-   * Get the SP Entity ID from the OAuth client
+   * Get the Client
    */
-  public String getSPEntityIdByRequest(String authState) {
+  protected Client getClientByRequest(String authState) {
     AuthorizationRequest authorizationRequest = authorizationRequestRepository.findByAuthState(authState);
-    Client client = authorizationRequest.getClient();
-    String clientSamlEntityName = client.getAttributes().get(CLIENT_SAML_ENTITY_NAME);
-    return clientSamlEntityName;
+    return authorizationRequest.getClient();
+
   }
 
 

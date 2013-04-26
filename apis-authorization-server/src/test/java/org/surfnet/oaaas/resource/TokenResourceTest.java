@@ -16,6 +16,8 @@
 
 package org.surfnet.oaaas.resource;
 
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -28,14 +30,14 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.model.AccessToken;
-import org.surfnet.oaaas.model.AccessTokenResponse;
-import org.surfnet.oaaas.model.AuthorizationRequest;
-import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
@@ -46,6 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.VALID;
 
 public class TokenResourceTest {
 
@@ -59,6 +62,9 @@ public class TokenResourceTest {
   private AuthorizationRequestRepository authorizationRequestRepository;
 
   @Mock
+  private OAuth2Validator oAuth2Validator;
+
+  @Mock
   private AccessTokenRepository accessTokenRepository;
 
   @Before
@@ -67,7 +73,7 @@ public class TokenResourceTest {
   }
 
   @Test
-  public void getPrincipalDisplayName() {
+  public void testPrincipalDisplayName() {
     AuthorizationRequest authRequest = createAuthRequest(OAuth2Validator.IMPLICIT_GRANT_RESPONSE_TYPE);
     authRequest.getClient().setIncludePrincipal(true);
 

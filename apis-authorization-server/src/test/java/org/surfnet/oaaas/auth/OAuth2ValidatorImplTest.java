@@ -26,11 +26,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
+import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -48,20 +50,16 @@ public class OAuth2ValidatorImplTest {
   private OAuth2ValidatorImpl validator = new OAuth2ValidatorImpl();
 
   private AuthorizationRequest request;
+  private Client client;
 
   @Before
   public void before() {
     MockitoAnnotations.initMocks(this);
-    Client client = createClient("client-app");
+    this.client = createClient("client-app");
     when(clientRepository.findByClientId(client.getClientId())).thenReturn(client);
     this.request = getAuthorizationRequest(client);
   }
 
-  /**
-   * Test method for
-   * {@link org.surfnet.oaaas.auth.OAuth2ValidatorImpl#validate(org.surfnet.oaaas.model.AuthorizationRequest)}
-   * .
-   */
   @Test
   public void testValidateValidRedirectUri() {
     request.setRedirectUri("http://not-registered.nl");
@@ -84,6 +82,8 @@ public class OAuth2ValidatorImplTest {
   public void testHappyFlow() {
     validate(ValidationResponse.VALID);
   }
+
+
 
   @Test
   public void testRedirectUriWithQueryParameter() {
@@ -160,6 +160,21 @@ public class OAuth2ValidatorImplTest {
     final String determinedUri = validator.determineRedirectUri(request,
         OAuth2ValidatorImpl.IMPLICIT_GRANT_RESPONSE_TYPE, client);
     assertEquals(uri, determinedUri);
+  }
+
+  @Test
+  public void testClientCredentialsTokenRequest() {
+    AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
+    accessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_CLIENT_CREDENTIALS);
+    accessTokenRequest.setClientId(client.getClientId());
+    ValidationResponse response = validator.validate(accessTokenRequest);
+    assertEquals(ValidationResponse.CLIENT_CREDENTIALS_NOT_PERMITTED, response);
+    assertNull(accessTokenRequest.getClient());
+
+    client.setAllowedClientCredentials(true);
+    response = validator.validate(accessTokenRequest);
+    assertEquals(ValidationResponse.VALID, response);
+    assertEquals(client, accessTokenRequest.getClient());
   }
 
   private Client createClient(String clientId) {

@@ -106,6 +106,19 @@
           </div>
       </div>
 
+        <div class="alert hide" id="client_credentials_warning">
+            <button class="close" data-dismiss="alert">×</button>
+            <span>A client credentials grant is usually for resource servers that acts as clients to other resource servers. It MUST only be used by very confidential clients.</span>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Allow client credentials grant</label>
+            <div class="controls">
+                <input type="checkbox" name="allowedClientCredentials" value="true" {{#if allowedClientCredentials}}checked="checked"{{/if}}>
+                <i class="icon-question-sign icon-blue" rel="popover" name="client-allowedClientCredentials"></i>
+            </div>
+        </div>
+
         <div class="control-group">
             <label class="control-label">Use refresh tokens</label>
             <div class="controls">

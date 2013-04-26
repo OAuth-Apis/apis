@@ -53,9 +53,14 @@ public class AuthorizationCodeRequestHandler implements HttpRequestHandler {
   }
 
   /**
-   * Get the token response, wait for it if not set yet.
+   * Get the token response, wait for it if not set yet. This causes wonky tests, so we wait a bit before we check the tokenResponse
    */
   public String getTokenResponseBlocking() {
+    try {
+      Thread.sleep(2500);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
     while (tokenResponse == null) {
     }
     return tokenResponse;

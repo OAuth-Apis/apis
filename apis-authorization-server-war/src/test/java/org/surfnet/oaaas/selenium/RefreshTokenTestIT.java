@@ -48,8 +48,8 @@ public class RefreshTokenTestIT extends SeleniumSupport {
      */
     String accessTokenRedirectUri = startAuthorizationCallbackServer(clientId, secret);
 
+    restartBrowserSession();
     WebDriver webdriver = getWebDriver();
-    webdriver.manage().deleteAllCookies();
 
     String responseType = "code";
     String url = String.format("%s/oauth2/authorize?response_type=%s&client_id=%s&scope=read&redirect_uri=%s",
@@ -62,7 +62,9 @@ public class RefreshTokenTestIT extends SeleniumSupport {
     login(webdriver, false);
 
     // get token response
+    System.out.println("Getting response");
     String tokenResponse = getAuthorizationCodeRequestHandler().getTokenResponseBlocking();
+    System.out.println("Got response");
 
     AccessTokenResponse accessTokenResponse = getMapper().readValue(tokenResponse, AccessTokenResponse.class);
 

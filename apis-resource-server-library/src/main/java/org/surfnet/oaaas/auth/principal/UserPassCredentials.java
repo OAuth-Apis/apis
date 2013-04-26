@@ -42,12 +42,13 @@ public class UserPassCredentials {
 
     String authPart = authorizationHeader.substring(BASIC_AUTH_PREFIX_LENGTH);
     String userpass = new String(Base64.decodeBase64(authPart.getBytes()));
-    if (userpass.indexOf(SEMI_COLON) < 1) {
+    int index = userpass.indexOf(SEMI_COLON);
+    if (index < 1) {
       noValidAuthHeader();
       return;
     }
-    username = userpass.substring(0, userpass.indexOf(SEMI_COLON));
-    password = userpass.substring(userpass.indexOf(SEMI_COLON) + 1);
+    username = userpass.substring(0, index);
+    password = userpass.substring(index + 1);
   }
 
   public UserPassCredentials(String username, String password) {
@@ -87,6 +88,15 @@ public class UserPassCredentials {
   @Override
   public String toString() {
     return "UserPassCredentials [username=" + username + "]";
+  }
+
+  public String getAuthorizationHeaderValue() {
+    String result = null;
+    if (!StringUtils.isBlank(username) && !StringUtils.isBlank(password)) {
+      String value = username + ":" + password;
+      result = "Basic " + new String(Base64.encodeBase64(value.getBytes())) ;
+    }
+    return result;
   }
 
 }

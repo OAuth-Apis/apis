@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.selenium;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.surfnet.oaaas.model.AccessTokenResponse;

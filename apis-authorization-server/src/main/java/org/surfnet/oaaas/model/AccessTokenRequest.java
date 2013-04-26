@@ -24,6 +24,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
@@ -52,6 +53,9 @@ public class AccessTokenRequest {
 
   @JsonProperty("scope")
   private String scope;
+
+  @JsonIgnore
+  private Client client;
 
   public static AccessTokenRequest fromMultiValuedFormParameters(MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest atr = new AccessTokenRequest();
@@ -174,4 +178,13 @@ public class AccessTokenRequest {
   public void setScope(String scope) {
     this.scope = scope;
   }
+
+  public Client getClient() {
+    return client;
+  }
+
+  public void setClient(Client client) {
+    this.client = client;
+  }
+
 }

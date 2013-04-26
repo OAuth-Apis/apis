@@ -19,6 +19,8 @@ package org.surfnet.oaaas.it;
 import org.apache.commons.codec.binary.Base64;
 
 import com.sun.jersey.api.client.Client;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.surfnet.oaaas.auth.ObjectMapperProvider;
 
 
 public abstract class AbstractAuthorizationServerTest {
@@ -27,6 +29,7 @@ public abstract class AbstractAuthorizationServerTest {
 
   protected int defaultServletPort = 8080;
   protected Client client = new Client();
+  protected ObjectMapper objectMapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
 
   protected String baseUrl() {
     return String.format("http://localhost:%s",

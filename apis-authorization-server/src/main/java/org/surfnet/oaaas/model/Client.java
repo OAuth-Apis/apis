@@ -105,6 +105,9 @@ public class Client extends AbstractEntity {
   @Column
   private boolean allowedImplicitGrant;
 
+  @Column
+  private boolean allowedClientCredentials;
+
   // Listed here so Cascade will work.
   @OneToMany(mappedBy ="client", cascade = CascadeType.ALL)
   private List<AccessToken> accessTokens;
@@ -326,6 +329,15 @@ public class Client extends AbstractEntity {
     this.includePrincipal = includePrincipal;
   }
 
+  public boolean isAllowedClientCredentials() {
+    return allowedClientCredentials;
+  }
+
+  public void setAllowedClientCredentials(boolean allowedClientCredentials) {
+    this.allowedClientCredentials = allowedClientCredentials;
+  }
+
+
   /*
    * (non-Javadoc)
    *
@@ -340,8 +352,13 @@ public class Client extends AbstractEntity {
       isValid = false;
     }
 
+    if (isAllowedClientCredentials() && isAllowedImplicitGrant()) {
+      violation(context, "A Client can not be issued the client credentials grant AND the implicit grant as client credentials requires a secret.");
+      isValid = false;
+    }
+
     if (scopes != null && !resourceServer.getScopes().containsAll(scopes)) {
-      final String message = "Client should only contain scopes that its resource server defines. " +
+      String message = "Client should only contain scopes that its resource server defines. " +
           "Client scopes: " + scopes + ". Resource server scopes: " + resourceServer.getScopes();
       violation(context, message);
       isValid = false;

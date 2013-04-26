@@ -44,7 +44,7 @@ public abstract class SeleniumSupport extends AbstractAuthorizationServerTest {
 
   private LocalTestServer oauthClientServer;
 
-  private ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+  private ObjectMapper mapper = new ObjectMapper();
 
   @BeforeClass
   public static void initializeOnce() {

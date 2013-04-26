@@ -94,6 +94,7 @@ CREATE TABLE `client` (
   `expireDuration` bigint(20) DEFAULT NULL,
   `clientName` varchar(255) DEFAULT NULL,
   `allowedImplicitGrant` bit(1) DEFAULT NULL,
+  `allowedClientCredentials` bit(1) DEFAULT NULL,
   `secret` varchar(255) DEFAULT NULL,
   `skipConsent` bit(1) DEFAULT NULL,
   `includePrincipal` bit(1) DEFAULT NULL,

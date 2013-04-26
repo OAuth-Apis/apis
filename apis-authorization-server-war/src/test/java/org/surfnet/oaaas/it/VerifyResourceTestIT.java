@@ -18,11 +18,14 @@ package org.surfnet.oaaas.it;
 
 import static org.junit.Assert.assertEquals;
 
+import org.codehaus.jackson.JsonParseException;
 import org.junit.Test;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+
+import java.io.IOException;
 
 public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
 
@@ -54,11 +57,12 @@ public class VerifyResourceTestIT extends AbstractAuthorizationServerTest {
   }
 
   @Test
-  public void happy() {
+  public void happy() throws IOException {
     final ClientResponse response = client.resource(baseUrlWith("/v1/tokeninfo")).queryParam("access_token", "00-11-22-33")
         .header("Authorization", authorizationBasic("it-test-resource-server", "somesecret")).get(ClientResponse.class);
     assertEquals(200, response.getStatus());
-    final VerifyTokenResponse verifyTokenResponse = response.getEntity(VerifyTokenResponse.class);
+    String json = response.getEntity(String.class);
+    final VerifyTokenResponse verifyTokenResponse = objectMapper.readValue(json, VerifyTokenResponse.class);
     assertEquals("it-test-enduser", verifyTokenResponse.getPrincipal().getName());
   }
 }

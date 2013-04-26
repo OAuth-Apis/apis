@@ -16,10 +16,13 @@
 
 package org.surfnet.oaaas.resource.resourceserver;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.repository.ClientRepository;
+import org.surfnet.oaaas.repository.ResourceServerRepository;
+import org.surfnet.oaaas.resource.AbstractResource;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,14 +34,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.model.Client;
-import org.surfnet.oaaas.model.ResourceServer;
-import org.surfnet.oaaas.repository.ClientRepository;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
-import org.surfnet.oaaas.resource.AbstractResource;
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * JAX-RS Resource for CRUD operations on Clients. (clients in OAuth 2 context).
@@ -152,9 +151,9 @@ public class ClientResource extends AbstractResource {
     }
     final URI uri = UriBuilder.fromPath("{clientId}.json").build(clientSaved.getId());
     return Response
-        .created(uri)
-        .entity(clientSaved)
-        .build();
+            .created(uri)
+            .entity(clientSaved)
+            .build();
   }
 
   protected String generateSecret() {
@@ -232,6 +231,7 @@ public class ClientResource extends AbstractResource {
 
   /**
    * Method that generates a unique client id, taking into account existing clientIds in the backend.
+   *
    * @param client the client for whom to generate an id.
    * @return the generated id. Callers are responsible themselves for actually calling {@link Client#setClientId(String)}
    */
@@ -244,7 +244,7 @@ public class ClientResource extends AbstractResource {
       /* if one with such name exists already, the next one would actually be number 2. Therefore,
        * start counting with 2.
        */
-      int i=2;
+      int i = 2;
       do {
         clientId = baseClientId + (i++);
       } while (clientRepository.findByClientId(clientId) != null);

@@ -29,19 +29,7 @@ import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
 
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.IMPLICIT_GRANT_NOT_PERMITTED;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.IMPLICIT_GRANT_REDIRECT_URI;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.INVALID_GRANT_AUTHORIZATION_CODE;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.INVALID_GRANT_REFRESH_TOKEN;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRCT_URI_NOT_URI;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRCT_URI_NOT_VALID;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRECT_URI_FRAGMENT_COMPONENT;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.REDIRECT_URI_REQUIRED;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.SCOPE_NOT_VALID;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNKNOWN_CLIENT_ID;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNSUPPORTED_GRANT_TYPE;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNSUPPORTED_RESPONSE_TYPE;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.VALID;
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.*;
 
 /**
  * Implementation of {@link OAuth2Validator}
@@ -60,6 +48,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     
     GRANT_TYPES.add(GRANT_TYPE_AUTHORIZATION_CODE);
     GRANT_TYPES.add(GRANT_TYPE_REFRESH_TOKEN);
+    GRANT_TYPES.add(GRANT_TYPE_CLIENT_CREDENTIALS);
   }
 
   @Inject
@@ -189,6 +178,18 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   }
   
   protected void validateAccessTokenRequest(AccessTokenRequest accessTokenRequest) {
+    if (accessTokenRequest.getGrantType().equals(GRANT_TYPE_CLIENT_CREDENTIALS)) {
+      String clientId = accessTokenRequest.getClientId();
+      Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
+      if (client == null) {
+        throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
+      }
+      if (!client.isAllowedClientCredentials()) {
+        throw new ValidationResponseException(CLIENT_CREDENTIALS_NOT_PERMITTED);
+      }
+      accessTokenRequest.setClient(client);
+    }
+
   }
 
 }
