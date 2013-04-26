@@ -121,17 +121,6 @@ var clientFormView = (function() {
     hide: function() {
       $(containerSelector).css("height", $(containerSelector).height()); // set a fixed height to prevent wild swapping of the footer
       $(handleSelector).remove();
-    },
-
-    showMessage: function(type, text) {
-      if (type == "error")
-        Template.get("tplAlert", function(template) {
-          $("form#editClientForm").prepend(template({
-            title: type == "error" ? "Error" : "Notice",
-                text: text
-              }));
-        });
-
     }
   }
 })();
@@ -258,7 +247,7 @@ var clientFormController = (function() {
         windowController.onCloseEditClient();
       }, function (errorMessage) {
         console.log("error while saving data: " + errorMessage);
-        view.showMessage("error", errorMessage);
+        popoverBundle.showMessage("error", errorMessage, $("form#editClientForm"));
       });
     },
     onCancel: function() {

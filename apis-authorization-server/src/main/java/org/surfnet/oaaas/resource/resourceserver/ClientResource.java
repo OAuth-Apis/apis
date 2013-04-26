@@ -131,13 +131,6 @@ public class ClientResource extends AbstractResource {
     client.setClientId(generateClientId(client));
     client.setSecret(client.isAllowedImplicitGrant() ? null : generateSecret());
 
-    // Validate input
-    Set<ConstraintViolation<Client>> violations = validator.validate(client);
-    if (!violations.isEmpty()) {
-      LOG.info("Entity failed validation. Will respond with client error. Violations: {}", violations);
-      return buildViolationErrorResponse(new HashSet<ConstraintViolation<?>>(violations));
-    }
-
     Client clientSaved;
 
     try {

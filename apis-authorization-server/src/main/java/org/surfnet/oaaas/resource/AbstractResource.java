@@ -16,6 +16,7 @@
 
 package org.surfnet.oaaas.resource;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -31,11 +32,10 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
-import org.surfnet.oaaas.model.ErrorResponse;
-import org.surfnet.oaaas.model.ValidationErrorResponse;
-import org.surfnet.oaaas.model.VerifyTokenResponse;
+import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 
 /**
@@ -65,13 +65,7 @@ public class AbstractResource {
       reason = "Violating unique constraints";
     } else if (jpaException instanceof ConstraintViolationException) {
       ConstraintViolationException constraintViolationException = (ConstraintViolationException) jpaException;
-      s = Response.Status.BAD_REQUEST;
-      Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
-      reason = "Constraint violation(s): " ;
-      for (ConstraintViolation<?> violation : violations) {
-        reason += LINE_SEPARATOR;
-        reason += violation.getMessage();
-      }
+      return buildViolationErrorResponse(constraintViolationException.getConstraintViolations());
     } else {
       s = Response.Status.INTERNAL_SERVER_ERROR;
       reason = "Internal server error";
@@ -92,10 +86,16 @@ public class AbstractResource {
         .build();
   }
 
-
   protected String getUserId(HttpServletRequest request) {
     VerifyTokenResponse verifyTokenResponse = (VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
     return verifyTokenResponse.getPrincipal().getName();
+  }
+
+  protected void validate(AbstractEntity entity) {
+    Set<ConstraintViolation<AbstractEntity>> validate = validator.validate(entity);
+    if (!CollectionUtils.isEmpty(validate)) {
+      throw new ConstraintViolationException((Set)validate);
+    }
   }
 
   public String generateRandom() {

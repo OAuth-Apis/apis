@@ -151,6 +151,8 @@ public class ResourceServerResource extends AbstractResource {
 
     ResourceServer resourceServerSaved;
     try {
+      //we run transactional modus, so any constraint violations only occur after the commit of the transaction (to late...)
+      validate(newOne);
       resourceServerSaved = resourceServerRepository.save(newOne);
     } catch (Exception e) {
       return buildErrorResponse(e);
@@ -215,7 +217,16 @@ public class ResourceServerResource extends AbstractResource {
         persistedResourceServer.getClients());
     LOG.debug("About to update existing resourceServer {} with new properties: {}", persistedResourceServer,
         resourceServer);
-    ResourceServer savedInstance = resourceServerRepository.save(resourceServer);
+
+    ResourceServer savedInstance;
+    try {
+      //we run transactional modus, so any constraint violations only occur after the commit of the transaction (to late...)
+      validate(resourceServer);
+      savedInstance = resourceServerRepository.save(resourceServer);
+    } catch (Exception e) {
+      return buildErrorResponse(e);
+    }
+
     return Response.ok(savedInstance).build();
   }
 

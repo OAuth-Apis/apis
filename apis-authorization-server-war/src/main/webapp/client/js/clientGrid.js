@@ -110,7 +110,7 @@ var clientGridController = (function() {
         windowController.onDeleteClient();
       }, function (errorMessage) {
         console.log("error while saving data: " + errorMessage);
-        view.showMessage("error", errorMessage);
+        popoverBundle.showMessage("error", errorMessage, $("#clientGrid"));
       });
     },
 
