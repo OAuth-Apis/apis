@@ -1,4 +1,4 @@
-apis 
+APIs
 ======
 The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can be used to kickstart your API authentication. In essence it enables you to focus on your actual resource endpoints and use the out-of-the-box authorization server to authenticate resource owners and subsequently validate the access tokens that were granted to the Client applications. We will describe the typical use cases in more details in sections below.
 
@@ -6,9 +6,11 @@ The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can
 
 - An OAuth2 Authorization Server compliant with [the draft v2-31 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-31)
   * Pluggable authentication and userConsent handling (with default implementations provided)
-  * Support for authorization code and implicit grant
+  * Support for authorization code, implicit grant and client credentials
+  * Optional refresh tokens
   * Implementation of a Java Filter to be used in Resource Servers for all required communication with the Authorization Server
   * GUI included for the registration of Resource Servers and Client apps
+  * Clients are highly configurable (refresh tokens, allow implicit grant, allow client crendentials etc.)
 
 - Two OAuth2 demo Resource Servers
   * DropWizard stand-alone Resource Server with limited functionality (using in-memory JSON-based backend) to demo the OAuth Authorization Server
@@ -44,7 +46,9 @@ that only demonstrates how a Resource Server can communicate with the Authorizat
 For now we will continue to use the other example resource server (apis-example-resource-server, NOT the apis-example-resource-server-war!) , build using [Dropwizard] (http://dropwizard.codahale.com/), to demonstrate the apis Authorization Server. We will need to start the apis-exampl	e-resource-server to demonstrate the entire flow (new Terminal session):
 
     cd apis-example-resource-server
-    java -jar target/apis-example-resource-server-0.1-SNAPSHOT.jar
+    java -jar target/apis-example-resource-server-1.1.1-SNAPSHOT.jar
+
+If the last command gives you an error check if the master version is still 1.1.1-SNAPSHOT.
 
 ### Run Example Client App
 
@@ -64,12 +68,15 @@ Now start your browser and go to <a href="http://localhost:8084/test" target="_b
 
 ### Resource Servers and Client apps GUI registration
 
-The GUI for Resource Servers and Client apps registration can be found at:
-[http://localhost:8080/client/client.html/](http://localhost:8080/client/client.html)
+The GUI for Resource Servers and Client apps registration can be found at <a href="http://localhost:8080/client/client.html" target="_blank">http://localhost:8080/client/client.html</a>:
 
 For an overview of the different roles and the subsequent documentation please refer to the latest version of the [oauth v2 specification](http://tools.ietf.org/html/draft-ietf-oauth-v2#section-1.1).
 
-With the client you can create Resource Servers and Client applications. But to do so you will first need to login. So hit the login button and login. The default authentication module - this is pluggable - is a Form based login which will accept anything (see FormLoginAuthenticator#processForm):
+With the client you can create your own Resource Servers and Client applications. The admin client is actually an implicit-grant JavaScript OAuth client that uses the Authorization Server to obtain an access-token and subsequently used the Resource Server endpoints - included in the Authorization server - to manage the data.
+
+![screenshot](https://raw.github.com/oharsta/apis/master/apis-images/apis-client.png)
+
+To login on the client the default authentication module - this is pluggable - is used: a Form based login which will accept anything (see FormLoginAuthenticator#processForm):
 
 ```java
 private void processForm(final HttpServletRequest request) {
@@ -182,24 +189,9 @@ public AbstractAuthenticator authenticator() {
 
 ### The REST interface to build your own GUI
 
-You can use the exposed REST interface of the ResourceServerResource and ClientResource to build your own GUI. The following URLs are available for a custom registration interface:
+You can use the exposed REST interface of the ResourceServerResource, ClientResource and AccessTokenResource to build your own GUI. The resources offer full CRUD for the persistent objects. See the annotations on the mentioned Resources.
 
-    GET     /admin/resourceServer
-    GET     /admin/resourceServer/{resourceServerId}
-    PUT     /admin/resourceServer
-    POST    /admin/resourceServer/{resourceServerId}
-    DELETE  /admin/resourceServer/{resourceServerId}
-
-    GET     /admin/resourceServer/123/client
-    GET     /admin/resourceServer/123/client/{clientId}
-    PUT     /admin/resourceServer/123/client
-    POST    /admin/resourceServer/123/client/{clientId}
-    DELETE  /admin/resourceServer/123/client/{clientId}
-
-TODO add access token urls
-TODO explain where the key-secret can be configured
-
-While we were working on the JavaScript Admin client included in the Authorization Server war we disabled the login and consent locally to speed up the local feedback cycle when developing in 'jetty-modus':
+While we were working on the JavaScript Admin client included in the Authorization Server war we locally disabled the login and consent to speed up the local feedback cycle when developing in 'jetty-modus':
 
 <pre>
 # The authentication module
