@@ -31,11 +31,11 @@
     </div>
 
     <div class="consent">
-      <img alt="${client.resourceServer.name}"
-           title="${client.resourceServer.name}"
-           src="${client.resourceServer.thumbNailUrl}" />
-      <img src="${pageContext.request.contextPath}/client/img/arrow.png" />
       <img alt="${client.name}" title="${client.name}" src="${client.thumbNailUrl}" />
+      <img src="${pageContext.request.contextPath}/client/img/arrow.png" />
+      <img alt="${client.resourceServer.name}"
+        title="${client.resourceServer.name}"
+        src="${client.resourceServer.thumbNailUrl}" />
     </div>
 
     <form id="accept" method="post" action="${pageContext.request.contextPath}${actionUri}">
