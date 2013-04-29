@@ -16,10 +16,21 @@
 
 package org.surfnet.oaaas.resource.resourceserver;
 
-import static org.apache.commons.collections.CollectionUtils.subtract;
-
-import java.net.URI;
-import java.util.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+import org.surfnet.oaaas.auth.AuthorizationServerFilter;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.model.StatisticsResponse;
+import org.surfnet.oaaas.model.StatisticsResponse.ClientStat;
+import org.surfnet.oaaas.model.StatisticsResponse.ResourceServerStat;
+import org.surfnet.oaaas.model.VerifyTokenResponse;
+import org.surfnet.oaaas.repository.AccessTokenRepository;
+import org.surfnet.oaaas.repository.ClientRepository;
+import org.surfnet.oaaas.repository.ResourceServerRepository;
+import org.surfnet.oaaas.resource.AbstractResource;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,18 +41,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+import java.util.*;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.surfnet.oaaas.model.*;
-import org.surfnet.oaaas.model.StatisticsResponse.ClientStat;
-import org.surfnet.oaaas.model.StatisticsResponse.ResourceServerStat;
-import org.surfnet.oaaas.repository.AccessTokenRepository;
-import org.surfnet.oaaas.repository.ClientRepository;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
-import org.surfnet.oaaas.resource.AbstractResource;
+import static org.apache.commons.collections.CollectionUtils.subtract;
 
 /**
  * JAX-RS Resource for resource servers.
@@ -68,7 +71,7 @@ public class ResourceServerResource extends AbstractResource {
    */
   @GET
   public Response getAll(@Context
-  HttpServletRequest request) {
+                         HttpServletRequest request) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -88,8 +91,8 @@ public class ResourceServerResource extends AbstractResource {
   @GET
   @Path("/{resourceServerId}")
   public Response getById(@Context
-  HttpServletRequest request, @PathParam("resourceServerId")
-  Long id) {
+                          HttpServletRequest request, @PathParam("resourceServerId")
+                          Long id) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -113,21 +116,34 @@ public class ResourceServerResource extends AbstractResource {
    * Get statistics
    */
   @GET
-  @Path("stats")
-  public Response stats() {
-    Iterable<ResourceServer> resourceServers = this.resourceServerRepository.findAll();
+  @Path("/stats")
+  public Response stats(@Context
+                        HttpServletRequest request) {
+    String owner = getUserId(request);
+    Iterable<ResourceServer> resourceServers = this.resourceServerRepository.findByOwner(owner);
     List<ResourceServerStat> resourceServerStats = new ArrayList<StatisticsResponse.ResourceServerStat>();
     for (ResourceServer resourceServer : resourceServers) {
       List<ClientStat> clientStats = new ArrayList<StatisticsResponse.ClientStat>();
       Set<Client> clients = resourceServer.getClients();
       for (Client client : clients) {
         clientStats.add(new StatisticsResponse.ClientStat(client.getName(), client.getDescription(),
-            accessTokenRepository.countByUniqueResourceOwnerIdAndClientId(client.getId())));
+                accessTokenRepository.countByUniqueResourceOwnerIdAndClientId(client.getId())));
       }
       resourceServerStats.add(new StatisticsResponse.ResourceServerStat(resourceServer.getName(), resourceServer
-          .getDescription(), clientStats));
+              .getDescription(), clientStats));
     }
     return Response.ok(new StatisticsResponse(resourceServerStats)).build();
+  }
+
+  /**
+   * Get the principal
+   */
+  @GET
+  @Path("/principal")
+  public Response principal(@Context
+                        HttpServletRequest request) {
+    VerifyTokenResponse verifyTokenResponse = (VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
+    return Response.ok(verifyTokenResponse.getPrincipal()).build();
   }
 
   /**
@@ -135,8 +151,8 @@ public class ResourceServerResource extends AbstractResource {
    */
   @PUT
   public Response put(@Context
-  HttpServletRequest request, @Valid
-  ResourceServer newOne) {
+                      HttpServletRequest request, @Valid
+                      ResourceServer newOne) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -170,8 +186,8 @@ public class ResourceServerResource extends AbstractResource {
   @DELETE
   @Path("/{resourceServerId}")
   public Response delete(@Context
-  HttpServletRequest request, @PathParam("resourceServerId")
-  Long id) {
+                         HttpServletRequest request, @PathParam("resourceServerId")
+                         Long id) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -193,9 +209,9 @@ public class ResourceServerResource extends AbstractResource {
   @POST
   @Path("/{resourceServerId}")
   public Response post(@Valid
-  final ResourceServer resourceServer, @Context
-  HttpServletRequest request, @PathParam("resourceServerId")
-  Long id) {
+                       final ResourceServer resourceServer, @Context
+                       HttpServletRequest request, @PathParam("resourceServerId")
+                       Long id) {
     Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
     if (validateScopeResponse != null) {
       return validateScopeResponse;
@@ -214,9 +230,9 @@ public class ResourceServerResource extends AbstractResource {
     resourceServer.setOwner(owner);
 
     pruneClientScopes(resourceServer.getScopes(), persistedResourceServer.getScopes(),
-        persistedResourceServer.getClients());
+            persistedResourceServer.getClients());
     LOG.debug("About to update existing resourceServer {} with new properties: {}", persistedResourceServer,
-        resourceServer);
+            resourceServer);
 
     ResourceServer savedInstance;
     try {
@@ -234,12 +250,9 @@ public class ResourceServerResource extends AbstractResource {
    * Delete all scopes from clients that are not valid anymore with the new
    * resource server
    *
-   * @param newScopes
-   *          the newly saved scopes
-   * @param oldScopes
-   *          the scopes from the existing resource server
-   * @param clients
-   *          the clients of the resource server
+   * @param newScopes the newly saved scopes
+   * @param oldScopes the scopes from the existing resource server
+   * @param clients   the clients of the resource server
    */
   @SuppressWarnings("unchecked")
   protected void pruneClientScopes(final List<String> newScopes, List<String> oldScopes, Set<Client> clients) {
@@ -253,7 +266,7 @@ public class ResourceServerResource extends AbstractResource {
         if (CollectionUtils.containsAny(clientScopes, outdatedScopes)) {
           ArrayList<String> prunedScopes = new ArrayList<String>(subtract(clientScopes, outdatedScopes));
           LOG.info("Client scopes of client {} were: {}. After pruning (because resourceServer has new scopes): {}",
-              new Object[] { c.getClientId(), c.getScopes(), prunedScopes });
+                  new Object[]{c.getClientId(), c.getScopes(), prunedScopes});
           c.setScopes(prunedScopes);
         }
       }
