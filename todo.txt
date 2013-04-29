@@ -1,8 +1,0 @@
-MUST:
-- Implicit grant requires an redirect uri in the database (OAuth2ValidatorImpl#determineRedirectUri)
-
-NICE:
-- ClientResource and ResourceServerResource must debug log all activity
-- The client in the authorization server should change the ui based on the granted scopes (no 'add/delete' in case of read only scope)
-- add default scopes for clients that do not request any scope
-

@@ -28,6 +28,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.model.StatisticsResponse;
 
@@ -147,7 +148,16 @@ public class ResourceServerTestIT extends AbstractAuthorizationServerTest {
     StatisticsResponse entity = response.getEntity(StatisticsResponse.class);
     assertTrue(entity.getResourceServers().size() > 0);
     assertNotNull(entity.getResourceServers().get(0).getName());
-    
+  }
+
+  @Test
+  public void principal() {
+    final ClientResponse response = webResource.path("principal").header("Authorization", authorizationBearer(ACCESS_TOKEN))
+            .get(ClientResponse.class);
+    assertEquals(200, response.getStatus());
+
+    AuthenticatedPrincipal principal = response.getEntity(AuthenticatedPrincipal.class);
+    assertEquals("admin-enduser",principal.getName());
   }
 
   /**

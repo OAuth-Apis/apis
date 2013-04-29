@@ -132,7 +132,7 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
    */
   @Override
   public String toString() {
-    return "AuthenticatedPrincipalImpl [name=" + name + ", roles=" + roles + ", attributes=" + attributes + "]";
+    return getClass().getName() + " [name=" + name + ", roles=" + roles + ", attributes=" + attributes + "]";
   }
 
   /**

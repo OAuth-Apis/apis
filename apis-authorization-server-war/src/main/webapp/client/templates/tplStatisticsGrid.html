@@ -19,19 +19,19 @@
   <h1>Statistics</h1>
   {{#if resourceServers}}
     <div class="page-header">
-      <p>All Resource Servers</p>
+      <p>All your Resource Servers and client statistics</p>
     </div>   
     {{#each resourceServers}}
-      <p>Name: {{name}}</p>
+      <p>Resource Server name: {{name}}</p>
       {{#if description}}
       <p>Description: {{description}}</p>
       {{/if}}      
       <table class="table table-bordered">
         <thead>
         <tr>
-          <th>Client App name</th>
-          <th>Description</th>
-          <th>#Unique clients</th>
+          <th style="width: 40%;">Client App name</th>
+          <th style="width: 40%;">Description</th>
+          <th style="width: 20%;">#Unique clients</th>
         </tr>
         </thead>
         <tbody>
