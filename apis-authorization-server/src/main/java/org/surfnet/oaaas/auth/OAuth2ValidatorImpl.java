@@ -98,7 +98,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     if (StringUtils.isBlank(redirectUri)) {
       if (responseType.equals(IMPLICIT_GRANT_RESPONSE_TYPE)) {
         throw new ValidationResponseException(IMPLICIT_GRANT_REDIRECT_URI);
-      } else if (uris == null || uris.isEmpty()) {
+      } else if (CollectionUtils.isEmpty(uris)) {
         throw new ValidationResponseException(REDIRECT_URI_REQUIRED);
       } else {
         return uris.get(0);
@@ -107,9 +107,17 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       throw new ValidationResponseException(REDIRCT_URI_NOT_URI);
     } else if (redirectUri.contains("#")) {
       throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
-    } else if (uris != null && uris.size() > 0 && !uris.contains(
-            redirectUri.contains("?") ? redirectUri.substring(0, redirectUri.indexOf("?")) : redirectUri)) {
-      throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
+    } else if (CollectionUtils.isNotEmpty(uris)) {
+      boolean match = false;
+      for (String uri : uris) {
+        if (redirectUri.startsWith(uri)) {
+          match = true;
+          break;
+        }
+      }
+      if (!match) {
+        throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
+      }
     }
     return redirectUri;
   }

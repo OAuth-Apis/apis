@@ -110,6 +110,12 @@ public class OAuth2ValidatorImplTest {
   }
 
   @Test
+  public void partOfRedirectUrimatching() {
+    request.setRedirectUri("http://gothere.nl.subdomain/extra_path");
+    validate(ValidationResponse.VALID);
+  }
+
+  @Test
   public void testValidateResponseType() {
     request.setResponseType("not-existing-response-type");
     validate(ValidationResponse.UNSUPPORTED_RESPONSE_TYPE);
@@ -125,7 +131,6 @@ public class OAuth2ValidatorImplTest {
   public void testValidateRedirectUri() {
     request.setRedirectUri("qwert://no-valid-url");
     validate(ValidationResponse.REDIRCT_URI_NOT_URI);
-
   }
 
   @Test
