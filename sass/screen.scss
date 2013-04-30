@@ -1,0 +1,16 @@
+@import "compass/reset";
+@import "compass/css3";
+
+@font-face {
+  font-family: 'vagrundschriftdligregular';
+  src: url('../font/vagrundschriftd-lig-webfont.eot');
+  src: url('../font/vagrundschriftd-lig-webfont.eot?#iefix') format('embedded-opentype'), url('../font/vagrundschriftd-lig-webfont.woff') format('woff'), url('../font/vagrundschriftd-lig-webfont.ttf') format('truetype'), url('../font/vagrundschriftd-lig-webfont.svg#vagrundschriftdligregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+body {
+  font-family: 'VAG Rundschrift D Light', vagrundschriftdligregular, 'Helvetica Neue', Helvetiva, Arial, sans-serif;
+  font-smooth: always;
+}
