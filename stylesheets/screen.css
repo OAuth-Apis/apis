@@ -71,45 +71,55 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   font-style: normal;
 }
 
-/* line 13, ../sass/screen.scss */
+/* line 12, ../sass/screen.scss */
 body {
   font-family: 'VAG Rundschrift D Light', vagrundschriftdligregular, 'Helvetica Neue', Helvetiva, Arial, sans-serif;
   font-smooth: always;
   background-color: goldenrod;
 }
 
-/* line 20, ../sass/screen.scss */
+/* line 19, ../sass/screen.scss */
 .reveal .slides section h1, .reveal .slides section h2 {
   line-height: 60px;
 }
-/* line 23, ../sass/screen.scss */
+/* line 22, ../sass/screen.scss */
 .reveal .slides section h1.large, .reveal .slides section h2.large {
   line-height: 150px;
-  font-size: 12em;
+  font-size: 10em;
 }
 /* line 28, ../sass/screen.scss */
 .reveal .slides section h3 {
   line-height: 30px;
 }
 /* line 32, ../sass/screen.scss */
-.reveal .slides section .cover-img {
+.reveal .slides section .main {
   margin-top: 40px;
 }
-/* line 34, ../sass/screen.scss */
-.reveal .slides section .cover-img img {
+/* line 35, ../sass/screen.scss */
+.reveal .slides section .main img.cover {
   max-width: 60%;
 }
+/* line 39, ../sass/screen.scss */
+.reveal .slides section .main img.asset {
+  max-width: 10%;
+  margin: 0 35px 0 35px;
+}
 @media (max-width: 680px) {
-  /* line 41, ../sass/screen.scss */
-  .reveal .slides section .cover-img {
+  /* line 46, ../sass/screen.scss */
+  .reveal .slides section .main {
     margin-top: 20px;
   }
-  /* line 43, ../sass/screen.scss */
-  .reveal .slides section .cover-img img {
+  /* line 49, ../sass/screen.scss */
+  .reveal .slides section .main img.cover {
     max-width: 90%;
   }
+  /* line 52, ../sass/screen.scss */
+  .reveal .slides section .main img.asset {
+    max-width: 25%;
+    margin: 0 5px 0 5px;
+  }
 }
-/* line 53, ../sass/screen.scss */
+/* line 59, ../sass/screen.scss */
 .reveal .slides section .circle {
   width: 50px;
   height: 50px;
@@ -119,7 +129,7 @@ body {
   text-align: center;
   display: inline-block;
 }
-/* line 62, ../sass/screen.scss */
+/* line 68, ../sass/screen.scss */
 .reveal .slides section .circle span {
   display: inline-block;
   padding-top: 12px;
