@@ -79,6 +79,22 @@ body {
 }
 
 /* line 18, ../sass/screen.scss */
+.logo {
+  float: left;
+}
+/* line 21, ../sass/screen.scss */
+.logo img {
+  max-width: 25%;
+  margin: 5px;
+}
+
+@media (max-width: 680px) {
+  /* line 28, ../sass/screen.scss */
+  .logo img {
+    max-width: 10%;
+  }
+}
+/* line 33, ../sass/screen.scss */
 .disclaimer {
   position: absolute;
   top: 0;
@@ -96,67 +112,67 @@ body {
 }
 
 @media (max-width: 680px) {
-  /* line 36, ../sass/screen.scss */
+  /* line 51, ../sass/screen.scss */
   .disclaimer {
     margin: 30px -8px 0 0;
     font-size: 13px;
     width: 90px;
   }
 }
-/* line 44, ../sass/screen.scss */
+/* line 59, ../sass/screen.scss */
 .reveal .slides section h1, .reveal .slides section h2 {
   line-height: 60px;
 }
-/* line 47, ../sass/screen.scss */
+/* line 62, ../sass/screen.scss */
 .reveal .slides section h1.large, .reveal .slides section h2.large {
   line-height: 150px;
   font-size: 9em;
 }
-/* line 53, ../sass/screen.scss */
+/* line 68, ../sass/screen.scss */
 .reveal .slides section h3 {
   line-height: 30px;
 }
-/* line 57, ../sass/screen.scss */
+/* line 72, ../sass/screen.scss */
 .reveal .slides section .main {
   margin-top: 40px;
 }
-/* line 60, ../sass/screen.scss */
+/* line 75, ../sass/screen.scss */
 .reveal .slides section .main .assets {
   margin-top: 20px;
 }
-/* line 64, ../sass/screen.scss */
+/* line 79, ../sass/screen.scss */
 .reveal .slides section .main img.cover {
   max-width: 60%;
 }
-/* line 68, ../sass/screen.scss */
+/* line 83, ../sass/screen.scss */
 .reveal .slides section .main img.asset-medium {
   max-width: 30%;
 }
-/* line 72, ../sass/screen.scss */
+/* line 87, ../sass/screen.scss */
 .reveal .slides section .main img.asset {
   max-width: 10%;
   margin: 0 35px 0 35px;
 }
 @media (max-width: 680px) {
-  /* line 79, ../sass/screen.scss */
+  /* line 94, ../sass/screen.scss */
   .reveal .slides section .main {
     margin-top: 20px;
   }
-  /* line 82, ../sass/screen.scss */
+  /* line 97, ../sass/screen.scss */
   .reveal .slides section .main img.cover {
     max-width: 90%;
   }
-  /* line 85, ../sass/screen.scss */
+  /* line 100, ../sass/screen.scss */
   .reveal .slides section .main img.asset-medium {
     max-width: 60%;
   }
-  /* line 89, ../sass/screen.scss */
+  /* line 104, ../sass/screen.scss */
   .reveal .slides section .main img.asset {
     max-width: 25%;
     margin: 0 5px 0 5px;
   }
 }
-/* line 96, ../sass/screen.scss */
+/* line 111, ../sass/screen.scss */
 .reveal .slides section .circle {
   width: 50px;
   height: 50px;
@@ -166,7 +182,7 @@ body {
   text-align: center;
   display: inline-block;
 }
-/* line 105, ../sass/screen.scss */
+/* line 120, ../sass/screen.scss */
 .reveal .slides section .circle span {
   display: inline-block;
   padding-top: 12px;

@@ -15,6 +15,21 @@ body {
   background-color: goldenrod;
 }
 
+.logo {
+  float: left;
+
+  img {
+    max-width: 25%;
+    margin: 5px;
+  }
+}
+
+@media (max-width: 680px) {
+  .logo img {
+    max-width: 10%;
+  }
+}
+
 .disclaimer {
   position: absolute;
   top: 0;
