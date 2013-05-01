@@ -75,4 +75,54 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 body {
   font-family: 'VAG Rundschrift D Light', vagrundschriftdligregular, 'Helvetica Neue', Helvetiva, Arial, sans-serif;
   font-smooth: always;
+  background-color: goldenrod;
+}
+
+/* line 20, ../sass/screen.scss */
+.reveal .slides section h1, .reveal .slides section h2 {
+  line-height: 60px;
+}
+/* line 23, ../sass/screen.scss */
+.reveal .slides section h1.large, .reveal .slides section h2.large {
+  line-height: 150px;
+  font-size: 12em;
+}
+/* line 28, ../sass/screen.scss */
+.reveal .slides section h3 {
+  line-height: 30px;
+}
+/* line 32, ../sass/screen.scss */
+.reveal .slides section .cover-img {
+  margin-top: 40px;
+}
+/* line 34, ../sass/screen.scss */
+.reveal .slides section .cover-img img {
+  max-width: 60%;
+}
+@media (max-width: 680px) {
+  /* line 41, ../sass/screen.scss */
+  .reveal .slides section .cover-img {
+    margin-top: 20px;
+  }
+  /* line 43, ../sass/screen.scss */
+  .reveal .slides section .cover-img img {
+    max-width: 90%;
+  }
+}
+/* line 53, ../sass/screen.scss */
+.reveal .slides section .circle {
+  width: 50px;
+  height: 50px;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
+  border-radius: 25px;
+  text-align: center;
+  display: inline-block;
+}
+/* line 62, ../sass/screen.scss */
+.reveal .slides section .circle span {
+  display: inline-block;
+  padding-top: 12px;
+  color: white;
+  font-size: 10px;
 }
