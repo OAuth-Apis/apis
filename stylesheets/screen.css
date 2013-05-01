@@ -95,60 +95,68 @@ body {
   -webkit-transform: rotate(45deg);
 }
 
-/* line 35, ../sass/screen.scss */
+@media (max-width: 680px) {
+  /* line 36, ../sass/screen.scss */
+  .disclaimer {
+    margin: 30px -8px 0 0;
+    font-size: 13px;
+    width: 90px;
+  }
+}
+/* line 44, ../sass/screen.scss */
 .reveal .slides section h1, .reveal .slides section h2 {
   line-height: 60px;
 }
-/* line 38, ../sass/screen.scss */
+/* line 47, ../sass/screen.scss */
 .reveal .slides section h1.large, .reveal .slides section h2.large {
   line-height: 150px;
-  font-size: 10em;
+  font-size: 9em;
 }
-/* line 44, ../sass/screen.scss */
+/* line 53, ../sass/screen.scss */
 .reveal .slides section h3 {
   line-height: 30px;
 }
-/* line 49, ../sass/screen.scss */
+/* line 57, ../sass/screen.scss */
 .reveal .slides section .main {
   margin-top: 40px;
 }
-/* line 52, ../sass/screen.scss */
+/* line 60, ../sass/screen.scss */
 .reveal .slides section .main .assets {
   margin-top: 20px;
 }
-/* line 56, ../sass/screen.scss */
+/* line 64, ../sass/screen.scss */
 .reveal .slides section .main img.cover {
   max-width: 60%;
 }
-/* line 60, ../sass/screen.scss */
+/* line 68, ../sass/screen.scss */
 .reveal .slides section .main img.asset-medium {
   max-width: 30%;
 }
-/* line 64, ../sass/screen.scss */
+/* line 72, ../sass/screen.scss */
 .reveal .slides section .main img.asset {
   max-width: 10%;
   margin: 0 35px 0 35px;
 }
 @media (max-width: 680px) {
-  /* line 71, ../sass/screen.scss */
+  /* line 79, ../sass/screen.scss */
   .reveal .slides section .main {
     margin-top: 20px;
   }
-  /* line 74, ../sass/screen.scss */
+  /* line 82, ../sass/screen.scss */
   .reveal .slides section .main img.cover {
     max-width: 90%;
   }
-  /* line 77, ../sass/screen.scss */
+  /* line 85, ../sass/screen.scss */
   .reveal .slides section .main img.asset-medium {
     max-width: 60%;
   }
-  /* line 81, ../sass/screen.scss */
+  /* line 89, ../sass/screen.scss */
   .reveal .slides section .main img.asset {
     max-width: 25%;
     margin: 0 5px 0 5px;
   }
 }
-/* line 88, ../sass/screen.scss */
+/* line 96, ../sass/screen.scss */
 .reveal .slides section .circle {
   width: 50px;
   height: 50px;
@@ -158,7 +166,7 @@ body {
   text-align: center;
   display: inline-block;
 }
-/* line 97, ../sass/screen.scss */
+/* line 105, ../sass/screen.scss */
 .reveal .slides section .circle span {
   display: inline-block;
   padding-top: 12px;

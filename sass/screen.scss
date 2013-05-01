@@ -26,9 +26,18 @@ body {
   background-color: darkred;
   text-align: center;
   font-size: 20px;
-  transform:rotate(45deg);
-  -ms-transform:rotate(45deg);
-  -webkit-transform:rotate(45deg);
+  transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+
+}
+
+@media (max-width: 680px) {
+  .disclaimer {
+    margin: 30px -8px 0 0;
+    font-size: 13px;
+    width: 90px;
+  }
 }
 
 .reveal .slides section {
@@ -37,14 +46,13 @@ body {
 
     &.large {
       line-height: 150px;
-      font-size: 10em;
+      font-size: 9em;
     }
   }
 
   h3 {
     line-height: 30px;
   }
-
 
   .main {
     margin-top: 40px;
