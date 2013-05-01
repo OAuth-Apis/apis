@@ -15,6 +15,22 @@ body {
   background-color: goldenrod;
 }
 
+.disclaimer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  padding: 5px;
+  margin: 100px -40px 0 0;
+  width: 300px;
+  background-color: darkred;
+  text-align: center;
+  font-size: 20px;
+  transform:rotate(45deg);
+  -ms-transform:rotate(45deg);
+  -webkit-transform:rotate(45deg);
+}
+
 .reveal .slides section {
   h1, h2 {
     line-height: 60px;
@@ -29,11 +45,20 @@ body {
     line-height: 30px;
   }
 
+
   .main {
     margin-top: 40px;
 
+    .assets {
+      margin-top: 20px;
+    }
+
     img.cover {
       max-width: 60%;
+    }
+
+    img.asset-medium {
+      max-width: 30%;
     }
 
     img.asset {
@@ -49,6 +74,10 @@ body {
       img.cover {
         max-width: 90%;
       }
+      img.asset-medium {
+        max-width: 60%;
+      }
+
       img.asset {
         max-width: 25%;
         margin: 0 5px 0 5px;
