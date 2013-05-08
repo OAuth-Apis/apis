@@ -1,3 +1,4 @@
+notes
 .DS_Store
 rebel.xml
 .classpath
@@ -9,3 +10,4 @@ rebel.xml
 *.iws
 target
 bin
+.sass-cache

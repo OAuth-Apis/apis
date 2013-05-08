@@ -82,7 +82,7 @@ var resourceServerFormView = (function() {
 
         $("button.removeScope").one("click", function() { 
           if (model.id) {
-            Template.get("tplDeleteScopeWarning ", function(template) {
+            Template.get("tplDeleteScopeWarning", function(template) {
               $("#currentScopes").before(template());
             });
             return false; 
