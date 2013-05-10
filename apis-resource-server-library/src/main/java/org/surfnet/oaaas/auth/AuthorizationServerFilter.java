@@ -76,10 +76,17 @@ import java.util.Properties;
  * <p/>
  * Of course it might be better to use a properties file depending on the
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
- * simple to override the {@link AuthorizationServerFilter#init(FilterConfig)}
+ * simple to provide an apis.application.properties file on the classpath or configure a
+ * properties file name as init-param (to have multiple resource servers in the same tomcat instance).
+ *
+ * See {@link AuthorizationServerFilter#init(FilterConfig)}
+ *
  * <p/>
  * Also note that by default the responses from the Authorization Server are not
- * cached. This can easily be changed if you override
+ * cached. This in configurable in the properties file used by this Filter. Again
+ * see {@link AuthorizationServerFilter#init(FilterConfig)}
+ *
+ * The cache behaviour can also be changed if you override
  * {@link AuthorizationServerFilter#cacheAccessTokens()} and to configure the
  * cache differently override {@link AuthorizationServerFilter#buildCache()}
  */
@@ -239,7 +246,6 @@ public class AuthorizationServerFilter implements Filter {
         return verifyTokenResponse;
       }
     }
-
     if (verifyTokenResponse == null) {
       ClientResponse res = client.resource(String.format("%s?access_token=%s", authorizationServerUrl, accessToken))
               .header(HttpHeaders.AUTHORIZATION, "Basic " + authorizationValue).accept("application/json")
@@ -280,18 +286,26 @@ public class AuthorizationServerFilter implements Filter {
   /*
    * http://www.w3.org/TR/cors/#resource-preflight-requests
    */
-  protected boolean handledCorsPreflightRequest(HttpServletRequest request, HttpServletResponse response) {
+  protected boolean handledCorsPreflightRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (!this.allowCorsRequests || StringUtils.isBlank(request.getHeader("Origin"))) {
       return false;
     }
+    /*
+     * We must do this anyway, this being (probably) a CORS request
+     */
     response.setHeader("Access-Control-Allow-Origin", "*");
     if (isPreflightRequest(request)) {
+      /*
+       * We don't want to propogate the request any further
+       */
       response.setHeader("Access-Control-Allow-Methods", getAccessControlAllowedMethods());
       String requestHeaders = request.getHeader("Access-Control-Request-Headers");
       if (StringUtils.isNotBlank(requestHeaders)) {
         response.setHeader("Access-Control-Allow-Headers", getAllowedHeaders(requestHeaders));
       }
       response.setHeader("Access-Control-Max-Age", getAccessControlMaxAge());
+      response.setStatus(HttpServletResponse.SC_OK);
+      response.flushBuffer();
       return true;
     }
     return false;
