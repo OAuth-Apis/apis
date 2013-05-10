@@ -115,10 +115,16 @@ public class AuthorizationServerFilter implements Filter {
   public static final String VERIFY_TOKEN_RESPONSE = "VERIFY_TOKEN_RESPONSE";
 
   /*
-   * If not overridden by a subclass we cache the answers from the authorization
+   * If not overridden by a subclass / configured otherwise we don't cache the answers from the authorization
    * server
    */
+  private boolean cacheEnabled;
   private TokenResponseCache cache;
+
+  /*
+   * By default we respond to preflight CORS requests and have a lenient policy as we are secured by OAuth2
+   */
+  private boolean allowCorsRequests = true;
 
   /*
    * Key and secret obtained out-of-band to authenticate against the
@@ -156,6 +162,11 @@ public class AuthorizationServerFilter implements Filter {
       resourceServerKey = prop.getProperty("adminService.resourceServerKey");
       resourceServerSecret = prop.getProperty("adminService.resourceServerSecret");
       authorizationServerUrl = prop.getProperty("adminService.tokenVerificationUrl");
+      cacheEnabled = Boolean.valueOf(prop.getProperty("adminService.cacheEnabled"));
+      String allowCorsRequestsProperty = prop.getProperty("adminService.allowCorsRequests");
+      if (StringUtils.isNotEmpty(allowCorsRequestsProperty)) {
+        allowCorsRequests = Boolean.valueOf(allowCorsRequestsProperty);
+      }
     } else if (filterConfig.getInitParameter("resource-server-key") != null) {
       resourceServerKey = filterConfig.getInitParameter("resource-server-key");
       resourceServerSecret = filterConfig.getInitParameter("resource-server-secret");
@@ -200,6 +211,10 @@ public class AuthorizationServerFilter implements Filter {
           throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) servletRequest;
     HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+    if (handledCorsPreflightRequest(request, response)) {
+      return;
+    }
     /*
      * The Access Token from the Client app as documented in
      * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-7
@@ -259,7 +274,43 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   protected boolean cacheAccessTokens() {
+    return cacheEnabled;
+  }
+
+  /*
+   * http://www.w3.org/TR/cors/#resource-preflight-requests
+   */
+  protected boolean handledCorsPreflightRequest(HttpServletRequest request, HttpServletResponse response) {
+    if (!this.allowCorsRequests || StringUtils.isBlank(request.getHeader("Origin"))) {
+      return false;
+    }
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    if (isPreflightRequest(request)) {
+      response.setHeader("Access-Control-Allow-Methods", getAccessControlAllowedMethods());
+      String requestHeaders = request.getHeader("Access-Control-Request-Headers");
+      if (StringUtils.isNotBlank(requestHeaders)) {
+        response.setHeader("Access-Control-Allow-Headers", getAllowedHeaders(requestHeaders));
+      }
+      response.setHeader("Access-Control-Max-Age", getAccessControlMaxAge());
+      return true;
+    }
     return false;
+  }
+
+  protected boolean isPreflightRequest(HttpServletRequest request) {
+    return StringUtils.isNotBlank(request.getHeader("Access-Control-Request-Method")) && request.getMethod().equalsIgnoreCase("OPTIONS");
+  }
+
+  protected String getAllowedHeaders(String requestHeaders) {
+    return requestHeaders;
+  }
+
+  protected String getAccessControlMaxAge() {
+     return "86400";
+  }
+
+  protected String getAccessControlAllowedMethods() {
+    return "GET, OPTIONS, HEAD, PUT, PATCH, POST, DELETE";
   }
 
   private boolean isValidResponse(VerifyTokenResponse tokenResponse) {

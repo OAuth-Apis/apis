@@ -102,11 +102,11 @@ The authorization server is capable of handing out access tokens on behalf of th
 
 Once a Client app has obtained an access token (in combination with a refresh token if you have configured this for the Client app) it can query the resource server with whatever data you would like to share on behalf of the user (so we have made the implicit assumption that the resource server will only hand out data that is for the users eyes only or perhaps only for users that share a certain membership - the enforcement of that is of course the responsibility of the resource server). Note that the actual authentication of the user is pluggable and in real life the API provided by the resource server and subsequent data will 'know' of the identity returned by the authentication part of the authorization.
 
-When the Client app queries the API of the resource server it will - prior to returning the data - ask the authorization server to validate the access token. If the token is valid (e.g. not expired and belonging to the Resource Server and Client app) then the identity of the owner who has granted consent/ access is returned. Note that the actual information in the identity (group memberships, emails or whatever) returned to the resource server is the exact information that was returned by the authentication module when the user proved he could authenticate him/herself.
+When the Client app queries the API of the resource server it will - prior to returning the data - ask the authorization server to validate the access token (For more info see the section 'How do Resource Servers verify the Access Token?'). If the token is valid (e.g. not expired and belonging to the Resource Server and Client app) then the identity of the owner who has granted consent/ access is returned. Note that the actual information in the identity (group memberships, emails or whatever) returned to the resource server is the exact information that was returned by the authentication module when the user proved he could authenticate him/herself.
 
 Client apps and resource servers are registered using the OAuth admin application that is part of the authorization server. Note that the JavaScript OAuth admin application is actually also a Client app which needs to be registered out-of-band (e.g. by SQL) otherwise you will have the chicken-egg paradigm to solve. The resource server is something you will want to provide for yourself. After registration of your resource server with the admin client the key / secret for secure communication with the authorization server are provided to you.
 
-Typically you will want to deploy the authorization server in a servlet container like Tomcat or Jetty. You can of course also deploy the war on an Application Server if you like added complexity. One authorization server can serve up to many, many resource servers and as the communication between authorization server and resource server is a very simple REST / JSON API the technical nature of the resource server really does not care. See the AuthorizationServerFilter.java in the apis-authorization-server module for an example on how to resource servers can 'talk' to the authorization server.
+Typically you will want to deploy the authorization server in a servlet container like Tomcat or Jetty. You can of course also deploy the war on an Application Server if you like added complexity. One authorization server can serve up to many, many resource servers and as the communication between authorization server and resource server is a very simple REST / JSON API the technical nature of the resource server really does not care. See the AuthorizationServerFilter.java in the apis-resource-server-library module for an example on how to resource servers can 'talk' to the authorization server.
 
 ## Extending the defaults
 
@@ -158,6 +158,19 @@ protected String getUserConsentUrl() {
   return "/WEB-INF/jsp/userconsent.jsp";
 }
 ```
+
+### How do Resource Servers verify the Access Token?
+
+They don't. They ask the Authorization Server to do this. For Java implemented Resource Servers you can use (or extend) the `AuthorizationServerFilter` in the `apis-resource-server-library` module. For non-Java Resource Servers the protocol is simple:
+
+    GET http://<domain-name-authorization-server>/v1/tokeninfo?access_token=<access_token>
+    Authorization: Basic <Base64 encoded key:secret >
+    Accept: application/json
+
+The key/secret are obtained when creating the Resource Server in the admin GUI of the Authorization Server.
+
+The Response is the json representation of the tokenInfo with the client name, the Principal information and the expiry time (if set for this client).
+
 
 ### Plugging in your custom implementations
 

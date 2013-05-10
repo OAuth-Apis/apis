@@ -64,9 +64,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
       protected boolean cacheAccessTokens() {
         return true;
       }
-      
     };
-    
     filter.init(filterConfig);
   }
 
@@ -92,6 +90,8 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     VerifyTokenResponse response = (VerifyTokenResponse) chain.getRequest().getAttribute(
         AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
     assertEquals("value",response.getPrincipal().getAttributes().get("key"));
+    assertEquals("*", ((MockHttpServletResponse)chain.getResponse()).getHeader("Access-Control-Allow-Origin"));
+
 
     /*
      * Also test the cache by repeating the call and setting the expected result
@@ -122,6 +122,26 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
     assertEquals(403, response.getStatus());
   }
 
+  @Test
+  public void testCorsHeadersPreflight() throws IOException, ServletException {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    request.addHeader(HttpHeaders.AUTHORIZATION, "bearer dummy-access-token");
+    request.addHeader("Origin", "http://www.test.org");
+    request.addHeader("Access-Control-Request-Method", "PATCH");
+    request.addHeader("Access-Control-Request-Headers", HttpHeaders.AUTHORIZATION + ", X-Custom-Header");
+    request.setMethod("OPTIONS");
+
+    MockHttpServletResponse response = new MockHttpServletResponse();
+    //null FilterChain as chain.filter to proceed the flow is not called with preflight
+    filter.doFilter(request, response, null);
+
+    assertEquals("86400", response.getHeader("Access-Control-Max-Age"));
+    assertEquals(HttpHeaders.AUTHORIZATION + ", X-Custom-Header", response.getHeader("Access-Control-Allow-Headers"));
+    assertEquals("GET, OPTIONS, HEAD, PUT, PATCH, POST, DELETE", response.getHeader("Access-Control-Allow-Methods"));
+    assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
+
+  }
+
   private MockFilterChain doCallFilter(VerifyTokenResponse recorderdResponse) throws IOException, ServletException {
     return doCallFilter(recorderdResponse, new MockHttpServletResponse());
   }
@@ -136,6 +156,7 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
       ServletException {
     super.setResponseResource(resource);
     MockHttpServletRequest request = new MockHttpServletRequest();
+    request.addHeader("Origin", "http://www.test.org");
     request.addHeader(HttpHeaders.AUTHORIZATION, "bearer dummy-access-token");
     MockFilterChain chain = new MockFilterChain();
     filter.doFilter(request, response, chain);
