@@ -294,7 +294,7 @@ public class AuthorizationServerFilter implements Filter {
      * We must do this anyway, this being (probably) a CORS request
      */
     response.setHeader("Access-Control-Allow-Origin", "*");
-    if (isPreflightRequest(request)) {
+    if (StringUtils.isNotBlank(request.getHeader("Access-Control-Request-Method")) && request.getMethod().equalsIgnoreCase("OPTIONS")) {
       /*
        * We don't want to propogate the request any further
        */
@@ -309,10 +309,6 @@ public class AuthorizationServerFilter implements Filter {
       return true;
     }
     return false;
-  }
-
-  protected boolean isPreflightRequest(HttpServletRequest request) {
-    return StringUtils.isNotBlank(request.getHeader("Access-Control-Request-Method")) && request.getMethod().equalsIgnoreCase("OPTIONS");
   }
 
   protected String getAllowedHeaders(String requestHeaders) {
