@@ -17,23 +17,27 @@
 package org.surfnet.oaaas.conext;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import nl.surfnet.spring.security.opensaml.Provisioner;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.opensaml.saml2.core.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.Attribute;
+import org.opensaml.saml2.core.AttributeStatement;
+import org.opensaml.saml2.core.AuthenticatingAuthority;
+import org.opensaml.saml2.core.AuthnStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Implementation of Spring-security-opensaml's Provisioner interface, which provisions a UserDetails object based on a SAML Assertion.
  */
 public class SAMLProvisioner implements Provisioner {
+
+  private static final Logger LOG = LoggerFactory.getLogger(SAMLProvisioner.class);
 
   private String uuidAttribute = "urn:oid:1.3.6.1.4.1.1076.20.40.40.1";
   private static final String DISPLAY_NAME_ATTRIBUTE = "urn:mace:dir:attribute-def:displayName";
@@ -42,6 +46,9 @@ public class SAMLProvisioner implements Provisioner {
   public UserDetails provisionUser(Assertion assertion) {
     String userId = getValueFromAttributeStatements(assertion, uuidAttribute);
     String identityProvider = getAuthenticatingAuthority(assertion);
+    if (identityProvider == null) {
+      LOG.debug("No AuthenticatingAuthority present in the Assertion, cannot determine IdP. Will leave null in principal.");
+    }
     String displayName =  getValueFromAttributeStatements(assertion, DISPLAY_NAME_ATTRIBUTE);
     return new SAMLAuthenticatedPrincipal(userId, new ArrayList<String>(), new HashMap<String, String>(), new ArrayList<String>(), identityProvider, displayName);
   }
@@ -69,7 +76,7 @@ public class SAMLProvisioner implements Provisioner {
         }
       }
     }
-    throw new RuntimeException("No AuthenticatingAuthority present in the Assertion:" + ToStringBuilder.reflectionToString(assertion));
+    return null;
   }
 
 
