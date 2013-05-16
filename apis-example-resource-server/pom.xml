@@ -13,7 +13,7 @@
     <relativePath>../pom.xml</relativePath>
     <groupId>nl.surfnet.apis</groupId>
     <artifactId>apis-parent</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>apis-example-resource-server</artifactId>
