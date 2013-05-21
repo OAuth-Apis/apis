@@ -235,7 +235,7 @@ var clientFormController = (function() {
         thumbNailUrl: formAsObject['thumbNailUrl'],
         useRefreshTokens: formAsObject['useRefreshTokens'],
         allowedImplicitGrant: formAsObject['allowedImplicitGrant'],
-        allowedClientCredentials: formAsObject['allowedImplicitGrant'],
+        allowedClientCredentials: formAsObject['allowedClientCredentials'],
         expireDuration: formAsObject['expireDuration'],
         attributes: attributes,
         redirectUris: cleanFormArray(formAsObject['redirectUris'])
