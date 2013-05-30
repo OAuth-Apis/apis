@@ -50,7 +50,7 @@ public class SAMLProvisioner implements Provisioner {
       LOG.debug("No AuthenticatingAuthority present in the Assertion, cannot determine IdP. Will leave null in principal.");
     }
     String displayName =  getValueFromAttributeStatements(assertion, DISPLAY_NAME_ATTRIBUTE);
-    return new SAMLAuthenticatedPrincipal(userId, new ArrayList<String>(), new HashMap<String, String>(), new ArrayList<String>(), identityProvider, displayName);
+    return new SAMLAuthenticatedPrincipal(userId, new ArrayList<String>(), new HashMap<String, String>(), new ArrayList<String>(), identityProvider, displayName, false);
   }
 
   private String getValueFromAttributeStatements(final Assertion assertion, final String name) {

@@ -84,6 +84,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   private OpenConextOAuthClient apiClient;
   private String callbackFlagParameter = "apiOauthCallback";
   private boolean enrichPricipal;
+  private String adminGroup;
 
 
   @Inject
@@ -108,6 +109,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
       enrichPricipal = Boolean.valueOf(properties.getProperty("api-enrich-principal"));
       if (enrichPricipal) {
         apiClient = createOpenConextOAuthClient(properties);
+        adminGroup = properties.getProperty("admin.client.apis.teamname");
       }
     } catch (Exception e) {
       throw new ServletException(e);
@@ -151,7 +153,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
     LOG.debug("Hitting SAML Authenticator filter");
     if (isSAMLResponse(request)) {
       Response samlResponse = extractSamlResponse(request);
-      AuthenticatedPrincipal principal = (AuthenticatedPrincipal) openSAMLContext.assertionConsumer().consume(samlResponse);
+      SAMLAuthenticatedPrincipal principal = (SAMLAuthenticatedPrincipal) openSAMLContext.assertionConsumer().consume(samlResponse);
       if (enrichPricipal) {
         //need to save the Principal and the AuthState somewhere
         request.getSession().setAttribute(PRINCIPAL_FROM_SAML, principal);
@@ -161,7 +163,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         proceedWithChain(request, response, chain, principal, getSAMLRelayState(request));
       }
     } else if (isOAuthCallback(request)) {
-      AuthenticatedPrincipal principal = (AuthenticatedPrincipal) request.getSession().getAttribute(PRINCIPAL_FROM_SAML);
+      SAMLAuthenticatedPrincipal principal = (SAMLAuthenticatedPrincipal) request.getSession().getAttribute(PRINCIPAL_FROM_SAML);
       String authState = (String) request.getSession().getAttribute(RELAY_STATE_FROM_SAML);
       if (principal == null) { //huh
         throw new ServiceProviderAuthenticationException("No principal anymore in the session");
@@ -172,6 +174,9 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
       if (!CollectionUtils.isEmpty(groups)) {
         for (Group20 group : groups) {
           principal.addGroup(group.getId());
+          if (StringUtils.isNotBlank(this.adminGroup) && adminGroup.equalsIgnoreCase(group.getId())) {
+            principal.setAdminPrincipal(true);
+          }
         }
       }
       proceedWithChain(request, response, chain, principal, authState);

@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
-import org.surfnet.oaaas.resource.AbstractResource;
 
 /**
  * JAX-RS Resource for maintaining owns access tokens.
@@ -59,10 +58,7 @@ public class AccessTokenResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-    String owner = getUserId(request);
-    List<AccessToken> tokens = accessTokenRepository.findByResourceOwnerId(owner);
-
-    LOG.debug("About to return all access tokens ({}) for owner {}", tokens.size(), owner);
+    List<AccessToken> tokens = getAllAccessTokens(request);
     return Response.ok(tokens).build();
   }
 
@@ -76,14 +72,7 @@ public class AccessTokenResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    String owner = getUserId(request);
-
-    final AccessToken token = accessTokenRepository.findByIdAndResourceOwnerId(id, owner);
-
-    Response.ResponseBuilder responseBuilder = (token == null ? Response.status(Response.Status.NOT_FOUND) : Response.ok(token));
-    LOG.debug("About to return one accessToken with id {}: {}", id, token);
-    return responseBuilder.build();
+    return response(getAccessToken(request, id));
   }
 
 
@@ -97,15 +86,38 @@ public class AccessTokenResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    String owner = getUserId(request);
-
-    if (accessTokenRepository.findByIdAndResourceOwnerId(id, owner) == null) {
+    AccessToken accessToken = getAccessToken(request, id);
+    if (accessToken == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     LOG.debug("About to delete accessToken {}", id);
     accessTokenRepository.delete(id);
     return Response.noContent().build();
+  }
+
+  private AccessToken getAccessToken(HttpServletRequest request, Long id) {
+    AccessToken accessToken;
+    if (isAdminPrincipal(request)) {
+      accessToken = accessTokenRepository.findOne(id);
+    } else {
+      String owner = getUserId(request);
+      accessToken = accessTokenRepository.findByIdAndResourceOwnerId(id, owner);
+    }
+    LOG.debug("About to return one accessToken with id {}: {}", id, accessToken);
+    return accessToken;
+  }
+
+  private List<AccessToken> getAllAccessTokens(HttpServletRequest request) {
+    List<AccessToken> accessTokens;
+    if (isAdminPrincipal(request)) {
+      accessTokens = addAll(accessTokenRepository.findAll().iterator());
+      LOG.debug("About to return all resource servers ({}) for adminPrincipal", accessTokens.size());
+    } else {
+      String owner = getUserId(request);
+      accessTokens = accessTokenRepository.findByResourceOwnerId(owner);
+      LOG.debug("About to return all resource servers ({}) for owner {}", accessTokens.size(), owner);
+    }
+    return accessTokens;
   }
 
 

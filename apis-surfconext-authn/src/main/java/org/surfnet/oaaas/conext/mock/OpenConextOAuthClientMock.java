@@ -22,6 +22,7 @@ import nl.surfnet.coin.api.client.domain.Group20;
 import nl.surfnet.coin.api.client.domain.Person;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -64,7 +65,10 @@ public class OpenConextOAuthClientMock implements OpenConextOAuthClient {
 
   @Override
   public List<Group20> getGroups20(String userId, String onBehalfOf) {
-    return asList(new Group20("1224"));
+    if (userId.equalsIgnoreCase("admin")) {
+      return asList(new Group20("urn:collab:group:dev.surfteams.nl:nl:surfnet:diensten:admin_apis"));
+    }
+    return new ArrayList<Group20>();
   }
 
   @Override

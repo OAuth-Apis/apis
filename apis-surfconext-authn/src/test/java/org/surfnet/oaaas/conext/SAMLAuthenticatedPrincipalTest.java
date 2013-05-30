@@ -21,12 +21,13 @@ public class SAMLAuthenticatedPrincipalTest {
     attributes.put("key", "value");
     String identityProvider = "http://universiteit-hardewijk";
     String displayName = "gebruiker.pi";
-    AuthenticatedPrincipal principal = new SAMLAuthenticatedPrincipal("ud.id.name.pi", Arrays.asList(new String[]{"USER", "ADMIN"}), attributes, Arrays.asList(new String[]{"id.group.1", "id.group.2", "id.group.3"}), identityProvider, displayName);
+    AuthenticatedPrincipal principal = new SAMLAuthenticatedPrincipal("ud.id.name.pi", Arrays.asList(new String[]{"USER", "ADMIN"}), attributes, Arrays.asList(new String[]{"id.group.1", "id.group.2", "id.group.3"}), identityProvider, displayName, true);
     String json = principal.serialize();
     SAMLAuthenticatedPrincipal samlPrincipal = (SAMLAuthenticatedPrincipal) AuthenticatedPrincipal.deserialize(json);
     assertTrue(samlPrincipal.isGroupAware());
     assertEquals(identityProvider, samlPrincipal.getIdentityProvider());
     assertEquals(displayName, samlPrincipal.getDisplayName());
+    assertTrue(samlPrincipal.isAdminPrincipal());
   }
 
 }

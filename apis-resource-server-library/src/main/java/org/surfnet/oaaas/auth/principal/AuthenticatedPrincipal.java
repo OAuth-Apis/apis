@@ -53,6 +53,8 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
 
   private Collection<String> groups;
 
+  private boolean adminPrincipal;
+
   /*
    * Extra attributes, depending on the authentication implementation. Note that we only support String - String attributes as we
    * need to be able to persist the Principal generically
@@ -76,10 +78,15 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
   }
 
   public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups) {
+    this(username, roles, attributes, groups, false);
+  }
+
+  public AuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups, boolean adminPrincipal) {
     this.name = username;
     this.roles = roles;
     this.attributes = attributes;
     this.groups = groups;
+    this.adminPrincipal = adminPrincipal;
   }
 
   /**
@@ -168,6 +175,15 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
   public boolean isGroupAware() {
     return !CollectionUtils.isEmpty(groups);
   }
+
+  public boolean isAdminPrincipal() {
+    return adminPrincipal;
+  }
+
+  public void setAdminPrincipal(boolean adminPrincipal) {
+    this.adminPrincipal = adminPrincipal;
+  }
+
 
   @JsonIgnore
   public String serialize() {

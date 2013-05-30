@@ -30,7 +30,6 @@ import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
-import org.surfnet.oaaas.resource.AbstractResource;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -67,7 +66,7 @@ public class ResourceServerResource extends AbstractResource {
   private ClientRepository clientRepository;
 
   /**
-   * Get all existing resource servers for the provided credentials (== owner).
+   * Get all existing resource servers for the provided credentials (== owner) or in case of an adminPrincipal we return all resource servers.
    */
   @GET
   public Response getAll(@Context
@@ -76,12 +75,7 @@ public class ResourceServerResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    String owner = getUserId(request);
-    final List<ResourceServer> resourceServers = resourceServerRepository.findByOwner(owner);
-
-    LOG.debug("About to return all resource servers ({}) for owner {}", resourceServers.size(), owner);
-
+    List<ResourceServer> resourceServers = getAllResourceServers(request);
     return Response.ok(resourceServers).build();
   }
 
@@ -97,19 +91,7 @@ public class ResourceServerResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    String owner = getUserId(request);
-
-    Response.ResponseBuilder responseBuilder;
-    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(id, owner);
-
-    if (resourceServer == null) {
-      responseBuilder = Response.status(Response.Status.NOT_FOUND);
-    } else {
-      responseBuilder = Response.ok(resourceServer);
-    }
-    LOG.debug("About to return one resourceServer with id {}: {}", id, resourceServer);
-    return responseBuilder.build();
+    return response(getResourceServer(request, id));
   }
 
   /**
@@ -120,7 +102,7 @@ public class ResourceServerResource extends AbstractResource {
   public Response stats(@Context
                         HttpServletRequest request) {
     String owner = getUserId(request);
-    Iterable<ResourceServer> resourceServers = this.resourceServerRepository.findByOwner(owner);
+    Iterable<ResourceServer> resourceServers = this.getAllResourceServers(request);
     List<ResourceServerStat> resourceServerStats = new ArrayList<StatisticsResponse.ResourceServerStat>();
     for (ResourceServer resourceServer : resourceServers) {
       List<ClientStat> clientStats = new ArrayList<StatisticsResponse.ClientStat>();
@@ -192,10 +174,9 @@ public class ResourceServerResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
+    ResourceServer resourceServer = getResourceServer(request, id);
 
-    String owner = getUserId(request);
-
-    if (resourceServerRepository.findByIdAndOwner(id, owner) == null) {
+    if (resourceServer == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
     LOG.debug("About to delete resourceServer {}", id);
@@ -217,9 +198,7 @@ public class ResourceServerResource extends AbstractResource {
       return validateScopeResponse;
     }
 
-    String owner = getUserId(request);
-
-    ResourceServer persistedResourceServer = resourceServerRepository.findByIdAndOwner(id, owner);
+    ResourceServer persistedResourceServer = getResourceServer(request, id);
     if (persistedResourceServer == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -227,7 +206,7 @@ public class ResourceServerResource extends AbstractResource {
     // Copy over read-only fields
     resourceServer.setSecret(persistedResourceServer.getSecret());
     resourceServer.setKey(persistedResourceServer.getKey());
-    resourceServer.setOwner(owner);
+    resourceServer.setOwner(getUserId(request));
 
     pruneClientScopes(resourceServer.getScopes(), persistedResourceServer.getScopes(),
             persistedResourceServer.getClients());
@@ -280,5 +259,31 @@ public class ResourceServerResource extends AbstractResource {
   protected String generateSecret() {
     return super.generateRandom();
   }
+
+  private ResourceServer getResourceServer(HttpServletRequest request, Long id) {
+    ResourceServer resourceServer;
+    if (isAdminPrincipal(request)) {
+      resourceServer = resourceServerRepository.findOne(id);
+    } else {
+      String owner = getUserId(request);
+      resourceServer = resourceServerRepository.findByIdAndOwner(id, owner);
+    }
+    LOG.debug("About to return one resourceServer with id {}: {}", id, resourceServer);
+    return resourceServer;
+  }
+
+  private List<ResourceServer> getAllResourceServers(HttpServletRequest request) {
+    List<ResourceServer> resourceServers;
+    if (isAdminPrincipal(request)) {
+      resourceServers = addAll(resourceServerRepository.findAll().iterator());
+      LOG.debug("About to return all resource servers ({}) for adminPrincipal", resourceServers.size());
+    } else {
+      String owner = getUserId(request);
+      resourceServers = resourceServerRepository.findByOwner(owner);
+      LOG.debug("About to return all resource servers ({}) for owner {}", resourceServers.size(), owner);
+    }
+    return resourceServers;
+  }
+
 
 }

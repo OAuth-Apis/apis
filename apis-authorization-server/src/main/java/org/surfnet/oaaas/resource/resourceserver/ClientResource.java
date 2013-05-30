@@ -22,12 +22,10 @@ import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.repository.ClientRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
-import org.surfnet.oaaas.resource.AbstractResource;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -36,8 +34,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * JAX-RS Resource for CRUD operations on Clients. (clients in OAuth 2 context).
@@ -66,21 +62,9 @@ public class ClientResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    String owner = getUserId(request);
-
-    Response.ResponseBuilder responseBuilder;
-    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
-
-    final Iterable<Client> clients = clientRepository.findByResourceServer(resourceServer);
-
-    // Only return 404 in case resource server wasn't found. If no clients, just return empty list.
-    if (clients == null) {
-      responseBuilder = Response.status(Response.Status.NOT_FOUND);
-    } else {
-      responseBuilder = Response.ok(clients);
-    }
-    return responseBuilder.build();
+    ResourceServer resourceServer = getResourceServer(request, resourceServerId);
+    Iterable<Client> clients = clientRepository.findByResourceServer(resourceServer);
+    return response(addAll(clients.iterator()));
   }
 
 
@@ -96,20 +80,8 @@ public class ClientResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    Response.ResponseBuilder responseBuilder;
-
-    String owner = getUserId(request);
-
-    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
-    final Client client = clientRepository.findByIdAndResourceServer(id, resourceServer);
-
-    if (client == null) {
-      responseBuilder = Response.status(Response.Status.NOT_FOUND);
-    } else {
-      responseBuilder = Response.ok(client);
-    }
-    return responseBuilder.build();
+    Client client = getClientByResourceServer(request, id, resourceServerId);
+    return response(client);
   }
 
   /**
@@ -123,9 +95,7 @@ public class ClientResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-
-    String owner = getUserId(request);
-    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+    ResourceServer resourceServer = getResourceServer(request, resourceServerId);
 
     client.setResourceServer(resourceServer);
     client.setClientId(generateClientId(client));
@@ -143,10 +113,7 @@ public class ClientResource extends AbstractResource {
       LOG.debug("Saved client: {}", clientSaved);
     }
     final URI uri = UriBuilder.fromPath("{clientId}.json").build(clientSaved.getId());
-    return Response
-            .created(uri)
-            .entity(clientSaved)
-            .build();
+    return Response.created(uri).entity(clientSaved).build();
   }
 
   protected String generateSecret() {
@@ -167,10 +134,8 @@ public class ClientResource extends AbstractResource {
       return validateScopeResponse;
     }
 
-    String owner = getUserId(request);
-    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+    Client client = getClientByResourceServer(request, id, resourceServerId);
 
-    Client client = clientRepository.findByIdAndResourceServer(id, resourceServer);
     if (client == null) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -196,8 +161,7 @@ public class ClientResource extends AbstractResource {
       return validateScopeResponse;
     }
 
-    String owner = getUserId(request);
-    final ResourceServer resourceServer = resourceServerRepository.findByIdAndOwner(resourceServerId, owner);
+    ResourceServer resourceServer = getResourceServer(request, resourceServerId);
 
     final Client clientFromStore = clientRepository.findByIdAndResourceServer(id, resourceServer);
     if (clientFromStore == null) {
@@ -248,4 +212,21 @@ public class ClientResource extends AbstractResource {
   protected String sanitizeClientName(String name) {
     return name.toLowerCase().replaceAll(" ", "-").replaceAll(FILTERED_CLIENT_ID_CHARS, "");
   }
+
+  private Client getClientByResourceServer(HttpServletRequest request, Long clientId, Long resourceServerId) {
+    ResourceServer resourceServer = getResourceServer(request, resourceServerId);
+    return clientRepository.findByIdAndResourceServer(clientId, resourceServer);
+  }
+
+  private ResourceServer getResourceServer(HttpServletRequest request, Long id) {
+    ResourceServer resourceServer;
+    if (isAdminPrincipal(request)) {
+      resourceServer = resourceServerRepository.findOne(id);
+    } else {
+      String owner = getUserId(request);
+      resourceServer = resourceServerRepository.findByIdAndOwner(id, owner);
+    }
+    return resourceServer;
+  }
+
 }

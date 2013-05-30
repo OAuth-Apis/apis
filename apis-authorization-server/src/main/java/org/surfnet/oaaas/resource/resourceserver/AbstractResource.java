@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.resource;
+package org.surfnet.oaaas.resource.resourceserver;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
@@ -35,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AuthorizationServerFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 
@@ -87,9 +85,14 @@ public class AbstractResource {
   }
 
   protected String getUserId(HttpServletRequest request) {
-    VerifyTokenResponse verifyTokenResponse = (VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
-    return verifyTokenResponse.getPrincipal().getName();
+    return getAuthenticatedPrincipal(request).getName();
   }
+
+
+  protected boolean isAdminPrincipal(HttpServletRequest request) {
+    return getAuthenticatedPrincipal(request).isAdminPrincipal();
+  }
+
 
   protected void validate(AbstractEntity entity) {
     Set<ConstraintViolation<AbstractEntity>> validate = validator.validate(entity);
@@ -117,4 +120,23 @@ public class AbstractResource {
     }
     return null;
   }
+
+  private AuthenticatedPrincipal getAuthenticatedPrincipal(HttpServletRequest request) {
+    VerifyTokenResponse verifyTokenResponse = (VerifyTokenResponse) request.getAttribute(AuthorizationServerFilter.VERIFY_TOKEN_RESPONSE);
+    return verifyTokenResponse.getPrincipal();
+  }
+
+  protected <T> List<T> addAll(Iterator<T> iterator) {
+    List<T> result = new ArrayList<T>();
+    while (iterator.hasNext()) {
+      result.add(iterator.next());
+    }
+    return result;
+  }
+
+  protected Response response(Object response ) {
+    Response.ResponseBuilder responseBuilder = (response == null ? Response.status(Response.Status.NOT_FOUND) : Response.ok(response));
+    return responseBuilder.build();
+  }
+
 }

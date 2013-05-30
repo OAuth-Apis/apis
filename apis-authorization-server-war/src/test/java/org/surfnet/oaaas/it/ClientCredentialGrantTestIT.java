@@ -17,6 +17,7 @@
 package org.surfnet.oaaas.it;
 
 import com.sun.jersey.api.client.ClientResponse;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
@@ -50,7 +51,9 @@ public class ClientCredentialGrantTestIT extends AbstractAuthorizationServerTest
 
     InputStream responseContent = performClientCredentialTokenPost("it-test-client-credential-grant", "some-secret-client-credential-grant");
 
-    AccessTokenResponse accessTokenResponse =  mapper.readValue(responseContent,AccessTokenResponse.class);
+    String content = IOUtils.toString(responseContent);
+
+    AccessTokenResponse accessTokenResponse =  mapper.readValue(content,AccessTokenResponse.class);
     assertNotNull(accessTokenResponse.getAccessToken());
     assertEquals(0, accessTokenResponse.getExpiresIn());
     assertEquals(OAuth2Validator.BEARER, accessTokenResponse.getTokenType());

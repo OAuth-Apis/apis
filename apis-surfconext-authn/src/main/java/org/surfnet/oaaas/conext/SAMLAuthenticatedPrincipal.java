@@ -29,10 +29,11 @@ public class SAMLAuthenticatedPrincipal extends AuthenticatedPrincipal implement
   public SAMLAuthenticatedPrincipal() {
   }
 
-  public SAMLAuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups, String identityProvider, String displayName) {
+  public SAMLAuthenticatedPrincipal(String username, Collection<String> roles, Map<String, String> attributes, Collection<String> groups, String identityProvider, String displayName, boolean adminPrincipal) {
     super(username, roles, attributes, groups);
     addAttribute(IDENTITY_PROVIDER, identityProvider);
     addAttribute(DISPLAY_NAME, displayName);
+    setAdminPrincipal(adminPrincipal);
   }
 
   @JsonIgnore
