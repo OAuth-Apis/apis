@@ -9,7 +9,7 @@ To see the in action first start the Authorization Server. Go the authorization-
 
 Go the apis-example-resource-server-war and start the application (new Terminal session)
 
-    cd apis-authorization-server-war
+    cd apis-example-resource-server-war
     mvn jetty:run
 	
 Then perform a curl (new Terminal session):
