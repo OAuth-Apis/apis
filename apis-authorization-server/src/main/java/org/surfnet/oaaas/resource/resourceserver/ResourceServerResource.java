@@ -101,7 +101,6 @@ public class ResourceServerResource extends AbstractResource {
   @Path("/stats")
   public Response stats(@Context
                         HttpServletRequest request) {
-    String owner = getUserId(request);
     Iterable<ResourceServer> resourceServers = this.getAllResourceServers(request);
     List<ResourceServerStat> resourceServerStats = new ArrayList<StatisticsResponse.ResourceServerStat>();
     for (ResourceServer resourceServer : resourceServers) {
