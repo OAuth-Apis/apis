@@ -166,7 +166,7 @@ protected String getUserConsentUrl() {
 
 They don't. They ask the Authorization Server to do this. For Java implemented Resource Servers you can use (or extend) the `AuthorizationServerFilter` in the `apis-resource-server-library` module. For non-Java Resource Servers the protocol is simple:
 
-    GET http://<domain-name-authorization-server>/v1/tokeninfo?access_token=<access_token>
+    GET https://<domain-name-authorization-server>/v1/tokeninfo?access_token=<access_token>
     Authorization: Basic <Base64 encoded key:secret >
     Accept: application/json
 

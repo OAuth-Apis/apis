@@ -3,7 +3,7 @@ OpenConext authentication module for API Secure
 
 ## Introduction
 This module is an SAML specific implementation of the authentication plugin architecture of API Secure.
-Although it has been tested on SURFConext only, in theory it should work for any SAML 2.0 IdP.
+Although it has been tested on [SURFConext](https://github.com/OpenConext/OpenConext-vm) only (running in production) and the [open source SAML IdP/SP Mujina](https://github.com/OpenConext/Mujina), in theory it should work for any SAML 2.0 IdP.
 
 ## Configuration
 Enable this plugin by:
