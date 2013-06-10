@@ -18,30 +18,29 @@
  */
 package org.surfnet.oaaas.resource;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-
+import com.sun.jersey.api.client.ClientResponse.Status;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.surfnet.oaaas.auth.*;
-import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
+import org.surfnet.oaaas.auth.AbstractAuthenticator;
+import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.OAuth2Validator.*;
+import org.surfnet.oaaas.auth.ValidationResponseException;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.util.Arrays;
+import java.util.UUID;
 
 import static org.surfnet.oaaas.auth.OAuth2Validator.*;
 
@@ -182,6 +181,9 @@ public class TokenResource {
         request.setClient(accessTokenRequest.getClient());
         // We have to construct a AuthenticatedPrincipal on-the-fly as there is only key-secret authentication
         request.setPrincipal(new AuthenticatedPrincipal(request.getClient().getClientId()));
+        // Apply all client scopes to the access token.
+        // TODO: take into account given scopes from the request
+        request.setGrantedScopes(request.getClient().getScopes());
       }
       else {
         return sendErrorResponse(ValidationResponse.UNSUPPORTED_GRANT_TYPE);
