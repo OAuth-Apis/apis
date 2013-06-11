@@ -226,7 +226,7 @@ See the information in the [surfconext authn submodule](https://github.com/OpenC
 
 ### Tests
 
-Optionally you can build the entire project with the integration and selenium tests enabled
+Optionally you can build the entire project with the integration and selenium tests enabled:
 
 mvn clean install -P integration
 
