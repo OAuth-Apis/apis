@@ -20,8 +20,8 @@
 ##########################################################################
 
 entityId=https://apis.test.showroom.surfconext.nl
-assertionConsumerURI=https://apis.test.showroom.surfconext.nl/oauth2/authorize
-idpUrl=https://engine.acc.showroom.surfconext.nl/authentication/idp/single-sign-on
+assertionConsumerURI=https\://apis.dev.surfconext.nl/oauth2/authorize
+idpUrl=https\://engine.dev.showroom.surfconext.nl/authentication/idp/single-sign-on
 idpCertificate=MIIDYzCCAkugAwIBAgIJAJLbILWVSjicMA0GCSqGSIb3DQEBBQUAMEgxFDASBgNVBAMMC0VuZ2luZUJsb2NrMREwDwYDVQQLDAhTZXJ2aWNlczEQMA4GA1UECgwHU1VSRm5ldDELMAkGA1UEBhMCTkwwHhcNMTMwNDA5MTAxNTQ5WhcNMjMwNDA5MTAxNTQ5WjBIMRQwEgYDVQQDDAtFbmdpbmVCbG9jazERMA8GA1UECwwIU2VydmljZXMxEDAOBgNVBAoMB1NVUkZuZXQxCzAJBgNVBAYTAk5MMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxfI8sjrD9lDyqDdDxm2984buOePdvLsDjB4ss4hC28TQ76yfI1MvFBrkNk9o1bJcI29k10HzR4EnrQeWl6/pJiy45rbRpyiOr/rBcPIjd2ED0rshNgFcK16ph9ndV1PwmwyuEqwo8NInwqLNuAb0yFphlgXsch/qSlTu6e9cKNjsOL9VOjjr8G0QSNfcZV6SxPwuVsrO44M8w2hKg4gJZztWJJd8sSBp0SVCy+dJydjhmd2uvgT/xQF3xb1NdgvcGbsW4RaW8xxFHuDFRv7KeYtot876mmAgqDHFfQXTeCQrLXyWOcQ4ldIb1kZskP+Aotg/Amegr4xSQEFDk2HTmQIDAQABo1AwTjAdBgNVHQ4EFgQUcynNAPbj9oS+zJ4Q4Z/Rh4lrZggwHwYDVR0jBBgwFoAUcynNAPbj9oS+zJ4Q4Z/Rh4lrZggwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOCAQEALRHyJbDX+pg6o4cmnU3LTQDUNKBppGUpXEKP6KTQr1qu92pfNfj4SipYYgYkeBZw3f25q2oR0QZGnqn6iEUwMRAeMnTxVIQNSHqCDzrRJAkPdPE9zm+BOmnEI6WV8bzuF8UekR+7dUpFeFqmWRDWDGZY+w52eWrmHpGr6KZVTsPzNVDNe7i85K5E9mOqaoQkO7ZZc9ev9GDIH1b2RccveR8UdxHFonGyEE1zcJBDqqYVS01ad0CkO0HCS3M3lx1283pBvOIlTg9fKB1s0TCjNYHqbpKVQFJdf8zuEaCX5USZUFhN3zpP8kheGL0qDCV7OzX4ALWh4YDkFWmKtrxh+A==
 idpEntityId=https://engine.acc.showroom.surfconext.nl/authentication/idp/metadata
 spPrivateKey=???
