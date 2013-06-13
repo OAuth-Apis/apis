@@ -359,4 +359,11 @@ public class AuthorizationServerFilter implements Filter {
     this.resourceServerKey = resourceServerKey;
   }
 
+  public void setCacheEnabled(boolean cacheEnabled) {
+    this.cacheEnabled = cacheEnabled;
+  }
+
+  public void setAllowCorsRequests(boolean allowCorsRequests) {
+    this.allowCorsRequests = allowCorsRequests;
+  }
 }
