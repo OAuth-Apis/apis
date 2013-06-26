@@ -270,7 +270,7 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   protected void sendError(HttpServletResponse response, int statusCode, String reason) {
-    LOG.warn("No valid access-token on request. Will respond with error response");
+    LOG.warn("No valid access-token on request. Will respond with error response: {} {}", statusCode, reason);
     try {
       response.sendError(statusCode, reason);
       response.flushBuffer();
