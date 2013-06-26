@@ -15,34 +15,39 @@
   -->
 
 <configuration scan="true">
+  <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/apis.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>logs/cruncher-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+      <maxHistory>60</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{ISO8601} %5p [%t] %logger{40}:%L - %m%n</pattern>
+    </encoder>
+  </appender>
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="org.springframework">
+    <logger name="org.springframework" additivity="false">
         <level value="warn"/>
-        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </logger>
 
-    <logger name="org.apache.http">
+    <logger name="org.apache.http" additivity="false">
         <level value="info"/>
-        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </logger>
 
-    <logger name="org.hibernate.validator">
+    <logger name="org.hibernate.validator" additivity="false">
         <level value="warn"/>
-        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </logger>
 
-    <logger name="org.opensaml.xml">
+    <logger name="org.opensaml.xml" additivity="false">
         <level value="warn"/>
-        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </logger>
 
     <root level="info">
-        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
     </root>
 </configuration>
