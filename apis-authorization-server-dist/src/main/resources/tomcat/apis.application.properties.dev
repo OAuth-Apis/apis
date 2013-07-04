@@ -33,3 +33,4 @@ userConsentHandlerClass=org.surfnet.oaaas.consent.FormUserConsentHandler
 adminService.tokenVerificationUrl=http://localhost:8080/v1/tokeninfo
 adminService.resourceServerKey=authorization-server-admin
 adminService.resourceServerSecret=???
+adminService.jsonTypeInfoIncluded=true

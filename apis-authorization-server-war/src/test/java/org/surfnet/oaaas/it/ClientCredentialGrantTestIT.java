@@ -64,7 +64,7 @@ public class ClientCredentialGrantTestIT extends AbstractAuthorizationServerTest
             .header("Authorization", authorizationBasic("it-test-resource-server", "somesecret")).get(ClientResponse.class);
     assertEquals(200, response.getStatus());
     String json = response.getEntity(String.class);
-    final VerifyTokenResponse verifyTokenResponse = objectMapper.readValue(json, VerifyTokenResponse.class);
+    final VerifyTokenResponse verifyTokenResponse = mapper.readValue(json, VerifyTokenResponse.class);
 
     //The client name equals the principal name as we did not authenticate with the AbstractAuthenticator
     assertEquals("it-test-client-credential-grant", verifyTokenResponse.getPrincipal().getName());

@@ -78,14 +78,14 @@ import java.util.Properties;
  * environment (e.g. OTAP) to get the name, secret and url. This can be achieved
  * simple to provide an apis.application.properties file on the classpath or configure a
  * properties file name as init-param (to have multiple resource servers in the same tomcat instance).
- *
+ * <p/>
  * See {@link AuthorizationServerFilter#init(FilterConfig)}
- *
+ * <p/>
  * <p/>
  * Also note that by default the responses from the Authorization Server are not
  * cached. This in configurable in the properties file used by this Filter. Again
  * see {@link AuthorizationServerFilter#init(FilterConfig)}
- *
+ * <p/>
  * The cache behaviour can also be changed if you override
  * {@link AuthorizationServerFilter#cacheAccessTokens()} and to configure the
  * cache differently override {@link AuthorizationServerFilter#buildCache()}
@@ -159,6 +159,7 @@ public class AuthorizationServerFilter implements Filter {
     if (res == null || !res.exists()) {
       res = new ClassPathResource("apis.application.properties");
     }
+    boolean typeInformationIsIncluded = false;
     if (res != null && res.exists()) {
       Properties prop = new Properties();
       try {
@@ -174,10 +175,15 @@ public class AuthorizationServerFilter implements Filter {
       if (StringUtils.isNotEmpty(allowCorsRequestsProperty)) {
         allowCorsRequests = Boolean.valueOf(allowCorsRequestsProperty);
       }
+      String typeInformationIsIncludedProperty = prop.getProperty("adminService.jsonTypeInfoIncluded");
+      if (StringUtils.isNotEmpty(typeInformationIsIncludedProperty)) {
+        typeInformationIsIncluded = Boolean.valueOf(typeInformationIsIncludedProperty);
+      }
     } else if (filterConfig.getInitParameter("resource-server-key") != null) {
       resourceServerKey = filterConfig.getInitParameter("resource-server-key");
       resourceServerSecret = filterConfig.getInitParameter("resource-server-secret");
       authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
+      typeInformationIsIncluded = Boolean.valueOf(filterConfig.getInitParameter("type-information-is-included"));
     }
     Assert.hasText(resourceServerKey, "Must provide a resource server key");
     Assert.hasText(resourceServerSecret, "Must provide a resource server secret");
@@ -192,11 +198,17 @@ public class AuthorizationServerFilter implements Filter {
 
     this.client = createClient();
 
-    this.objectMapper = createObjectMapper();
+    this.objectMapper = createObjectMapper(typeInformationIsIncluded);
   }
 
-  protected ObjectMapper createObjectMapper() {
-    return new ObjectMapperProvider().getContext(ObjectMapper.class);
+  protected ObjectMapper createObjectMapper(boolean typeInformationIsIncluded) {
+    ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+    if (typeInformationIsIncluded) {
+      mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+    } else {
+      mapper.disableDefaultTyping();
+    }
+    return mapper;
   }
 
   /**
@@ -316,7 +328,7 @@ public class AuthorizationServerFilter implements Filter {
   }
 
   protected String getAccessControlMaxAge() {
-     return "86400";
+    return "86400";
   }
 
   protected String getAccessControlAllowedMethods() {

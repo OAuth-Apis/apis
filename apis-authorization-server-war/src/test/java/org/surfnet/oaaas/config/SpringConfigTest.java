@@ -16,19 +16,22 @@
 
 package org.surfnet.oaaas.config;
 
-import static org.junit.Assert.assertNotNull;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
 import com.googlecode.flyway.core.Flyway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.surfnet.oaaas.resource.VerifyResource;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=SpringConfiguration.class)
+@ContextConfiguration(classes = SpringConfiguration.class)
 public class SpringConfigTest {
 
   @Inject
@@ -37,10 +40,14 @@ public class SpringConfigTest {
   @Inject
   private Flyway flyway;
 
-  
+  @Inject
+  private VerifyResource verifyResource;
+
+
   @Test
   public void wire() {
     assertNotNull(dataSource);
     assertNotNull(flyway);
+    assertFalse(verifyResource.isJsonTypeInfoIncluded());
   }
 }
