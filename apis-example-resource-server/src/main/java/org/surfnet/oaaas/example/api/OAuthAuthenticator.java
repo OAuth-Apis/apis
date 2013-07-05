@@ -43,7 +43,11 @@ public class OAuthAuthenticator implements Authenticator<String, AuthenticatedPr
   private String authorizationValue;
 
   private Client client = Client.create();
-  private ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+  private static ObjectMapper mapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+
+  static {
+    mapper.disableDefaultTyping();
+  }
 
   /**
    * @param configuration
