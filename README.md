@@ -175,6 +175,30 @@ The key/secret are obtained when creating the Resource Server in the admin GUI o
 
 The Response is the json representation of the tokenInfo with the client name, the Principal information and the expiry time (if set for this client).
 
+    {
+        "audience": "Authorization Server Admin Client",
+        "scopes": [
+            "read",
+            "write"
+        ],
+        "principal": {
+            "name": "aaaaa",
+            "roles": [],
+            "groups": [],
+            "adminPrincipal": false,
+            "attributes": {
+                "DISPLAY_NAME": "test-user",
+                "IDENTITY_PROVIDER": "http://mock-idp"
+            }
+        },
+        "expires_in": 1373178401833
+    }
+
+Default we omit the type-information in the JSON as it would tie the Resource Server to the libraries used in the Authorization Server. For those Resource Servers and / or that depend on
+a specific subtype of `AuthenticatedPrincipal` (e.g. would like to cast the principal to a known implementation) it is possible to override the default behaviour by changing the property
+`adminService.jsonTypeInfoIncluded` in the properties file that drive the Authorization Server (`apis.application.properties`) and respectively the properties file that drive the Resource Server
+(the property file driving the AuthorizationServletFilter - if used - is set using a servlet init-parameter named `apis.application.properties.file`).
+
 
 ### Plugging in your custom implementations
 
