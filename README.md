@@ -194,7 +194,7 @@ The Response is the json representation of the tokenInfo with the client name, t
         "expires_in": 1373178401833
     }
 
-Default we omit the type-information in the JSON as it would tie the Resource Server to the libraries used in the Authorization Server. For those Resource Servers and / or that depend on
+Default we omit the type-information in the JSON as it would tie the Resource Server to the libraries used in the Authorization Server. For those Resource Servers that depend on
 a specific subtype of `AuthenticatedPrincipal` (e.g. would like to cast the principal to a known implementation) it is possible to override the default behaviour by changing the property
 `adminService.jsonTypeInfoIncluded` in the properties file that drive the Authorization Server (`apis.application.properties`) and respectively the properties file that drive the Resource Server
 (the property file driving the AuthorizationServletFilter - if used - is set using a servlet init-parameter named `apis.application.properties.file`).
@@ -246,7 +246,7 @@ userConsentHandlerClass=org.surfnet.oaaas.noop.NoopUserConsentHandler
 
 ### SURFConext Authn Authenticator
 
-See the information in the [surfconext authn submodule](https://github.com/OpenConextApps/apis/tree/master/apis-surfconext-authn) for detailed information on the SURFconext SAML Authenthication implementation.
+See the information in the [surfconext authn submodule](https://github.com/OpenConextApps/apis/tree/master/apis-surfconext-authn) for detailed information on the SURFconext SAML Authentication implementation.
 
 ### Tests
 
