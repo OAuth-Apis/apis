@@ -18,21 +18,11 @@
  */
 package org.surfnet.oaaas.resource;
 
-import static org.surfnet.oaaas.resource.TokenResource.BASIC_REALM;
-import static org.surfnet.oaaas.resource.TokenResource.WWW_AUTHENTICATE;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
@@ -41,7 +31,17 @@ import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.ResourceServerRepository;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.*;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
+
+import static org.surfnet.oaaas.resource.TokenResource.BASIC_REALM;
+import static org.surfnet.oaaas.resource.TokenResource.WWW_AUTHENTICATE;
 
 /**
  * Resource for handling the call from resource servers to validate an access
@@ -50,12 +50,11 @@ import java.io.IOException;
  * the Google <a href=
  * "https://developers.google.com/accounts/docs/OAuth2Login#validatingtoken"
  * >specification</a> as basis.
- *
  */
 @Named
 @Path("/tokeninfo")
 @Produces(MediaType.APPLICATION_JSON)
-public class VerifyResource {
+public class VerifyResource implements EnvironmentAware {
 
   private static final Logger LOG = LoggerFactory.getLogger(VerifyResource.class);
 
@@ -67,15 +66,17 @@ public class VerifyResource {
   @Inject
   private ResourceServerRepository resourceServerRepository;
 
+  private boolean jsonTypeInfoIncluded;
+
   @GET
   public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
-  String authorization, @QueryParam("access_token")
-  String accessToken) throws IOException {
+                              String authorization, @QueryParam("access_token")
+                              String accessToken) throws IOException {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
 
     ResourceServer resourceServer = getResourceServer(credentials);
-    if (resourceServer  == null || !resourceServer.getSecret().equals(credentials.getPassword() )) {
+    if (resourceServer == null || !resourceServer.getSecret().equals(credentials.getPassword())) {
       LOG.warn("Responding with 401 in VerifyResource#verifyToken for user {}", credentials);
       return unauthorized();
     }
@@ -91,7 +92,7 @@ public class VerifyResource {
     }
 
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
-        token.getScopes(), token.getPrincipal(), token.getExpires());
+            token.getScopes(), token.getPrincipal(), token.getExpires());
 
     LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
     return Response.ok(mapper.writeValueAsString(verifyTokenResponse)).build();
@@ -111,19 +112,31 @@ public class VerifyResource {
   }
 
   /**
-   * @param accessTokenRepository
-   *          the accessTokenRepository to set
+   * @param accessTokenRepository the accessTokenRepository to set
    */
   public void setAccessTokenRepository(AccessTokenRepository accessTokenRepository) {
     this.accessTokenRepository = accessTokenRepository;
   }
 
   /**
-   * @param resourceServerRepository
-   *          the resourceServerRepository to set
+   * @param resourceServerRepository the resourceServerRepository to set
    */
   public void setResourceServerRepository(ResourceServerRepository resourceServerRepository) {
     this.resourceServerRepository = resourceServerRepository;
+  }
+
+  @Override
+  public void setEnvironment(Environment environment) {
+    jsonTypeInfoIncluded = Boolean.valueOf(environment.getProperty("adminService.jsonTypeInfoIncluded", "false"));
+    if (jsonTypeInfoIncluded) {
+      mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+    } else {
+      mapper.disableDefaultTyping();
+    }
+  }
+
+  public boolean isJsonTypeInfoIncluded() {
+    return jsonTypeInfoIncluded;
   }
 
 }

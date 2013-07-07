@@ -29,7 +29,10 @@ public abstract class AbstractAuthorizationServerTest {
 
   protected int defaultServletPort = 8080;
   protected Client client = new Client();
-  protected ObjectMapper objectMapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+  protected static ObjectMapper objectMapper = new ObjectMapperProvider().getContext(ObjectMapper.class);
+  static {
+     objectMapper.disableDefaultTyping();
+  }
 
   protected String baseUrl() {
     return String.format("http://localhost:%s",

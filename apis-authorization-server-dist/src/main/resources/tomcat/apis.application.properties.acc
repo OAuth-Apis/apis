@@ -33,3 +33,4 @@ userConsentHandlerClass=org.surfnet.oaaas.consent.FormUserConsentHandler
 adminService.tokenVerificationUrl=https://apis.acc.showroom.surfconext.nl/v1/tokeninfo
 adminService.resourceServerKey=authorization-server-admin
 adminService.resourceServerSecret=???
+adminService.jsonTypeInfoIncluded=true
