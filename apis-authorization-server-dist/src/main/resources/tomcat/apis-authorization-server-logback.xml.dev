@@ -19,7 +19,7 @@
     <file>logs/apis.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- daily rollover -->
-      <fileNamePattern>logs/cruncher-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+      <fileNamePattern>logs/apis-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
       <maxHistory>60</maxHistory>
     </rollingPolicy>
     <encoder>
