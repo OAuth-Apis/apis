@@ -15,7 +15,7 @@
   -->
 
 <configuration scan="true">
-<!-- This file is used by Mujina (which uses the InitParameterLogbackContextListener and will not find a specific config) -->
+
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>

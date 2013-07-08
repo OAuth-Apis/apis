@@ -11,7 +11,7 @@
 
   <properties>
     <servlet.port>8080</servlet.port>
-    <mujina-idp.version>2.13.0</mujina-idp.version>
+    <mujina-idp.version>3.1.0</mujina-idp.version>
   </properties>
 
   <dependencies>

@@ -33,6 +33,9 @@
     <param-value>org.surfnet.oaaas.config.SpringConfiguration</param-value>
   </context-param>
   <listener>
+    <listener-class>org.surfnet.oaaas.logging.LogbackConfigLocationListener</listener-class>
+  </listener>
+  <listener>
     <listener-class>
       org.springframework.web.context.ContextLoaderListener
     </listener-class>
