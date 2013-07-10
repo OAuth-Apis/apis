@@ -62,6 +62,10 @@ import java.util.Properties;
  *     <param-name>authorization-server-url</param-name>
  *     <param-value>http://<host-name>/v1/tokeninfo</param-value>
  *   </init-param>
+ *   <init-param>
+ *     <param-name>type-information-is-included</param-name>
+ *     <param-value>true</param-value>
+ *   </init-param>
  * </filter>
  * <filter-mapping>
  *   <filter-name>authorization-server</filter-name>
@@ -140,6 +144,11 @@ public class AuthorizationServerFilter implements Filter {
   private String resourceServerKey;
   private String resourceServerSecret;
 
+  /**
+   * Whether (java) type information is included in the VerifyTokenResponse.
+   */
+  private boolean typeInformationIsIncluded = false;
+
   private ObjectMapper objectMapper;
 
   @Override
@@ -159,7 +168,6 @@ public class AuthorizationServerFilter implements Filter {
     if (res == null || !res.exists()) {
       res = new ClassPathResource("apis.application.properties");
     }
-    boolean typeInformationIsIncluded = false;
     if (res != null && res.exists()) {
       Properties prop = new Properties();
       try {
@@ -378,4 +386,9 @@ public class AuthorizationServerFilter implements Filter {
   public void setAllowCorsRequests(boolean allowCorsRequests) {
     this.allowCorsRequests = allowCorsRequests;
   }
+
+  public void setTypeInformationIsIncluded(boolean typeInformationIsIncluded) {
+    this.typeInformationIsIncluded = typeInformationIsIncluded;
+  }
+
 }

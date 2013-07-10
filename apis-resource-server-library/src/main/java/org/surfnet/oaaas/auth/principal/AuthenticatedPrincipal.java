@@ -103,6 +103,18 @@ public class AuthenticatedPrincipal implements Serializable, Principal {
     return attributes;
   }
 
+  /**
+   * Get the given attribute.
+   * @param key the attribute key to get.
+   * @return String value if attribute found. Null if attribute not found or no attributes at all.
+   */
+  public String getAttribute(String key) {
+    if (attributes == null) {
+      return null;
+    }
+    return attributes.get(key);
+  }
+
   public void addAttribute(String key, String value) {
     if (attributes == null) {
       attributes = new HashMap<String, String>();
