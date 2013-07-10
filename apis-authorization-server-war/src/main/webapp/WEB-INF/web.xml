@@ -44,6 +44,10 @@
   <filter>
     <filter-name>adminAuthorizationFilter</filter-name>
     <filter-class>org.surfnet.oaaas.auth.AuthorizationServerFilter</filter-class>
+    <init-param>
+      <param-name>apis-resource-server.properties.file</param-name>
+      <param-value>apis.application.properties</param-value>
+    </init-param>
   </filter>
 
   <filter-mapping>
