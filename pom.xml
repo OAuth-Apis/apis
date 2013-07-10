@@ -11,7 +11,7 @@
 
   <groupId>nl.surfnet.apis</groupId>
   <artifactId>apis-parent</artifactId>
-  <version>1.3.0</version>
+  <version>1.3.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>API Secure</name>
 
@@ -308,7 +308,7 @@
       <dependency>
         <groupId>org.surfnet.coin</groupId>
         <artifactId>coin-api-client</artifactId>
-        <version>3.6.1</version>
+        <version>3.6.2-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
