@@ -107,7 +107,7 @@
     <jstl.version>1.2</jstl.version>
     <jsp.version>2.1</jsp.version>
     <mysql.version>5.1.20</mysql.version>
-    <coin-api.version>3.6.1-SNAPSHOT</coin-api.version>
+    <coin-api.version>3.6.1</coin-api.version>
 
   </properties>
 
@@ -308,7 +308,7 @@
       <dependency>
         <groupId>org.surfnet.coin</groupId>
         <artifactId>coin-api-client</artifactId>
-        <version>3.6.2-SNAPSHOT</version>
+        <version>${coin-api.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
