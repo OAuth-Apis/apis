@@ -155,25 +155,25 @@ public class AuthorizationServerFilter implements Filter {
   public void init(FilterConfig filterConfig) throws ServletException {
     /*
      * First check on the presence of a init-param where to look for the properties to support
-     * multiple resource servers in the same war. Then look for second best apis.application.properties file, then
+     * multiple resource servers in the same war. Then look for second best apis-resource-server.properties file, then
      * try to use the filter config if parameters are present. If this also
      * fails trust on the setters (e.g. probably in test modus), but apply
      * fail-fast strategy
      */
     ClassPathResource res = null;
-    String propertiesFile = filterConfig.getInitParameter("apis.application.properties.file");
+    String propertiesFile = filterConfig.getInitParameter("apis-resource-server.properties.file");
     if (StringUtils.isNotEmpty(propertiesFile)) {
       res = new ClassPathResource(propertiesFile);
     }
     if (res == null || !res.exists()) {
-      res = new ClassPathResource("apis.application.properties");
+      res = new ClassPathResource("apis-resource-server.properties");
     }
     if (res != null && res.exists()) {
       Properties prop = new Properties();
       try {
         prop.load(res.getInputStream());
       } catch (IOException e) {
-        throw new RuntimeException("Error in reading the apis.application.properties file", e);
+        throw new RuntimeException("Error in reading the apis-resource-server.properties file", e);
       }
       resourceServerKey = prop.getProperty("adminService.resourceServerKey");
       resourceServerSecret = prop.getProperty("adminService.resourceServerSecret");

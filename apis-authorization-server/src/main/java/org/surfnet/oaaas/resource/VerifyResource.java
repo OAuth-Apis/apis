@@ -75,26 +75,28 @@ public class VerifyResource implements EnvironmentAware {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
 
+    LOG.debug("Incoming verify-token request, access token: {}, credentials from authorization header: {}", accessToken, credentials);
+
     ResourceServer resourceServer = getResourceServer(credentials);
     if (resourceServer == null || !resourceServer.getSecret().equals(credentials.getPassword())) {
-      LOG.warn("Responding with 401 in VerifyResource#verifyToken for user {}", credentials);
+      LOG.info("For access token {}: Resource server not found for credentials {}. Responding with 401 in VerifyResource#verifyToken.", accessToken, credentials);
       return unauthorized();
     }
 
     AccessToken token = accessTokenRepository.findByToken(accessToken);
     if (token == null || !resourceServer.containsClient(token.getClient())) {
-      LOG.warn("Responding with 404 in VerifyResource#verifyToken for user {}", credentials);
+      LOG.info("Access token {} not found for resource server '{}'. Responding with 404 in VerifyResource#verifyToken for user {}", accessToken, resourceServer.getName(), credentials);
       return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
     }
     if (tokenExpired(token)) {
-      LOG.warn("Responding with 410 in VerifyResource#verifyToken for user {}", credentials);
+      LOG.warn("Token {} is expired. Responding with 410 in VerifyResource#verifyToken for user {}", accessToken, credentials);
       return Response.status(Status.GONE).entity(new VerifyTokenResponse("token_expired")).build();
     }
 
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
             token.getScopes(), token.getPrincipal(), token.getExpires());
 
-    LOG.debug("Responding with 200 in VerifyResource#verifyToken for user {}", credentials);
+    LOG.debug("Responding with 200 in VerifyResource#verifyToken for access token {} and user {}", accessToken, credentials);
     return Response.ok(mapper.writeValueAsString(verifyTokenResponse)).build();
   }
 

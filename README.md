@@ -29,6 +29,10 @@ After the clone build the entire project
 
     mvn clean install
 
+## Upgrades
+
+Changes between versions are listed in [CHANGES.md](CHANGES.md)
+
 ### Run Authorization Server
 
 Go the authorization-server-war and start the application
@@ -197,7 +201,7 @@ The Response is the json representation of the tokenInfo with the client name, t
 Default we omit the type-information in the JSON as it would tie the Resource Server to the libraries used in the Authorization Server. For those Resource Servers that depend on
 a specific subtype of `AuthenticatedPrincipal` (e.g. would like to cast the principal to a known implementation) it is possible to override the default behaviour by changing the property
 `adminService.jsonTypeInfoIncluded` in the properties file that drive the Authorization Server (`apis.application.properties`) and respectively the properties file that drive the Resource Server
-(the property file driving the AuthorizationServletFilter - if used - is set using a servlet init-parameter named `apis.application.properties.file`).
+(the property file driving the AuthorizationServletFilter - if used - is set using a servlet init-parameter named `apis-resource-server.properties.file`).
 
 
 ### Plugging in your custom implementations
