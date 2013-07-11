@@ -16,10 +16,10 @@
 
 <configuration scan="true">
   <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs/apis.log</file>
+    <file>${CATALINA_BASE}/logs/apis.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- daily rollover -->
-      <fileNamePattern>logs/apis-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+      <fileNamePattern>${CATALINA_BASE}/logs/apis-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
       <maxHistory>60</maxHistory>
     </rollingPolicy>
     <encoder>
