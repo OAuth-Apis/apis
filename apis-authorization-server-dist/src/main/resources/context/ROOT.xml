@@ -13,6 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<Context path="/" docBase="/usr/share/tomcat6-low/wars/apis-authorization-server-war-@VERSION@.war">
-  <Parameter name="logbackConfigurationFilePrefix" value="apis-authorization-server" override="false"/>
-</Context>
+<Context path="/" docBase="/usr/share/tomcat6-low/wars/apis-authorization-server-war-@VERSION@.war" />
