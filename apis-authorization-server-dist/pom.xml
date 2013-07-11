@@ -19,7 +19,7 @@
   <parent>
     <artifactId>apis-parent</artifactId>
     <groupId>nl.surfnet.apis</groupId>
-    <version>1.3.2-SNAPSHOT</version>
+    <version>1.3.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apis-authorization-server-dist</artifactId>
