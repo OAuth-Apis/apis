@@ -254,7 +254,7 @@ See the information in the [surfconext authn submodule](https://github.com/OpenC
 
 ### Tests
 
-Optionally you can build the entire project with the integration and selenium tests enabled:
+You can build the entire project including the integration and selenium tests (which are dependent on your version of FireFox):
 
 mvn clean install -P integration
 
