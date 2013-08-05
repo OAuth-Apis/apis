@@ -75,17 +75,19 @@ public class VerifyResource implements EnvironmentAware {
 
     UserPassCredentials credentials = new UserPassCredentials(authorization);
 
-    LOG.debug("Incoming verify-token request, access token: {}, credentials from authorization header: {}", accessToken, credentials);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Incoming verify-token request, access token: {}, credentials from authorization header: {}", accessToken, credentials);
+    }
 
     ResourceServer resourceServer = getResourceServer(credentials);
     if (resourceServer == null || !resourceServer.getSecret().equals(credentials.getPassword())) {
-      LOG.info("For access token {}: Resource server not found for credentials {}. Responding with 401 in VerifyResource#verifyToken.", accessToken, credentials);
+      LOG.warn("For access token {}: Resource server not found for credentials {}. Responding with 401 in VerifyResource#verifyToken.", accessToken, credentials);
       return unauthorized();
     }
 
     AccessToken token = accessTokenRepository.findByToken(accessToken);
     if (token == null || !resourceServer.containsClient(token.getClient())) {
-      LOG.info("Access token {} not found for resource server '{}'. Responding with 404 in VerifyResource#verifyToken for user {}", accessToken, resourceServer.getName(), credentials);
+      LOG.warn("Access token {} not found for resource server '{}'. Responding with 404 in VerifyResource#verifyToken for user {}", accessToken, resourceServer.getName(), credentials);
       return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
     }
     if (tokenExpired(token)) {
@@ -96,7 +98,9 @@ public class VerifyResource implements EnvironmentAware {
     final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
             token.getScopes(), token.getPrincipal(), token.getExpires());
 
-    LOG.debug("Responding with 200 in VerifyResource#verifyToken for access token {} and user {}", accessToken, credentials);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Responding with 200 in VerifyResource#verifyToken for access token {} and user {}", accessToken, credentials);
+    }
     return Response.ok(mapper.writeValueAsString(verifyTokenResponse)).build();
   }
 

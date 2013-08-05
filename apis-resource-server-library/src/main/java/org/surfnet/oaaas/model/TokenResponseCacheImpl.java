@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Very simple - but highly effective - TokenResponseCache implementation. Please carefully monitor the performance / cache hit-ratio
  * in production as the maxSize in combination with the expireTimeSeconds is important. If the maxSize is too small and the expireTimeSeconds to low
- * it will result in a cache that with each addition will try to make space (e.g. effectively only removing the oldes entry each time).
+ * it will result in a cache that with each addition will try to make space (e.g. effectively only removing the oldest entry each time).
  */
 public class TokenResponseCacheImpl implements TokenResponseCache {
 
