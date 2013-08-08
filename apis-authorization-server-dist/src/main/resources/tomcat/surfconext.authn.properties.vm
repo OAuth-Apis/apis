@@ -21,7 +21,7 @@
 
 entityId=https\://apis._OPENCONEXT_DOMAIN_/
 assertionConsumerURI=https\://apis._OPENCONEXT_DOMAIN_/oauth2/authorize
-idpUrl=https\://engine.engine._OPENCONEXT_DOMAIN_/authentication/idp/single-sign-on
+idpUrl=https\://engine._OPENCONEXT_DOMAIN_/authentication/idp/single-sign-on
 idpCertificate=??
 idpEntityId=https\://engine._OPENCONEXT_DOMAIN_/authentication/idp/metadata
 spPrivateKey=??
