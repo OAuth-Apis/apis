@@ -19,9 +19,9 @@
 # values depend on the environment and are unknown to the developers     #
 ##########################################################################
 
-entityId=https\://apis._OPENCONEXT_DOMAIN_
+entityId=https\://apis._OPENCONEXT_DOMAIN_/
 assertionConsumerURI=https\://apis._OPENCONEXT_DOMAIN_/oauth2/authorize
-idpUrl=https\://engine.surfconext.nl/authentication/idp/single-sign-on
+idpUrl=https\://engine.engine._OPENCONEXT_DOMAIN_/authentication/idp/single-sign-on
 idpCertificate=??
 idpEntityId=https\://engine._OPENCONEXT_DOMAIN_/authentication/idp/metadata
 spPrivateKey=??
@@ -36,7 +36,7 @@ admin.client.apis.teamname=urn\:collab\:group\:surfteams.nl\:nl\:surfnet\:manage
 openConextApiClient=nl.surfnet.coin.api.client.OpenConextOAuthClientImpl
 
 api-baseurl=https\://api._OPENCONEXT_DOMAIN_/v1/
-api-consumerkey=https\://apis._OPENCONEXT_DOMAIN_
+api-consumerkey=https\://apis._OPENCONEXT_DOMAIN_/
 api-consumersecret=secret
 api-callbackuri=https\://apis._OPENCONEXT_DOMAIN_/oauth2/authorize?apiOauthCallback\=true
 api-enrich-principal=true
