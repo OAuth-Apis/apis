@@ -36,7 +36,7 @@ admin.client.apis.teamname=urn\:collab\:group\:surfteams.nl\:nl\:surfnet\:manage
 openConextApiClient=nl.surfnet.coin.api.client.OpenConextOAuthClientImpl
 
 api-baseurl=https\://api._OPENCONEXT_DOMAIN_/v1/
-api-consumerkey=https\://apis._OPENCONEXT_DOMAIN_/
+api-consumerkey=https\://apis._OPENCONEXT_DOMAIN_
 api-consumersecret=secret
 api-callbackuri=https\://apis._OPENCONEXT_DOMAIN_/oauth2/authorize?apiOauthCallback\=true
 api-enrich-principal=true
