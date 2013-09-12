@@ -42,9 +42,12 @@ public class NoopAuthenticator extends AbstractAuthenticator {
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
     super.setAuthStateValue(request, authStateValue);
-    AuthenticatedPrincipal principal = new AuthenticatedPrincipal("noop");
-    principal.setAdminPrincipal(true);
+    AuthenticatedPrincipal principal = getAuthenticatedPrincipal();
     super.setPrincipal(request, principal);
     chain.doFilter(request, response);
+  }
+
+  protected AuthenticatedPrincipal getAuthenticatedPrincipal() {
+    return new AuthenticatedPrincipal("noop");
   }
 }
