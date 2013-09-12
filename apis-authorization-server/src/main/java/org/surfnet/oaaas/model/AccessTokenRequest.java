@@ -56,6 +56,12 @@ public class AccessTokenRequest {
 
   @JsonIgnore
   private Client client;
+  
+  @JsonProperty("username")
+  private String username;
+  
+  @JsonProperty("password")
+  private String password;
 
   public static AccessTokenRequest fromMultiValuedFormParameters(MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest atr = new AccessTokenRequest();
@@ -66,6 +72,8 @@ public class AccessTokenRequest {
     atr.setRedirectUri(nullSafeGetFormParameter("redirect_uri", formParameters));
     atr.setRefreshToken(nullSafeGetFormParameter("refresh_token", formParameters));
     atr.setScope(nullSafeGetFormParameter("scope", formParameters));
+    atr.setUsername(nullSafeGetFormParameter("username", formParameters));
+    atr.setPassword(nullSafeGetFormParameter("password", formParameters));
     return atr;
   }
 
@@ -185,6 +193,37 @@ public class AccessTokenRequest {
 
   public void setClient(Client client) {
     this.client = client;
+  }
+  
+  /**
+   * @return the username
+   */
+  public String getUsername() {
+    return username;
+  }
+  
+  /**
+   * @param username
+   *          the username to set
+   */
+  public void setUsername(String username) {
+    this.username = username;
+  }
+  
+  /**
+   * @return the password
+   */
+  public String getPassword() {
+    return password;
+  }
+  
+
+  /**
+   * @param password
+   *          the password to set
+   */
+  public void setPassword(String password) {
+    this.password = password;
   }
 
 }

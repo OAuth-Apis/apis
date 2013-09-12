@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.ClientCredentials;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:
@@ -285,9 +285,9 @@ public class Client extends AbstractEntity {
     this.expireDuration = expireDuration;
   }
 
-  public boolean isExactMatch(UserPassCredentials credentials) {
-    return credentials != null && credentials.isValid() && credentials.getUsername().equals(clientId)
-        && credentials.getPassword().equals(secret);
+  public boolean isExactMatch(ClientCredentials credentials) {
+    return credentials != null && credentials.isValid() && credentials.getClientId().equals(clientId)
+        && credentials.getSecret().equals(secret);
 
   }
 

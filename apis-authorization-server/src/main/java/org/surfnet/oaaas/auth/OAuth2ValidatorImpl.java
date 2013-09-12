@@ -49,6 +49,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     GRANT_TYPES.add(GRANT_TYPE_AUTHORIZATION_CODE);
     GRANT_TYPES.add(GRANT_TYPE_REFRESH_TOKEN);
     GRANT_TYPES.add(GRANT_TYPE_CLIENT_CREDENTIALS);
+    GRANT_TYPES.add(GRANT_TYPE_USER_PASSWORD_CREDENTIALS);
   }
 
   @Inject
@@ -178,6 +179,11 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       if (StringUtils.isBlank(request.getCode())) {
         throw new ValidationResponseException(INVALID_GRANT_AUTHORIZATION_CODE);
       }
+    } else if (GRANT_TYPE_USER_PASSWORD_CREDENTIALS.equals(grantType)) {
+    	if (StringUtils.isBlank(request.getUsername()) || StringUtils.isBlank(request.getPassword())) {
+            throw new ValidationResponseException(INVALID_GRANT_PASSWORD);
+          }
+    	
     } else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
       if (StringUtils.isBlank(request.getRefreshToken())) {
         throw new ValidationResponseException(INVALID_GRANT_REFRESH_TOKEN);
@@ -186,17 +192,17 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   }
   
   protected void validateAccessTokenRequest(AccessTokenRequest accessTokenRequest) {
-    if (accessTokenRequest.getGrantType().equals(GRANT_TYPE_CLIENT_CREDENTIALS)) {
-      String clientId = accessTokenRequest.getClientId();
-      Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
-      if (client == null) {
+	String clientId = accessTokenRequest.getClientId();
+    Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
+    if (client == null) {
         throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
-      }
-      if (!client.isAllowedClientCredentials()) {
-        throw new ValidationResponseException(CLIENT_CREDENTIALS_NOT_PERMITTED);
-      }
-      accessTokenRequest.setClient(client);
+    } 
+    if (accessTokenRequest.getGrantType().equals(GRANT_TYPE_CLIENT_CREDENTIALS)) {
+    	if (!client.isAllowedClientCredentials()) {
+            throw new ValidationResponseException(CLIENT_CREDENTIALS_NOT_PERMITTED);
+          }
     }
+    accessTokenRequest.setClient(client);
 
   }
 
