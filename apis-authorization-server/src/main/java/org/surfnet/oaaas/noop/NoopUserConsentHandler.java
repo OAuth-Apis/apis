@@ -38,15 +38,6 @@ import org.surfnet.oaaas.model.Client;
  */
 public class NoopUserConsentHandler extends AbstractUserConsentHandler {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.surfnet.oaaas.auth.AbstractUserConsentHandler#handleUserConsent(javax
-   * .servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
-   * javax.servlet.FilterChain, java.lang.String, java.lang.String,
-   * org.surfnet.oaaas.model.Client)
-   */
   @Override
   public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri, Client client) throws IOException, ServletException {

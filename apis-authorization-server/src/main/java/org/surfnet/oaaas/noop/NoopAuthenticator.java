@@ -27,7 +27,7 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 /**
- * A mimimalistic implementation of AbstractAuthenticator that contains no authentication but only fulfills the
+ * A minimalistic implementation of AbstractAuthenticator that contains no authentication but only fulfills the
  * contract of Authenticators.
  * Useful for testing and demonstration purposes only, of course not safe for production.
  */
@@ -42,7 +42,9 @@ public class NoopAuthenticator extends AbstractAuthenticator {
   public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
       String authStateValue, String returnUri) throws IOException, ServletException {
     super.setAuthStateValue(request, authStateValue);
-    super.setPrincipal(request, new AuthenticatedPrincipal("noop"));
+    AuthenticatedPrincipal principal = new AuthenticatedPrincipal("noop");
+    principal.setAdminPrincipal(true);
+    super.setPrincipal(request, principal);
     chain.doFilter(request, response);
   }
 }
