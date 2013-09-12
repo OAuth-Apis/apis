@@ -31,7 +31,7 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
  * contract of Authenticators.
  * Useful for testing and demonstration purposes only, of course not safe for production.
  */
-public class NoopAuthenticator extends AbstractAuthenticator {
+public class NoopAdminAuthenticator extends AbstractAuthenticator {
 
   @Override
   public boolean canCommence(HttpServletRequest request) {
