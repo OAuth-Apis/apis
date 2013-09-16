@@ -109,11 +109,11 @@ Client for user password credentials
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
 clientId, secret, allowedUserPasswordCredentials)
 VALUES
-    (99993, 'it-test-user-password-credential@example.com', 'john.user.password.credential.grant', 'it test user password credential grant',
+    (9994, 'it-test-user-password-credential@example.com', 'john.user.password.credential.grant', 'it test user password credential grant',
     'it test user password credential grant',
     'thumbnailurl', 99997,
     'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 1);
-INSERT INTO user lacks privilege or object not found_scopes values (99993, 'read');
+INSERT INTO  Client_scopes values (99994, 'read');
 
 
 /*
