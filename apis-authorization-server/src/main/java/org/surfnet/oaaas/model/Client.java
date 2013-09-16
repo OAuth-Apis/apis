@@ -107,6 +107,9 @@ public class Client extends AbstractEntity {
 
   @Column
   private boolean allowedClientCredentials;
+  
+  @Column
+  private boolean allowedUserPasswordCredentials;
 
   // Listed here so Cascade will work.
   @OneToMany(mappedBy ="client", cascade = CascadeType.ALL)
@@ -332,7 +335,15 @@ public class Client extends AbstractEntity {
   public boolean isAllowedClientCredentials() {
     return allowedClientCredentials;
   }
-
+  
+  public boolean isAllowedUserPasswordCredentials() {
+	    return allowedUserPasswordCredentials;
+	  }
+  
+  public void setAllowedUserPasswordCredentials(boolean allowedUserPasswordCredentials) {
+	    this.allowedUserPasswordCredentials = allowedUserPasswordCredentials;
+	  }
+  
   public void setAllowedClientCredentials(boolean allowedClientCredentials) {
     this.allowedClientCredentials = allowedClientCredentials;
   }
