@@ -113,7 +113,7 @@ VALUES
     'it test user password credential grant',
     'thumbnailurl', 99997,
     'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 1);
-INSERT INTO Client_scopes values (99993, 'read');
+INSERT INTO user lacks privilege or object not found_scopes values (99993, 'read');
 
 
 /*

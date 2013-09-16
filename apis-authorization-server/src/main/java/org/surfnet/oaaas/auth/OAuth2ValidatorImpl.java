@@ -203,8 +203,8 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
           }
     }
     if (accessTokenRequest.getGrantType().equals(GRANT_TYPE_USER_PASSWORD_CREDENTIALS)) {
-    	if (!client.isAllowedClientCredentials()) {
-            throw new ValidationResponseException(CLIENT_CREDENTIALS_NOT_PERMITTED);
+    	if (!client.isAllowedUserPasswordCredentials()) {
+            throw new ValidationResponseException(USER_PASSWORD_CREDENTIALS_NOT_PERMITTED);
           }
     }
     accessTokenRequest.setClient(client);
