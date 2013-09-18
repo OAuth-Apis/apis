@@ -47,11 +47,8 @@ public class ResourceServerRepositoryTest extends AbstractTestRepository {
 
   @Test
   public void test() {
-	LOG.info("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeeeeeee");
     ResourceServerRepository repo = getRepository(ResourceServerRepository.class);
     ClientRepository clientRepo = getRepository(ClientRepository.class);
-    LOG.info("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ " + clientRepo.toString());
-
     ResourceServer rs = repo.findByKey("authorization-server-admin");
     
     Client client = null;

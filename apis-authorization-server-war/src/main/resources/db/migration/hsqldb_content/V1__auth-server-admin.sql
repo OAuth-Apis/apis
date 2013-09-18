@@ -109,7 +109,7 @@ Client for user password credentials
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
 clientId, secret, allowedUserPasswordCredentials)
 VALUES
-    (9994, 'it-test-user-password-credential@example.com', 'john.user.password.credential.grant', 'it test user password credential grant',
+    (99994, 'it-test-user-password-credential@example.com', 'john.user.password.credential.grant', 'it test user password credential grant',
     'it test user password credential grant',
     'thumbnailurl', 99997,
     'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 1);
