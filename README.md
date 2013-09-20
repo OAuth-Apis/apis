@@ -228,12 +228,15 @@ VALUES
 INSERT INTO Client_scopes values (99993, 'read');
 ```
 
-Let's test this client with curl. We need the base64 encoded client_key:secret (`it-test-client-credential-grant:some-secret-client-credential-grant`) and we use this to - [client credential grant](http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-1.3.4) does not involve any user involvement as it is granted to highly trusted clients - obtain a access token:
+Let's test this client with curl. We need the base64 encoded client_key:secret (`it-test-client-credential-grant:some-secret-client-credential-grant`):
 
     echo -n 'it-test-client-credential-grant:some-secret-client-credential-grant' | openssl base64
+
+and we use this to - [client credential grant](http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-1.3.4) does not involve any user involvement as it is granted to highly trusted clients - obtain a access token:
+
     curl -v -H "Accept: application/json" -H "Content-type: application/x-www-form-urlencoded" -H \
-    "Authorization: Basic aXQtdGVzdC1jbGllbnQtY3JlZGVudGlhbC1ncmFudDpzb21lLXNlY3JldC1jbGllbnQtY3JlZGVudGlhbC1ncmFudA==" \
-    -X POST -d 'grant_type=client_credentials' http://localhost:8080/oauth2/token
+      "Authorization: Basic aXQtdGVzdC1jbGllbnQtY3JlZGVudGlhbC1ncmFudDpzb21lLXNlY3JldC1jbGllbnQtY3JlZGVudGlhbC1ncmFudA==" \
+      -X POST -d 'grant_type=client_credentials' http://localhost:8080/oauth2/token
 
 The result is a new access token:
 
