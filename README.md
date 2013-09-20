@@ -203,6 +203,49 @@ a specific subtype of `AuthenticatedPrincipal` (e.g. would like to cast the prin
 `adminService.jsonTypeInfoIncluded` in the properties file that drive the Authorization Server (`apis.application.properties`) and respectively the properties file that drive the Resource Server
 (the property file driving the AuthorizationServletFilter - if used - is set using a servlet init-parameter named `apis-resource-server.properties.file`).
 
+#### Authorization Server - Resource Server demo flow
+
+First start up the Authorization Server (if you have not already done so):
+
+    cd apis-authorization-server-war
+    mvn jetty:run
+
+When started up in local development mode with Jetty the content of the in-memory test database is populated with the content from apis/apis-authorization-server-war/src/main/resources/db/migration/hsqldb_content/V1__auth-server-admin.sql. One entry in that file
+is a client configured with allowedClientCredentials=true.
+
+```sql
+/*
+Client for client credentials
+*/
+INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
+clientId, secret, allowedClientCredentials)
+VALUES
+    (99993, 'it-test-client-credential@example.com', 'john.client.credential.grant', 'it test client credential grant',
+    'it test client credential grant',
+    'thumbnailurl', 99997,
+    'it-test-client-credential-grant', 'some-secret-client-credential-grant', 1);
+INSERT INTO Client_scopes values (99993, 'read');
+```
+
+Let's test this client with curl. We need the base64 encoded the client key:secret (it-test-client-credential-grant:some-secret-client-credential-grant) and we use this to (client credential grant does not involve an user involvement as it is granted to highly trusted clients) obtain a access token:
+
+    echo -n 'it-test-client-credential-grant:some-secret-client-credential-grant' | openssl base64
+    curl -v -H "Accept: application/json" -H "Content-type: application/x-www-form-urlencoded" -H "Authorization: Basic aXQtdGVzdC1jbGllbnQtY3JlZGVudGlhbC1ncmFudDpzb21lLXNlY3JldC1jbGllbnQtY3JlZGVudGlhbC1ncmFudA==" -X POST -d 'grant_type=client_credentials' http://localhost:8080/oauth2/token
+
+The result is a new access token:
+
+    {"scope":"read","access_token":"38b0b9e5-0ff0-42f9-a9df-28cfaf996de2","token_type":"bearer","expires_in":0}
+
+Now test the call that a Resource Server would make to the Authorization Server when this client uses his newly obtained access token to perform an API call. We will mimic the Resource Server that actually is connected to the client we used (id = 99997 and key:secret is it-test-resource-server:somesecret).
+
+This is the call (proprietary API as out-of-scope in the OAuth2 specification) to the Authorization Server to validate the access token:
+
+    curl -v -H "Authorization: Basic aXQtdGVzdC1yZXNvdXJjZS1zZXJ2ZXI6c29tZXNlY3JldA==" "http://localhost:8080/v1/tokeninfo?access_token=38b0b9e5-0ff0-42f9-a9df-28cfaf996de2"
+
+And the result as expected (note as we used client credential flow the principal name is the client name);
+
+    {"audience":"it test client credential grant","scopes":["read"],"principal":{"name":"it-test-client-credential-grant","roles":[],"groups":[],"adminPrincipal":false,"attributes":{}},"expires_in":0}
+
 
 ### Plugging in your custom implementations
 
