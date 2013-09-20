@@ -228,7 +228,7 @@ VALUES
 INSERT INTO Client_scopes values (99993, 'read');
 ```
 
-Let's test this client with curl. We need the base64 encoded the client key:secret (it-test-client-credential-grant:some-secret-client-credential-grant) and we use this to - [client credential grant](http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-1.3.4) does not involve any user involvement as it is granted to highly trusted clients) obtain a access token:
+Let's test this client with curl. We need the base64 encoded client_key:secret (`it-test-client-credential-grant:some-secret-client-credential-grant`) and we use this to - [client credential grant](http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-1.3.4) does not involve any user involvement as it is granted to highly trusted clients - obtain a access token:
 
     echo -n 'it-test-client-credential-grant:some-secret-client-credential-grant' | openssl base64
     curl -v -H "Accept: application/json" -H "Content-type: application/x-www-form-urlencoded" -H \
@@ -237,7 +237,12 @@ Let's test this client with curl. We need the base64 encoded the client key:secr
 
 The result is a new access token:
 
-    {"scope":"read","access_token":"38b0b9e5-0ff0-42f9-a9df-28cfaf996de2","token_type":"bearer","expires_in":0}
+    {
+        "scope": "read",
+        "access_token": "38b0b9e5-0ff0-42f9-a9df-28cfaf996de2",
+        "token_type": "bearer",
+        "expires_in": 0
+    }
 
 Now test the call that a Resource Server would make to the Authorization Server when this client uses his newly obtained access token to perform an API call against the Resource Server. We will mimic the Resource Server that actually is connected to the client we used (`id = 99997, key:secret is it-test-resource-server:somesecret`).
 
@@ -248,7 +253,20 @@ This is the call - proprietary API as described [out-of-scope](http://tools.ietf
 
 And the result as expected (note as we used client credential flow the principal name is the client name);
 
-    {"audience":"it test client credential grant","scopes":["read"],"principal":{"name":"it-test-client-credential-grant","roles":[],"groups":[],"adminPrincipal":false,"attributes":{}},"expires_in":0}
+    {
+        "audience": "it test client credential grant",
+        "scopes": [
+            "read"
+        ],
+        "principal": {
+            "name": "it-test-client-credential-grant",
+            "roles": [],
+            "groups": [],
+            "adminPrincipal": false,
+            "attributes": {}
+        },
+        "expires_in": 0
+    }
 
 If you write your own implementation of the above flow for your Resource Servers strongly consider caching subsequent calls & answers from the Authorization Server.
 
