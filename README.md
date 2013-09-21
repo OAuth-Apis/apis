@@ -25,6 +25,10 @@ The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can
 
 First clone this repo. To build the sources you need to have [maven 3](http://maven.apache.org/download.html) installed.
 
+The default JVM size is not sufficient - it rarely is - so when running the various modules in test mode using `mvn` you will have to allocate more memory to the JVM:
+
+	export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=512M"
+
 After the clone build the entire project
 
     mvn clean install
