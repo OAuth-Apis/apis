@@ -44,7 +44,7 @@ Go the authorization-server-war and start the application
     cd apis-authorization-server-war
     mvn jetty:run
 
-The authorization-server-war application is capable of authenticating Resource Owners and granting and validating Access Tokens (and optional Refresh Tokens) on behalf of Resource Servers that are receiving resource calls from a Client app. It also offers a JavaScript application to manage Resource Servers and Client application instances. 
+The authorization-server-war application is capable of authenticating Resource Owners (e.g. users) and granting and validating Access Tokens (and optional Refresh Tokens) on behalf of Resource Servers that are receiving resource calls from a Client app. It also offers a JavaScript application to manage Resource Servers and Client application instances. 
 
 ### Run Example Resource Server (war & standalone modus)
 
@@ -102,7 +102,9 @@ After this you can add your own ResourceServer and Client instances. See the too
 
 #### Admin privileges
 It is possible to have admin privileges in the JS GUI, meaning you can edit / delete all of the known Resource Servers and Clients. A common usecase if you have a department responsible for the administration of ResourceServers and Clients. In order to obtain admin rights your
-AuthenticatedPrincipal needs to return true for the `isAdminPrincipal` method. The default implementation does not so and everyone can only edit / delete their own ResourceServers and Clients. The [surfconext authn submodule](https://github.com/OpenConextApps/apis/tree/master/apis-surfconext-authn) however serves as an example implementation that uses this feature.
+AuthenticatedPrincipal needs to return true for the `isAdminPrincipal` method. The default implementation does not so and everyone can only edit / delete their own ResourceServers and Clients. You can change this by changing the `authenticatorClass` configuration in the `apis-authorization-server-war/src/test/resources/apis.application.properties` file to `org.surfnet.oaaas.noop.NoopAdminAuthenticator`.
+
+The [surfconext authn submodule](https://github.com/OpenConextApps/apis/tree/master/apis-surfconext-authn) is another production-ready implementation that uses group membership to determine the is-admin feature.
 
 ### Component overview
 
