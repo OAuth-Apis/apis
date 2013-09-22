@@ -63,6 +63,16 @@ var clientGridView = (function() {
           $(this).select();
         });
 
+        /*
+         * We need to populate the client column in the Resource Server grid
+         */
+        $(clients).each(function(i, client) {
+          var $clientLink = $("<a href='#'>" + client.name + "<a><br>").click(function(e){
+            windowController.onEditClient(client.resourceServer.id, client.id);
+          })
+          $('#resource_server_clients_' + client.resourceServer.id).prepend($clientLink) ;
+        });
+
       });
 
     },

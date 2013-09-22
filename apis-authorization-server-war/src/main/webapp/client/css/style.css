@@ -211,11 +211,11 @@ img.tablelogo {
 }
 
 .grid-overview th.col-about {
-    width: 25%;
+    width: 15%;
 }
 
 .grid-overview th.resource-id {
-    width: 10%;
+    width: 15%;
 }
 
 .grid-overview th.scopes {
@@ -223,7 +223,7 @@ img.tablelogo {
 }
 
 .grid-overview th.col-meta {
-    width: 40%;
+    width: 45%;
 }
 
 .grid-overview th.actions {
