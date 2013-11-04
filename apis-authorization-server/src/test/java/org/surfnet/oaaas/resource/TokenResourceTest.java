@@ -30,7 +30,7 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.ClientCredentials;
 import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
