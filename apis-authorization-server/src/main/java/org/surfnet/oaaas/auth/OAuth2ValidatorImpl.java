@@ -206,9 +206,17 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     	if (!client.isAllowedUserPasswordCredentials()) {
             throw new ValidationResponseException(USER_PASSWORD_CREDENTIALS_NOT_PERMITTED);
           }
+    	if (!isAuthenticated(accessTokenRequest.getUsername(), accessTokenRequest.getPassword())) {
+    		throw new ValidationResponseException(INVALID_CREDENTIALS);
+    	}
     }
     accessTokenRequest.setClient(client);
 
   }
+
+private Boolean isAuthenticated(String username, String password) {
+
+	return true;
+}
 
 }

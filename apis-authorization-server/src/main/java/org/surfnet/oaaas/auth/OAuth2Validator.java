@@ -104,7 +104,9 @@ public interface OAuth2Validator {
 
     INVALID_GRANT_REFRESH_TOKEN("invalid_grant", "The refresh token is invalid"),
     
-    INVALID_GRANT_PASSWORD("invalid_grant", "the username and password parameters are required");
+    INVALID_GRANT_PASSWORD("invalid_grant", "the username and password parameters are required"),
+    
+    INVALID_CREDENTIALS("invalid_credentials", "Invalid username or password");
 
     private String value;
     private String description;

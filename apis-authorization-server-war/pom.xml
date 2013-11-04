@@ -1,316 +1,313 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>apis-parent</artifactId>
-		<groupId>nl.surfnet.apis</groupId>
-		<version>1.3.4-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>apis-authorization-server-war</artifactId>
-	<packaging>war</packaging>
-	<name>API Secure - authorization server webapp</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>apis-parent</artifactId>
+    <groupId>nl.surfnet.apis</groupId>
+    <version>1.3.5-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>apis-authorization-server-war</artifactId>
+  <packaging>war</packaging>
+  <name>API Secure - authorization server webapp</name>
 
-	<properties>
-		<servlet.port>8080</servlet.port>
-		<mujina-idp.version>3.1.0</mujina-idp.version>
-	</properties>
-	<repositories>
-		<repository>
-			<id>jetty-releases</id>
-			<name>Jetty Releases</name>
-			<url>https://oss.sonatype.org/content/repositories/jetty-releases</url>
-		</repository>
-	</repositories>
+  <properties>
+    <servlet.port>8080</servlet.port>
+    <mujina-idp.version>3.1.0</mujina-idp.version>
+  </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-servlets</artifactId>
-			<version>9.0.5.v20130815</version>
-		</dependency>
-		<dependency>
-			<groupId>nl.surfnet.apis</groupId>
-			<artifactId>apis-authorization-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>${jstl.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>${jsp.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-spring</artifactId>
-			<version>${jersey.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+  <dependencies>
+    <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-servlets</artifactId>
+        <version>9.0.5.v20130815</version>
+    </dependency>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-authorization-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>${jstl.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>${jsp.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-spring</artifactId>
+      <version>${jersey.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-aop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-jdbc</artifactId>
+    </dependency>
 
 
-		<!-- Begin Selenium -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-firefox-driver</artifactId>
-			<version>${selenium.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-support</artifactId>
-			<version>${selenium.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>${selenium.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- End Selenium -->
+    <!-- Begin Selenium -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-htmlunit-driver</artifactId>
+      <version>${selenium.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- End Selenium -->
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>nl.surfnet.apis</groupId>
-			<artifactId>apis-surfconext-authn</artifactId>
-		</dependency>
-
-	</dependencies>
-
-	<profiles>
-
-		<!-- Profile for integration tests. Enable with -Pintegration This profile 
-			enables the maven failsafe plugin with its standard configuration. This means 
-			that test classes **TestIT.java will be run and **Test.java will be skipped. 
-			Prior to running the tests, a Jetty container is started by the jetty-maven-plugin. -->
-		<profile>
-			<id>integration</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>integration</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.12</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>integration-test</goal>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.mortbay.jetty</groupId>
-						<artifactId>jetty-maven-plugin</artifactId>
-						<version>${jetty-maven-plugin.version}</version>
-						<configuration>
-							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<webAppConfig>
-								<contextPath>/</contextPath>
-								<extraClasspath>${basedir}/src/test/resources/</extraClasspath>
-							</webAppConfig>
-							<connectors>
-								<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-									<port>${servlet.port}</port>
-									<maxIdleTime>60000</maxIdleTime>
-								</connector>
-							</connectors>
-							<daemon>true</daemon>
-							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<stopKey>foo</stopKey>
-							<stopPort>9966</stopPort>
-							<contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
-						</configuration>
-						<executions>
-							<execution>
-								<id>start-jetty</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>stop-jetty</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<!-- extra profile to use a headless selenium driver instead of default 
-			(firefox). -->
-		<profile>
-			<id>selenium-headless</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<selenium.webdriver>htmlunit</selenium.webdriver>
-			</properties>
-		</profile>
-
-	</profiles>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
 
 
-	<build>
-		<plugins>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.2</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
 
-			<!-- Specific jetty-maven-plugin configuration for running Jetty during 
-				development. None of its goals are run in a normal build lifecycle. -->
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty-maven-plugin.version}</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.surfnet.coin</groupId>
-						<artifactId>mujina-idp</artifactId>
-						<type>war</type>
-						<version>${mujina-idp.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>nl.surfnet.apis</groupId>
-						<artifactId>apis-openconext-mock-war</artifactId>
-						<type>war</type>
-						<version>${project.version}</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<contextHandlers>
-						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-							<contextPath>/mujina-idp</contextPath>
-							<war>
-								${settings.localRepository}/org/surfnet/coin/mujina-idp/${mujina-idp.version}/mujina-idp-${mujina-idp.version}.war
-							</war>
-							<extraClasspath>${basedir}/src/test/resources/</extraClasspath>
-						</contextHandler>
-						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-							<contextPath>/openconext-mock</contextPath>
-							<war>
-								${settings.localRepository}/nl/surfnet/apis/apis-openconext-mock-war/${project.version}/apis-openconext-mock-war-${project.version}.war
-							</war>
-							<extraClasspath>${basedir}/src/test/resources/</extraClasspath>
-						</contextHandler>
-					</contextHandlers>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-surfconext-authn</artifactId>
+    </dependency>
 
-					<webAppConfig>
-						<contextPath>/</contextPath>
-						<extraClasspath>${basedir}/src/test/resources/</extraClasspath>
-					</webAppConfig>
-					<connectors>
-						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<port>${servlet.port}</port>
-							<host>0.0.0.0</host>
-						</connector>
-					</connectors>
-					<reload>manual</reload>
-					<stopKey>stopauthserver</stopKey>
-					<stopPort>9280</stopPort>
-					<useTestClasspath>true</useTestClasspath>
-					<contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+  </dependencies>
+
+  <profiles>
+
+    <!--
+    Profile for integration tests.
+    Enable with -Pintegration
+
+    This profile enables the maven failsafe plugin with its standard configuration.
+    This means that test classes **TestIT.java will be run and **Test.java will be skipped.
+    Prior to running the tests, a Jetty container is started by the jetty-maven-plugin.
+    -->
+    <profile>
+      <id>integration</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>integration</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.12</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <version>${jetty-maven-plugin.version}</version>
+            <configuration>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+              <webAppConfig>
+                <contextPath>/</contextPath>
+                <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+              </webAppConfig>
+              <connectors>
+                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                  <port>${servlet.port}</port>
+                  <maxIdleTime>60000</maxIdleTime>
+                </connector>
+              </connectors>
+              <daemon>true</daemon>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+              <stopKey>foo</stopKey>
+              <stopPort>9966</stopPort>
+              <contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-jetty</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-jetty</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- extra profile to use a headless selenium driver instead of default (firefox). -->
+    <profile>
+      <id>selenium-headless</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <selenium.webdriver>htmlunit</selenium.webdriver>
+      </properties>
+    </profile>
+
+  </profiles>
+
+
+  <build>
+    <plugins>
+
+      <!--
+      Specific jetty-maven-plugin configuration for running Jetty during development.
+      None of its goals are run in a normal build lifecycle.
+      -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-maven-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.surfnet.coin</groupId>
+            <artifactId>mujina-idp</artifactId>
+            <type>war</type>
+            <version>${mujina-idp.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>nl.surfnet.apis</groupId>
+            <artifactId>apis-openconext-mock-war</artifactId>
+            <type>war</type>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <contextHandlers>
+            <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+              <contextPath>/mujina-idp</contextPath>
+              <war>
+                ${settings.localRepository}/org/surfnet/coin/mujina-idp/${mujina-idp.version}/mujina-idp-${mujina-idp.version}.war
+              </war>
+              <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+            </contextHandler>
+            <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+              <contextPath>/openconext-mock</contextPath>
+              <war>
+                ${settings.localRepository}/nl/surfnet/apis/apis-openconext-mock-war/${project.version}/apis-openconext-mock-war-${project.version}.war
+              </war>
+              <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+            </contextHandler>
+          </contextHandlers>
+
+          <webAppConfig>
+            <contextPath>/</contextPath>
+            <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${servlet.port}</port>
+              <host>0.0.0.0</host>
+            </connector>
+          </connectors>
+          <reload>manual</reload>
+          <stopKey>stopauthserver</stopKey>
+          <stopPort>9280</stopPort>
+          <useTestClasspath>true</useTestClasspath>
+          <contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
