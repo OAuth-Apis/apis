@@ -72,7 +72,7 @@ public class VerifyResource implements EnvironmentAware {
   public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
                               String authorization, @QueryParam("access_token")
                               String accessToken) throws IOException {
-
+    
     ClientCredentials credentials = new ClientCredentials(authorization);
 
     if (LOG.isDebugEnabled()) {

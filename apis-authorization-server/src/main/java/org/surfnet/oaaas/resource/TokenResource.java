@@ -189,7 +189,7 @@ public class TokenResource {
     	  request =  new AuthorizationRequest();
           request.setClient(accessTokenRequest.getClient());
           // Need enhancement
-          request.setPrincipal(new AuthenticatedPrincipal(request.getClient().getClientId()));
+          request.setPrincipal(new AuthenticatedPrincipal(accessTokenRequest.getUsername()));
           request.setGrantedScopes(request.getClient().getScopes());   	  
       } else {
         return sendErrorResponse(ValidationResponse.UNSUPPORTED_GRANT_TYPE);
