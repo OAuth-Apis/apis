@@ -55,6 +55,12 @@ VALUES
 	'it-test-resource-server', 'somesecret', 'it-test-enduser');
 INSERT INTO Resourceserver_scopes values (99997, 'read');
 
+INSERT INTO resourceserver (id, contactEmail,  contactName, resourceServerName, resourceServerKey, secret, owner)
+VALUES
+	(98997, 'it-test@example.com','it test','it-test-resource-server',
+	'salam-key', 'salam-secret', 'salam');
+INSERT INTO Resourceserver_scopes values (98997, 'read');
+
 /*
 Client not getting refresh tokens
 */
@@ -111,7 +117,7 @@ clientId, secret, allowedUserPasswordCredentials)
 VALUES
     (99994, 'it-test-user-password-credential@example.com', 'john.user.password.credential.grant', 'it test user password credential grant',
     'it test user password credential grant',
-    'thumbnailurl', 99997,
+    'thumbnailurl', 98997,
     'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 1);
 INSERT INTO  Client_scopes values (99994, 'read');
 
