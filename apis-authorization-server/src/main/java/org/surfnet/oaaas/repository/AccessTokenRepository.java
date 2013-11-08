@@ -21,6 +21,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.Client;
 
@@ -28,6 +29,8 @@ import org.surfnet.oaaas.model.Client;
 public interface AccessTokenRepository extends CrudRepository<AccessToken, Long> {
 
   AccessToken findByToken(String token);
+  
+  AccessToken findByTokenAndClient(String token, Client client);
 
   AccessToken findByRefreshToken(String refreshToken);
 
@@ -39,4 +42,7 @@ public interface AccessTokenRepository extends CrudRepository<AccessToken, Long>
 
   @Query(value = "select count(distinct resourceOwnerId) from accesstoken where client_id = ?1", nativeQuery = true)
   Number countByUniqueResourceOwnerIdAndClientId(long clientId);
+  
+  @Transactional
+  void delete(AccessToken token);
 }

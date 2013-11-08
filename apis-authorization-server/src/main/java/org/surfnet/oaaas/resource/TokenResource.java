@@ -153,7 +153,7 @@ public class TokenResource {
     String authState = (String) request.getAttribute(AbstractAuthenticator.AUTH_STATE);
     return authorizationRequestRepository.findByAuthState(authState);
   }
-
+  
   @POST
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
