@@ -29,8 +29,8 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
 import org.surfnet.oaaas.auth.ValidationResponseException;
-import org.surfnet.oaaas.auth.principal.ClientCredentials;
 import org.surfnet.oaaas.auth.OAuth2Validator.*;
+import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.Client;
@@ -83,7 +83,7 @@ public class RevokeResource implements EnvironmentAware {
 	String accessToken = null;
     Client client = null;  
 	AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
-    ClientCredentials credentials = getClientCredentials(authorization, accessTokenRequest);
+	UserPassCredentials credentials = getClientCredentials(authorization, accessTokenRequest);
     try { 
     	client = validateClient(credentials);
     	if (!client.isExactMatch(credentials)) {
@@ -104,8 +104,8 @@ public class RevokeResource implements EnvironmentAware {
     return Response.ok().build();
   }
   
-  protected Client validateClient(ClientCredentials credentials) {
-	    String clientId = credentials.getClientId();
+  protected Client validateClient(UserPassCredentials credentials) {
+	    String clientId = credentials.getUsername();
 	    Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
 	    if (client == null) {
 	      throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
@@ -113,9 +113,9 @@ public class RevokeResource implements EnvironmentAware {
 	    return client;
 	  }
 
-  private ClientCredentials getClientCredentials(String authorization, AccessTokenRequest accessTokenRequest) {
-    return StringUtils.isBlank(authorization) ? new ClientCredentials(accessTokenRequest.getClientId(),
-        accessTokenRequest.getClientSecret()) : new ClientCredentials(authorization);
+  private UserPassCredentials getClientCredentials(String authorization, AccessTokenRequest accessTokenRequest) {
+    return StringUtils.isBlank(authorization) ? new UserPassCredentials(accessTokenRequest.getClientId(),
+        accessTokenRequest.getClientSecret()) : new UserPassCredentials(authorization);
   }
 
   protected Response unauthorized() {
