@@ -98,7 +98,7 @@ public class RevokeResource implements EnvironmentAware {
 	AccessToken token = accessTokenRepository.findByTokenAndClient(accessToken, client);
     if (token == null) {
     	LOG.warn("Access token {} not found for client '{}'.", accessToken, client.getClientId());
-        return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
+    	return Response.ok().build();
     }
     accessTokenRepository.delete(token);
     return Response.ok().build();
