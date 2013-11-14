@@ -16,6 +16,11 @@
 
   <dependencies>
     <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-servlets</artifactId>
+        <version>9.0.5.v20130815</version>
+    </dependency>
+    <dependency>
       <groupId>nl.surfnet.apis</groupId>
       <artifactId>apis-authorization-server</artifactId>
     </dependency>

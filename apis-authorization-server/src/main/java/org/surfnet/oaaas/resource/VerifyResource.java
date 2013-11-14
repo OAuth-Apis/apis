@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.ClientCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
@@ -72,15 +72,15 @@ public class VerifyResource implements EnvironmentAware {
   public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
                               String authorization, @QueryParam("access_token")
                               String accessToken) throws IOException {
-
-    UserPassCredentials credentials = new UserPassCredentials(authorization);
+    
+    ClientCredentials credentials = new ClientCredentials(authorization);
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("Incoming verify-token request, access token: {}, credentials from authorization header: {}", accessToken, credentials);
     }
 
     ResourceServer resourceServer = getResourceServer(credentials);
-    if (resourceServer == null || !resourceServer.getSecret().equals(credentials.getPassword())) {
+    if (resourceServer == null || !resourceServer.getSecret().equals(credentials.getSecret())) {
       LOG.warn("For access token {}: Resource server not found for credentials {}. Responding with 401 in VerifyResource#verifyToken.", accessToken, credentials);
       return unauthorized();
     }
@@ -108,8 +108,8 @@ public class VerifyResource implements EnvironmentAware {
     return token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis();
   }
 
-  private ResourceServer getResourceServer(UserPassCredentials credentials) {
-    String key = credentials.getUsername();
+  private ResourceServer getResourceServer(ClientCredentials credentials) {
+    String key = credentials.getClientId();
     return resourceServerRepository.findByKey(key);
   }
 

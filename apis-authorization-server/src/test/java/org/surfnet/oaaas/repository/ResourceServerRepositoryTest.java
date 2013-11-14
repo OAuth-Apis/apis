@@ -31,22 +31,26 @@ import java.util.UUID;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.resource.TokenResource;
 
 /**
  * {@link Test} for {@link ResourceServerRepository}
  * 
  */
 public class ResourceServerRepositoryTest extends AbstractTestRepository {
+  private static final Logger LOG = LoggerFactory.getLogger(ResourceServerRepositoryTest.class);
 
   @Test
   public void test() {
     ResourceServerRepository repo = getRepository(ResourceServerRepository.class);
     ClientRepository clientRepo = getRepository(ClientRepository.class);
-
     ResourceServer rs = repo.findByKey("authorization-server-admin");
+    
     Client client = null;
     assertFalse(rs.containsClient(client));
 
