@@ -113,12 +113,12 @@ INSERT INTO Client_scopes values (99993, 'read');
 Client for user password credentials
 */
 INSERT INTO client (id, contactEmail, contactName, description, clientName, thumbNailUrl, resourceserver_id,
-clientId, secret, allowedUserPasswordCredentials)
+clientId, secret, expireDuration, useRefreshTokens, allowedUserPasswordCredentials)
 VALUES
     (99994, 'it-test-user-password-credential@example.com', 'john.user.password.credential.grant', 'it test user password credential grant',
     'it test user password credential grant',
     'thumbnailurl', 98997,
-    'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 1);
+    'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 36000, 1, 1);
 INSERT INTO  Client_scopes values (99994, 'read');
 
 
