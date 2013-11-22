@@ -121,6 +121,10 @@ VALUES
     'it-test-user-password-credential-grant', 'some-secret-user-password-credential-grant', 36000, 1, 1);
 INSERT INTO  Client_scopes values (99994, 'read');
 
+INSERT INTO accesstoken (id, expires, encodedPrincipal, token, client_id, resourceOwnerId)
+VALUES (99998, 0, '["org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal",{"name":"admin-enduser","roles":["java.util.ArrayList",[]],"groups":["java.util.ArrayList",[]],"attributes":["java.util.HashMap",{}]}]',
+'cff37223-babb-41e5-9ed3-954ef44f929b',99994, 'enduser');
+INSERT INTO Accesstoken_scopes values (99994, 'read'), (99994, 'write');
 
 /*
 admin-enduser
