@@ -29,6 +29,8 @@ public interface OAuth2Validator {
   String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
 
   String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
+  
+  String GRANT_TYPE_USER_PASSWORD_CREDENTIALS = "password";
 
   String IMPLICIT_GRANT_RESPONSE_TYPE = "token";
 
@@ -89,16 +91,22 @@ public interface OAuth2Validator {
     IMPLICIT_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permisssion for implicit grant"),
 
     CLIENT_CREDENTIALS_NOT_PERMITTED("unauthorized_client", "The client has no permisssion for client credentials"),
+    
+    USER_PASSWORD_CREDENTIALS_NOT_PERMITTED("unauthorized_client", "The client has no permisssion for user password credentials"),
 
     REDIRECT_URI_FRAGMENT_COMPONENT("invalid_request",
         "The redirect_uri endpoint must not include a fragment component"),
 
-    UNSUPPORTED_GRANT_TYPE("unsupported_grant_type", String.format("The supported grant_type values are '%s' and '%s'",
-        GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN)),
+    UNSUPPORTED_GRANT_TYPE("unsupported_grant_type", String.format("The supported grant_type values are '%s', '%s' and '%s'",
+        GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, GRANT_TYPE_USER_PASSWORD_CREDENTIALS)),
 
     INVALID_GRANT_AUTHORIZATION_CODE("invalid_grant", "The authorization code is invalid"),
 
-    INVALID_GRANT_REFRESH_TOKEN("invalid_grant", "The refresh token is invalid");
+    INVALID_GRANT_REFRESH_TOKEN("invalid_grant", "The refresh token is invalid"),
+    
+    INVALID_GRANT_PASSWORD("invalid_grant", "the username and password parameters are required"),
+    
+    INVALID_CREDENTIALS("invalid_credentials", "Invalid username or password");
 
     private String value;
     private String description;

@@ -18,28 +18,36 @@
  */
 package org.surfnet.oaaas.resource;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
+import org.surfnet.oaaas.auth.ValidationResponseException;
 import org.surfnet.oaaas.auth.principal.ClientCredentials;
+import org.surfnet.oaaas.auth.OAuth2Validator.*;
 import org.surfnet.oaaas.model.AccessToken;
-import org.surfnet.oaaas.model.ResourceServer;
+import org.surfnet.oaaas.model.AccessTokenRequest;
+import org.surfnet.oaaas.model.Client;
+import org.surfnet.oaaas.model.ErrorResponse;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
-import org.surfnet.oaaas.repository.ResourceServerRepository;
+import org.surfnet.oaaas.repository.ClientRepository;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
 
+import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.UNKNOWN_CLIENT_ID;
 import static org.surfnet.oaaas.resource.TokenResource.BASIC_REALM;
 import static org.surfnet.oaaas.resource.TokenResource.WWW_AUTHENTICATE;
 
@@ -52,9 +60,10 @@ import static org.surfnet.oaaas.resource.TokenResource.WWW_AUTHENTICATE;
  * >specification</a> as basis.
  */
 @Named
-@Path("/tokeninfo")
+@Path("/revoke")
 @Produces(MediaType.APPLICATION_JSON)
-public class VerifyResource implements EnvironmentAware {
+@Consumes("application/x-www-form-urlencoded")
+public class RevokeResource implements EnvironmentAware {
 
   private static final Logger LOG = LoggerFactory.getLogger(VerifyResource.class);
 
@@ -64,72 +73,60 @@ public class VerifyResource implements EnvironmentAware {
   private AccessTokenRepository accessTokenRepository;
 
   @Inject
-  private ResourceServerRepository resourceServerRepository;
+  private ClientRepository clientRepository;
 
   private boolean jsonTypeInfoIncluded;
 
-  @GET
-  public Response verifyToken(@HeaderParam(HttpHeaders.AUTHORIZATION)
-                              String authorization, @QueryParam("access_token")
-                              String accessToken) throws IOException {
-    
-    ClientCredentials credentials = new ClientCredentials(authorization);
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Incoming verify-token request, access token: {}, credentials from authorization header: {}", accessToken, credentials);
+  @POST
+  public Response revokeAccessToken(@HeaderParam("Authorization")
+  String authorization, final MultivaluedMap<String, String> formParameters) {
+	String accessToken = null;
+    Client client = null;  
+	AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
+    ClientCredentials credentials = getClientCredentials(authorization, accessTokenRequest);
+    try { 
+    	client = validateClient(credentials);
+    	if (!client.isExactMatch(credentials)) {
+            return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
+          }
+    	List<String> params = formParameters.get("token");
+        accessToken = CollectionUtils.isEmpty(params) ? null : params.get(0);
+    } catch (ValidationResponseException e) {
+    	ValidationResponse validationResponse = e.v;
+    	return  Response.status(Status.BAD_REQUEST).entity(new ErrorResponse(validationResponse.getValue(), validationResponse.getDescription())).build();
     }
-
-    ResourceServer resourceServer = getResourceServer(credentials);
-    if (resourceServer == null || !resourceServer.getSecret().equals(credentials.getSecret())) {
-      LOG.warn("For access token {}: Resource server not found for credentials {}. Responding with 401 in VerifyResource#verifyToken.", accessToken, credentials);
-      return unauthorized();
+	AccessToken token = accessTokenRepository.findByTokenAndClient(accessToken, client);
+    if (token == null) {
+    	LOG.warn("Access token {} not found for client '{}'.", accessToken, client.getClientId());
+        return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
     }
-
-    AccessToken token = accessTokenRepository.findByToken(accessToken);
-    if (token == null || !resourceServer.containsClient(token.getClient())) {
-      LOG.warn("Access token {} not found for resource server '{}'. Responding with 404 in VerifyResource#verifyToken for user {}", accessToken, resourceServer.getName(), credentials);
-      return Response.status(Status.NOT_FOUND).entity(new VerifyTokenResponse("not_found")).build();
-    }
-    if (tokenExpired(token)) {
-      LOG.warn("Token {} is expired. Responding with 410 in VerifyResource#verifyToken for user {}", accessToken, credentials);
-      return Response.status(Status.GONE).entity(new VerifyTokenResponse("token_expired")).build();
-    }
-
-    final VerifyTokenResponse verifyTokenResponse = new VerifyTokenResponse(token.getClient().getName(),
-            token.getScopes(), token.getPrincipal(), token.getExpires());
-
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Responding with 200 in VerifyResource#verifyToken for access token {} and user {}", accessToken, credentials);
-    }
-    return Response.ok(mapper.writeValueAsString(verifyTokenResponse)).build();
+    accessTokenRepository.delete(token);
+    return Response.ok().build();
   }
+  
+  protected Client validateClient(ClientCredentials credentials) {
+	    String clientId = credentials.getClientId();
+	    Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
+	    if (client == null) {
+	      throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
+	    }
+	    return client;
+	  }
 
-  private boolean tokenExpired(AccessToken token) {
-    return token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis();
-  }
-
-  private ResourceServer getResourceServer(ClientCredentials credentials) {
-    String key = credentials.getClientId();
-    return resourceServerRepository.findByKey(key);
+  private ClientCredentials getClientCredentials(String authorization, AccessTokenRequest accessTokenRequest) {
+    return StringUtils.isBlank(authorization) ? new ClientCredentials(accessTokenRequest.getClientId(),
+        accessTokenRequest.getClientSecret()) : new ClientCredentials(authorization);
   }
 
   protected Response unauthorized() {
     return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
   }
 
-  /**
-   * @param accessTokenRepository the accessTokenRepository to set
-   */
   public void setAccessTokenRepository(AccessTokenRepository accessTokenRepository) {
     this.accessTokenRepository = accessTokenRepository;
   }
 
-  /**
-   * @param resourceServerRepository the resourceServerRepository to set
-   */
-  public void setResourceServerRepository(ResourceServerRepository resourceServerRepository) {
-    this.resourceServerRepository = resourceServerRepository;
-  }
+
 
   @Override
   public void setEnvironment(Environment environment) {

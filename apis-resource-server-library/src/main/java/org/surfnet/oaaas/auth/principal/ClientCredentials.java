@@ -19,78 +19,78 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Holder and parser for the username and password from the authentication header.
+ * Holder and parser for the clientId and secret from the authentication header.
  */
-public class UserPassCredentials {
+public class ClientCredentials {
 
   private static final char SEMI_COLON = ':';
   private static final int BASIC_AUTH_PREFIX_LENGTH = "Basic ".length();
 
-  private String username;
-  private String password;
+  private String clientId;
+  private String secret;
 
   /**
-   * Parse the username and password from the authorization header. If
-   * the username and password cannot be found they are set to null.
+   * Parse the clientId and secret from the authorization header. If
+   * the clientId and secret cannot be found they are set to null.
    * @param authorizationHeader the authorization header
    */
-  public UserPassCredentials(final String authorizationHeader) {
+  public ClientCredentials(final String authorizationHeader) {
     if (authorizationHeader == null || authorizationHeader.length() < BASIC_AUTH_PREFIX_LENGTH) {
       noValidAuthHeader();
       return;
     }
 
     String authPart = authorizationHeader.substring(BASIC_AUTH_PREFIX_LENGTH);
-    String userpass = new String(Base64.decodeBase64(authPart.getBytes()));
-    int index = userpass.indexOf(SEMI_COLON);
+    String clientSecret = new String(Base64.decodeBase64(authPart.getBytes()));
+    int index = clientSecret.indexOf(SEMI_COLON);
     if (index < 1) {
       noValidAuthHeader();
       return;
     }
-    username = userpass.substring(0, index);
-    password = userpass.substring(index + 1);
+    clientId = clientSecret.substring(0, index);
+    secret = clientSecret.substring(index + 1);
   }
 
-  public UserPassCredentials(String username, String password) {
+  public ClientCredentials(String clientId, String secret) {
     super();
-    this.username = username;
-    this.password = password;
+    this.clientId = clientId;
+    this.secret = secret;
   }
 
   private void noValidAuthHeader() {
-    username = null;
-    password = null;
+    clientId = null;
+    secret = null;
   }
 
   public boolean isValid() {
-    return !StringUtils.isBlank(username) && !StringUtils.isBlank(password);
+    return !StringUtils.isBlank(clientId) && !StringUtils.isBlank(secret);
   }
   
   /**
-   * Get the username.
-   * @return the username or null if the username was not found
+   * Get the clientId.
+   * @return the clientId or null if the clientId was not found
    */
-  public String getUsername() {
-    return username;
+  public String getClientId() {
+    return clientId;
   }
 
   /**
-   * Get the password.
-   * @return the password or null if the password was not found
+   * Get the secret.
+   * @return the secret or null if the secret was not found
    */
-  public String getPassword() {
-    return password;
+  public String getSecret() {
+    return secret;
   }
 
   @Override
   public String toString() {
-    return "UserPassCredentials [username=" + username + "]";
+    return "ClientCredentials [clientId=" + clientId + "]";
   }
 
   public String getAuthorizationHeaderValue() {
     String result = null;
-    if (!StringUtils.isBlank(username) && !StringUtils.isBlank(password)) {
-      String value = username + ":" + password;
+    if (!StringUtils.isBlank(clientId) && !StringUtils.isBlank(secret)) {
+      String value = clientId + ":" + secret;
       result = "Basic " + new String(Base64.encodeBase64(value.getBytes())) ;
     }
     return result;

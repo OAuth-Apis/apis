@@ -29,7 +29,7 @@ import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.OAuth2Validator.*;
 import org.surfnet.oaaas.auth.ValidationResponseException;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.ClientCredentials;
 import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
@@ -52,7 +52,7 @@ import static org.surfnet.oaaas.auth.OAuth2Validator.*;
 @Named
 @Path("/")
 public class TokenResource {
-
+		
   public static final String BASIC_REALM = "Basic realm=\"OAuth2 Secure\"";
 
   public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
@@ -153,7 +153,7 @@ public class TokenResource {
     String authState = (String) request.getAttribute(AbstractAuthenticator.AUTH_STATE);
     return authorizationRequestRepository.findByAuthState(authState);
   }
-
+  
   @POST
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
@@ -161,13 +161,14 @@ public class TokenResource {
   public Response token(@HeaderParam("Authorization")
   String authorization, final MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
-    UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
+    ClientCredentials credentials = getClientCredentials(authorization, accessTokenRequest);
     String grantType = accessTokenRequest.getGrantType();
     if (GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
-      accessTokenRequest.setClientId(credentials.getUsername());
+      accessTokenRequest.setClientId(credentials.getClientId());
     }
     ValidationResponse vr = oAuth2Validator.validate(accessTokenRequest);
     if (!vr.valid()) {
+      LOG.error("server received an invalid token request", accessTokenRequest);
       return sendErrorResponse(vr);
     }
     AuthorizationRequest request;
@@ -184,8 +185,13 @@ public class TokenResource {
         // Apply all client scopes to the access token.
         // TODO: take into account given scopes from the request
         request.setGrantedScopes(request.getClient().getScopes());
-      }
-      else {
+      } else if (GRANT_TYPE_USER_PASSWORD_CREDENTIALS.equals(grantType)) {
+    	  request =  new AuthorizationRequest();
+          request.setClient(accessTokenRequest.getClient());
+          // Need enhancement
+          request.setPrincipal(new AuthenticatedPrincipal(accessTokenRequest.getUsername()));
+          request.setGrantedScopes(request.getClient().getScopes());   	  
+      } else {
         return sendErrorResponse(ValidationResponse.UNSUPPORTED_GRANT_TYPE);
       }
     } catch (ValidationResponseException e) {
@@ -195,7 +201,6 @@ public class TokenResource {
       return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
     }
     AccessToken token = createAccessToken(request, false);
-
     AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, request.getClient()
         .getExpireDuration(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ','));
 
@@ -237,9 +242,9 @@ public class TokenResource {
    * include the secret and id in the request body
    */
 
-  private UserPassCredentials getUserPassCredentials(String authorization, AccessTokenRequest accessTokenRequest) {
-    return StringUtils.isBlank(authorization) ? new UserPassCredentials(accessTokenRequest.getClientId(),
-        accessTokenRequest.getClientSecret()) : new UserPassCredentials(authorization);
+  private ClientCredentials getClientCredentials(String authorization, AccessTokenRequest accessTokenRequest) {
+    return StringUtils.isBlank(authorization) ? new ClientCredentials(accessTokenRequest.getClientId(),
+        accessTokenRequest.getClientSecret()) : new ClientCredentials(authorization);
   }
 
   private Response sendAuthorizationCodeResponse(AuthorizationRequest authReq) {
