@@ -199,8 +199,19 @@ public class TokenResource {
     AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, request.getClient()
         .getExpireDuration(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ','));
 
-    return Response.ok().entity(response).build();
+    return Response
+            .ok()
+            .entity(response)
+            .cacheControl(cacheControlNoStore())
+            .header("Pragma", "no-cache")
+            .build();
 
+  }
+
+  private CacheControl cacheControlNoStore() {
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setNoStore(true);
+    return cacheControl;
   }
 
   private AuthorizationRequest authorizationCodeToken(AccessTokenRequest accessTokenRequest) {
@@ -248,7 +259,11 @@ public class TokenResource {
     authReq.setAuthorizationCode(authorizationCode);
     authorizationRequestRepository.save(authReq);
     uri = uri + appendQueryMark(uri) + "code=" + authorizationCode + appendStateParameter(authReq);
-    return Response.seeOther(UriBuilder.fromUri(uri).build()).build();
+    return Response
+            .seeOther(UriBuilder.fromUri(uri).build())
+            .cacheControl(cacheControlNoStore())
+            .header("Pragma", "no-cache")
+            .build();
   }
 
   protected String getTokenValue(boolean isRefreshToken) {
@@ -274,7 +289,12 @@ public class TokenResource {
     if (authReq.getClient().isIncludePrincipal()) {
       fragment += String.format("&principal=%s", authReq.getPrincipal().getDisplayName()) ;
     }
-    return Response.seeOther(UriBuilder.fromUri(uri).fragment(fragment).build()).build();
+    return Response
+            .seeOther(UriBuilder.fromUri(uri)
+            .fragment(fragment).build())
+            .cacheControl(cacheControlNoStore())
+            .header("Pragma", "no-cache")
+            .build();
 
 
   }
