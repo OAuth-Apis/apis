@@ -70,8 +70,7 @@ public class TokenResource {
 
   @GET
   @Path("/authorize")
-  public Response authorizeCallbackGet(@Context
-  HttpServletRequest request) {
+  public Response authorizeCallbackGet(@Context HttpServletRequest request) {
     return authorizeCallback(request);
   }
 
@@ -86,8 +85,7 @@ public class TokenResource {
   @POST
   @Produces(MediaType.TEXT_HTML)
   @Path("/authorize")
-  public Response authorizeCallback(@Context
-  HttpServletRequest request) {
+  public Response authorizeCallback(@Context HttpServletRequest request) {
     return doProcess(request);
   }
 
@@ -101,8 +99,7 @@ public class TokenResource {
   @POST
   @Produces(MediaType.TEXT_HTML)
   @Path("/consent")
-  public Response consentCallback(@Context
-  HttpServletRequest request) {
+  public Response consentCallback(@Context HttpServletRequest request) {
     return doProcess(request);
   }
 
@@ -158,8 +155,7 @@ public class TokenResource {
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes("application/x-www-form-urlencoded")
-  public Response token(@HeaderParam("Authorization")
-  String authorization, final MultivaluedMap<String, String> formParameters) {
+  public Response token(@HeaderParam("Authorization") String authorization, final MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
     UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
     String grantType = accessTokenRequest.getGrantType();
