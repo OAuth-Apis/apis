@@ -39,6 +39,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -301,7 +303,11 @@ public class TokenResource {
 
   private String appendStateParameter(AuthorizationRequest authReq) {
     String state = authReq.getState();
-    return StringUtils.isBlank(state) ? "" : "&state=".concat(state);
+    try {
+      return StringUtils.isBlank(state) ? "" : "&state=".concat(URLEncoder.encode(state, "UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Response serverError(String msg) {
