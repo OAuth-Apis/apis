@@ -76,10 +76,10 @@ public interface OAuth2Validator {
     REDIRECT_URI_REQUIRED("invalid_request",
         "Client has no registered redirect_uri, must provide run-time redirect_uri"),
 
-    REDIRCT_URI_NOT_VALID("invalid_request",
+    REDIRECT_URI_NOT_VALID("invalid_request",
         "The redirect_uri does not equal any of the registered redirect_uri values"),
 
-    REDIRCT_URI_NOT_URI("invalid_request", "The redirect_uri is not a valid URL"),
+    REDIRECT_URI_NOT_URI("invalid_request", "The redirect_uri is not a valid URL"),
 
     REDIRECT_URI_DIFFERENT("invaid_request","The redirect_uri does not match the initial authorization request"),
     

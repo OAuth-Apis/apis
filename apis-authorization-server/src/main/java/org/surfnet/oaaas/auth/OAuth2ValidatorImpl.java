@@ -104,7 +104,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
         return uris.get(0);
       }
     } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
-      throw new ValidationResponseException(REDIRCT_URI_NOT_URI);
+      throw new ValidationResponseException(REDIRECT_URI_NOT_URI);
     } else if (redirectUri.contains("#")) {
       throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
     } else if (CollectionUtils.isNotEmpty(uris)) {
@@ -116,7 +116,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
         }
       }
       if (!match) {
-        throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
+        throw new ValidationResponseException(REDIRECT_URI_NOT_VALID);
       }
     }
     return redirectUri;
