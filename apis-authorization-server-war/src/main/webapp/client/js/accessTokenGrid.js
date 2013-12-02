@@ -68,10 +68,11 @@ var accessTokenGridController = (function() {
       data.getAccessTokens(function(accessTokens) {
         for (var i = 0; i < accessTokens.length; i++) {
           var accessToken = accessTokens[i];
-          if (accessToken.expires > 0) {
-            accessToken.expires = new Date(accessToken.expires).toLocaleString();
+          if (accessToken.expiresIn > 0) {
+            // New date based on 'current date in ms, plus expiration-in-seconds times 1000)
+            accessToken.expiresIn = new Date(new Date().getTime() + accessToken.expiresIn*1000).toLocaleString();
           } else {
-            accessToken.expires = '∞';
+            accessToken.expiresIn = '∞';
           }
 
           accessToken.creationDate = new Date(accessToken.creationDate).toLocaleString();

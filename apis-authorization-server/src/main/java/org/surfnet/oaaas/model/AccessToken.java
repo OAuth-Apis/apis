@@ -18,17 +18,14 @@
  */
 package org.surfnet.oaaas.model;
 
-import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.Assert;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.*;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.Assert;
-import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+import java.util.List;
 
 /**
  * Representation of an <a
@@ -66,7 +63,11 @@ public class AccessToken extends AbstractEntity {
   @XmlTransient
   private Client client;
 
+  /**
+   * Absolute point in time (ms since epoch) when token expires.
+   */
   @Column
+  @XmlTransient
   private long expires;
 
   @ElementCollection(fetch= FetchType.EAGER)
@@ -153,10 +154,23 @@ public class AccessToken extends AbstractEntity {
   }
 
   /**
-   * @return the expires
+   * @return the absolute point in time when this token expires. Use {@link #getExpiresIn()} in external communication.
+   * @see #getExpiresIn()
    */
   public long getExpires() {
     return expires;
+  }
+
+
+  /**
+   * Nr of seconds relative to 'now', when token is to expire.
+   * @see #getExpires()
+   */
+  @XmlElement
+  public long getExpiresIn() {
+    long currInMs = System.currentTimeMillis();
+
+    return Math.round((expires - currInMs) / 1000.0);
   }
 
   /**
