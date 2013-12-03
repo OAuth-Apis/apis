@@ -21,9 +21,6 @@
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
-  <logger name="org.surfnet.oaaas" level="debug" additivity="false">
-    <appender-ref ref="console" />
-  </logger>
   <root level="info">
     <appender-ref ref="console"/>
   </root>
