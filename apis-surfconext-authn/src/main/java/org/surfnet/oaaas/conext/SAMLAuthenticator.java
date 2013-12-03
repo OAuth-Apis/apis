@@ -47,8 +47,6 @@ import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
@@ -65,7 +63,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
 
 @Component
 public class SAMLAuthenticator extends AbstractAuthenticator {
@@ -169,6 +168,9 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         throw new ServiceProviderAuthenticationException("No principal anymore in the session");
       }
       String userId = principal.getName();
+      if (StringUtils.isEmpty(userId)) {
+        throw new ServiceProviderAuthenticationException("No userId in SAML assertion!");
+      }
       apiClient.oauthCallback(request, userId);
       List<Group20> groups = apiClient.getGroups20(userId, userId);
       if (!CollectionUtils.isEmpty(groups)) {
