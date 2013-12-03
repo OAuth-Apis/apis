@@ -71,8 +71,10 @@ var accessTokenGridController = (function() {
           if (accessToken.expiresIn > 0) {
             // New date based on 'current date in ms, plus expiration-in-seconds times 1000)
             accessToken.expiresIn = new Date(new Date().getTime() + accessToken.expiresIn*1000).toLocaleString();
-          } else {
+          } else if (accessToken.expiresIn == 0) {
             accessToken.expiresIn = '∞';
+          } else {
+            accessToken.expiresIn = "expired";
           }
 
           accessToken.creationDate = new Date(accessToken.creationDate).toLocaleString();
