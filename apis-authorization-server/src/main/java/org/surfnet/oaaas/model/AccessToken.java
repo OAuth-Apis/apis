@@ -166,11 +166,13 @@ public class AccessToken extends AbstractEntity {
    * Nr of seconds relative to 'now', when token is to expire.
    * @see #getExpires()
    */
-  @XmlElement
   public long getExpiresIn() {
-    long currInMs = System.currentTimeMillis();
-
-    return Math.round((expires - currInMs) / 1000.0);
+    if (expires == 0L) {
+      return 0L;
+    } else {
+      long currInMs = System.currentTimeMillis();
+      return Math.round((expires - currInMs) / 1000.0);
+    }
   }
 
   /**
