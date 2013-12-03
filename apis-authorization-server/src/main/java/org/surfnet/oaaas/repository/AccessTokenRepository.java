@@ -39,4 +39,7 @@ public interface AccessTokenRepository extends CrudRepository<AccessToken, Long>
 
   @Query(value = "select count(distinct resourceOwnerId) from accesstoken where client_id = ?1", nativeQuery = true)
   Number countByUniqueResourceOwnerIdAndClientId(long clientId);
+
+  @Query(value="select * from accesstoken where expires < ?1", nativeQuery = true)
+  List<AccessToken> findByMaxExpires(long expiresBoundary);
 }

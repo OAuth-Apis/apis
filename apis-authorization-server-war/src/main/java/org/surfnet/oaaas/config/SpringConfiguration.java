@@ -23,17 +23,17 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
+import org.surfnet.oaaas.support.Cleaner;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.validation.Validator;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The SpringConfiguration is a {@link Configuration} that can be overridden if
@@ -52,6 +52,7 @@ import java.util.List;
 @ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
 @ImportResource("classpath:spring-repositories.xml")
 @EnableTransactionManagement
+@EnableScheduling
 public class SpringConfiguration {
 
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
@@ -159,4 +160,8 @@ public class SpringConfiguration {
     return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
   }
 
+  @Bean
+  public Cleaner cleaner() {
+    return new Cleaner();
+  }
 }
