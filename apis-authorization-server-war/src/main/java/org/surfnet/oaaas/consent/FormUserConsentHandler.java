@@ -18,17 +18,6 @@
  */
 package org.surfnet.oaaas.consent;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpMethod;
@@ -40,6 +29,16 @@ import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Example {@link AbstractUserConsentHandler} that forwards to a form.
@@ -88,6 +87,7 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
       request.setAttribute("client", client);
       request.setAttribute(AUTH_STATE, authStateValue);
       request.setAttribute("actionUri", returnUri);
+      ((HttpServletResponse) response).setHeader("X-Frame-Options", "SAMEORIGIN");
       request.getRequestDispatcher(getUserConsentUrl()).forward(request, response);
     }
 

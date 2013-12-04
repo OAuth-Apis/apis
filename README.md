@@ -327,6 +327,11 @@ userConsentHandlerClass=org.surfnet.oaaas.noop.NoopUserConsentHandler
 
 See the information in the [surfconext authn submodule](https://github.com/OpenConextApps/apis/tree/master/apis-surfconext-authn) for detailed information on the SURFconext SAML Authentication implementation.
 
+### SSL/TLS
+
+As noted in the OAuth 2.0 RFC ([1](http://tools.ietf.org/html/rfc6749#section-3.1), [2](http://tools.ietf.org/html/rfc6749#section-3.1.2.1), [3](http://tools.ietf.org/html/rfc6749#section-3.2)), the use of TLS is required, as credentials are transmitted in clear-text.
+This is not enforced at code level, but it must be when deploying the application.
+
 ### Tests
 
 You can build the entire project including the integration and selenium tests (which are dependent on your version of FireFox):

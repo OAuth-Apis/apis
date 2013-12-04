@@ -39,6 +39,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -70,8 +72,7 @@ public class TokenResource {
 
   @GET
   @Path("/authorize")
-  public Response authorizeCallbackGet(@Context
-  HttpServletRequest request) {
+  public Response authorizeCallbackGet(@Context HttpServletRequest request) {
     return authorizeCallback(request);
   }
 
@@ -86,8 +87,7 @@ public class TokenResource {
   @POST
   @Produces(MediaType.TEXT_HTML)
   @Path("/authorize")
-  public Response authorizeCallback(@Context
-  HttpServletRequest request) {
+  public Response authorizeCallback(@Context HttpServletRequest request) {
     return doProcess(request);
   }
 
@@ -101,8 +101,7 @@ public class TokenResource {
   @POST
   @Produces(MediaType.TEXT_HTML)
   @Path("/consent")
-  public Response consentCallback(@Context
-  HttpServletRequest request) {
+  public Response consentCallback(@Context HttpServletRequest request) {
     return doProcess(request);
   }
 
@@ -144,8 +143,7 @@ public class TokenResource {
     long expires = (expireDuration == 0L ? 0L : (System.currentTimeMillis() + (1000 * expireDuration)));
     String refreshToken = (client.isUseRefreshTokens() && !isImplicitGrant) ? getTokenValue(true) : null;
     AuthenticatedPrincipal principal = request.getPrincipal();
-    AccessToken token = new AccessToken(getTokenValue(false), principal, client, expires,
-        request.getGrantedScopes(), refreshToken);
+    AccessToken token = new AccessToken(getTokenValue(false), principal, client, expires, request.getGrantedScopes(), refreshToken);
     return accessTokenRepository.save(token);
   }
 
@@ -158,8 +156,7 @@ public class TokenResource {
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes("application/x-www-form-urlencoded")
-  public Response token(@HeaderParam("Authorization")
-  String authorization, final MultivaluedMap<String, String> formParameters) {
+  public Response token(@HeaderParam("Authorization") String authorization, final MultivaluedMap<String, String> formParameters) {
     AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
     UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
     String grantType = accessTokenRequest.getGrantType();
@@ -196,11 +193,21 @@ public class TokenResource {
     }
     AccessToken token = createAccessToken(request, false);
 
-    AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, request.getClient()
-        .getExpireDuration(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ','));
+    AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, token.getExpiresIn(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ','));
 
-    return Response.ok().entity(response).build();
+    return Response
+            .ok()
+            .entity(response)
+            .cacheControl(cacheControlNoStore())
+            .header("Pragma", "no-cache")
+            .build();
 
+  }
+
+  private CacheControl cacheControlNoStore() {
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setNoStore(true);
+    return cacheControl;
   }
 
   private AuthorizationRequest authorizationCodeToken(AccessTokenRequest accessTokenRequest) {
@@ -248,7 +255,11 @@ public class TokenResource {
     authReq.setAuthorizationCode(authorizationCode);
     authorizationRequestRepository.save(authReq);
     uri = uri + appendQueryMark(uri) + "code=" + authorizationCode + appendStateParameter(authReq);
-    return Response.seeOther(UriBuilder.fromUri(uri).build()).build();
+    return Response
+            .seeOther(UriBuilder.fromUri(uri).build())
+            .cacheControl(cacheControlNoStore())
+            .header("Pragma", "no-cache")
+            .build();
   }
 
   protected String getTokenValue(boolean isRefreshToken) {
@@ -270,11 +281,16 @@ public class TokenResource {
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
     String uri = authReq.getRedirectUri();
     String fragment = String.format("access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
-        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpires(), StringUtils.join(authReq.getGrantedScopes(), ','));
+        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpiresIn(), StringUtils.join(authReq.getGrantedScopes(), ','));
     if (authReq.getClient().isIncludePrincipal()) {
       fragment += String.format("&principal=%s", authReq.getPrincipal().getDisplayName()) ;
     }
-    return Response.seeOther(UriBuilder.fromUri(uri).fragment(fragment).build()).build();
+    return Response
+            .seeOther(UriBuilder.fromUri(uri)
+            .fragment(fragment).build())
+            .cacheControl(cacheControlNoStore())
+            .header("Pragma", "no-cache")
+            .build();
 
 
   }
@@ -285,7 +301,11 @@ public class TokenResource {
 
   private String appendStateParameter(AuthorizationRequest authReq) {
     String state = authReq.getState();
-    return StringUtils.isBlank(state) ? "" : "&state=".concat(state);
+    try {
+      return StringUtils.isBlank(state) ? "" : "&state=".concat(URLEncoder.encode(state, "UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Response serverError(String msg) {

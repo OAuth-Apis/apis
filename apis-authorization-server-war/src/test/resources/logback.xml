@@ -21,7 +21,6 @@
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
-
   <root level="info">
     <appender-ref ref="console"/>
   </root>

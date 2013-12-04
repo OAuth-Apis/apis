@@ -15,19 +15,18 @@
  */
 package org.surfnet.oaaas.auth;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.ClientRepository;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.*;
 
@@ -104,7 +103,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
         return uris.get(0);
       }
     } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
-      throw new ValidationResponseException(REDIRCT_URI_NOT_URI);
+      throw new ValidationResponseException(REDIRECT_URI_NOT_URI);
     } else if (redirectUri.contains("#")) {
       throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
     } else if (CollectionUtils.isNotEmpty(uris)) {
@@ -116,7 +115,9 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
         }
       }
       if (!match) {
-        throw new ValidationResponseException(REDIRCT_URI_NOT_VALID);
+        // Reset the redirect uri to first of the registered ones. Otherwise the result error response would be undesired: a (possibly on purpose) redirect to URI that is not acked.
+        authorizationRequest.setRedirectUri(uris.get(0));
+        throw new ValidationResponseException(REDIRECT_URI_NOT_VALID);
       }
     }
     return redirectUri;

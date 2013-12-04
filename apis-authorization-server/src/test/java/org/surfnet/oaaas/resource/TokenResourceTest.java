@@ -16,11 +16,6 @@
 
 package org.surfnet.oaaas.resource;
 
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -30,25 +25,20 @@ import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.OAuth2Validator;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
-import org.surfnet.oaaas.model.*;
+import org.surfnet.oaaas.model.AccessToken;
+import org.surfnet.oaaas.model.AuthorizationRequest;
+import org.surfnet.oaaas.model.Client;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse.VALID;
 
 public class TokenResourceTest {
 
@@ -81,20 +71,22 @@ public class TokenResourceTest {
 
     when(authorizationRequestRepository.findByAuthState("auth_state")).thenReturn(authRequest);
     when(request.getAttribute(AbstractAuthenticator.AUTH_STATE)).thenReturn("auth_state");
-    when(request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES)).thenReturn(accessToken.getScopes().toArray(new String[]{}));
+    when(request.getAttribute(AbstractUserConsentHandler.GRANTED_SCOPES)).thenReturn(accessToken.getScopes().toArray());
     when(accessTokenRepository.save((AccessToken) any())).thenReturn(accessToken);
 
     URI uri = (URI) tokenResource.authorizeCallback(request).getMetadata().get("Location").get(0);
 
-    assertEquals("http://localhost:8080#access_token=ABCDEF&token_type=bearer&expires_in=123456&scope=read,write&state=important&principal=sammy%20sammy", uri.toString());
+
+    long expiresIn = 1800;
+    assertEquals("http://localhost:8080#access_token=ABCDEF&token_type=bearer&expires_in=" + expiresIn + "&scope=read,write&state=important&principal=sammy%20sammy", uri.toString());
     assertTrue(uri.getFragment().endsWith("principal=" + authRequest.getPrincipal().getDisplayName()));
   }
 
   private AccessToken createAccessToken() {
     AccessToken token = new AccessToken();
     token.setToken("ABCDEF");
-    token.setExpires(123456);
-    token.setScopes(Arrays.asList(new String[]{"read","write"}));
+    token.setExpires(System.currentTimeMillis() + 1800 * 1000);
+    token.setScopes(Arrays.asList("read","write"));
     return token;
   }
 
@@ -109,5 +101,4 @@ public class TokenResourceTest {
     authRequest.setState("important");
     return authRequest;
   }
-
 }

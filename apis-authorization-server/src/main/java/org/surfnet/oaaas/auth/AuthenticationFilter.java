@@ -16,30 +16,25 @@
 
 package org.surfnet.oaaas.auth;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @Named
 public class AuthenticationFilter implements Filter {
@@ -124,8 +119,10 @@ public class AuthenticationFilter implements Filter {
     String state = authReq.getState();
     if (isValidUrl(redirectUri)) {
       redirectUri = redirectUri.concat(redirectUri.contains("?") ? "&" : "?");
-      redirectUri = redirectUri.concat("error=").concat(validate.getValue()).concat("&error_description=")
-          .concat(validate.getDescription()).concat(StringUtils.isBlank(state) ? "" : "&state=".concat(state));
+      redirectUri = redirectUri
+              .concat("error=").concat(validate.getValue())
+              .concat("&error_description=").concat(validate.getDescription())
+              .concat(StringUtils.isBlank(state) ? "" : "&state=".concat(URLEncoder.encode(state, "UTF-8")));
       LOG.info("Sending error response, a redirect to: {}", redirectUri);
       response.sendRedirect(redirectUri);
     } else {

@@ -17,14 +17,13 @@
 package org.surfnet.oaaas.selenium;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.surfnet.oaaas.model.AccessTokenResponse;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import java.net.URLEncoder;
+
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 /**
@@ -48,7 +47,7 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
         baseUrl(), responseType, scopes, clientId, accessTokenRedirectUri);
     webdriver.get(url);
 
-    login(webdriver,true);
+    login(webdriver,false);
     
     // get token response
     String tokenResponse = getAuthorizationCodeRequestHandler().getTokenResponseBlocking();
@@ -69,5 +68,36 @@ public class AuthorizationCodeTestIT extends SeleniumSupport {
 
     String pageSource = webdriver.getPageSource();
     assertThat(pageSource, containsString("The supported response_type values are 'token' and 'code'"));
+  }
+
+  @Test
+  public void stateParam() throws Exception {
+    String accessTokenRedirectUri = startAuthorizationCallbackServer(clientId, secret);
+    WebDriver webdriver = getWebDriver();
+
+    /*
+    The RFC says (http://tools.ietf.org/html/rfc6749#appendix-A.5):
+           state      = 1*VSCHAR
+    Defined in http://tools.ietf.org/html/rfc6749#appendix-A:
+         VSCHAR     = %x20-7E
+
+    The variable 'state' below contains all chars in 0x20-0x7E
+     */
+    String state = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmno0070pqrstuvwxyz{|}~";
+    String url = String.format(
+            "%s/oauth2/authorize?response_type=%s&scope=%s&client_id=%s&redirect_uri=%s&state=%s",
+            baseUrl(), "code", "read,write", clientId,
+            URLEncoder.encode(accessTokenRedirectUri, "UTF-8"),
+            URLEncoder.encode(state, "UTF-8"));
+    webdriver.get(url);
+
+    login(webdriver,false);
+
+    // wait for token response to arrive, therefore block
+    getAuthorizationCodeRequestHandler().getTokenResponseBlocking();
+
+    String stateFromResponse = getAuthorizationCodeRequestHandler().getAuthorizationResponseState();
+
+    assertEquals("State from response should be equal to provided state", state, stateFromResponse);
   }
 }
