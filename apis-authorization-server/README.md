@@ -13,7 +13,7 @@ The main building blocks of the Authorization Server are:
     * See `org.surfnet.oaaas.auth.AbstractUserConsentHandler` and the default implementation `org.surfnet.oaaas.consent.FormUserConsentHandler`
 * Spring configuration to wire everything together
     * The main components are annotated using `org.springframework.stereotype@Repository`, `javax.inject.@Named` and `javax.inject.@Inject`
-    * See `/apis-authorization-server-war/src/main/java/org/surfnet/oaaas/config/DefaultPackagesResourceConfig.java` and `/apis-authorization-server-war/src/main/java/org/surfnet/oaaas/config/SpringConfiguration.java`
+    * See `/apis-authorization-server-war/src/main/java/org/surfnet/oaaas/config/SpringConfiguration.java`
 * [OpenJPA](http://openjpa.apache.org/) persistence layer
     * See `/apis-authorization-server/src/main/resources/META-INF/persistence.xml`
     * See `/apis-authorization-server/src/main/resources/db/migration/mysql/V1__auth-server-admin.sql`
