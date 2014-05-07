@@ -267,9 +267,8 @@ public class TokenResource {
     request.setClient(accessTokenRequest.getClient());
     // We have to construct a AuthenticatedPrincipal on-the-fly as there is only key-secret authentication
     request.setPrincipal(new AuthenticatedPrincipal(request.getClient().getClientId()));
-    // Apply all client scopes to the access token.
-    // TODO: take into account given scopes from the request
-    request.setGrantedScopes(request.getClient().getScopes());
+    // Get scopes (either from request or the client's default set)
+    request.setGrantedScopes(accessTokenRequest.getScopeList());
     return request;
   }
   
