@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
+import org.surfnet.oaaas.auth.principal.BasicAuthCredentials;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
@@ -172,12 +173,14 @@ public class OAuth2ValidatorImplTest {
     AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
     accessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_CLIENT_CREDENTIALS);
     accessTokenRequest.setClientId(client.getClientId());
-    ValidationResponse response = validator.validate(accessTokenRequest);
+    ValidationResponse response = validator.validate(accessTokenRequest, 
+        BasicAuthCredentials.createCredentialsFromHeader(null));
     assertEquals(ValidationResponse.CLIENT_CREDENTIALS_NOT_PERMITTED, response);
     assertNull(accessTokenRequest.getClient());
 
     client.setAllowedClientCredentials(true);
-    response = validator.validate(accessTokenRequest);
+    response = validator.validate(accessTokenRequest,
+        BasicAuthCredentials.createCredentialsFromHeader(null));
     assertEquals(ValidationResponse.VALID, response);
     assertEquals(client, accessTokenRequest.getClient());
   }

@@ -23,13 +23,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
 
 /**
  * Represents a Client as defined by the OAuth 2 specification:
@@ -285,10 +296,15 @@ public class Client extends AbstractEntity {
     this.expireDuration = expireDuration;
   }
 
-  public boolean isExactMatch(UserPassCredentials credentials) {
-    return credentials != null && credentials.isValid() && credentials.getUsername().equals(clientId)
-        && credentials.getPassword().equals(secret);
-
+  /**
+   * Confirm that we know the client's secret.
+   * 
+   * @param clientSecret
+   * @return {@code true} if we know the secret
+   */
+  public boolean verifySecret(String clientSecret) {
+    return (secret == null && clientSecret == null) || 
+        (secret != null && secret.equals(clientSecret));
   }
 
   /**

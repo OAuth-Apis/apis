@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.surfnet.oaaas.auth.ObjectMapperProvider;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.BasicAuthCredentials;
 import org.surfnet.oaaas.model.AccessToken;
 import org.surfnet.oaaas.model.ResourceServer;
 import org.surfnet.oaaas.model.VerifyTokenResponse;
@@ -73,7 +73,8 @@ public class VerifyResource implements EnvironmentAware {
                               String authorization, @QueryParam("access_token")
                               String accessToken) throws IOException {
 
-    UserPassCredentials credentials = new UserPassCredentials(authorization);
+    BasicAuthCredentials credentials = 
+        BasicAuthCredentials.createCredentialsFromHeader(authorization);
 
     if (LOG.isDebugEnabled()) {
       LOG.debug("Incoming verify-token request, access token: {}, credentials from authorization header: {}", accessToken, credentials);
@@ -108,7 +109,7 @@ public class VerifyResource implements EnvironmentAware {
     return token.getExpires() != 0 && token.getExpires() < System.currentTimeMillis();
   }
 
-  private ResourceServer getResourceServer(UserPassCredentials credentials) {
+  private ResourceServer getResourceServer(BasicAuthCredentials credentials) {
     String key = credentials.getUsername();
     return resourceServerRepository.findByKey(key);
   }

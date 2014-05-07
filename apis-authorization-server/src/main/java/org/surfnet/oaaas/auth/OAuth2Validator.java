@@ -15,8 +15,11 @@
  */
 package org.surfnet.oaaas.auth;
 
+import org.surfnet.oaaas.auth.principal.BasicAuthCredentials;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * Responsible for validating the OAuth2 incoming requests
@@ -29,6 +32,8 @@ public interface OAuth2Validator {
   String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
 
   String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
+  
+  String GRANT_TYPE_PASSWORD = "password";
 
   String IMPLICIT_GRANT_RESPONSE_TYPE = "token";
 
@@ -52,9 +57,11 @@ public interface OAuth2Validator {
    * 
    * @param request
    *          the AccessTokenRequest with the data send from the client
+   * @param clientCredentials
+   *          the credentials supplied to identify the client     
    * @return A {@link ValidationResponse} specifying what is wrong (if any)
    */
-  ValidationResponse validate(AccessTokenRequest request);
+  ValidationResponse validate(AccessTokenRequest request, BasicAuthCredentials clientCredentials);
 
   /**
    * 
@@ -70,6 +77,8 @@ public interface OAuth2Validator {
         AUTHORIZATION_CODE_GRANT_RESPONSE_TYPE)),
 
     UNKNOWN_CLIENT_ID("unauthorized_client", "The client_id is unknown"),
+    
+    UNAUTHORIZED_CLIENT("unauthorized_client", "The client_id is unknown", Status.UNAUTHORIZED),
 
     IMPLICIT_GRANT_REDIRECT_URI("invalid_request", "For Implicit Grant the redirect_uri parameter is required"),
 
@@ -98,14 +107,24 @@ public interface OAuth2Validator {
 
     INVALID_GRANT_AUTHORIZATION_CODE("invalid_grant", "The authorization code is invalid"),
 
-    INVALID_GRANT_REFRESH_TOKEN("invalid_grant", "The refresh token is invalid");
+    INVALID_GRANT_REFRESH_TOKEN("invalid_grant", "The refresh token is invalid"),
+    
+    INVALID_GRANT_CLIENT_CREDENTIALS("invalid_grant", "The client is invalid"),
+    
+    INVALID_GRANT_PASSWORD("invalid_grant", "The resource owners credentials must be provided");
 
     private String value;
     private String description;
+    private Status status;
 
     private ValidationResponse(String value, String description) {
+      this(value, description, Status.BAD_REQUEST);
+    }
+    
+    private ValidationResponse(String value, String description, Status status) {
       this.value = value;
       this.description = description;
+      this.status = status;
     }
 
     public boolean valid() {
@@ -118,6 +137,10 @@ public interface OAuth2Validator {
 
     public String getDescription() {
       return description;
+    }
+    
+    public Status getStatus() {
+      return status;
     }
   }
 

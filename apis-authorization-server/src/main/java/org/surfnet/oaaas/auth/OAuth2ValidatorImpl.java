@@ -17,6 +17,7 @@ package org.surfnet.oaaas.auth;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.surfnet.oaaas.auth.principal.BasicAuthCredentials;
 import org.surfnet.oaaas.model.AccessTokenRequest;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.model.Client;
@@ -24,6 +25,7 @@ import org.surfnet.oaaas.repository.ClientRepository;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +50,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
     GRANT_TYPES.add(GRANT_TYPE_AUTHORIZATION_CODE);
     GRANT_TYPES.add(GRANT_TYPE_REFRESH_TOKEN);
     GRANT_TYPES.add(GRANT_TYPE_CLIENT_CREDENTIALS);
+    GRANT_TYPES.add(GRANT_TYPE_PASSWORD);
   }
 
   @Inject
@@ -152,11 +155,14 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
    * @see org.surfnet.oaaas.auth.OAuth2Validator#validate(org.surfnet.oaaas.model.AccessTokenRequest)
    */
   @Override
-  public ValidationResponse validate(AccessTokenRequest request) {
+  public ValidationResponse validate(AccessTokenRequest request, 
+      BasicAuthCredentials clientCredentials) {
     try {
       validateGrantType(request);
       
       validateAttributes(request);
+      
+      validateClient(request, clientCredentials);
       
       validateAccessTokenRequest(request);
       
@@ -183,22 +189,63 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       if (StringUtils.isBlank(request.getRefreshToken())) {
         throw new ValidationResponseException(INVALID_GRANT_REFRESH_TOKEN);
       }
+    } else if (GRANT_TYPE_PASSWORD.equals(grantType)) {
+      if (StringUtils.isBlank(request.getUsername()) || StringUtils.isBlank(request.getPassword())) {
+        throw new ValidationResponseException(INVALID_GRANT_PASSWORD);
+      }
     }
+  }
+  
+  protected void validateClient(AccessTokenRequest accessTokenRequest, 
+      BasicAuthCredentials clientCredentials) {
+    Client client = null;
+    
+    // Were we given client credentials via basic auth?
+    if (!clientCredentials.isNull()) {
+      // Confirm that the credentials are valid and use them to get the client
+      if (!clientCredentials.isValid()) {
+        throw new ValidationResponseException(UNAUTHORIZED_CLIENT);
+      }
+      client = getClient(clientCredentials.getUsername(), clientCredentials.getPassword(), 
+          UNAUTHORIZED_CLIENT);
+    } else if (!StringUtils.isBlank(accessTokenRequest.getClientId())) {
+      // Use the request parameters to obtain the client
+      client = getClient(accessTokenRequest.getClientId(), accessTokenRequest.getClientSecret(), 
+          UNKNOWN_CLIENT_ID);
+    }
+
+    // Record the associated client
+    accessTokenRequest.setClient(client);
+  }
+  
+  private Client getClient(String clientId, String clientSecret, ValidationResponse error) {
+    // Find the indicated client
+    Client client = clientRepository.findByClientId(clientId);
+    if (client == null) {
+      throw new ValidationResponseException(error);
+    }
+    
+    // Confirm that the credentials match those for the client
+    if (!client.verifySecret(clientSecret)) {
+      throw new ValidationResponseException(error);
+    }
+    return client;
   }
   
   protected void validateAccessTokenRequest(AccessTokenRequest accessTokenRequest) {
     if (accessTokenRequest.getGrantType().equals(GRANT_TYPE_CLIENT_CREDENTIALS)) {
-      String clientId = accessTokenRequest.getClientId();
-      Client client = StringUtils.isBlank(clientId) ? null : clientRepository.findByClientId(clientId);
+      // We must have a client
+      Client client = accessTokenRequest.getClient();
       if (client == null) {
-        throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
+        throw new ValidationResponseException(INVALID_GRANT_CLIENT_CREDENTIALS);
       }
+      
+      // And the client must be allowed to perform this grant type
       if (!client.isAllowedClientCredentials()) {
+        accessTokenRequest.setClient(null);
         throw new ValidationResponseException(CLIENT_CREDENTIALS_NOT_PERMITTED);
       }
-      accessTokenRequest.setClient(client);
     }
-
   }
 
 }

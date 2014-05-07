@@ -19,17 +19,20 @@
 package org.surfnet.oaaas.resource;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
+import org.surfnet.oaaas.auth.AuthenticationFilter;
 import org.surfnet.oaaas.auth.OAuth2Validator;
+import org.surfnet.oaaas.auth.ResourceOwnerAuthenticator;
 import org.surfnet.oaaas.auth.OAuth2Validator.*;
 import org.surfnet.oaaas.auth.ValidationResponseException;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
-import org.surfnet.oaaas.auth.principal.UserPassCredentials;
+import org.surfnet.oaaas.auth.principal.BasicAuthCredentials;
 import org.surfnet.oaaas.model.*;
 import org.surfnet.oaaas.repository.AccessTokenRepository;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
@@ -39,6 +42,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -67,9 +71,23 @@ public class TokenResource {
 
   @Inject
   private OAuth2Validator oAuth2Validator;
+  
+  @Inject
+  private ResourceOwnerAuthenticator resourceOwnerAuthenticator;
 
   private static final Logger LOG = LoggerFactory.getLogger(TokenResource.class);
 
+  /**
+   * The "authorization endpoint" as described in <a
+   * href="http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1">Section 3.1</a> of
+   * the OAuth spec.  This provides the optional GET support.  Access to this endpoint requires
+   * authentication of the requestor (the resource owner) which must be accomplished via a
+   * configured {@link AuthenticationFilter}.
+   * 
+   * @param request
+   *          the {@link HttpServletRequest}
+   * @return the response
+   */
   @GET
   @Path("/authorize")
   public Response authorizeCallbackGet(@Context HttpServletRequest request) {
@@ -78,7 +96,9 @@ public class TokenResource {
 
   /**
    * Entry point for the authorize call which needs to return an authorization
-   * code or (implicit grant) an access token
+   * code or (implicit grant) an access token.    Access to this endpoint requires
+   * authentication of the requestor (the resource owner) which must be accomplished via a
+   * configured {@link AuthenticationFilter}.
    *
    * @param request
    *          the {@link HttpServletRequest}
@@ -152,21 +172,34 @@ public class TokenResource {
     return authorizationRequestRepository.findByAuthState(authState);
   }
 
+  /**
+   * The "token endpoint" as described in <a
+   * href="http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.2">Section 3.2</a> of
+   * the OAuth spec.
+   * 
+   * @param authorization the HTTP Basic auth header.
+   * @param formParameters the request parameters
+   * @return the response
+   */
   @POST
   @Path("/token")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes("application/x-www-form-urlencoded")
-  public Response token(@HeaderParam("Authorization") String authorization, final MultivaluedMap<String, String> formParameters) {
-    AccessTokenRequest accessTokenRequest = AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
-    UserPassCredentials credentials = getUserPassCredentials(authorization, accessTokenRequest);
-    String grantType = accessTokenRequest.getGrantType();
-    if (GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
-      accessTokenRequest.setClientId(credentials.getUsername());
-    }
-    ValidationResponse vr = oAuth2Validator.validate(accessTokenRequest);
+  public Response token(@HeaderParam("Authorization") String authorization, 
+          final MultivaluedMap<String, String> formParameters) {
+    // Convert incoming parameters into internal form and validate them
+    AccessTokenRequest accessTokenRequest = 
+            AccessTokenRequest.fromMultiValuedFormParameters(formParameters);
+    BasicAuthCredentials credentials = 
+        BasicAuthCredentials.createCredentialsFromHeader(authorization);
+
+    ValidationResponse vr = oAuth2Validator.validate(accessTokenRequest, credentials);
     if (!vr.valid()) {
       return sendErrorResponse(vr);
     }
+    
+    // The request looks valid, attempt to process
+    String grantType = accessTokenRequest.getGrantType();
     AuthorizationRequest request;
     try {
       if (GRANT_TYPE_AUTHORIZATION_CODE.equals(grantType)) {
@@ -174,22 +207,14 @@ public class TokenResource {
       } else if (GRANT_TYPE_REFRESH_TOKEN.equals(grantType)) {
         request = refreshTokenToken(accessTokenRequest);
       } else if (GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
-        request =  new AuthorizationRequest();
-        request.setClient(accessTokenRequest.getClient());
-        // We have to construct a AuthenticatedPrincipal on-the-fly as there is only key-secret authentication
-        request.setPrincipal(new AuthenticatedPrincipal(request.getClient().getClientId()));
-        // Apply all client scopes to the access token.
-        // TODO: take into account given scopes from the request
-        request.setGrantedScopes(request.getClient().getScopes());
-      }
-      else {
+        request = clientCredentialToken(accessTokenRequest);
+      } else if (GRANT_TYPE_PASSWORD.equals(grantType)) {
+        request = passwordToken(accessTokenRequest);
+      } else {
         return sendErrorResponse(ValidationResponse.UNSUPPORTED_GRANT_TYPE);
       }
     } catch (ValidationResponseException e) {
       return sendErrorResponse(e.v);
-    }
-    if (!request.getClient().isExactMatch(credentials)) {
-      return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
     }
     AccessToken token = createAccessToken(request, false);
 
@@ -236,18 +261,34 @@ public class TokenResource {
     return request;
 
   }
-
-  /*
-   * http://tools.ietf.org/html/draft-ietf-oauth-v2#section-2.3.1
-   *
-   * We support both options. Clients can use the Basic Authentication or
-   * include the secret and id in the request body
-   */
-
-  private UserPassCredentials getUserPassCredentials(String authorization, AccessTokenRequest accessTokenRequest) {
-    return StringUtils.isBlank(authorization) ? new UserPassCredentials(accessTokenRequest.getClientId(),
-        accessTokenRequest.getClientSecret()) : new UserPassCredentials(authorization);
+  
+  private AuthorizationRequest clientCredentialToken(AccessTokenRequest accessTokenRequest) {
+    AuthorizationRequest request =  new AuthorizationRequest();
+    request.setClient(accessTokenRequest.getClient());
+    // We have to construct a AuthenticatedPrincipal on-the-fly as there is only key-secret authentication
+    request.setPrincipal(new AuthenticatedPrincipal(request.getClient().getClientId()));
+    // Apply all client scopes to the access token.
+    // TODO: take into account given scopes from the request
+    request.setGrantedScopes(request.getClient().getScopes());
+    return request;
   }
+  
+  private AuthorizationRequest passwordToken(AccessTokenRequest accessTokenRequest) {
+    // Authenticate the resource owner
+    AuthenticatedPrincipal principal = 
+        resourceOwnerAuthenticator.authenticate(accessTokenRequest.getUsername(), 
+            accessTokenRequest.getPassword());
+    if (principal == null) {
+      throw new ValidationResponseException(ValidationResponse.INVALID_GRANT_PASSWORD);
+    }
+    
+    AuthorizationRequest request = new AuthorizationRequest();
+    request.setClient(accessTokenRequest.getClient());
+    request.setPrincipal(principal);
+    request.setGrantedScopes(accessTokenRequest.getScopeList());
+    return request;
+  }
+
 
   private Response sendAuthorizationCodeResponse(AuthorizationRequest authReq) {
     String uri = authReq.getRedirectUri();
@@ -270,12 +311,15 @@ public class TokenResource {
     return getTokenValue(false);
   }
 
-  private Response sendErrorResponse(String error, String description) {
-    return Response.status(Status.BAD_REQUEST).entity(new ErrorResponse(error, description)).build();
+  private Response sendErrorResponse(String error, String description, Status status) {
+    if (status == Status.UNAUTHORIZED) {
+      return Response.status(Status.UNAUTHORIZED).header(WWW_AUTHENTICATE, BASIC_REALM).build();
+    }
+    return Response.status(status).entity(new ErrorResponse(error, description)).build();
   }
 
   private Response sendErrorResponse(ValidationResponse response) {
-    return sendErrorResponse(response.getValue(), response.getDescription());
+    return sendErrorResponse(response.getValue(), response.getDescription(), response.getStatus());
   }
 
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
