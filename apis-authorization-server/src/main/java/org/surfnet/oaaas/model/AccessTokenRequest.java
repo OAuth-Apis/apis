@@ -213,10 +213,15 @@ public class AccessTokenRequest {
   }
   
   public List<String> getScopeList() {
-    if (StringUtils.isNotBlank(scope)) {
-      return Arrays.asList(scope.split(","));
+    // If the request didn't ask for any scopes, then use the ones for our client
+    if (StringUtils.isBlank(scope)) {
+      if (this.client != null) {
+        return this.client.getScopes();
+      } else {
+        return Collections.emptyList();
+      }
     }
-    return Collections.emptyList();
+    return Arrays.asList(scope.split(","));
   }
 
   /**
