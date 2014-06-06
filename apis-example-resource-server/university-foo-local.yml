@@ -1,15 +1,34 @@
-http:
-  port: 8180
-  adminPort: 8181
-
-logging:
-  level: info
-  loggers:
-    "org.surfnet": debug
-    "openjpa": error
-    
 auth:
   authorizationServerUrl: http://localhost:8080/v1/tokeninfo
   secret: 58b749f7-acb3-44b7-a38c-53d5ad740cf6
   key: university-foo
+  
+# use the simple server factory if you only want to run on a single port
+#server:
+# type: simple
+# connector:
+# type: http
+# port: 8080
+  
+server:
+# softNofileLimit: 1000
+# hardNofileLimit: 1000
+  applicationConnectors:
+    - type: http
+      port: 8180
+    
+  adminConnectors:
+    - type: http
+      port: 8181
+    
+
+
+logging:
+  level: info
+  loggers:
+    org.surfnet: debug
+    openjpa: error
+    
+  appenders:
+    - type: console
    

@@ -18,6 +18,8 @@
  */
 package org.surfnet.oaaas.example.api.resource;
 
+import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.auth.Auth;
 import java.security.Principal;
 import java.util.List;
 
@@ -35,8 +37,7 @@ import org.surfnet.oaaas.example.api.domain.Course;
 import org.surfnet.oaaas.example.api.domain.Student;
 import org.surfnet.oaaas.example.api.domain.University;
 
-import com.yammer.dropwizard.auth.Auth;
-import com.yammer.metrics.annotation.Timed;
+
 
 /**
  * Main resource

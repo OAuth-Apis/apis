@@ -21,37 +21,43 @@ package org.surfnet.oaaas.example.api;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 import org.surfnet.oaaas.example.api.resource.UniversityResource;
 
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.auth.oauth.OAuthProvider;
-import com.yammer.dropwizard.config.Environment;
+import io.dropwizard.Application;
+import io.dropwizard.auth.oauth.OAuthProvider;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
 /**
  * Main entry
  *
  */
-public class UniversityFooService extends Service<UniversityFooConfiguration> {
+public class UniversityFooService extends Application<UniversityFooConfiguration> {
 
-  /*
-   * Used by DropWizard to bootstrap the application. See README.md
-   */
-  public static void main(String[] args) throws Exception {
-    if (args == null || args.length != 2) {
-      args = new String[] { "server", "university-foo-local.yml" };
+    /*
+     * Used by DropWizard to bootstrap the application. See README.md
+     */
+    public static void main(String[] args) throws Exception {
+        if (args == null || args.length != 2) {
+            args = new String[]{"server", "university-foo-local.yml"};
+        }
+        new UniversityFooService().run(args);
     }
-    new UniversityFooService().run(args);
-  }
 
-  private UniversityFooService() {
-    super("university-foo");
-  }
+    @Override
+    public String getName() {
+        return "university-foo";
+    }
 
-  @Override
-  protected void initialize(UniversityFooConfiguration configuration, Environment environment)
-      throws ClassNotFoundException {
-    environment
-        .addProvider(new OAuthProvider<AuthenticatedPrincipal>(new OAuthAuthenticator(configuration), "protected-resources"));
-    environment.addResource(new UniversityResource());
-    
-  }
+    @Override
+    public void initialize(Bootstrap<UniversityFooConfiguration> btstrp) {
+    }
+
+    @Override
+    public void run(UniversityFooConfiguration configuration, Environment environment)
+            throws Exception {
+        environment.jersey().
+                register(new OAuthProvider<AuthenticatedPrincipal>(new OAuthAuthenticator(configuration), "protected-resources"));
+        environment.jersey().register(new UniversityResource());
+
+    }
 
 }

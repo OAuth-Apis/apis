@@ -18,58 +18,66 @@
  */
 package org.surfnet.oaaas.example.api;
 
+import io.dropwizard.Configuration;
+
 /**
  * Configuration for Authorization Server
- * 
+ *
  */
-public class AuthConfiguration {
-  private String authorizationServerUrl;
-  private String secret;
-  private String key;
+public class AuthConfiguration extends Configuration {
 
-  /**
-   * @return the authorizationServerUrl
-   */
-  public String getAuthorizationServerUrl() {
-    return authorizationServerUrl;
-  }
+    private String authorizationServerUrl;
+    private String secret;
+    private String key;
 
-  /**
-   * @param authorizationServerUrl
-   *          the authorizationServerUrl to set
-   */
-  public void setAuthorizationServerUrl(String authorizationServerUrl) {
-    this.authorizationServerUrl = authorizationServerUrl;
-  }
+    /**
+     * @return the authorizationServerUrl
+     */
+    public String getAuthorizationServerUrl() {
+        return authorizationServerUrl;
+    }
 
- 
+    /**
+     * @param authorizationServerUrl the authorizationServerUrl to set
+     */
+    public void setAuthorizationServerUrl(String authorizationServerUrl) {
+        this.authorizationServerUrl = authorizationServerUrl;
+    }
 
-  /**
-   * @return the secret
-   */
-  public String getSecret() {
-    return secret;
-  }
+    /**
+     * @return the secret
+     */
+    public String getSecret() {
+        return secret;
+    }
 
-  /**
-   * @param secret the secret to set
-   */
-  public void setSecret(String secret) {
-    this.secret = secret;
-  }
+    /**
+     * @param secret the secret to set
+     */
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 
-  /**
-   * @return the key
-   */
-  public String getKey() {
-    return key;
-  }
+    /**
+     * @return the key
+     */
+    public String getKey() {
+        return key;
+    }
 
-  /**
-   * @param key the key to set
-   */
-  public void setKey(String key) {
-    this.key = key;
-  }
+    /**
+     * @param key the key to set
+     */
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthConfiguration{ "
+                + "authorizationServerUrl = " + authorizationServerUrl
+                + ", secret = " + secret
+                + ", key = " + key + '}';
+    }
 
 }
