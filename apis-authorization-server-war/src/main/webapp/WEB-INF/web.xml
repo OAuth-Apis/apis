@@ -47,43 +47,27 @@
     </filter>
     <filter-mapping>
         <filter-name>CAS Single Sign Out Filter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/cas</url-pattern>
     </filter-mapping>
     <listener>
         <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
     </listener>
 
     <filter>
-        <filter-name>CAS Authentication Filter</filter-name>
-        <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-        <init-param>
-            <param-name>casServerLoginUrl</param-name>
-            <param-value>https://sso-castest.univ-rennes1.fr/login</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serverName</param-name>
-            <param-value>http://localhost:8080</param-value>
-        </init-param>
+        <filter-name>casAuthenticationFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>CAS Authentication Filter</filter-name>
+        <filter-name>casAuthenticationFilter</filter-name>
         <url-pattern>/cas</url-pattern>
     </filter-mapping>
 
     <filter>
-        <filter-name>CAS Validation Filter</filter-name>
-        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-        <init-param>
-            <param-name>casServerUrlPrefix</param-name>
-            <param-value>https://sso-castest.univ-rennes1.fr</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serverName</param-name>
-            <param-value>http://localhost:8080</param-value>
-        </init-param>
+        <filter-name>casValidationFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>CAS Validation Filter</filter-name>
+        <filter-name>casValidationFilter</filter-name>
         <url-pattern>/cas</url-pattern>
     </filter-mapping>
 
@@ -97,11 +81,11 @@
     </filter-mapping>
 
     <filter>
-        <filter-name>Post CAS Authentication Filter</filter-name>
-        <filter-class>org.surfnet.oaaas.cas.PostCasAuthenticationFilter</filter-class>
+        <filter-name>postCASAuthenticationFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>Post CAS Authentication Filter</filter-name>
+        <filter-name>postCASAuthenticationFilter</filter-name>
         <url-pattern>/cas</url-pattern>
     </filter-mapping>
 

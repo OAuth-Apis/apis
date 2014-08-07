@@ -45,6 +45,7 @@ import javax.validation.Validator;
  */
 @Configuration
 @PropertySource("classpath:apis.application.properties")
+@Import(CasSpringConfiguration.class)
 /*
  * The component scan can be used to add packages and exclusions to the default
  * package

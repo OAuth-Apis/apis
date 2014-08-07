@@ -20,7 +20,7 @@ public class CasAuthenticator extends AbstractAuthenticator {
 
     @Override
     public void authenticate(HttpServletRequest request, HttpServletResponse response, FilterChain chain, String authStateValue, String returnUri) throws IOException, ServletException {
-        String casUser = (String) request.getSession().getAttribute(PostCasAuthenticationFilter.POST_CAS_AUTHENTICATION_INFO);
+        CasUser casUser = (CasUser) request.getSession().getAttribute(PostCasAuthenticationFilter.POST_CAS_AUTHENTICATION_INFO);
         if (casUser == null) {
             String uri = request.getRequestURI();
             String queryString = request.getQueryString();
@@ -29,7 +29,8 @@ public class CasAuthenticator extends AbstractAuthenticator {
             return;
         }
         else {
-            AuthenticatedPrincipal principal = new AuthenticatedPrincipal(casUser);
+            AuthenticatedPrincipal principal = new AuthenticatedPrincipal(casUser.getUid());
+            principal.setAdminPrincipal(casUser.isAdmin);
             super.setPrincipal(request, principal);
             super.setAuthStateValue(request, authStateValue);
             chain.doFilter(request, response);
