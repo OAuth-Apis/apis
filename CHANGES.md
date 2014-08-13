@@ -1,3 +1,9 @@
+## 1.3.6
+
+Issue #53: Be explicit about a move to Java 7.
+
+Issue #46: Now behaving according to spec.
+
 ## 1.3.0
 
 Issue #17 is fixed: Changed default properties file for resource servers that use the AuthorizationServerFilter for token verification: it now is 'apis-resource-server.properties'.
