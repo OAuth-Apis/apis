@@ -51,7 +51,7 @@ The authorization-server-war application is capable of authenticating Resource O
 We have provided two example resource servers. One (apis-example-resource-server-war) is a very simple Java web application
 that only demonstrates how a Resource Server can communicate with the Authorization Server using the `org.surfnet.oaaas.auth.AuthorizationServerFilter` (which is a simple `javax.servlet.Filter`). The `AuthorizationServerFilter` only protects a single JSP page in the apis-example-resource-server-war module. See the [README of this submodule] (https://github.com/OpenConextApps/apis/tree/master/apis-example-resource-server-war) on how to use curl to test this 'flavor'.
 
-For now we will continue to use the other example resource server (apis-example-resource-server, NOT the apis-example-resource-server-war!) , build using [Dropwizard] (http://dropwizard.codahale.com/), to demonstrate the apis Authorization Server. We will need to start the apis-exampl	e-resource-server to demonstrate the entire flow (new Terminal session):
+For now we will continue to use the other example resource server (apis-example-resource-server, NOT the apis-example-resource-server-war!) , built using [Dropwizard] (http://dropwizard.codahale.com/), to demonstrate the apis Authorization Server. We will need to start the apis-exampl	e-resource-server to demonstrate the entire flow (new Terminal session):
 
     cd apis-example-resource-server
     java -jar target/apis-example-resource-server-1.1.1-SNAPSHOT.jar
