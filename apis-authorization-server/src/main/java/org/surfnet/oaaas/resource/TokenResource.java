@@ -218,7 +218,7 @@ public class TokenResource {
     }
     AccessToken token = createAccessToken(request, false);
 
-    AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, token.getExpiresIn(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ','));
+    AccessTokenResponse response = new AccessTokenResponse(token.getToken(), BEARER, token.getExpiresIn(), token.getRefreshToken(), StringUtils.join(token.getScopes(), ' '));
 
     return Response
             .ok()
