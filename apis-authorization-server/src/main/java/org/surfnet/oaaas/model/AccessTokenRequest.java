@@ -18,12 +18,15 @@
  */
 package org.surfnet.oaaas.model;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -48,6 +51,12 @@ public class AccessTokenRequest {
   @JsonProperty("client_secret")
   private String clientSecret;
 
+  @JsonProperty("username")
+  private String username;
+
+  @JsonProperty("password")
+  private String password;
+
   @JsonProperty("refresh_token")
   private String refreshToken;
 
@@ -65,6 +74,8 @@ public class AccessTokenRequest {
     atr.setGrantType(nullSafeGetFormParameter("grant_type", formParameters));
     atr.setRedirectUri(nullSafeGetFormParameter("redirect_uri", formParameters));
     atr.setRefreshToken(nullSafeGetFormParameter("refresh_token", formParameters));
+    atr.setUsername(nullSafeGetFormParameter("username", formParameters));
+    atr.setPassword(nullSafeGetFormParameter("password", formParameters));
     atr.setScope(nullSafeGetFormParameter("scope", formParameters));
     return atr;
   }
@@ -165,10 +176,52 @@ public class AccessTokenRequest {
   }
 
   /**
+   * @return the username
+   */
+  public String getUsername() {
+    return username;
+  }
+
+  /**
+   * @param username 
+   *          the username to set
+   */
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  /**
+   * @return the password
+   */
+  public String getPassword() {
+    return password;
+  }
+
+  /**
+   * @param password 
+   *          the password to set
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  /**
    * @return the scope
    */
   public String getScope() {
     return scope;
+  }
+  
+  public List<String> getScopeList() {
+    // If the request didn't ask for any scopes, then use the ones for our client
+    if (StringUtils.isBlank(scope)) {
+      if (this.client != null) {
+        return this.client.getScopes();
+      } else {
+        return Collections.emptyList();
+      }
+    }
+    return Arrays.asList(scope.split(","));
   }
 
   /**
@@ -178,7 +231,7 @@ public class AccessTokenRequest {
   public void setScope(String scope) {
     this.scope = scope;
   }
-
+  
   public Client getClient() {
     return client;
   }

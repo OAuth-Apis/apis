@@ -23,14 +23,15 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class UserPassCredentialsTest {
+public class BasicAuthCredentialsTest {
 
   @Test
   public void testGetAuthorizationHeaderValue() throws Exception {
-    UserPassCredentials credentials = new UserPassCredentials("john.doe","secret");
+    BasicAuthCredentials credentials = new BasicAuthCredentials("john.doe","secret");
     assertTrue(credentials.isValid());
 
-    UserPassCredentials fromAuthValue = new UserPassCredentials(credentials.getAuthorizationHeaderValue());
+    BasicAuthCredentials fromAuthValue = 
+        BasicAuthCredentials.createCredentialsFromHeader(credentials.getAuthorizationHeaderValue());
     assertEquals(credentials.getUsername(), fromAuthValue.getUsername());
     assertEquals(credentials.getPassword(), fromAuthValue.getPassword());
 
