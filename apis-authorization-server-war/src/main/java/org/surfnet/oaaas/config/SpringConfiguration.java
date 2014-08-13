@@ -17,14 +17,25 @@
 package org.surfnet.oaaas.config;
 
 import com.googlecode.flyway.core.Flyway;
+import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.apache.tomcat.jdbc.pool.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
@@ -44,32 +55,89 @@ import javax.validation.Validator;
  * configured.
  */
 @Configuration
-@PropertySource("classpath:apis.application.properties")
-/*
- * The component scan can be used to add packages and exclusions to the default
- * package
- */
+@EnableAutoConfiguration
+@PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
-@ImportResource("classpath:spring-repositories.xml")
 @EnableTransactionManagement
 @EnableScheduling
-public class SpringConfiguration {
+@EnableJpaRepositories(basePackages = "org.surfnet.oaaas.repository")
+public class SpringConfiguration extends SpringBootServletInitializer {
 
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
   private static final Class<PersistenceProviderImpl> PERSISTENCE_PROVIDER_CLASS = PersistenceProviderImpl.class;
 
-  @Inject
-  Environment env;
+  @Value("${jdbc.driverClassName}")
+  String driverClassName;
+
+  @Value("${jdbc.url}")
+  String url;
+
+  @Value("${jdbc.username}")
+  String username;
+
+  @Value("${jdbc.password}")
+  String password;
+
+  @Value("${flyway.migrations.location}")
+  String flywayMigrationsLocation;
+
+  @Value("${authenticatorClass}")
+  String authenticatorClassName;
+
+  @Value("${userConsentHandlerClass}")
+  String userConsentHandlerClassName;
+
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+    return application.sources(SpringConfiguration.class);
+  }
+
+  @Bean
+  public FilterRegistrationBean adminAuthorizationFilter() {
+    FilterRegistrationBean bean = new FilterRegistrationBean();
+    bean.setFilter(new AuthorizationServerFilter());
+    bean.addInitParameter("apis-resource-server.properties.file", "application.properties");
+    bean.addUrlPatterns("/admin/*");
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean oauth2AuthenticationFilter() {
+    FilterRegistrationBean bean = new FilterRegistrationBean();
+    AuthenticationFilter filter = new AuthenticationFilter();
+    filter.setAuthenticator(authenticator());
+    bean.setFilter(filter);
+    bean.addUrlPatterns("/oauth2/authorize");
+    return bean;
+  }
+
+  @Bean
+  public FilterRegistrationBean oauth2UserConsentFilter() {
+    FilterRegistrationBean bean = new FilterRegistrationBean();
+    UserConsentFilter filter = new UserConsentFilter();
+    filter.setUserConsentHandler(userConsentHandler());
+    bean.setFilter(filter);
+    bean.addUrlPatterns("/oauth2/authorize", "/oauth2/consent");
+    return bean;
+  }
+
+  @Bean
+  public ServletRegistrationBean jersey() {
+    ServletRegistrationBean bean = new ServletRegistrationBean();
+    bean.setServlet(new SpringServlet());
+    bean.addInitParameter("com.sun.jersey.api.json.POJOMappingFeature", "true");
+    bean.setLoadOnStartup(1);
+    bean.addUrlMappings("/oauth2/*", "/v1/*", "/admin/*");
+    return bean;
+  }
 
   @Bean
   public javax.sql.DataSource dataSource() {
-    DataSource dataSource = new DataSource();
-    dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-    dataSource.setUrl(env.getProperty("jdbc.url"));
-    dataSource.setUsername(env.getProperty("jdbc.username"));
-    dataSource.setPassword(env.getProperty("jdbc.password"));
-    dataSource.setTestOnBorrow(true);
-    dataSource.setValidationQuery("SELECT 1");
+    DriverManagerDataSource dataSource = new DriverManagerDataSource();
+    dataSource.setDriverClassName(driverClassName);
+    dataSource.setUrl(url);
+    dataSource.setUsername(username);
+    dataSource.setPassword(password);
     return dataSource;
   }
 
@@ -78,8 +146,7 @@ public class SpringConfiguration {
     final Flyway flyway = new Flyway();
     flyway.setInitOnMigrate(true);
     flyway.setDataSource(dataSource());
-    String locationsValue = env.getProperty("flyway.migrations.location");
-    String[] locations = locationsValue.split("\\s*,\\s*");
+    String[] locations = flywayMigrationsLocation.split("\\s*,\\s*");
     flyway.setLocations(locations);
     flyway.migrate();
     return flyway;
@@ -100,20 +167,6 @@ public class SpringConfiguration {
   }
 
   @Bean
-  public Filter oauth2AuthenticationFilter() {
-    final AuthenticationFilter authenticationFilter = new AuthenticationFilter();
-    authenticationFilter.setAuthenticator(authenticator());
-    return authenticationFilter;
-  }
-
-  @Bean
-  public Filter oauth2UserConsentFilter() {
-    final UserConsentFilter userConsentFilter = new UserConsentFilter();
-    userConsentFilter.setUserConsentHandler(userConsentHandler());
-    return userConsentFilter;
-  }
-
-  @Bean
   public OAuth2Validator oAuth2Validator() {
     return new OAuth2ValidatorImpl();
   }
@@ -126,7 +179,7 @@ public class SpringConfiguration {
    */
   @Bean
   public AbstractAuthenticator authenticator() {
-    AbstractAuthenticator authenticatorClass = (AbstractAuthenticator) getConfiguredBean("authenticatorClass");
+    AbstractAuthenticator authenticatorClass = (AbstractAuthenticator) getConfiguredBean(authenticatorClassName);
     try {
       authenticatorClass.init(null);
     } catch (ServletException e) {
@@ -137,7 +190,7 @@ public class SpringConfiguration {
 
   @Bean
   public AbstractUserConsentHandler userConsentHandler() {
-    return (AbstractUserConsentHandler) getConfiguredBean("userConsentHandlerClass");
+    return (AbstractUserConsentHandler) getConfiguredBean(userConsentHandlerClassName);
   }
 
   @Bean
@@ -147,7 +200,7 @@ public class SpringConfiguration {
 
   private Object getConfiguredBean(String className) {
     try {
-      return getClass().getClassLoader().loadClass(env.getProperty(className)).newInstance();
+      return getClass().getClassLoader().loadClass(className).newInstance();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

@@ -74,10 +74,12 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -95,6 +97,7 @@
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.surfnet.coin</groupId>
