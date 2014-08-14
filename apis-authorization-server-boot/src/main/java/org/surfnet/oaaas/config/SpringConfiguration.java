@@ -19,32 +19,33 @@ package org.surfnet.oaaas.config;
 import com.googlecode.flyway.core.Flyway;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 import org.surfnet.oaaas.support.Cleaner;
 
-import javax.inject.Inject;
-import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.validation.Validator;
+import java.util.Properties;
 
 /**
  * The SpringConfiguration is a {@link Configuration} that can be overridden if
@@ -55,13 +56,13 @@ import javax.validation.Validator;
  * configured.
  */
 @Configuration
-@EnableAutoConfiguration
-@PropertySource("classpath:application.properties")
+//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+//@PropertySource(value = {"classpath:application.properties", "config/application.properties", "application.properties"}, ignoreResourceNotFound = true)
 @ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
 @EnableTransactionManagement
 @EnableScheduling
 @EnableJpaRepositories(basePackages = "org.surfnet.oaaas.repository")
-public class SpringConfiguration extends SpringBootServletInitializer {
+public class SpringConfiguration {
 
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
   private static final Class<PersistenceProviderImpl> PERSISTENCE_PROVIDER_CLASS = PersistenceProviderImpl.class;
@@ -87,18 +88,35 @@ public class SpringConfiguration extends SpringBootServletInitializer {
   @Value("${userConsentHandlerClass}")
   String userConsentHandlerClassName;
 
-  @Override
-  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-    return application.sources(SpringConfiguration.class);
+  public static void main(String[] args) {
+    SpringApplication.run(SpringConfiguration.class, args);
+  }
+  @Bean
+  public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+    return new PropertySourcesPlaceholderConfigurer();
   }
 
   @Bean
-  public FilterRegistrationBean adminAuthorizationFilter() {
+  public FilterRegistrationBean adminAuthorizationFilter(@Value("${adminService.resourceServerKey}") String resourceServerKey,
+                                                         @Value("${adminService.resourceServerSecret}") String resourceServerSecret,
+                                                         @Value("${adminService.tokenVerificationUrl}") String authorizationServerUrl,
+                                                         @Value("${adminService.jsonTypeInfoIncluded:false}") boolean jsonTypeInfoIncluded,
+                                                         @Value("${adminService.cacheEnabled:false}") boolean cacheEnabled,
+                                                         @Value("${adminService.allowCorsRequests:true}") boolean allowCorsRequests
+                                                         ) {
     FilterRegistrationBean bean = new FilterRegistrationBean();
-    bean.setFilter(new AuthorizationServerFilter());
-    bean.addInitParameter("apis-resource-server.properties.file", "application.properties");
+    AuthorizationServerFilter authorizationServerFilter = new AuthorizationServerFilter(resourceServerKey, resourceServerSecret, authorizationServerUrl);
+    authorizationServerFilter.setAllowCorsRequests(allowCorsRequests);
+    authorizationServerFilter.setCacheEnabled(cacheEnabled);
+    authorizationServerFilter.setTypeInformationIsIncluded(jsonTypeInfoIncluded);
+    bean.setFilter(authorizationServerFilter);
     bean.addUrlPatterns("/admin/*");
     return bean;
+  }
+
+  @Bean
+  public TomcatEmbeddedServletContainerFactory tomcat() {
+    return new TomcatEmbeddedServletContainerFactory();
   }
 
   @Bean
@@ -162,7 +180,14 @@ public class SpringConfiguration extends SpringBootServletInitializer {
     final LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
     emfBean.setDataSource(dataSource());
     emfBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
-    emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
+    emfBean.setPackagesToScan("org.surfnet.oaaas.model");
+//    emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
+    OpenJpaVendorAdapter jpaVendorAdapter = new OpenJpaVendorAdapter();
+
+    Properties properties = new Properties();
+    properties.setProperty("openjpa.Log", "slf4j");
+    emfBean.setJpaProperties(properties);
+    emfBean.setJpaVendorAdapter(jpaVendorAdapter);
     return emfBean;
   }
 

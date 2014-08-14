@@ -17,8 +17,14 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
   <persistence-unit name="oaaas">
+    <class>org.surfnet.oaaas.model.AccessToken</class>
+    <class>org.surfnet.oaaas.model.AuthorizationRequest</class>
+    <class>org.surfnet.oaaas.model.Client</class>
+    <class>org.surfnet.oaaas.model.ResourceServer</class>
     <properties>
       <property name="openjpa.Log" value="slf4j" />
+      <!--<property name="openjpa.classLoadEnhancement" value="false" />-->
+      <property name="openjpa.DynamicEnhancementAgent" value="false"/>
     </properties>
   </persistence-unit>
 </persistence>

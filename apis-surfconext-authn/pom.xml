@@ -14,7 +14,7 @@
   <parent>
     <groupId>nl.surfnet.apis</groupId>
     <artifactId>apis-parent</artifactId>
-    <version>1.3.6-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>apis-surfconext-authn</artifactId>
@@ -36,6 +36,10 @@
       <artifactId>apis-authorization-server</artifactId>
     </dependency>
     <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-resource-server-library</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.surfnet.coin</groupId>
       <artifactId>coin-api-client</artifactId>
     </dependency>
@@ -46,6 +50,19 @@
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

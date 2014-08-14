@@ -7,8 +7,8 @@
   <meta name="author" content="" />
   <title>Consent</title>
   <!-- Le styles -->
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/client/css/style.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/META-INF/resources/client/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/META-INF/resources/client/css/style.css" />
 
   <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
@@ -19,7 +19,7 @@
 
 
 <div class="head">
-  <img src="${pageContext.request.contextPath}/client/img/surf-oauth.png"/>
+  <img src="${pageContext.request.contextPath}/META-INF/resources/client/img/surf-oauth.png"/>
 </div>
 <div class="main">
   <div class="full">
@@ -32,7 +32,7 @@
 
     <div class="consent">
       <img alt="${client.name}" title="${client.name}" src="${client.thumbNailUrl}" />
-      <img src="${pageContext.request.contextPath}/client/img/arrow.png" />
+      <img src="${pageContext.request.contextPath}/META-INF/resources/client/img/arrow.png" />
       <img alt="${client.resourceServer.name}"
         title="${client.resourceServer.name}"
         src="${client.resourceServer.thumbNailUrl}" />

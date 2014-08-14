@@ -55,17 +55,14 @@ public class AuthorizationServerFilterTest extends AbstractMockHttpServerTest {
   @Before
   public void before() throws ServletException {
     MockFilterConfig filterConfig = new MockFilterConfig();
-    filterConfig.addInitParameter("resource-server-key", "org.surfnet.oaaas.conext.mock-server-name");
-    filterConfig.addInitParameter("resource-server-secret", UUID.randomUUID().toString());
-    filterConfig.addInitParameter("authorization-server-url", "http://localhost:8088/org.surfnet.oaaas.conext.mock/endpoint");
-    filterConfig.addInitParameter("type-information-is-included", "true");
     //enable caching as we want to test this
-    filter = new AuthorizationServerFilter(){
+    filter = new AuthorizationServerFilter("org.surfnet.oaaas.conext.mock-server-name", UUID.randomUUID().toString(), "http://localhost:8088/org.surfnet.oaaas.conext.mock/endpoint"){
       @Override
       protected boolean cacheAccessTokens() {
         return true;
       }
     };
+    filter.setTypeInformationIsIncluded(true);
     filter.init(filterConfig);
   }
 

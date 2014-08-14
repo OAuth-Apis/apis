@@ -129,7 +129,7 @@ public class AuthorizationServerFilter implements Filter {
    * If not overridden by a subclass / configured otherwise we don't cache the answers from the authorization
    * server
    */
-  private boolean cacheEnabled;
+  private boolean cacheEnabled = false;
   private TokenResponseCache cache;
 
   /*
@@ -151,48 +151,15 @@ public class AuthorizationServerFilter implements Filter {
 
   private ObjectMapper objectMapper;
 
+  public AuthorizationServerFilter(String resourceServerKey, String resourceServerSecret, String authorizationServerUrl) {
+    this.resourceServerKey = resourceServerKey;
+    this.resourceServerSecret = resourceServerSecret;
+    this.authorizationServerUrl = authorizationServerUrl;
+  }
+
+
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    /*
-     * First check on the presence of a init-param where to look for the properties to support
-     * multiple resource servers in the same war. Then look for second best apis-resource-server.properties file, then
-     * try to use the filter config if parameters are present. If this also
-     * fails trust on the setters (e.g. probably in test modus), but apply
-     * fail-fast strategy
-     */
-    ClassPathResource res = null;
-    String propertiesFile = filterConfig.getInitParameter("apis-resource-server.properties.file");
-    if (StringUtils.isNotEmpty(propertiesFile)) {
-      res = new ClassPathResource(propertiesFile);
-    }
-    if (res == null || !res.exists()) {
-      res = new ClassPathResource("apis-resource-server.properties");
-    }
-    if (res != null && res.exists()) {
-      Properties prop = new Properties();
-      try {
-        prop.load(res.getInputStream());
-      } catch (IOException e) {
-        throw new RuntimeException("Error in reading the apis-resource-server.properties file", e);
-      }
-      resourceServerKey = prop.getProperty("adminService.resourceServerKey");
-      resourceServerSecret = prop.getProperty("adminService.resourceServerSecret");
-      authorizationServerUrl = prop.getProperty("adminService.tokenVerificationUrl");
-      cacheEnabled = Boolean.valueOf(prop.getProperty("adminService.cacheEnabled"));
-      String allowCorsRequestsProperty = prop.getProperty("adminService.allowCorsRequests");
-      if (StringUtils.isNotEmpty(allowCorsRequestsProperty)) {
-        allowCorsRequests = Boolean.valueOf(allowCorsRequestsProperty);
-      }
-      String typeInformationIsIncludedProperty = prop.getProperty("adminService.jsonTypeInfoIncluded");
-      if (StringUtils.isNotEmpty(typeInformationIsIncludedProperty)) {
-        typeInformationIsIncluded = Boolean.valueOf(typeInformationIsIncludedProperty);
-      }
-    } else if (filterConfig.getInitParameter("resource-server-key") != null) {
-      resourceServerKey = filterConfig.getInitParameter("resource-server-key");
-      resourceServerSecret = filterConfig.getInitParameter("resource-server-secret");
-      authorizationServerUrl = filterConfig.getInitParameter("authorization-server-url");
-      typeInformationIsIncluded = Boolean.valueOf(filterConfig.getInitParameter("type-information-is-included"));
-    }
     Assert.hasText(resourceServerKey, "Must provide a resource server key");
     Assert.hasText(resourceServerSecret, "Must provide a resource server secret");
     Assert.hasText(authorizationServerUrl, "Must provide a authorization server url");
@@ -365,18 +332,6 @@ public class AuthorizationServerFilter implements Filter {
 
   @Override
   public void destroy() {
-  }
-
-  public void setAuthorizationServerUrl(String authorizationServerUrl) {
-    this.authorizationServerUrl = authorizationServerUrl;
-  }
-
-  public void setResourceServerSecret(String resourceServerSecret) {
-    this.resourceServerSecret = resourceServerSecret;
-  }
-
-  public void setResourceServerKey(String resourceServerKey) {
-    this.resourceServerKey = resourceServerKey;
   }
 
   public void setCacheEnabled(boolean cacheEnabled) {
