@@ -19,6 +19,7 @@ package org.surfnet.oaaas.config;
 import com.googlecode.flyway.core.Flyway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,17 +35,16 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = SpringConfiguration.class)
+@SpringApplicationConfiguration(classes = SpringConfiguration.class)
 public class SpringConfigTest {
 
-  @Inject
+  @Autowired
   DataSource dataSource;
 
-  @Inject
+  @Autowired
   Flyway flyway;
 
-  @Inject
+  @Autowired
   VerifyResource verifyResource;
 
 
