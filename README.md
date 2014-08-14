@@ -29,20 +29,22 @@ The default JVM size is not sufficient - it rarely is - so when running the vari
 
 	export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=512M"
 
-After the clone build the entire project
+After cloning, build the entire project:
 
     mvn clean install
 
-## Upgrades
-
-Changes between versions are listed in [CHANGES.md](CHANGES.md)
-
 ### Run Authorization Server
 
-Go the authorization-server-war and start the application
+By default, the application assumes a MySQL database to be present. To set it up:
 
-    cd apis-authorization-server-war
-    mvn jetty:run
+    CREATE USER 'apisrw'@'localhost' IDENTIFIED BY 'apisrw';
+    GRANT ALL PRIVILEGES ON * . * TO 'apisrw'@'localhost';
+    FLUSH PRIVILEGES;
+
+Then, you're ready to start the application
+
+    cd apis-authorization-server-boot
+    mvn spring-boot:run
 
 The authorization-server-war application is capable of authenticating Resource Owners (e.g. users) and granting and validating Access Tokens (and optional Refresh Tokens) on behalf of Resource Servers that are receiving resource calls from a Client app. It also offers a JavaScript application to manage Resource Servers and Client application instances. 
 
@@ -338,3 +340,6 @@ You can build the entire project including the integration and selenium tests (w
 
 mvn clean install -P integration
 
+## Upgrades
+
+Changes between versions are listed in [CHANGES.md](CHANGES.md)
