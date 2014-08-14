@@ -14,36 +14,23 @@
  * limitations under the License.
  */
 
-package org.surfnet.oaaas.config;
+package org.surfnet.oaaas;
 
 import com.googlecode.flyway.core.Flyway;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
-import org.apache.openjpa.persistence.PersistenceProviderImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.surfnet.oaaas.auth.*;
 import org.surfnet.oaaas.authentication.FormLoginAuthenticator;
 import org.surfnet.oaaas.consent.FormUserConsentHandler;
@@ -53,13 +40,7 @@ import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 import org.surfnet.oaaas.support.Cleaner;
 
-import javax.inject.Inject;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.validation.Validator;
-import java.util.Enumeration;
-import java.util.Properties;
 
 /**
  * The SpringConfiguration is a {@link Configuration} that can be overridden if
@@ -73,7 +54,7 @@ import java.util.Properties;
 @ComponentScan(basePackages = {"org.surfnet.oaaas.resource", "org.surfnet.oaaas.controller", "org.surfnet.oaaas.consent"})
 @EnableAutoConfiguration
 @EnableJpaRepositories(basePackages = "org.surfnet.oaaas.repository")
-public class SpringConfiguration {
+public class Application {
 
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
 
@@ -100,7 +81,7 @@ public class SpringConfiguration {
 
 
   public static void main(String[] args) {
-    SpringApplication.run(SpringConfiguration.class, args);
+    SpringApplication.run(Application.class, args);
   }
 
   @Bean

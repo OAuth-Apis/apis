@@ -100,7 +100,6 @@
     <javax-inject.version>1</javax-inject.version>
     <mockito.version>1.9.0</mockito.version>
     <jackson.version>1.9.2</jackson.version>
-    <logback.version>1.0.6</logback.version>
     <jetty-maven-plugin.version>8.1.4.v20120524</jetty-maven-plugin.version>
     <selenium.version>2.32.0</selenium.version>
     <cglib.version>2.2.2</cglib.version>
@@ -350,11 +349,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>jul-to-slf4j</artifactId>
         <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
