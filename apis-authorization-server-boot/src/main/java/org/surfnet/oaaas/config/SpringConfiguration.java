@@ -23,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
@@ -68,8 +71,6 @@ import java.util.Properties;
  */
 @Configuration
 @ComponentScan(basePackages = {"org.surfnet.oaaas.resource", "org.surfnet.oaaas.controller", "org.surfnet.oaaas.consent"})
-@EnableTransactionManagement
-@EnableScheduling
 @EnableAutoConfiguration
 @EnableJpaRepositories(basePackages = "org.surfnet.oaaas.repository")
 public class SpringConfiguration {
@@ -100,11 +101,6 @@ public class SpringConfiguration {
 
   public static void main(String[] args) {
     SpringApplication.run(SpringConfiguration.class, args);
-  }
-
-  @Bean
-  public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-    return new PropertySourcesPlaceholderConfigurer();
   }
 
   @Bean
