@@ -19,17 +19,18 @@ package org.surfnet.oaaas.config;
 import com.googlecode.flyway.core.Flyway;
 import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -38,13 +39,23 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.surfnet.oaaas.auth.*;
+import org.surfnet.oaaas.authentication.FormLoginAuthenticator;
+import org.surfnet.oaaas.consent.FormUserConsentHandler;
+import org.surfnet.oaaas.repository.AccessTokenRepository;
+import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 import org.surfnet.oaaas.repository.ExceptionTranslator;
 import org.surfnet.oaaas.repository.OpenJPAExceptionTranslator;
 import org.surfnet.oaaas.support.Cleaner;
 
+import javax.inject.Inject;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.validation.Validator;
+import java.util.Enumeration;
 import java.util.Properties;
 
 /**
@@ -56,16 +67,14 @@ import java.util.Properties;
  * configured.
  */
 @Configuration
-//@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-//@PropertySource(value = {"classpath:application.properties", "config/application.properties", "application.properties"}, ignoreResourceNotFound = true)
-@ComponentScan(basePackages = {"org.surfnet.oaaas.resource"})
+@ComponentScan(basePackages = {"org.surfnet.oaaas.resource", "org.surfnet.oaaas.controller", "org.surfnet.oaaas.consent"})
 @EnableTransactionManagement
 @EnableScheduling
+@EnableAutoConfiguration
 @EnableJpaRepositories(basePackages = "org.surfnet.oaaas.repository")
 public class SpringConfiguration {
 
   private static final String PERSISTENCE_UNIT_NAME = "oaaas";
-  private static final Class<PersistenceProviderImpl> PERSISTENCE_PROVIDER_CLASS = PersistenceProviderImpl.class;
 
   @Value("${jdbc.driverClassName}")
   String driverClassName;
@@ -88,9 +97,11 @@ public class SpringConfiguration {
   @Value("${userConsentHandlerClass}")
   String userConsentHandlerClassName;
 
+
   public static void main(String[] args) {
     SpringApplication.run(SpringConfiguration.class, args);
   }
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -103,7 +114,7 @@ public class SpringConfiguration {
                                                          @Value("${adminService.jsonTypeInfoIncluded:false}") boolean jsonTypeInfoIncluded,
                                                          @Value("${adminService.cacheEnabled:false}") boolean cacheEnabled,
                                                          @Value("${adminService.allowCorsRequests:true}") boolean allowCorsRequests
-                                                         ) {
+  ) {
     FilterRegistrationBean bean = new FilterRegistrationBean();
     AuthorizationServerFilter authorizationServerFilter = new AuthorizationServerFilter(resourceServerKey, resourceServerSecret, authorizationServerUrl);
     authorizationServerFilter.setAllowCorsRequests(allowCorsRequests);
@@ -120,22 +131,22 @@ public class SpringConfiguration {
   }
 
   @Bean
-  public FilterRegistrationBean oauth2AuthenticationFilter() {
+  public FilterRegistrationBean oauth2AuthenticationFilter(AuthorizationRequestRepository authorizationRequestRepository, FormLoginAuthenticator authenticator) {
     FilterRegistrationBean bean = new FilterRegistrationBean();
-    AuthenticationFilter filter = new AuthenticationFilter();
-    filter.setAuthenticator(authenticator());
+    AuthenticationFilter filter = new AuthenticationFilter(authenticator, authorizationRequestRepository, oAuth2Validator());
     bean.setFilter(filter);
     bean.addUrlPatterns("/oauth2/authorize");
+    bean.setOrder(1);
     return bean;
   }
 
   @Bean
-  public FilterRegistrationBean oauth2UserConsentFilter() {
+  public FilterRegistrationBean oauth2UserConsentFilter(AuthorizationRequestRepository authorizationRequestRepository, FormUserConsentHandler userConsentHandler) {
     FilterRegistrationBean bean = new FilterRegistrationBean();
-    UserConsentFilter filter = new UserConsentFilter();
-    filter.setUserConsentHandler(userConsentHandler());
+    UserConsentFilter filter = new UserConsentFilter(authorizationRequestRepository, userConsentHandler);
     bean.setFilter(filter);
     bean.addUrlPatterns("/oauth2/authorize", "/oauth2/consent");
+    bean.setOrder(2);
     return bean;
   }
 
@@ -180,13 +191,8 @@ public class SpringConfiguration {
     final LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
     emfBean.setDataSource(dataSource());
     emfBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
-    emfBean.setPackagesToScan("org.surfnet.oaaas.model");
-//    emfBean.setPersistenceProviderClass(PERSISTENCE_PROVIDER_CLASS);
     OpenJpaVendorAdapter jpaVendorAdapter = new OpenJpaVendorAdapter();
 
-    Properties properties = new Properties();
-    properties.setProperty("openjpa.Log", "slf4j");
-    emfBean.setJpaProperties(properties);
     emfBean.setJpaVendorAdapter(jpaVendorAdapter);
     return emfBean;
   }
@@ -196,26 +202,14 @@ public class SpringConfiguration {
     return new OAuth2ValidatorImpl();
   }
 
-  /**
-   * Returns the {@link AbstractAuthenticator} that is responsible for the
-   * authentication of Resource Owners.
-   *
-   * @return an {@link AbstractAuthenticator}
-   */
   @Bean
-  public AbstractAuthenticator authenticator() {
-    AbstractAuthenticator authenticatorClass = (AbstractAuthenticator) getConfiguredBean(authenticatorClassName);
-    try {
-      authenticatorClass.init(null);
-    } catch (ServletException e) {
-      throw new RuntimeException(e);
-    }
-    return authenticatorClass;
+  public FormLoginAuthenticator authenticator() {
+    return new FormLoginAuthenticator();
   }
 
   @Bean
-  public AbstractUserConsentHandler userConsentHandler() {
-    return (AbstractUserConsentHandler) getConfiguredBean(userConsentHandlerClassName);
+  public FormUserConsentHandler userConsentHandler(AccessTokenRepository accessTokenRepository, AuthorizationRequestRepository authorizationRequestRepository) {
+    return new FormUserConsentHandler(accessTokenRepository, authorizationRequestRepository);
   }
 
   @Bean
@@ -223,19 +217,9 @@ public class SpringConfiguration {
     return new OpenJPAExceptionTranslator();
   }
 
-  private Object getConfiguredBean(String className) {
-    try {
-      return getClass().getClassLoader().loadClass(className).newInstance();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   @Bean
   public Validator validator() {
-    // This LocalValidatorFactoryBean already uses the SpringConstraintValidatorFactory by default,
-    // so available validators will be wired automatically.
-    return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
+    return new LocalValidatorFactoryBean();
   }
 
   @Bean

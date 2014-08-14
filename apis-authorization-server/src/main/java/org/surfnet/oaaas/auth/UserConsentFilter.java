@@ -18,8 +18,6 @@ package org.surfnet.oaaas.auth;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,15 +33,18 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
  * the Resource Server data to the Client app.
  *
  */
-@Named
-public class UserConsentFilter implements Filter {
+public class UserConsentFilter extends AuthorizationSupport implements Filter {
 
   private static final String RETURN_URI = "/oauth2/consent";
 
-  @Inject
-  private AuthorizationRequestRepository authorizationRequestRepository;
+  private final AuthorizationRequestRepository authorizationRequestRepository;
 
-  private AbstractUserConsentHandler userConsentHandler;
+  private final AbstractUserConsentHandler userConsentHandler;
+
+  public UserConsentFilter(AuthorizationRequestRepository authorizationRequestRepository, AbstractUserConsentHandler userConsentHandler) {
+    this.authorizationRequestRepository = authorizationRequestRepository;
+    this.userConsentHandler = userConsentHandler;
+  }
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -54,22 +55,23 @@ public class UserConsentFilter implements Filter {
     if (authorizationRequest == null) {
       response
           .sendError(HttpServletResponse.SC_BAD_REQUEST, "No valid AbstractAuthenticator.AUTH_STATE on the Request");
-    }
-    if (initialRequest(request)) {
-      storePrincipal(request, response, authorizationRequest);
-      request.setAttribute(AbstractAuthenticator.RETURN_URI, RETURN_URI);
-      request.setAttribute(AbstractUserConsentHandler.CLIENT, authorizationRequest.getClient());
-      if (!authorizationRequest.getClient().isSkipConsent()) {
-        userConsentHandler.doFilter(request, response, chain);
-      } else {
-        chain.doFilter(request, response);
-      }
     } else {
-      /*
-       * Ok, the consentHandler wants to have control again (because he stepped
-       * out)
-       */
-      userConsentHandler.doFilter(request, response, chain);
+      if (initialRequest(request)) {
+        storePrincipal(request, response, authorizationRequest);
+        request.setAttribute(AbstractAuthenticator.RETURN_URI, RETURN_URI);
+        request.setAttribute(AbstractUserConsentHandler.CLIENT, authorizationRequest.getClient());
+        if (!authorizationRequest.getClient().isSkipConsent()) {
+          userConsentHandler.handleUserConsent(request, response, chain, getAuthStateValue(request), getReturnUri(request), authorizationRequest.getClient());
+        } else {
+          chain.doFilter(request, response);
+        }
+      } else {
+        /*
+         * Ok, the consentHandler wants to have control again (because he stepped
+         * out)
+         */
+        userConsentHandler.handleUserConsent(request, response, chain, getAuthStateValue(request), getReturnUri(request), authorizationRequest.getClient());
+      }
     }
   }
 
@@ -93,22 +95,6 @@ public class UserConsentFilter implements Filter {
 
   private boolean initialRequest(HttpServletRequest request) {
     return (AuthenticatedPrincipal) request.getAttribute(AbstractAuthenticator.PRINCIPAL) != null;
-  }
-
-  /**
-   * @param authorizationRequestRepository
-   *          the authorizationRequestRepository to set
-   */
-  public void setAuthorizationRequestRepository(AuthorizationRequestRepository authorizationRequestRepository) {
-    this.authorizationRequestRepository = authorizationRequestRepository;
-  }
-
-  /**
-   * @param userConsentHandler
-   *          the userConsentHandler to set
-   */
-  public void setUserConsentHandler(AbstractUserConsentHandler userConsentHandler) {
-    this.userConsentHandler = userConsentHandler;
   }
 
   @Override

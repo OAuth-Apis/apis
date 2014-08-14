@@ -23,8 +23,6 @@ import org.surfnet.oaaas.auth.OAuth2Validator.ValidationResponse;
 import org.surfnet.oaaas.model.AuthorizationRequest;
 import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,18 +34,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@Named
-public class AuthenticationFilter implements Filter {
+public class AuthenticationFilter extends AuthorizationSupport implements Filter {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-  private AbstractAuthenticator authenticator;
+  private final AbstractAuthenticator authenticator;
 
-  @Inject
-  private AuthorizationRequestRepository authorizationRequestRepository;
+  public AuthenticationFilter(AbstractAuthenticator authenticator, AuthorizationRequestRepository authorizationRequestRepository, OAuth2Validator oAuth2Validator) {
+    this.authenticator = authenticator;
+    this.authorizationRequestRepository = authorizationRequestRepository;
+    this.oAuth2Validator = oAuth2Validator;
+  }
 
-  @Inject
-  private OAuth2Validator oAuth2Validator;
+  private final AuthorizationRequestRepository authorizationRequestRepository;
+
+  private final OAuth2Validator oAuth2Validator;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -66,11 +67,11 @@ public class AuthenticationFilter implements Filter {
       * Ok, the authenticator wants to have control again (because he stepped
       * out)
       */
-      authenticator.doFilter(request, response, chain);
+      authenticator.authenticate(request, response, chain, getAuthStateValue(request), getReturnUri(request));
     } else if (validationResponse.valid()) {
       // Request contains correct parameters to be a real OAuth2 request.
       handleInitialRequest(authorizationRequest, request);
-      authenticator.doFilter(request, response, chain);
+      authenticator.authenticate(request, response, chain, getAuthStateValue(request), getReturnUri(request));
     } else {
       // not an initial request but authentication module cannot handle it either
       sendError(response, authorizationRequest, validationResponse);
@@ -139,10 +140,6 @@ public class AuthenticationFilter implements Filter {
   public void init(FilterConfig filterConfig) throws ServletException {
   }
 
-  public void setAuthenticator(AbstractAuthenticator authenticator) {
-    this.authenticator = authenticator;
-  }
-
   public static boolean isValidUrl(String redirectUri) {
     try {
       new URL(redirectUri);
@@ -152,20 +149,5 @@ public class AuthenticationFilter implements Filter {
     }
   }
 
-  /**
-   * @param authorizationRequestRepository
-   *          the authorizationRequestRepository to set
-   */
-  public void setAuthorizationRequestRepository(AuthorizationRequestRepository authorizationRequestRepository) {
-    this.authorizationRequestRepository = authorizationRequestRepository;
-  }
-
-  /**
-   * @param oAuth2Validator
-   *          the oAuth2Validator to set
-   */
-  public void setOAuth2Validator(OAuth2Validator oAuth2Validator) {
-    this.oAuth2Validator = oAuth2Validator;
-  }
 
 }

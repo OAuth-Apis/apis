@@ -24,10 +24,10 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 
 /**
- * Shared functionality of the different authorization and userconsent Filters
+ * Shared functionality of the different authorization and userconsent.
  * 
  */
-public abstract class AbstractFilter implements Filter {
+public abstract class AuthorizationSupport {
 
   /**
    * Constant to get the return uri when the control should be returned to the

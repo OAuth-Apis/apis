@@ -8,16 +8,16 @@
   <meta name="author" content="" />
 
   <title>Login</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/META-INF/resources/client/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/META-INF/resources/client/css/style.css" />
-  <script type="text/javascript" src="${pageContext.request.contextPath}/META-INF/resources/client/js/lib/jquery.js"></script>
-  <script type="text/javascript" src="${pageContext.request.contextPath}/META-INF/resources/client/js/lib/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/client/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/client/css/style.css" />
+  <script type="text/javascript" src="/client/js/lib/jquery.js"></script>
+  <script type="text/javascript" src="/client/js/lib/bootstrap.min.js"></script>
 </head>
 
 <body>
 
 <div class="head">
-  <img src="${pageContext.request.contextPath}/META-INF/resources/client/img/surf-oauth.png"/>
+  <img src="/client/img/surf-oauth.png"/>
 </div>
 
 <div class="main">

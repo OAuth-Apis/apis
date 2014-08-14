@@ -19,10 +19,8 @@ package org.surfnet.oaaas.auth;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +29,7 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
 /**
  * To be implemented by various authentication methods.
  */
-public abstract class AbstractAuthenticator extends AbstractFilter {
+public abstract class AbstractAuthenticator extends AuthorizationSupport {
 
   /**
    * The constant that contains the principal, set by concrete authenticators
@@ -39,12 +37,18 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
    */
   public static final String PRINCIPAL = "PRINCIPAL";
 
-  @Override
-  public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-      ServletException {
-    authenticate((HttpServletRequest) request, (HttpServletResponse) response, chain, getAuthStateValue(request),
-        getReturnUri(request));
-  }
+  /**
+   * Constant to get the return uri when the control should be returned to the
+   * implementor
+   */
+  public static final String RETURN_URI = "RETURN_URI";
+
+  /**
+   * The constant used to keep 'session' state when we give flow control to the
+   * authenticator filter. Part of the contract with the authenticator Filter is
+   * that we expect to get the value back when authentication is done.
+   */
+  public static final String AUTH_STATE = "AUTH_STATE";
 
   /**
    * Implement this method to state whether the given request is a continuation that can be handled.
@@ -60,29 +64,13 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
 
   /**
    * Implement this method to perform the actual authentication. Use
-   * {@link org.surfnet.oaaas.basic.BasicAuthenticator BasicAuthenticator} or
-   * {@link org.surfnet.oaaas.simple.FormLoginAuthenticator
-   * FormLoginAuthenticator} as an example.
+   * {@link FormLoginAuthenticator} as an example.
    * 
-   * In general, the contract is:
-   * <p>
-   * assert that the user is authenticated. You can use the request and response
-   * for this. When not yet authenticated:
-   * </p>
-   * <ul>
-   * <li>use {@link #getAuthStateValue(javax.servlet.ServletRequest)} to
-   * pass-around for user agent communication</li>
-   * <li>use {@link #getReturnUri(javax.servlet.ServletRequest)} if you need to
-   * step out and return to the current location
-   * </ul>
-   * <p>
-   * When authenticated:
-   * </p>
    * <ul>
    * <li>set the authState attribute, by calling
    * {@link #setAuthStateValue(javax.servlet.ServletRequest, String)}</li>
    * <li>set the principal attribute, by calling
-   * {@link #setPrincipal(ServletRequest, RolesPrincipal)}</li>
+   * {@link #setPrincipal(ServletRequest, AuthenticatedPrincipal)}</li>
    * <li>call chain.doFilter(request, response) to let the flow continue..
    * </ul>
    * 
@@ -114,11 +102,4 @@ public abstract class AbstractAuthenticator extends AbstractFilter {
     request.setAttribute(PRINCIPAL, principal);
   }
 
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-  }
-
-  @Override
-  public void destroy() {
-  }
 }

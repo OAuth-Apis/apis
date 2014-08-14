@@ -37,7 +37,6 @@ import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
  * {@link HttpServletRequest} and {@link HttpServletResponse}.
  * 
  */
-@Named("formAuthenticator")
 public class FormLoginAuthenticator extends AbstractAuthenticator {
 
   private static final String SESSION_IDENTIFIER = "AUTHENTICATED_PRINCIPAL";
@@ -71,7 +70,7 @@ public class FormLoginAuthenticator extends AbstractAuthenticator {
       String authStateValue) throws IOException, ServletException {
     request.setAttribute(AUTH_STATE, authStateValue);
     request.setAttribute("actionUri", returnUri);
-    request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+    request.getRequestDispatcher("/login.html").forward(request, response);
   }
 
   /**

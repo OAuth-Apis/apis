@@ -30,7 +30,7 @@ import org.surfnet.oaaas.model.Client;
  * Responsible for handling user consent.
  *
  */
-public abstract class AbstractUserConsentHandler extends AbstractFilter {
+public abstract class AbstractUserConsentHandler extends AuthorizationSupport {
 
   /**
    * The constant that contains the scopes, set by concrete userConsentHandlers
@@ -54,13 +54,6 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    */
   public final Client getClient(ServletRequest request) {
     return (Client) request.getAttribute(CLIENT);
-  }
-
-  @Override
-  public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-      ServletException {
-    handleUserConsent((HttpServletRequest) request, (HttpServletResponse) response, chain, getAuthStateValue(request),
-        getReturnUri(request), getClient(request));
   }
 
   /**
@@ -120,14 +113,6 @@ public abstract class AbstractUserConsentHandler extends AbstractFilter {
    */
   protected final void setGrantedScopes(ServletRequest request, String[] scopes) {
     request.setAttribute(GRANTED_SCOPES, scopes);
-  }
-
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-  }
-
-  @Override
-  public void destroy() {
   }
 
 }

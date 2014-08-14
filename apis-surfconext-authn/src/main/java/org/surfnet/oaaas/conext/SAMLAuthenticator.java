@@ -57,7 +57,6 @@ import org.surfnet.oaaas.repository.AuthorizationRequestRepository;
 
 import javax.inject.Inject;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,10 +99,9 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
   }
 
 
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
+  public SAMLAuthenticator() {
+
     try {
-      super.init(filterConfig);
       openSAMLContext = createOpenSAMLContext(properties);
       enrichPricipal = Boolean.valueOf(properties.getProperty("api-enrich-principal"));
       if (enrichPricipal) {
@@ -111,7 +109,7 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
         adminGroup = properties.getProperty("admin.client.apis.teamname");
       }
     } catch (Exception e) {
-      throw new ServletException(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -237,13 +235,13 @@ public class SAMLAuthenticator extends AbstractAuthenticator {
 
   private void sendAuthnRequest(HttpServletResponse response, String authState, String returnUri) throws IOException {
     AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(openSAMLContext.entityId(), timeService,
-            idService);
+      idService);
     EndpointGenerator endpointGenerator = new EndpointGenerator();
 
     final String target = openSAMLContext.getIdpUrl();
 
     Endpoint endpoint = endpointGenerator.generateEndpoint(
-            SingleSignOnService.DEFAULT_ELEMENT_NAME, target, openSAMLContext.assertionConsumerUri());
+      SingleSignOnService.DEFAULT_ELEMENT_NAME, target, openSAMLContext.assertionConsumerUri());
 
     AuthnRequest authnRequest = authnRequestGenerator.generateAuthnRequest(target, openSAMLContext.assertionConsumerUri());
 

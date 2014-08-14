@@ -20,7 +20,9 @@ package org.surfnet.oaaas.consent;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.surfnet.oaaas.auth.AbstractAuthenticator;
 import org.surfnet.oaaas.auth.AbstractUserConsentHandler;
 import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
@@ -44,16 +46,18 @@ import java.util.List;
  * Example {@link AbstractUserConsentHandler} that forwards to a form.
  * 
  */
-@Named("formConsentHandler")
 public class FormUserConsentHandler extends AbstractUserConsentHandler {
 
   private static final String USER_OAUTH_APPROVAL = "user_oauth_approval";
 
-  @Inject
-  private AccessTokenRepository accessTokenRepository;
+  private final AccessTokenRepository accessTokenRepository;
 
-  @Inject
-  private AuthorizationRequestRepository authorizationRequestRepository;
+  private final AuthorizationRequestRepository authorizationRequestRepository;
+
+  public FormUserConsentHandler(AccessTokenRepository accessTokenRepository, AuthorizationRequestRepository authorizationRequestRepository) {
+    this.accessTokenRepository = accessTokenRepository;
+    this.authorizationRequestRepository = authorizationRequestRepository;
+  }
 
   @Override
   public void handleUserConsent(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
@@ -93,15 +97,8 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
 
   }
 
-  /**
-   * 
-   * Return the path to the User Consent page. Subclasses can use this hook by
-   * providing a custom html/jsp.
-   * 
-   * @return the path to the User Consent page
-   */
   protected String getUserConsentUrl() {
-    return "/WEB-INF/jsp/userconsent.jsp";
+    return "/userconsent.html";
   }
 
   private boolean processForm(final HttpServletRequest request, final HttpServletResponse response)
@@ -117,11 +114,8 @@ public class FormUserConsentHandler extends AbstractUserConsentHandler {
     }
   }
 
-  /**
-   * @return
-   */
   protected String getUserConsentDeniedUrl() {
-    return "/WEB-INF/jsp/userconsent_denied.jsp";
+    return "/userconsent-denied.html";
   }
 
 }
