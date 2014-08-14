@@ -63,14 +63,14 @@
 
 
   <modules>
-    <module>apis-resource-server-library</module>
-    <module>examples/apis-example-resource-server</module>
     <module>apis-authorization-server</module>
     <module>apis-authorization-server-boot</module>
-    <module>apis-surfconext-authn</module>
+    <module>examples/apis-example-resource-server</module>
     <module>examples/apis-example-resource-server-war</module>
     <module>examples/apis-example-client-app</module>
-    <module>apis-openconext-mock-war</module>
+    <module>contrib/apis-resource-server-library</module>
+    <module>contrib/apis-surfconext-authn</module>
+    <module>contrib/apis-openconext-mock-war</module>
   </modules>
 
   <properties>
