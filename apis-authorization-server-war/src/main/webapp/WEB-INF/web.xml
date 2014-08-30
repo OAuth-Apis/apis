@@ -41,7 +41,55 @@
     </listener-class>
   </listener>
 
-  <filter>
+    <filter>
+        <filter-name>CAS Single Sign Out Filter</filter-name>
+        <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS Single Sign Out Filter</filter-name>
+        <url-pattern>/cas</url-pattern>
+    </filter-mapping>
+    <listener>
+        <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>casAuthenticationFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>casAuthenticationFilter</filter-name>
+        <url-pattern>/cas</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>casValidationFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>casValidationFilter</filter-name>
+        <url-pattern>/cas</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+        <url-pattern>/cas</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>postCASAuthenticationFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>postCASAuthenticationFilter</filter-name>
+        <url-pattern>/cas</url-pattern>
+    </filter-mapping>
+
+    <filter>
     <filter-name>adminAuthorizationFilter</filter-name>
     <filter-class>org.surfnet.oaaas.auth.AuthorizationServerFilter</filter-class>
     <init-param>
