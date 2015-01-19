@@ -143,17 +143,8 @@ public class AuthenticationFilter implements Filter {
     this.authenticator = authenticator;
   }
 
-  public static boolean isValidUrl(String redirectUrl) {
-    try {
-      new URL(redirectUrl);
-      return true;
-    } catch (MalformedURLException e) {
-      return false;
-    }
-  }
-  
   public static boolean isValidUri(String redirectUri) {
-	  try {
+    try {
       URI uri = new URI(redirectUri);
       if (uri.getScheme() != null) {
         return true;
