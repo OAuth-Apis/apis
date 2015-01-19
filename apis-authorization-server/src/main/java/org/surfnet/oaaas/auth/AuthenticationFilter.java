@@ -117,7 +117,7 @@ public class AuthenticationFilter implements Filter {
     LOG.info("Will send error response for authorization request '{}', validation result: {}", authReq, validate);
     String redirectUri = authReq.getRedirectUri();
     String state = authReq.getState();
-    if (isValidUrl(redirectUri)) {
+    if (isValidUri(redirectUri)) {
       redirectUri = redirectUri.concat(redirectUri.contains("?") ? "&" : "?");
       redirectUri = redirectUri
               .concat("error=").concat(validate.getValue())
