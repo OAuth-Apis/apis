@@ -16,8 +16,8 @@
 
 package org.surfnet.oaaas.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -382,8 +382,11 @@ public class Client extends AbstractEntity {
 
     for (String redirectUri : redirectUris) {
       try {
-        new URL(redirectUri);
-      } catch (MalformedURLException e) {
+        URI uri = new URI(redirectUri);
+        if (uri.getScheme() == null) {
+          isValid = false;
+        }
+      } catch (URISyntaxException e) {
         violation(context, "redirectUri '" + redirectUri + "' is not a valid URI");
         isValid = false;
       }
