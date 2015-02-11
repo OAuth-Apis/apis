@@ -29,8 +29,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
@@ -117,7 +117,7 @@ public class AuthenticationFilter implements Filter {
     LOG.info("Will send error response for authorization request '{}', validation result: {}", authReq, validate);
     String redirectUri = authReq.getRedirectUri();
     String state = authReq.getState();
-    if (isValidUrl(redirectUri)) {
+    if (isValidUri(redirectUri)) {
       redirectUri = redirectUri.concat(redirectUri.contains("?") ? "&" : "?");
       redirectUri = redirectUri
               .concat("error=").concat(validate.getValue())
@@ -143,11 +143,15 @@ public class AuthenticationFilter implements Filter {
     this.authenticator = authenticator;
   }
 
-  public static boolean isValidUrl(String redirectUri) {
+  public static boolean isValidUri(String redirectUri) {
     try {
-      new URL(redirectUri);
-      return true;
-    } catch (MalformedURLException e) {
+      URI uri = new URI(redirectUri);
+      if (uri.getScheme() != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (URISyntaxException e) {
       return false;
     }
   }

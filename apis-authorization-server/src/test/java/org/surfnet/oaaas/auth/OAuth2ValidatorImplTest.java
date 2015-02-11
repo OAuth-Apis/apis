@@ -130,7 +130,7 @@ public class OAuth2ValidatorImplTest {
 
   @Test
   public void testValidateRedirectUri() {
-    request.setRedirectUri("qwert://no-valid-url");
+    request.setRedirectUri("//no-valid-redirect-uri");
     validate(ValidationResponse.REDIRECT_URI_NOT_URI);
   }
 

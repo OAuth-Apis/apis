@@ -105,7 +105,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       } else {
         return uris.get(0);
       }
-    } else if (!AuthenticationFilter.isValidUrl(redirectUri)) {
+    } else if (!AuthenticationFilter.isValidUri(redirectUri)) {
       throw new ValidationResponseException(REDIRECT_URI_NOT_URI);
     } else if (redirectUri.contains("#")) {
       throw new ValidationResponseException(REDIRECT_URI_FRAGMENT_COMPONENT);
