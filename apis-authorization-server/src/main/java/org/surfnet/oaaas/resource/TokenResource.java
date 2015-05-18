@@ -323,8 +323,9 @@ public class TokenResource {
 
   private Response sendImplicitGrantResponse(AuthorizationRequest authReq, AccessToken accessToken) {
     String uri = authReq.getRedirectUri();
-    String fragment = String.format("access_token=%s&token_type=bearer&expires_in=%s&scope=%s"
-        + appendStateParameter(authReq), accessToken.getToken(), accessToken.getExpiresIn(), StringUtils.join(authReq.getGrantedScopes(), ','));
+    String fragment = String.format("access_token=%s&token_type=bearer&expires_in=%s&scope=%s", 
+      accessToken.getToken(), accessToken.getExpiresIn(), StringUtils.join(authReq.getGrantedScopes(), ',')) + 
+      appendStateParameter(authReq);
     if (authReq.getClient().isIncludePrincipal()) {
       fragment += String.format("&principal=%s", authReq.getPrincipal().getDisplayName()) ;
     }
