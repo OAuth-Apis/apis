@@ -1,9 +1,11 @@
-Example Client App 
+Jetty Connector for proxied configuration
 ======
-The Example Client App is a very simple Spring web application that is developed for demo purposes. With the client app you can see what the typical flow is for real clients of your Resource Server. The prerequisites for seeing the client app in action are:
+This project contains an extension plugin for Jetty that permits to permit a proper Apache (or Nginx) proxying.
+This extension permits to implement the configuration described here:
+```
+   https                 http
+ --------->   Apache   -------> Jetty
+```
 
-- The Authorization Server up and running
-- The Example Resource Server up and running
-
-See the documentation in the [README.md](https://github.com/OpenConextApps/apis/blob/master/README.md) in the root project for detailed instructions. 
-
+To permit this workflow the request schema is retrieved from the `X-Forwarded-Proto` HTTP header.
+This is the standard behavior of Jetty 9, this extension makes it available also in Jetty 8.
