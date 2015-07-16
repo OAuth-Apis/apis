@@ -203,9 +203,11 @@
                 <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
               </webAppConfig>
               <connectors>
-                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                <!--connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector"-->
+                <connector implementation="org.surfnet.oaaas.jetty.SelectChannelConnectorHttps">
                   <port>${servlet.port}</port>
                   <maxIdleTime>60000</maxIdleTime>
+                  <forwarded>true</forwarded>
                 </connector>
               </connectors>
               <daemon>true</daemon>
@@ -230,6 +232,13 @@
                 </goals>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>nl.surfnet.apis</groupId>
+                <artifactId>jetty-connector</artifactId>
+                <version>1.3.6-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
@@ -261,6 +270,11 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-maven-plugin.version}</version>
         <dependencies>
+          <dependency>
+            <groupId>nl.surfnet.apis</groupId>
+            <artifactId>jetty-connector</artifactId>
+            <version>1.3.6-SNAPSHOT</version>
+          </dependency>
           <dependency>
             <groupId>org.surfnet.coin</groupId>
             <artifactId>mujina-idp</artifactId>
@@ -297,7 +311,8 @@
             <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
           </webAppConfig>
           <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+            <!--connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector"-->
+            <connector implementation="org.surfnet.oaaas.jetty.SelectChannelConnectorHttps">
               <port>${servlet.port}</port>
               <host>0.0.0.0</host>
             </connector>

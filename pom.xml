@@ -72,6 +72,7 @@
     <module>apis-example-client-app</module>
     <module>apis-openconext-mock-war</module>
     <module>apis-authorization-server-dist</module>
+    <module>jetty-connector</module>
   </modules>
 
   <properties>
