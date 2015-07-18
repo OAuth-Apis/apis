@@ -23,7 +23,6 @@ import java.io.IOException;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.io.EndPoint;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * {@link SelectChannelConnector} that sets the request schema according to the
