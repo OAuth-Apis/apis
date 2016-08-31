@@ -17,9 +17,9 @@
 package org.surfnet.oaaas.config;
 
 import com.googlecode.flyway.core.Flyway;
+import com.jolbox.bonecp.BoneCPDataSource;
 
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -34,6 +34,7 @@ import org.surfnet.oaaas.support.Cleaner;
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
+import javax.sql.DataSource;
 import javax.validation.Validator;
 
 /**
@@ -64,14 +65,12 @@ public class SpringConfiguration {
   Environment env;
 
   @Bean
-  public javax.sql.DataSource dataSource() {
-    DataSource dataSource = new DataSource();
-    dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-    dataSource.setUrl(env.getProperty("jdbc.url"));
+  public DataSource dataSource() {
+    BoneCPDataSource dataSource = new BoneCPDataSource();
+    dataSource.setDriverClass(env.getProperty("jdbc.driverClassName"));
+    dataSource.setJdbcUrl(env.getProperty("jdbc.url"));
     dataSource.setUsername(env.getProperty("jdbc.username"));
     dataSource.setPassword(env.getProperty("jdbc.password"));
-    dataSource.setTestOnBorrow(true);
-    dataSource.setValidationQuery("SELECT 1");
     return dataSource;
   }
 
