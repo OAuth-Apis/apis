@@ -119,6 +119,9 @@ public class Client extends AbstractEntity {
   @Column
   private boolean allowedClientCredentials;
 
+  @Column
+  private boolean allowedPasswordGrant;
+
   // Listed here so Cascade will work.
   @OneToMany(mappedBy ="client", cascade = CascadeType.ALL)
   private List<AccessToken> accessTokens;
@@ -353,6 +356,18 @@ public class Client extends AbstractEntity {
     this.allowedClientCredentials = allowedClientCredentials;
   }
 
+  public boolean isAllowedPasswordGrant() {
+    return allowedPasswordGrant;
+  }
+
+  public void setAllowedPasswordGrant(boolean allowedPasswordGrant) {
+    this.allowedPasswordGrant = allowedPasswordGrant;
+  }
+
+  public boolean shouldGenerateASecret() {
+    return !(isAllowedImplicitGrant() || isAllowedPasswordGrant());
+  }
+
 
   /*
    * (non-Javadoc)
@@ -370,6 +385,11 @@ public class Client extends AbstractEntity {
 
     if (isAllowedClientCredentials() && isAllowedImplicitGrant()) {
       violation(context, "A Client can not be issued the client credentials grant AND the implicit grant as client credentials requires a secret.");
+      isValid = false;
+    }
+
+    if (isAllowedClientCredentials() && isAllowedPasswordGrant()) {
+      violation(context, "A Client can not be issued the client credentials grant AND the password grant as client credentials requires a secret.");
       isValid = false;
     }
 

@@ -99,7 +99,7 @@ public class ClientResource extends AbstractResource {
 
     client.setResourceServer(resourceServer);
     client.setClientId(generateClientId(client));
-    client.setSecret(client.isAllowedImplicitGrant() ? null : generateSecret());
+    client.setSecret(client.shouldGenerateASecret() ? generateSecret() : null);
 
     Client clientSaved;
 
@@ -171,7 +171,7 @@ public class ClientResource extends AbstractResource {
     // Copy over read-only fields
     newOne.setResourceServer(resourceServer);
     newOne.setClientId(clientFromStore.getClientId());
-    newOne.setSecret(newOne.isAllowedImplicitGrant() ? null : clientFromStore.getSecret());
+    newOne.setSecret(newOne.shouldGenerateASecret() ? clientFromStore.getSecret() : null);
 
     Client savedInstance;
     try {

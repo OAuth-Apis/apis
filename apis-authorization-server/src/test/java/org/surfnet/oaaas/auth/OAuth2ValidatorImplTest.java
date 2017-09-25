@@ -208,4 +208,26 @@ public class OAuth2ValidatorImplTest {
     return request;
   }
 
+  @Test
+  public void testPasswordTokenRequest() {
+    AccessTokenRequest noClientAccessTokenRequest = new AccessTokenRequest();
+    noClientAccessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_PASSWORD);
+    ValidationResponse noClientResponse = validator.validate(noClientAccessTokenRequest, BasicAuthCredentials.createCredentialsFromHeader(null));
+    assertEquals(ValidationResponse.INVALID_GRANT_PASSWORD, noClientResponse);
+
+    AccessTokenRequest unallowedAccessTokenRequest = new AccessTokenRequest();
+    unallowedAccessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_PASSWORD);
+    unallowedAccessTokenRequest.setClientId(client.getClientId());
+    ValidationResponse unallowedResponse = validator.validate(unallowedAccessTokenRequest, BasicAuthCredentials.createCredentialsFromHeader(null));
+    assertEquals(ValidationResponse.INVALID_GRANT_PASSWORD, unallowedResponse);
+
+    client.setAllowedPasswordGrant(true);
+    AccessTokenRequest validAccessTokenRequest = new AccessTokenRequest();
+    validAccessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_PASSWORD);
+    validAccessTokenRequest.setClientId(client.getClientId());
+    validAccessTokenRequest.setUsername("username");
+    validAccessTokenRequest.setPassword("password");
+    ValidationResponse validResponse = validator.validate(validAccessTokenRequest, BasicAuthCredentials.createCredentialsFromHeader(null));
+    assertEquals(ValidationResponse.VALID, validResponse);
+  }
 }
