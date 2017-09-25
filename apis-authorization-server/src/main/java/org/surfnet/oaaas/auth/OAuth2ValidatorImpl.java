@@ -199,6 +199,7 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
   protected void validateClient(AccessTokenRequest accessTokenRequest, 
       BasicAuthCredentials clientCredentials) {
     Client client = null;
+    String grantType = accessTokenRequest.getGrantType();
     
     // Were we given client credentials via basic auth?
     if (!clientCredentials.isNull()) {
@@ -208,28 +209,32 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       }
       client = getClient(clientCredentials.getUsername(), clientCredentials.getPassword(), 
           UNAUTHORIZED_CLIENT);
-    } else if (!StringUtils.isBlank(accessTokenRequest.getClientId())) {
+    } else /* if (!StringUtils.isBlank(accessTokenRequest.getClientId())) */ {
       // Use the request parameters to obtain the client
       client = getClient(accessTokenRequest.getClientId(), accessTokenRequest.getClientSecret(), 
-          UNKNOWN_CLIENT_ID);
+          UNKNOWN_CLIENT_ID, !GRANT_TYPE_PASSWORD.equals(grantType));
     }
 
     // Record the associated client
     accessTokenRequest.setClient(client);
   }
-  
-  private Client getClient(String clientId, String clientSecret, ValidationResponse error) {
+
+  private Client getClient(String clientId, String clientSecret, ValidationResponse error, boolean isClientSecretRequired) {
     // Find the indicated client
     Client client = clientRepository.findByClientId(clientId);
     if (client == null) {
       throw new ValidationResponseException(error);
     }
-    
-    // Confirm that the credentials match those for the client
-    if (!client.verifySecret(clientSecret)) {
+
+    // Confirm that the credentials match those for the client, if required
+    if (isClientSecretRequired && !client.verifySecret(clientSecret)) {
       throw new ValidationResponseException(error);
     }
     return client;
+  }
+  
+  private Client getClient(String clientId, String clientSecret, ValidationResponse error) {
+    return getClient(clientId, clientSecret, error, true);
   }
   
   protected void validateAccessTokenRequest(AccessTokenRequest accessTokenRequest) {
