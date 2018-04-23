@@ -20,6 +20,11 @@
       <artifactId>apis-authorization-server</artifactId>
     </dependency>
     <dependency>
+      <groupId>de.daasi</groupId>
+      <artifactId>shib-apis-authn</artifactId>
+      <version>0.0.2-SNAPSHOT</version>
+      </dependency>
+    <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-servlet</artifactId>
     </dependency>
@@ -41,6 +46,11 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.uadetector</groupId>
+      <artifactId>uadetector-resources</artifactId>
+      <version>2014.04</version>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey.contribs</groupId>

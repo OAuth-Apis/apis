@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <relativePath>../pom.xml</relativePath>
+    <groupId>nl.surfnet.apis</groupId>
+    <artifactId>apis-parent</artifactId>
+    <version>1.3.6-SNAPSHOT</version>
+  </parent>
+
+
+  <groupId>de.daasi</groupId>
+  <artifactId>shib-apis-authn</artifactId>
+  <version>0.0.2-SNAPSHOT</version> 
+  <name>API Secure - Shibboleth authentication plugin</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>spring-security-opensaml</artifactId>
+      <exclusions>
+          <exclusion>
+              <artifactId>commons-collections</artifactId>
+              <groupId>commons-collections</groupId>
+          </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-authorization-server</artifactId>
+      <version>1.3.6-SNAPSHOT</version><!--$NO-MVN-MAN-VER$-->
+    </dependency>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>coin-api-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>nl.surfnet.apis</groupId>
+    	<artifactId>apis-resource-server-library</artifactId>
+    	<version>1.3.6-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.uadetector</groupId>
+    	<artifactId>uadetector-resources</artifactId>
+    	<version>2014.04</version>
+    	<scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>
