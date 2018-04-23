@@ -16,6 +16,9 @@
 
 package org.surfnet.oaaas.resource.resourceserver;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,7 +81,6 @@ public class AccessTokenForOwnerResource extends AbstractResource {
     return Response.ok(tokens).build();
   }
 
-
   /**
    * Delete all existing access tokens for a user.
    */
@@ -97,6 +99,27 @@ public class AccessTokenForOwnerResource extends AbstractResource {
 	accessTokenRepository.delete(tokens);
     return Response.noContent().build();
   }
+
+  @GET
+  @Path("/{accessTokenOwner}")
+  public Response getByOwnerEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwner") String owner) {
+      return getByOwner(request, decode(owner));
+  }
+
+  @DELETE
+  @Path("/{accessTokenOwner}")
+  public Response deleteEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwner") String owner) {
+      return delete(request, decode(owner));
+  }
+  
+  private String decode(String owner) {
+      try {
+          owner = URLDecoder.decode(owner, StandardCharsets.UTF_8.name());
+      } catch (UnsupportedEncodingException e) {
+          LOG.error(String.format("Error while decoding '%s'", owner), e);
+      }
+      return owner;
+}
 
   private List<AccessToken> getAccessTokensForOwner(HttpServletRequest request, String owner) {
     List<AccessToken> accessTokens;
