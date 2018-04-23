@@ -16,6 +16,9 @@
 
 package org.surfnet.oaaas.resource.resourceserver;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,11 +45,11 @@ import org.surfnet.oaaas.repository.AccessTokenRepository;
  * JAX-RS Resource for maintaining owns access tokens.
  */
 @Named
-@Path("/accessTokenForOwner")
+@Path("/accessTokenForOwnerEncrypted")
 @Produces(MediaType.APPLICATION_JSON)
-public class AccessTokenForOwnerResource extends AbstractResource {
+public class AccessTokenForOwnerEncryptedResource extends AbstractResource {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AccessTokenForOwnerResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AccessTokenForOwnerEncryptedResource.class);
 
   @Inject
   private AccessTokenRepository accessTokenRepository;
@@ -74,7 +77,7 @@ public class AccessTokenForOwnerResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-    List<AccessToken> tokens = getAccessTokensForOwner(request, owner);
+    List<AccessToken> tokens = getAccessTokensForOwner(request, decode(owner));
     return Response.ok(tokens).build();
   }
 
@@ -88,7 +91,7 @@ public class AccessTokenForOwnerResource extends AbstractResource {
     if (validateScopeResponse != null) {
       return validateScopeResponse;
     }
-    List<AccessToken> tokens = getAccessTokensForOwner(request, owner);
+    List<AccessToken> tokens = getAccessTokensForOwner(request, decode(owner));
     if (tokens == null || tokens.isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -96,6 +99,15 @@ public class AccessTokenForOwnerResource extends AbstractResource {
 	accessTokenRepository.delete(tokens);
     return Response.noContent().build();
   }
+
+  private String decode(String owner) {
+      try {
+          owner = URLDecoder.decode(owner, StandardCharsets.UTF_8.name());
+      } catch (UnsupportedEncodingException e) {
+          LOG.error(String.format("Error while decoding '%s'", owner), e);
+      }
+      return owner;
+}
 
   private List<AccessToken> getAccessTokensForOwner(HttpServletRequest request, String owner) {
     List<AccessToken> accessTokens;
