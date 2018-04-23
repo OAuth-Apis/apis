@@ -101,14 +101,14 @@ public class AccessTokenForOwnerResource extends AbstractResource {
   }
 
   @GET
-  @Path("/{accessTokenOwner}")
-  public Response getByOwnerEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwner") String owner) {
+  @Path("/{accessTokenOwnerEncrypted}")
+  public Response getByOwnerEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwnerEncrypted") String owner) {
       return getByOwner(request, decode(owner));
   }
 
   @DELETE
-  @Path("/{accessTokenOwner}")
-  public Response deleteEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwner") String owner) {
+  @Path("/{accessTokenOwnerEncrypted}")
+  public Response deleteEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwnerEncrypted") String owner) {
       return delete(request, decode(owner));
   }
   

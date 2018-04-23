@@ -17,7 +17,6 @@
   </parent>
 
   <artifactId>apis-authorization-server</artifactId>
-  <packaging>war</packaging>
   <name>API Secure - authorization server</name>
 
   <dependencies>
