@@ -73,43 +73,52 @@ public class AccessTokenForOwnerResource extends AbstractResource {
   @GET
   @Path("/{accessTokenOwner}")
   public Response getByOwner(@Context HttpServletRequest request, @PathParam("accessTokenOwner") String owner) {
-    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
-    if (validateScopeResponse != null) {
-      return validateScopeResponse;
-    }
-    List<AccessToken> tokens = getAccessTokensForOwner(request, owner);
-    return Response.ok(tokens).build();
+    return doGetByOwner(request, owner);
   }
 
-  /**
+/**
    * Delete all existing access tokens for a user.
    */
   @DELETE
   @Path("/{accessTokenOwner}")
   public Response delete(@Context HttpServletRequest request, @PathParam("accessTokenOwner") String owner) {
-    Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
-    if (validateScopeResponse != null) {
-      return validateScopeResponse;
-    }
-    List<AccessToken> tokens = getAccessTokensForOwner(request, owner);
-    if (tokens == null || tokens.isEmpty()) {
-      return Response.status(Response.Status.NOT_FOUND).build();
-    }
-	LOG.debug("About to delete accessTokens {}", Arrays.toString(tokens.toArray()));
-	accessTokenRepository.delete(tokens);
-    return Response.noContent().build();
+    return doDelete(request, owner);
   }
 
   @GET
   @Path("/{accessTokenOwnerEncrypted}")
   public Response getByOwnerEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwnerEncrypted") String owner) {
-      return getByOwner(request, decode(owner));
+      return doGetByOwner(request, decode(owner));
   }
 
   @DELETE
   @Path("/{accessTokenOwnerEncrypted}")
   public Response deleteEncrypted(@Context HttpServletRequest request, @PathParam("accessTokenOwnerEncrypted") String owner) {
-      return delete(request, decode(owner));
+      return doDelete(request, decode(owner));
+  }
+  
+  private Response doGetByOwner(HttpServletRequest request, String owner) {
+      Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_READ));
+      if (validateScopeResponse != null) {
+        return validateScopeResponse;
+      }
+      List<AccessToken> tokens = getAccessTokensForOwner(request, owner);
+      return Response.ok(tokens).build();
+  }
+
+  private Response doDelete (HttpServletRequest request, String owner ) {
+      
+      Response validateScopeResponse = validateScope(request, Collections.singletonList(AbstractResource.SCOPE_WRITE));
+      if (validateScopeResponse != null) {
+        return validateScopeResponse;
+      }
+      List<AccessToken> tokens = getAccessTokensForOwner(request, owner);
+      if (tokens == null || tokens.isEmpty()) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      LOG.debug("About to delete accessTokens {}", Arrays.toString(tokens.toArray()));
+      accessTokenRepository.delete(tokens);
+      return Response.noContent().build();
   }
   
   private String decode(String owner) {
