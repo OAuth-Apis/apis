@@ -1,3 +1,7 @@
+|  ***WARNING***: This project is no longer actively maintained. |
+|:-------|
+| If anyone is still using this and is willing to take over maintenance, please let us know and we can see how to arrange access. bas.zoetekouw@surfnet.nl pieter.vandermeulen@surfnet.nl|
+
 APIs
 ======
 The apis (APIs Secure) project offers an OAuth 2.0 Authorization Server that can be used to kickstart your API authentication. In essence it enables you to focus on your actual resource endpoints and use the out-of-the-box authorization server to authenticate resource owners and subsequently validate the access tokens that were granted to the Client applications. We will describe the typical use cases in more details in sections below.
@@ -37,7 +41,7 @@ After the clone build the entire project
 
 Changes between versions are listed in [CHANGES.md](CHANGES.md)
 
-### Run Authorization Server
+### Run Authorization Serve.  
 
 Go the authorization-server-war and start the application
 
