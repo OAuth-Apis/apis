@@ -208,4 +208,20 @@ public class OAuth2ValidatorImplTest {
     return request;
   }
 
+  @Test
+  public void testPasswordTokenRequest() {
+    AccessTokenRequest invalidAccessTokenRequest = new AccessTokenRequest();
+    invalidAccessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_PASSWORD);
+    invalidAccessTokenRequest.setClientId(client.getClientId());
+    ValidationResponse invalidResponse = validator.validate(invalidAccessTokenRequest, BasicAuthCredentials.createCredentialsFromHeader(null));
+    assertEquals(ValidationResponse.INVALID_GRANT_PASSWORD, invalidResponse);
+
+    AccessTokenRequest validAccessTokenRequest = new AccessTokenRequest();
+    validAccessTokenRequest.setGrantType(OAuth2Validator.GRANT_TYPE_PASSWORD);
+    validAccessTokenRequest.setClientId(client.getClientId());
+    validAccessTokenRequest.setUsername("username");
+    validAccessTokenRequest.setPassword("password");
+    ValidationResponse validResponse = validator.validate(validAccessTokenRequest, BasicAuthCredentials.createCredentialsFromHeader(null));
+    assertEquals(ValidationResponse.VALID, validResponse);
+  }
 }
