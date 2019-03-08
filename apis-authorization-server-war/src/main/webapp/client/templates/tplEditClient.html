@@ -119,6 +119,19 @@
             </div>
         </div>
 
+        <div class="alert hide" id="password_grant_warning">
+          <button class="close" data-dismiss="alert">×</button>
+          <span>A password grant is usually for highly trusted mobile or desktop apps. These clients should should not have a secret, since it can't be protected.</span>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Allow password grant</label>
+            <div class="controls">
+                <input type="checkbox" name="allowedPasswordGrant" value="true" {{#if allowedPasswordGrant}}checked="checked"{{/if}}>
+                <i class="icon-question-sign icon-blue" rel="popover" name="client-allowedPasswordGrant"></i>
+            </div>
+        </div>
+
         <div class="control-group">
             <label class="control-label">Use refresh tokens</label>
             <div class="controls">

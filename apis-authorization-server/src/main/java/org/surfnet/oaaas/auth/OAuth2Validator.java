@@ -95,9 +95,11 @@ public interface OAuth2Validator {
     SCOPE_NOT_VALID("invalid_scope", "The requested scope is invalid, unknown, malformed, " +
         "or exceeds the scope granted by the resource owner."),
 
-    IMPLICIT_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permisssion for implicit grant"),
+    IMPLICIT_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permission for implicit grant"),
 
-    CLIENT_CREDENTIALS_NOT_PERMITTED("unauthorized_client", "The client has no permisssion for client credentials"),
+    PASSWORD_GRANT_NOT_PERMITTED("unsupported_response_type", "The client has no permission for password grant"),
+
+    CLIENT_CREDENTIALS_NOT_PERMITTED("unauthorized_client", "The client has no permission for client credentials"),
 
     REDIRECT_URI_FRAGMENT_COMPONENT("invalid_request",
         "The redirect_uri endpoint must not include a fragment component"),

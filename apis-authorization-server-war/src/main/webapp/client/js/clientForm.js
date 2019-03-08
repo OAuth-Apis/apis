@@ -85,6 +85,10 @@ var clientFormView = (function() {
           $("#client_credentials_warning").fadeToggle($(this).is(':checked'));
         });
 
+        $("input[name='allowedPasswordGrant']").change(function(){
+          $("#password_grant_warning").fadeToggle($(this).is(':checked'));
+        });
+
         if (mode == "add") {
           // Trigger the onchange beforehand for new clients, to populate the scopes list for the first time.
           clientFormController.onChangeResourceServer($("select#clientResourceServer option:selected").val());
@@ -236,6 +240,7 @@ var clientFormController = (function() {
         useRefreshTokens: formAsObject['useRefreshTokens'],
         allowedImplicitGrant: formAsObject['allowedImplicitGrant'],
         allowedClientCredentials: formAsObject['allowedClientCredentials'],
+        allowedPasswordGrant: formAsObject['allowedPasswordGrant'],
         expireDuration: formAsObject['expireDuration'],
         attributes: attributes,
         redirectUris: cleanFormArray(formAsObject['redirectUris'])
