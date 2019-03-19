@@ -1,0 +1,17 @@
+#
+# APIs is protected by a Shibboleth SP now, like so:
+#<Location /oauth2/oauth2/authorize>
+#  AuthType shibboleth
+#  ShibRequestSetting requireSession 1
+#  require shib-session
+#</Location>
+#
+
+# REMOTE_USER is being used as principal. See shibboleth2.xml for which IdP attribute will make it up
+
+# could list further attributes driving displayname, admin role, etc.
+# and implement that in ShibAuthenticator.java
+
+# Comma separated list of Admin Principals, short of a usable SAML attribute
+adminPrincipals=user1@scope.edu,UserName2@anotherscope.edu
+

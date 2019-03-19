@@ -1,0 +1,102 @@
+package de.daasi.shib_apis_authn;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
+import org.surfnet.oaaas.auth.principal.AuthenticatedPrincipal;
+
+/**
+ * essentially the same code as org.surfnet.oaaas.conext.SAMLAuthenticatedPrincipal
+ * duplicated here in order to not introduce a dependency to conext stuff 
+ */
+public class SAMLAuthenticatedPrincipal extends AuthenticatedPrincipal
+		implements UserDetails {
+
+	@JsonIgnore
+	private final static String IDENTITY_PROVIDER = "IDENTITY_PROVIDER";
+
+	@JsonIgnore
+	private final static String DISPLAY_NAME = "DISPLAY_NAME";
+
+	public SAMLAuthenticatedPrincipal() {
+	}
+
+	public SAMLAuthenticatedPrincipal(String username,
+			Collection<String> roles, Map<String, String> attributes,
+			Collection<String> groups, String identityProvider,
+			String displayName, boolean adminPrincipal) {
+		super(username, roles, attributes, groups);
+		addAttribute(IDENTITY_PROVIDER, identityProvider);
+		addAttribute(DISPLAY_NAME, displayName);
+		setAdminPrincipal(adminPrincipal);
+	}
+
+	@JsonIgnore
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		if (!CollectionUtils.isEmpty(getRoles())) {
+			for (final String role : getRoles()) {
+				authorities.add(new GrantedAuthority() {
+					public String getAuthority() {
+						return role;
+					}
+				});
+			}
+		}
+		return authorities;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getPassword() {
+		throw new RuntimeException(
+				"SAML based authentication does not support passwords on the receiving end");
+	}
+
+	@JsonIgnore
+	@Override
+	public String getUsername() {
+		return getName();
+	}
+
+	@Override
+	public String getDisplayName() {
+		return getAttributes().get(DISPLAY_NAME);
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@JsonIgnore
+	public String getIdentityProvider() {
+		return getAttributes().get(IDENTITY_PROVIDER);
+	}
+
+}
