@@ -212,6 +212,8 @@ public class OAuth2ValidatorImpl implements OAuth2Validator {
       // Use the request parameters to obtain the client
       client = getClient(accessTokenRequest.getClientId(), accessTokenRequest.getClientSecret(), 
           UNKNOWN_CLIENT_ID);
+    } else {
+    	throw new ValidationResponseException(UNKNOWN_CLIENT_ID);
     }
 
     // Record the associated client
